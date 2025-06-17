@@ -1,4 +1,5 @@
 import { pgTable, text, serial, integer, boolean, real, timestamp } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -61,6 +62,39 @@ export const userCards = pgTable("user_cards", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+// Relations
+export const usersRelations = relations(users, ({ many }) => ({
+  collections: many(collections),
+  userCards: many(userCards),
+}));
+
+export const collectionsRelations = relations(collections, ({ one, many }) => ({
+  user: one(users, {
+    fields: [collections.userId],
+    references: [users.id],
+  }),
+  cards: many(cards),
+  userCards: many(userCards),
+}));
+
+export const cardsRelations = relations(cards, ({ one }) => ({
+  collection: one(collections, {
+    fields: [cards.collectionId],
+    references: [collections.id],
+  }),
+}));
+
+export const userCardsRelations = relations(userCards, ({ one }) => ({
+  user: one(users, {
+    fields: [userCards.userId],
+    references: [users.id],
+  }),
+  collection: one(collections, {
+    fields: [userCards.collectionId],
+    references: [collections.id],
+  }),
+}));
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
