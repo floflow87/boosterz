@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -62,11 +64,19 @@
     @apply font-sans antialiased bg-background text-foreground;
     background-color: hsl(216, 46%, 13%);
     color: white;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
   }
 }
 
 @layer components {
+  .font-luckiest {
+    font-family: 'Luckiest Guy', cursive;
+  }
+  
+  .font-poppins {
+    font-family: 'Poppins', sans-serif;
+  }
+  
   .halo-blur {
     position: absolute;
     top: -100px;

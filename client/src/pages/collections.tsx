@@ -86,8 +86,8 @@ export default function Collections() {
               className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer"
             >
               <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center">
-                <h3 className="font-bold text-white text-sm">{collection.name}</h3>
-                <p className="text-xs text-white opacity-90">{collection.season}</p>
+                <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
+                <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
               </div>
               <img 
                 src={collection.imageUrl || ""} 

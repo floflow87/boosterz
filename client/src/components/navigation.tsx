@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 const navItems = [
   { id: "home", icon: Home, label: "Menu List", path: "/collections" },
   { id: "social", icon: Users, label: "Menu List", path: "/social" },
-  { id: "cards", icon: CreditCard, label: "Menu List", path: "/cards" },
+  { id: "cards", icon: CreditCard, label: "Menu List", path: "/all-cards" },
   { id: "shop", icon: ShoppingCart, label: "Menu List", path: "/shop" },
   { id: "settings", icon: Settings, label: "Menu List", path: "/settings" },
 ];
