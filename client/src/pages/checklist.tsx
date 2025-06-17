@@ -11,7 +11,7 @@ export default function Checklist() {
   const params = useParams();
   const collectionId = params.id ? parseInt(params.id) : 1;
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [filter, setFilter] = useState<"all" | "owned" | "missing">("all");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "special">("all");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { data: collection } = useQuery<Collection>({
@@ -25,11 +25,19 @@ export default function Checklist() {
   const filteredCards = cards?.filter((card) => {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
+    if (filter === "special") {
+      // Pour Score Ligue 1: autographes et cartes 1/1
+      return card.cardType === "Autograph" || card.serialNumber === "/1" || card.serialNumber === "1/1";
+    }
     return true;
   });
 
   const ownedCount = cards?.filter(card => card.isOwned).length || 0;
   const totalCount = cards?.length || 0;
+  const missingCount = totalCount - ownedCount;
+  const specialCount = cards?.filter(card => 
+    card.cardType === "Autograph" || card.serialNumber === "/1" || card.serialNumber === "1/1"
+  ).length || 0;
   const completionPercentage = totalCount > 0 ? Math.round((ownedCount / totalCount) * 100) : 0;
 
   return (

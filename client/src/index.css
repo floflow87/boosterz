@@ -134,4 +134,20 @@
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     gap: 10px;
   }
+
+  /* 3D Carousel Effects */
+  .hover\:rotate-y-12:hover {
+    transform: rotateY(12deg) scale(1.1);
+  }
+
+  @supports (transform-style: preserve-3d) {
+    .carousel-card {
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+    
+    .carousel-card:hover {
+      transform: perspective(1000px) rotateY(15deg) scale(1.1);
+    }
+  }
 }

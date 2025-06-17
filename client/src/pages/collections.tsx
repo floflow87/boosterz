@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -11,7 +11,7 @@ import type { User, Collection, Card } from "@shared/schema";
 export default function Collections() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<"collections" | "cards">("collections");
-  const [viewMode, setViewMode] = useState<"grid" | "gallery">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel">("grid");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
 
@@ -171,7 +171,15 @@ export default function Collections() {
                     viewMode === "grid" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
                   }`}
                 >
-                  <Grid className="w-4 h-4" />
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("carousel")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "carousel" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("gallery")}
@@ -279,6 +287,41 @@ export default function Collections() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                ) : viewMode === "carousel" ? (
+                  <div className="overflow-x-auto pb-4">
+                    <div className="flex space-x-4 px-2" style={{ width: 'max-content' }}>
+                      {cards.map((card, index) => (
+                        <div 
+                          key={card.id} 
+                          className="flex-shrink-0 group cursor-pointer"
+                          style={{ perspective: '1000px' }}
+                        >
+                          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 w-40 transition-all duration-300 hover:scale-110 hover:rotate-y-12 hover:shadow-2xl transform-gpu group-hover:z-10 relative">
+                            {card.isOwned && card.imageUrl ? (
+                              <img 
+                                src={card.imageUrl} 
+                                alt={`${card.playerName} card`}
+                                className="w-full h-48 object-cover rounded-lg mb-2"
+                              />
+                            ) : (
+                              <div className="w-full h-48 bg-gray-600 rounded-lg flex items-center justify-center opacity-50 mb-2">
+                                <span className="text-gray-400 text-xs font-poppins">#{card.cardNumber}</span>
+                              </div>
+                            )}
+                            <div className="text-center font-poppins">
+                              <div className={`font-medium text-sm ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
+                                {card.isOwned ? card.playerName : '?????'}
+                              </div>
+                              <div className="text-[hsl(212,23%,69%)] text-xs">{card.cardNumber}</div>
+                              {card.cardType !== "Base" && (
+                                <div className="text-[hsl(9,85%,67%)] text-xs mt-1">{card.cardType}</div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div className="space-y-3">
