@@ -1,6 +1,6 @@
 import { users, collections, cards, userCards, type User, type InsertUser, type Collection, type InsertCollection, type Card, type InsertCard, type UserCard, type InsertUserCard } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -121,6 +121,43 @@ export class DatabaseStorage implements IStorage {
       .where(eq(cards.id, id))
       .returning();
     return card || undefined;
+  }
+
+  // User Cards methods
+  async getUserCardsByUserId(userId: number): Promise<UserCard[]> {
+    return await db.select().from(userCards).where(eq(userCards.userId, userId));
+  }
+
+  async getUserCardsByCollectionId(collectionId: number, userId: number): Promise<UserCard[]> {
+    return await db.select().from(userCards)
+      .where(eq(userCards.collectionId, collectionId));
+  }
+
+  async getUserCard(id: number): Promise<UserCard | undefined> {
+    const [userCard] = await db.select().from(userCards).where(eq(userCards.id, id));
+    return userCard || undefined;
+  }
+
+  async createUserCard(insertUserCard: InsertUserCard): Promise<UserCard> {
+    const [userCard] = await db
+      .insert(userCards)
+      .values(insertUserCard)
+      .returning();
+    return userCard;
+  }
+
+  async updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined> {
+    const [userCard] = await db
+      .update(userCards)
+      .set(updates)
+      .where(eq(userCards.id, id))
+      .returning();
+    return userCard || undefined;
+  }
+
+  async deleteUserCard(id: number): Promise<boolean> {
+    const result = await db.delete(userCards).where(eq(userCards.id, id));
+    return (result.rowCount || 0) > 0;
   }
 }
 
@@ -398,6 +435,31 @@ export class MemStorage implements IStorage {
     const updatedCard = { ...card, isOwned: !card.isOwned };
     this.cards.set(id, updatedCard);
     return updatedCard;
+  }
+
+  // User Cards methods (not implemented in memory storage)
+  async getUserCardsByUserId(userId: number): Promise<UserCard[]> {
+    return [];
+  }
+
+  async getUserCardsByCollectionId(collectionId: number, userId: number): Promise<UserCard[]> {
+    return [];
+  }
+
+  async getUserCard(id: number): Promise<UserCard | undefined> {
+    return undefined;
+  }
+
+  async createUserCard(userCard: InsertUserCard): Promise<UserCard> {
+    throw new Error("User cards not supported in memory storage");
+  }
+
+  async updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined> {
+    return undefined;
+  }
+
+  async deleteUserCard(id: number): Promise<boolean> {
+    return false;
   }
 }
 
