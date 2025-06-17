@@ -210,54 +210,84 @@ export class MemStorage implements IStorage {
         collectionId: 1,
         cardNumber: "#001",
         playerName: "Mbappé",
+        teamName: "Paris Saint-Germain",
+        cardType: "base",
+        cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
-        isSpecial: true
+        isRookieCard: false,
+        rarity: "common",
+        serialNumber: null
       },
       {
         id: 2,
         collectionId: 1,
         cardNumber: "#002",
         playerName: "Neymar",
+        teamName: "Paris Saint-Germain",
+        cardType: "base",
+        cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
-        isSpecial: false
+        isRookieCard: false,
+        rarity: "common",
+        serialNumber: null
       },
       {
         id: 3,
         collectionId: 1,
         cardNumber: "#003",
         playerName: "Messi",
+        teamName: "Paris Saint-Germain",
+        cardType: "base",
+        cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
-        isSpecial: true
+        isRookieCard: false,
+        rarity: "common",
+        serialNumber: null
       },
       {
         id: 4,
         collectionId: 1,
         cardNumber: "#004",
         playerName: "Hakimi",
-        imageUrl: "",
+        teamName: "Paris Saint-Germain",
+        cardType: "base",
+        cardSubType: null,
+        imageUrl: null,
         isOwned: false,
-        isSpecial: false
+        isRookieCard: false,
+        rarity: "common",
+        serialNumber: null
       },
       {
         id: 5,
         collectionId: 1,
         cardNumber: "#005",
         playerName: "Ben Yedder",
+        teamName: "AS Monaco",
+        cardType: "base",
+        cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
-        isSpecial: false
+        isRookieCard: false,
+        rarity: "common",
+        serialNumber: null
       },
       {
         id: 6,
         collectionId: 1,
         cardNumber: "#006",
         playerName: "Payet",
-        imageUrl: "",
+        teamName: "Olympique de Marseille",
+        cardType: "base",
+        cardSubType: null,
+        imageUrl: null,
         isOwned: false,
-        isSpecial: false
+        isRookieCard: false,
+        rarity: "common",
+        serialNumber: null
       }
     ];
 

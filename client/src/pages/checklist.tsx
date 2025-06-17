@@ -167,10 +167,10 @@ export default function Checklist() {
                   )}
                 </div>
                 
-                {card.isSpecial && (
+                {card.isRookieCard && (
                   <div className="absolute top-2 left-2">
                     <div className="bg-[hsl(9,85%,67%)] text-white text-xs px-2 py-1 rounded font-poppins">
-                      Spéciale
+                      RC
                     </div>
                   </div>
                 )}
@@ -210,9 +210,9 @@ export default function Checklist() {
                     </div>
                     
                     <div className="flex items-center space-x-2">
-                      {card.isSpecial && (
+                      {card.isRookieCard && (
                         <span className="bg-[hsl(9,85%,67%)] text-white text-xs px-2 py-1 rounded">
-                          Spéciale
+                          RC
                         </span>
                       )}
                       <span className={`text-xs px-2 py-1 rounded ${

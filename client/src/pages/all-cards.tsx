@@ -188,8 +188,8 @@ export default function AllCards() {
                         {card.isOwned ? card.playerName : 'Carte manquante'}
                       </div>
                       <div className="text-[hsl(212,23%,69%)] text-sm">{card.cardNumber}</div>
-                      {card.isSpecial && (
-                        <div className="text-[hsl(9,85%,67%)] text-xs">Spéciale</div>
+                      {card.isRookieCard && (
+                        <div className="text-[hsl(9,85%,67%)] text-xs">RC</div>
                       )}
                     </div>
                     <div className={`w-3 h-3 rounded-full ${card.isOwned ? 'bg-green-500' : 'bg-gray-500'}`} />
