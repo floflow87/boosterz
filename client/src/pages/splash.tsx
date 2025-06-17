@@ -15,7 +15,7 @@ export default function Splash() {
       
       <div className="flex flex-col items-center justify-center h-screen text-center relative z-10 px-4">
         <div className="mb-8">
-          <div className="w-[576px] h-40 mb-8 mx-auto flex items-center justify-center">
+          <div className="w-[576px] h-40 mb-4 mx-auto flex items-center justify-center">
             <img 
               src={paniniLogo} 
               alt="Panini Logo"
@@ -26,10 +26,10 @@ export default function Splash() {
           <p className="text-[hsl(212,23%,69%)] font-poppins">Gérez vos collections de cartes Panini</p>
         </div>
         
-        <div className="mt-12">
+        <div className="mt-16">
           <button 
             onClick={handleStart}
-            className="w-full max-w-xs bg-[hsl(9,85%,67%)] text-white py-4 rounded-2xl font-semibold hover:bg-opacity-90 transition-all"
+            className="w-full max-w-xs bg-[hsl(9,85%,67%)] text-white py-6 px-8 rounded-2xl font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Commencer
           </button>

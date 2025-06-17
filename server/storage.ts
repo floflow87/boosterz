@@ -187,7 +187,7 @@ export class MemStorage implements IStorage {
       id: 1,
       username: "flo87",
       name: "FLORENT MARTIN",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150",
+      avatar: null,
       totalCards: 1450,
       collectionsCount: 4,
       completionPercentage: 71

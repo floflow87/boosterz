@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 import CardAddModal from "@/components/card-add-modal";
+import avatarImage from "@assets/image_1750196240581.png";
 import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
@@ -54,24 +55,32 @@ export default function Collections() {
         {/* User Profile Section */}
         {user && (
           <div className="flex flex-col items-center text-center mb-8 mt-4">
-            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
-              <div className="w-20 h-20 bg-[#FF6B35] rounded-full flex items-center justify-center">
-                <span className="text-2xl">👨‍💼</span>
+            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg relative">
+              <img 
+                src={avatarImage} 
+                alt="Avatar utilisateur"
+                className="w-20 h-20 rounded-full object-cover border-2 border-white"
+              />
+              <div className="absolute -top-1 -right-1 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <Trophy className="w-4 h-4 text-white" />
               </div>
             </div>
             <h2 className="text-2xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
             <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-4">@{user.username}</p>
             
             <div className="flex space-x-6 text-center">
-              <div>
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-xl border border-[hsl(9,85%,67%)]/30">
+                <Star className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString()}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
               </div>
-              <div>
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-xl border border-[hsl(9,85%,67%)]/30">
+                <Trophy className="w-5 h-5 text-green-400 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{user.collectionsCount}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Collections</div>
               </div>
-              <div>
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-xl border border-[hsl(9,85%,67%)]/30">
+                <Award className="w-5 h-5 text-purple-400 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{user.completionPercentage}%</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Complété</div>
               </div>
@@ -224,7 +233,7 @@ export default function Collections() {
                   <div 
                     key={collection.id}
                     onClick={() => setSelectedCollection(collection.id)}
-                    className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer"
+                    className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50 relative"
                   >
                     <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center">
                       <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>

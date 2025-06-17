@@ -23,7 +23,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white backdrop-blur-lg border-t border-gray-200 px-2 py-2 z-20 shadow-lg">
+    <nav className="fixed bottom-0 left-0 right-0 bg-[#F37261] backdrop-blur-lg px-4 py-3 z-20 shadow-lg rounded-t-[30px]">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -33,13 +33,13 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => setLocation(item.path)}
-              className={`nav-item flex flex-col items-center space-y-1 p-3 rounded-xl transition-all duration-300 ${
+              className={`nav-item flex flex-col items-center p-3 transition-all duration-300 ${
                 active 
-                  ? "bg-[#F37261] text-white shadow-lg shadow-[#F37261]/20" 
-                  : "text-[#F37261] hover:bg-[#F37261]/10"
+                  ? "text-[#F37261] bg-white rounded-full shadow-lg" 
+                  : "text-white hover:bg-white/10 rounded-lg"
               }`}
               style={active ? {
-                boxShadow: '0 0 20px rgba(243, 114, 97, 0.2), 0 4px 12px rgba(243, 114, 97, 0.15)'
+                boxShadow: '0 0 0 8px rgba(243, 114, 97, 0.2)'
               } : {}}
             >
               <Icon className={`w-6 h-6 ${active ? 'scale-110' : ''} transition-transform`} />
