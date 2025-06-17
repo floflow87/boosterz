@@ -1,5 +1,6 @@
 import { useLocation } from "wouter";
 import HaloBlur from "@/components/halo-blur";
+import paniniLogo from "@assets/panini-group-logo 1_1750197572668.png";
 
 export default function Splash() {
   const [, setLocation] = useLocation();
@@ -16,7 +17,7 @@ export default function Splash() {
         <div className="mb-8">
           <div className="w-56 h-16 mb-4 mx-auto flex items-center justify-center">
             <img 
-              src="/attached_assets/panini-group-logo 1_1750197572668.png" 
+              src={paniniLogo} 
               alt="Panini Logo"
               className="h-full w-auto object-contain"
             />

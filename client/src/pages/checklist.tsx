@@ -184,7 +184,8 @@ export default function Checklist() {
             {filteredCards?.map((card, index) => (
               <div 
                 key={card.id}
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-l-4 ${
+                onClick={() => setSelectedCard(card)}
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-l-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors ${
                   card.isOwned ? "border-green-500" : "border-gray-500"
                 }`}
               >
@@ -232,6 +233,113 @@ export default function Checklist() {
           </div>
         )}
       </main>
+
+      {/* Card Details Modal */}
+      {selectedCard && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 max-w-sm w-full max-h-[80vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold text-white font-poppins">Détails de la carte</h3>
+              <button
+                onClick={() => setSelectedCard(null)}
+                className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Card Image */}
+              <div className="w-full h-48 bg-gray-600 rounded-lg overflow-hidden">
+                {selectedCard.isOwned && selectedCard.imageUrl ? (
+                  <img 
+                    src={selectedCard.imageUrl} 
+                    alt={`${selectedCard.playerName} card`}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-gray-400 text-sm font-poppins">
+                      {selectedCard.isOwned ? "Image non disponible" : "Carte non possédée"}
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              {/* Card Details */}
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Numéro</label>
+                  <div className="text-lg font-bold text-white font-poppins">#{selectedCard.cardNumber}</div>
+                </div>
+                
+                <div>
+                  <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Joueur</label>
+                  <div className="text-white font-poppins">
+                    {selectedCard.isOwned ? selectedCard.playerName || "Non spécifié" : "Carte non possédée"}
+                  </div>
+                </div>
+                
+                {selectedCard.teamName && selectedCard.isOwned && (
+                  <div>
+                    <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Équipe</label>
+                    <div className="text-white font-poppins">{selectedCard.teamName}</div>
+                  </div>
+                )}
+                
+                <div>
+                  <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Type</label>
+                  <div className="text-white font-poppins">{selectedCard.cardType}</div>
+                </div>
+                
+                {selectedCard.cardSubType && (
+                  <div>
+                    <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Sous-type</label>
+                    <div className="text-white font-poppins">{selectedCard.cardSubType}</div>
+                  </div>
+                )}
+                
+                {selectedCard.rarity && (
+                  <div>
+                    <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Rareté</label>
+                    <div className="text-white font-poppins">{selectedCard.rarity}</div>
+                  </div>
+                )}
+                
+                {selectedCard.serialNumber && (
+                  <div>
+                    <label className="text-xs text-[hsl(212,23%,69%)] font-poppins">Numéro de série</label>
+                    <div className="text-white font-poppins">{selectedCard.serialNumber}</div>
+                  </div>
+                )}
+                
+                <div className="flex items-center justify-between pt-2 border-t border-gray-600">
+                  <span className="text-[hsl(212,23%,69%)] font-poppins">Statut</span>
+                  <div className="flex items-center space-x-2">
+                    {selectedCard.isOwned ? (
+                      <div className="flex items-center space-x-1">
+                        <Check className="w-4 h-4 text-green-500" />
+                        <span className="text-green-500 font-poppins">Possédée</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-1">
+                        <X className="w-4 h-4 text-gray-500" />
+                        <span className="text-gray-500 font-poppins">Manquante</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {selectedCard.isRookieCard && (
+                  <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-2 rounded-lg text-center font-poppins">
+                    🏆 Carte Rookie
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Navigation />
     </div>
