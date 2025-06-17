@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import Navigation from "@/components/navigation";
 import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight } from "lucide-react";
 
 export default function Settings() {
@@ -125,6 +126,8 @@ export default function Settings() {
           </button>
         </div>
       </div>
+      
+      <Navigation />
     </div>
   );
 }

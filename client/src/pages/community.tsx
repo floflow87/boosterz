@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import Navigation from "@/components/navigation";
 import { Users, MessageCircle, Trophy, Star } from "lucide-react";
 
 export default function Community() {
@@ -120,6 +121,8 @@ export default function Community() {
           </div>
         </div>
       </div>
+      
+      <Navigation />
     </div>
   );
 }

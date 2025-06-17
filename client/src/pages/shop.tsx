@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import Navigation from "@/components/navigation";
 import { ShoppingCart, Star, Package, Truck } from "lucide-react";
 
 export default function Shop() {
@@ -131,6 +132,8 @@ export default function Shop() {
           </div>
         </div>
       </div>
+      
+      <Navigation />
     </div>
   );
 }

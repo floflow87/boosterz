@@ -10,7 +10,7 @@ import type { Collection, Card } from "@shared/schema";
 export default function CollectionDetail() {
   const params = useParams();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "special">("all");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "numbered" | "autographs" | "hits">("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
@@ -24,19 +24,20 @@ export default function CollectionDetail() {
   const filteredCards = cards?.filter((card) => {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
-    if (filter === "special") {
-      // Pour Score Ligue 1: autographes et cartes 1/1
-      return card.cardType === "Autograph" || card.serialNumber === "/1" || card.serialNumber === "1/1";
-    }
+    if (filter === "bases") return card.cardType === "Base";
+    if (filter === "numbered") return card.serialNumber && card.serialNumber !== "/1" && card.serialNumber !== "1/1";
+    if (filter === "autographs") return card.cardType === "Autograph";
+    if (filter === "hits") return card.cardType === "Insert" || card.cardType === "Parallel" || card.rarity === "Ultra Rare";
     return true;
   });
 
   const ownedCount = cards?.filter(card => card.isOwned).length || 0;
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
-  const specialCount = cards?.filter(card => 
-    card.cardType === "Autograph" || card.serialNumber === "/1" || card.serialNumber === "1/1"
-  ).length || 0;
+  const basesCount = cards?.filter(card => card.cardType === "Base").length || 0;
+  const numberedCount = cards?.filter(card => card.serialNumber && card.serialNumber !== "/1" && card.serialNumber !== "1/1").length || 0;
+  const autographsCount = cards?.filter(card => card.cardType === "Autograph").length || 0;
+  const hitsCount = cards?.filter(card => card.cardType === "Insert" || card.cardType === "Parallel" || card.rarity === "Ultra Rare").length || 0;
 
   if (collectionLoading || cardsLoading) {
     return (
@@ -112,53 +113,91 @@ export default function CollectionDetail() {
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex space-x-2 mb-6 overflow-x-auto scroll-container">
-          <button
-            onClick={() => setFilter("all")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-              filter === "all" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <Star className="w-4 h-4 inline mr-1" />
-            Toutes ({totalCount})
-          </button>
-          <button
-            onClick={() => setFilter("owned")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-              filter === "owned" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <Check className="w-4 h-4 inline mr-1" />
-            Possédées ({ownedCount})
-          </button>
-          <button
-            onClick={() => setFilter("missing")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-              filter === "missing" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <HelpCircle className="w-4 h-4 inline mr-1" />
-            Manquantes ({missingCount})
-          </button>
-          <button
-            onClick={() => setFilter("special")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-              filter === "special" 
-                ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105" 
-                : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <Sparkles className="w-4 h-4 inline mr-1" />
-            Spéciales ({specialCount})
-          </button>
-        </div>
+        {/* Filter Tabs - Score Ligue 1 */}
+        {collection.name.includes("SCORE LIGUE 1") ? (
+          <div className="flex space-x-2 mb-6 overflow-x-auto scroll-container">
+            <button
+              onClick={() => setFilter("bases")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "bases" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Star className="w-4 h-4 inline mr-1" />
+              Bases ({basesCount})
+            </button>
+            <button
+              onClick={() => setFilter("numbered")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "numbered" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Check className="w-4 h-4 inline mr-1" />
+              Numérotées ({numberedCount})
+            </button>
+            <button
+              onClick={() => setFilter("autographs")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "autographs" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <HelpCircle className="w-4 h-4 inline mr-1" />
+              Autographes ({autographsCount})
+            </button>
+            <button
+              onClick={() => setFilter("hits")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "hits" 
+                  ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Sparkles className="w-4 h-4 inline mr-1" />
+              Hits ({hitsCount})
+            </button>
+          </div>
+        ) : (
+          <div className="flex space-x-2 mb-6 overflow-x-auto scroll-container">
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "all" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Star className="w-4 h-4 inline mr-1" />
+              Toutes ({totalCount})
+            </button>
+            <button
+              onClick={() => setFilter("owned")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "owned" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Check className="w-4 h-4 inline mr-1" />
+              Possédées ({ownedCount})
+            </button>
+            <button
+              onClick={() => setFilter("missing")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "missing" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <HelpCircle className="w-4 h-4 inline mr-1" />
+              Manquantes ({missingCount})
+            </button>
+          </div>
+        )}
 
         {/* Cards Display */}
         {viewMode === "grid" ? (
