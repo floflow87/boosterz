@@ -111,6 +111,10 @@ export default function CollectionDetail() {
               <List className="w-4 h-4" />
             </button>
           </div>
+          
+          <button className="bg-[hsl(9,85%,67%)] text-white p-2 rounded-lg hover:bg-[hsl(9,85%,57%)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 animate-pulse-glow">
+            <Plus className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Filter Tabs - Score Ligue 1 */}

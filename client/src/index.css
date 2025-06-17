@@ -116,7 +116,9 @@
   
   .scroll-container {
     overflow-x: auto;
+    overflow-y: hidden;
     scrollbar-width: none;
+    white-space: nowrap;
   }
   
   .scroll-container::-webkit-scrollbar {

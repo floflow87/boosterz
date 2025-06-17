@@ -256,7 +256,7 @@ export class MemStorage implements IStorage {
         cardNumber: "#001",
         playerName: "Mbappé",
         teamName: "Paris Saint-Germain",
-        cardType: "base",
+        cardType: "Base",
         cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
@@ -270,7 +270,7 @@ export class MemStorage implements IStorage {
         cardNumber: "#002",
         playerName: "Neymar",
         teamName: "Paris Saint-Germain",
-        cardType: "base",
+        cardType: "Base",
         cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
@@ -284,7 +284,7 @@ export class MemStorage implements IStorage {
         cardNumber: "#003",
         playerName: "Messi",
         teamName: "Paris Saint-Germain",
-        cardType: "base",
+        cardType: "Base",
         cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
@@ -298,10 +298,10 @@ export class MemStorage implements IStorage {
         cardNumber: "#004",
         playerName: "Hakimi",
         teamName: "Paris Saint-Germain",
-        cardType: "base",
+        cardType: "Base",
         cardSubType: null,
         imageUrl: null,
-        isOwned: false,
+        isOwned: true,
         isRookieCard: false,
         rarity: "common",
         serialNumber: null
@@ -312,7 +312,7 @@ export class MemStorage implements IStorage {
         cardNumber: "#005",
         playerName: "Ben Yedder",
         teamName: "AS Monaco",
-        cardType: "base",
+        cardType: "Base",
         cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
@@ -326,10 +326,10 @@ export class MemStorage implements IStorage {
         cardNumber: "#006",
         playerName: "Payet",
         teamName: "Olympique de Marseille",
-        cardType: "base",
+        cardType: "Base",
         cardSubType: null,
         imageUrl: null,
-        isOwned: false,
+        isOwned: true,
         isRookieCard: false,
         rarity: "common",
         serialNumber: null
@@ -365,23 +365,51 @@ export class MemStorage implements IStorage {
       {
         id: 9,
         collectionId: 1,
-        cardNumber: "#SP01",
+        cardNumber: "#N01",
         playerName: "Ben Yedder",
         teamName: "AS Monaco",
-        cardType: "numbered",
+        cardType: "Numbered",
         cardSubType: "gold_parallel",
         imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
-        isOwned: true,
+        isOwned: false,
         isRookieCard: false,
         rarity: "rare",
-        serialNumber: "1/1"
+        serialNumber: "15/99"
+      },
+      {
+        id: 10,
+        collectionId: 1,
+        cardNumber: "#I01",
+        playerName: "Payet",
+        teamName: "Olympique de Marseille",
+        cardType: "Insert",
+        cardSubType: "rookie_stars",
+        imageUrl: null,
+        isOwned: true,
+        isRookieCard: true,
+        rarity: "Ultra Rare",
+        serialNumber: null
+      },
+      {
+        id: 11,
+        collectionId: 1,
+        cardNumber: "#P01",
+        playerName: "Mbappé",
+        teamName: "Paris Saint-Germain",
+        cardType: "Parallel",
+        cardSubType: "silver",
+        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "Ultra Rare",
+        serialNumber: "7/25"
       }
     ];
 
     sampleCards.forEach(card => {
       this.cards.set(card.id, card);
     });
-    this.currentCardId = 10;
+    this.currentCardId = 12;
   }
 
   // User methods
