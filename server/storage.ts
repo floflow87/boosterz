@@ -333,13 +333,55 @@ export class MemStorage implements IStorage {
         isRookieCard: false,
         rarity: "common",
         serialNumber: null
+      },
+      {
+        id: 7,
+        collectionId: 1,
+        cardNumber: "#A01",
+        playerName: "Mbappé",
+        teamName: "Paris Saint-Germain",
+        cardType: "Autograph",
+        cardSubType: "signature",
+        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
+        isOwned: true,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "1/1"
+      },
+      {
+        id: 8,
+        collectionId: 1,
+        cardNumber: "#A02",
+        playerName: "Messi",
+        teamName: "Paris Saint-Germain",
+        cardType: "Autograph",
+        cardSubType: "signature",
+        imageUrl: "https://images.unsplash.com/photo-1522778119026-d647f0596c20?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "/1"
+      },
+      {
+        id: 9,
+        collectionId: 1,
+        cardNumber: "#SP01",
+        playerName: "Ben Yedder",
+        teamName: "AS Monaco",
+        cardType: "numbered",
+        cardSubType: "gold_parallel",
+        imageUrl: "https://images.unsplash.com/photo-1575361204480-aadea25e6e68?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
+        isOwned: true,
+        isRookieCard: false,
+        rarity: "rare",
+        serialNumber: "1/1"
       }
     ];
 
     sampleCards.forEach(card => {
       this.cards.set(card.id, card);
     });
-    this.currentCardId = 7;
+    this.currentCardId = 10;
   }
 
   // User methods
