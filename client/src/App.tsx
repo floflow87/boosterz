@@ -8,6 +8,9 @@ import Collections from "@/pages/collections";
 import CollectionDetail from "@/pages/collection-detail";
 import AllCards from "@/pages/all-cards";
 import Checklist from "@/pages/checklist";
+import Community from "@/pages/community";
+import Shop from "@/pages/shop";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -18,9 +21,9 @@ function Router() {
       <Route path="/collection/:id" component={CollectionDetail} />
       <Route path="/checklist/:id" component={Checklist} />
       <Route path="/all-cards" component={AllCards} />
-      <Route path="/social" component={Collections} />
-      <Route path="/shop" component={Collections} />
-      <Route path="/settings" component={Collections} />
+      <Route path="/community" component={Community} />
+      <Route path="/shop" component={Shop} />
+      <Route path="/settings" component={Settings} />
       <Route component={NotFound} />
     </Switch>
   );
