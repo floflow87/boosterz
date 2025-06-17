@@ -40,7 +40,6 @@ export default function Navigation() {
               }`}
             >
               <Icon className={`w-6 h-6 ${active ? 'scale-110' : ''} transition-transform`} />
-              <span className="text-xs font-medium">{item.label}</span>
             </button>
           );
         })}
