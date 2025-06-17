@@ -1,4 +1,4 @@
-import { users, collections, cards, type User, type InsertUser, type Collection, type InsertCollection, type Card, type InsertCard } from "@shared/schema";
+import { users, collections, cards, userCards, type User, type InsertUser, type Collection, type InsertCollection, type Card, type InsertCard, type UserCard, type InsertUserCard } from "@shared/schema";
 import { db } from "./db";
 import { eq } from "drizzle-orm";
 
@@ -21,6 +21,14 @@ export interface IStorage {
   createCard(card: InsertCard): Promise<Card>;
   updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined>;
   toggleCardOwnership(id: number): Promise<Card | undefined>;
+  
+  // User Cards
+  getUserCardsByUserId(userId: number): Promise<UserCard[]>;
+  getUserCardsByCollectionId(collectionId: number, userId: number): Promise<UserCard[]>;
+  getUserCard(id: number): Promise<UserCard | undefined>;
+  createUserCard(userCard: InsertUserCard): Promise<UserCard>;
+  updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined>;
+  deleteUserCard(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
