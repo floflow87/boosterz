@@ -38,18 +38,14 @@ export default function Collections() {
       <main className="relative z-10 px-4 pb-24">
         {/* User Profile Section */}
         {user && (
-          <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 mb-6 gradient-overlay">
-            <div className="flex items-center space-x-4 mb-4">
-              <img 
-                src={user.avatar || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150"} 
-                alt="User avatar"
-                className="w-16 h-16 rounded-full object-cover border-2 border-[hsl(9,85%,67%)]"
-              />
-              <div>
-                <h2 className="text-xl font-bold text-white font-poppins">{user.name}</h2>
-                <p className="text-[hsl(212,23%,69%)] text-sm font-poppins">@{user.username}</p>
+          <div className="flex flex-col items-center text-center mb-8 mt-4">
+            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+              <div className="w-20 h-20 bg-[#FF6B35] rounded-full flex items-center justify-center">
+                <span className="text-2xl">👨‍💼</span>
               </div>
             </div>
+            <h2 className="text-2xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
+            <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-4">@{user.username}</p>
             
             <div className="flex space-x-6 text-center">
               <div>
@@ -83,33 +79,52 @@ export default function Collections() {
             <div 
               key={collection.id}
               onClick={() => handleCollectionClick(collection.id)}
-              className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer"
+              className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group"
             >
-              <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center">
-                <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
-                <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+              <div 
+                className="h-32 relative bg-gradient-to-br"
+                style={{ 
+                  background: `linear-gradient(135deg, ${collection.backgroundColor || '#F37261'}, ${collection.backgroundColor || '#F37261'}dd)` 
+                }}
+              >
+                <div className="absolute top-3 right-3 bg-black/20 text-white text-xs px-2 py-1 rounded-full">
+                  {collection.completionPercentage}%
+                </div>
+                
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4">
+                  <h3 className="font-bold text-white font-poppins">{collection.name}</h3>
+                  <p className="text-white/80 text-sm">{collection.season}</p>
+                </div>
               </div>
-              <img 
-                src={collection.imageUrl || ""} 
-                alt={`${collection.name} cards`}
-                className="w-full h-20 object-cover rounded-lg mb-2"
-              />
-              <div className="text-xs text-[hsl(212,23%,69%)]">{collection.totalCards} cartes</div>
-              <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
-                <div 
-                  className="progress-bar h-1.5 rounded-full" 
-                  style={{ width: `${collection.completionPercentage}%` }}
-                />
+              
+              <div className="p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm text-[hsl(212,23%,69%)]">
+                    {collection.ownedCards} / {collection.totalCards} cartes
+                  </span>
+                </div>
+                
+                <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                  <div 
+                    className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${collection.completionPercentage}%` }}
+                  ></div>
+                </div>
               </div>
             </div>
           ))}
-        </div>
 
-        {/* Add Collection Button */}
-        <button className="w-full bg-[hsl(9,85%,67%)] text-white py-4 rounded-xl font-semibold mt-6 hover:bg-opacity-90 transition-all">
-          <Plus className="w-5 h-5 inline mr-2" />
-          Ajouter une collection
-        </button>
+          {/* Add Collection Button */}
+          <div className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group">
+            <div className="h-full flex flex-col items-center justify-center p-6 text-center">
+              <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <Plus className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-bold text-white mb-1 font-poppins">Nouvelle Collection</h3>
+              <p className="text-[hsl(212,23%,69%)] text-sm">Ajouter une collection</p>
+            </div>
+          </div>
+        </div>
       </main>
 
       <Navigation />
