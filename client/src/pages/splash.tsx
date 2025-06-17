@@ -15,7 +15,7 @@ export default function Splash() {
       
       <div className="flex flex-col items-center justify-center h-screen text-center relative z-10 px-4">
         <div className="mb-8">
-          <div className="w-56 h-16 mb-4 mx-auto flex items-center justify-center">
+          <div className="w-72 h-20 mb-4 mx-auto flex items-center justify-center">
             <img 
               src={paniniLogo} 
               alt="Panini Logo"

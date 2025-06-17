@@ -123,7 +123,17 @@ export default function Checklist() {
                 : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
             }`}
           >
-            Manquantes ({totalCount - ownedCount})
+            Manquantes ({missingCount})
+          </button>
+          <button
+            onClick={() => setFilter("special")}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+              filter === "special" 
+                ? "bg-[hsl(9,85%,67%)] text-white" 
+                : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+            }`}
+          >
+            Spéciales ({specialCount})
           </button>
         </div>
 

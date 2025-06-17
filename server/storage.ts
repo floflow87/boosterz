@@ -143,9 +143,9 @@ export class MemStorage implements IStorage {
       username: "flo87",
       name: "FLORENT MARTIN",
       avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&h=150",
-      totalCards: 1247,
+      totalCards: 1450,
       collectionsCount: 4,
-      completionPercentage: 76
+      completionPercentage: 71
     };
     this.users.set(1, user);
     this.currentUserId = 2;
@@ -177,24 +177,24 @@ export class MemStorage implements IStorage {
       {
         id: 3,
         userId: 1,
-        name: "ARGENTINA",
+        name: "SCORE LIGUE 1",
         season: "22/23",
-        totalCards: 89,
-        ownedCards: 82,
-        completionPercentage: 92,
-        imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
+        totalCards: 216,
+        ownedCards: 145,
+        completionPercentage: 67,
+        imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         backgroundColor: "#F37261"
       },
       {
         id: 4,
         userId: 1,
-        name: "QUI ES-TU?",
+        name: "COFFRET 125 ANS OM",
         season: "23/24",
-        totalCards: 312,
-        ownedCards: 87,
-        completionPercentage: 28,
+        totalCards: 89,
+        ownedCards: 34,
+        completionPercentage: 38,
         imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
-        backgroundColor: "#F37261"
+        backgroundColor: "#00A0E6"
       }
     ];
 
