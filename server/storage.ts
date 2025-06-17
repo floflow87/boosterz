@@ -1,4 +1,6 @@
 import { users, collections, cards, type User, type InsertUser, type Collection, type InsertCollection, type Card, type InsertCard } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -19,6 +21,99 @@ export interface IStorage {
   createCard(card: InsertCard): Promise<Card>;
   updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined>;
   toggleCardOwnership(id: number): Promise<Card | undefined>;
+}
+
+export class DatabaseStorage implements IStorage {
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: number, updates: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  async getCollectionsByUserId(userId: number): Promise<Collection[]> {
+    return await db.select().from(collections).where(eq(collections.userId, userId));
+  }
+
+  async getCollection(id: number): Promise<Collection | undefined> {
+    const [collection] = await db.select().from(collections).where(eq(collections.id, id));
+    return collection || undefined;
+  }
+
+  async createCollection(insertCollection: InsertCollection): Promise<Collection> {
+    const [collection] = await db
+      .insert(collections)
+      .values(insertCollection)
+      .returning();
+    return collection;
+  }
+
+  async updateCollection(id: number, updates: Partial<Collection>): Promise<Collection | undefined> {
+    const [collection] = await db
+      .update(collections)
+      .set(updates)
+      .where(eq(collections.id, id))
+      .returning();
+    return collection || undefined;
+  }
+
+  async getCardsByCollectionId(collectionId: number): Promise<Card[]> {
+    return await db.select().from(cards).where(eq(cards.collectionId, collectionId));
+  }
+
+  async getCard(id: number): Promise<Card | undefined> {
+    const [card] = await db.select().from(cards).where(eq(cards.id, id));
+    return card || undefined;
+  }
+
+  async createCard(insertCard: InsertCard): Promise<Card> {
+    const [card] = await db
+      .insert(cards)
+      .values(insertCard)
+      .returning();
+    return card;
+  }
+
+  async updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined> {
+    const [card] = await db
+      .update(cards)
+      .set(updates)
+      .where(eq(cards.id, id))
+      .returning();
+    return card || undefined;
+  }
+
+  async toggleCardOwnership(id: number): Promise<Card | undefined> {
+    const existingCard = await this.getCard(id);
+    if (!existingCard) return undefined;
+    
+    const [card] = await db
+      .update(cards)
+      .set({ isOwned: !existingCard.isOwned })
+      .where(eq(cards.id, id))
+      .returning();
+    return card || undefined;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -268,4 +363,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

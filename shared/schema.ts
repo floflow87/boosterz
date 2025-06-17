@@ -7,9 +7,9 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   name: text("name").notNull(),
   avatar: text("avatar"),
-  totalCards: integer("total_cards").default(0),
-  collectionsCount: integer("collections_count").default(0),
-  completionPercentage: real("completion_percentage").default(0),
+  totalCards: integer("total_cards").default(0).notNull(),
+  collectionsCount: integer("collections_count").default(0).notNull(),
+  completionPercentage: real("completion_percentage").default(0).notNull(),
 });
 
 export const collections = pgTable("collections", {
@@ -18,8 +18,8 @@ export const collections = pgTable("collections", {
   name: text("name").notNull(),
   season: text("season"),
   totalCards: integer("total_cards").notNull(),
-  ownedCards: integer("owned_cards").default(0),
-  completionPercentage: real("completion_percentage").default(0),
+  ownedCards: integer("owned_cards").default(0).notNull(),
+  completionPercentage: real("completion_percentage").default(0).notNull(),
   imageUrl: text("image_url"),
   backgroundColor: text("background_color").default("#F37261"),
 });
@@ -30,8 +30,8 @@ export const cards = pgTable("cards", {
   cardNumber: text("card_number").notNull(),
   playerName: text("player_name"),
   imageUrl: text("image_url"),
-  isOwned: boolean("is_owned").default(false),
-  isSpecial: boolean("is_special").default(false),
+  isOwned: boolean("is_owned").default(false).notNull(),
+  isSpecial: boolean("is_special").default(false).notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
