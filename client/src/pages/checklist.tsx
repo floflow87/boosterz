@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Check, X, Eye, Grid, List } from "lucide-react";
+import { Check, X, Eye, Grid, List, Info } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -12,6 +12,7 @@ export default function Checklist() {
   const collectionId = params.id ? parseInt(params.id) : 1;
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [filter, setFilter] = useState<"all" | "owned" | "missing">("all");
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { data: collection } = useQuery<Collection>({
     queryKey: [`/api/collections/${collectionId}`],
@@ -124,7 +125,8 @@ export default function Checklist() {
             {filteredCards?.map((card, index) => (
               <div 
                 key={card.id} 
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-2 transition-all ${
+                onClick={() => setSelectedCard(card)}
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-2 transition-all cursor-pointer hover:scale-105 ${
                   card.isOwned 
                     ? "border-green-500 bg-opacity-100" 
                     : "border-gray-600 bg-opacity-50"
