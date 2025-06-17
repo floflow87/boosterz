@@ -10,7 +10,7 @@ import type { Collection, Card } from "@shared/schema";
 export default function CollectionDetail() {
   const params = useParams();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "numbered" | "autographs" | "hits">("all");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "numbered" | "autographs" | "hits" | "speciales">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
@@ -27,6 +27,7 @@ export default function CollectionDetail() {
     if (filter === "bases") return card.cardType === "Base";
     if (filter === "numbered") return card.serialNumber && card.serialNumber !== "/1" && card.serialNumber !== "1/1";
     if (filter === "autographs") return card.cardType === "Autograph";
+    if (filter === "speciales") return card.cardType === "Special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
     if (filter === "hits") return card.cardType === "Insert" || card.cardType === "Parallel" || card.rarity === "Ultra Rare";
     return true;
   });
@@ -37,6 +38,7 @@ export default function CollectionDetail() {
   const basesCount = cards?.filter(card => card.cardType === "Base").length || 0;
   const numberedCount = cards?.filter(card => card.serialNumber && card.serialNumber !== "/1" && card.serialNumber !== "1/1").length || 0;
   const autographsCount = cards?.filter(card => card.cardType === "Autograph").length || 0;
+  const specialesCount = cards?.filter(card => card.cardType === "Special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
   const hitsCount = cards?.filter(card => card.cardType === "Insert" || card.cardType === "Parallel" || card.rarity === "Ultra Rare").length || 0;
 
   if (collectionLoading || cardsLoading) {
@@ -124,12 +126,23 @@ export default function CollectionDetail() {
               onClick={() => setFilter("bases")}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                 filter === "bases" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
+                  ? "bg-gray-500 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-600 text-gray-300 hover:bg-gray-500"
               }`}
             >
               <Star className="w-4 h-4 inline mr-1" />
               Bases ({basesCount})
+            </button>
+            <button
+              onClick={() => setFilter("speciales")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "speciales" 
+                  ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105 animate-pulse" 
+                  : "bg-gradient-to-r from-yellow-600 to-yellow-800 text-yellow-100 hover:from-yellow-500 hover:to-yellow-700"
+              }`}
+            >
+              <Sparkles className="w-4 h-4 inline mr-1" />
+              Spéciales 1/1 ({specialesCount})
             </button>
             <button
               onClick={() => setFilter("numbered")}
@@ -152,17 +165,6 @@ export default function CollectionDetail() {
             >
               <HelpCircle className="w-4 h-4 inline mr-1" />
               Autographes ({autographsCount})
-            </button>
-            <button
-              onClick={() => setFilter("hits")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "hits" 
-                  ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <Sparkles className="w-4 h-4 inline mr-1" />
-              Hits ({hitsCount})
             </button>
           </div>
         ) : (

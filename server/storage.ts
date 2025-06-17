@@ -904,7 +904,7 @@ export class MemStorage implements IStorage {
         serialNumber: "1/1"
       },
       {
-        id: 8,
+        id: 102,
         collectionId: 1,
         cardNumber: "#A02",
         playerName: "Messi",
@@ -917,8 +917,80 @@ export class MemStorage implements IStorage {
         rarity: "super_rare",
         serialNumber: "/1"
       },
+      // Add more 1/1 Special Cards
       {
-        id: 9,
+        id: 103,
+        collectionId: 1,
+        cardNumber: "#S01",
+        playerName: "Hakimi",
+        teamName: "Paris Saint-Germain",
+        cardType: "Special",
+        cardSubType: "1/1_gold",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "1/1"
+      },
+      {
+        id: 104,
+        collectionId: 1,
+        cardNumber: "#S02",
+        playerName: "Ben Yedder",
+        teamName: "AS Monaco",
+        cardType: "Special",
+        cardSubType: "1/1_platinum",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "1/1"
+      },
+      {
+        id: 105,
+        collectionId: 1,
+        cardNumber: "#S03",
+        playerName: "Lacazette",
+        teamName: "Olympique Lyonnais",
+        cardType: "Special",
+        cardSubType: "1/1_diamond",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "1/1"
+      },
+      {
+        id: 106,
+        collectionId: 1,
+        cardNumber: "#S04",
+        playerName: "Terrier",
+        teamName: "Stade Rennais",
+        cardType: "Special",
+        cardSubType: "1/1_emerald",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "1/1"
+      },
+      {
+        id: 107,
+        collectionId: 1,
+        cardNumber: "#S05",
+        playerName: "David",
+        teamName: "LOSC Lille",
+        cardType: "Special",
+        cardSubType: "1/1_ruby",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "1/1"
+      },
+      // Numbered Cards
+      {
+        id: 108,
         collectionId: 1,
         cardNumber: "#N01",
         playerName: "Ben Yedder",
@@ -932,21 +1004,7 @@ export class MemStorage implements IStorage {
         serialNumber: "15/99"
       },
       {
-        id: 10,
-        collectionId: 1,
-        cardNumber: "#I01",
-        playerName: "Payet",
-        teamName: "Olympique de Marseille",
-        cardType: "Insert",
-        cardSubType: "rookie_stars",
-        imageUrl: null,
-        isOwned: true,
-        isRookieCard: true,
-        rarity: "Ultra Rare",
-        serialNumber: null
-      },
-      {
-        id: 11,
+        id: 109,
         collectionId: 1,
         cardNumber: "#P01",
         playerName: "Mbappé",
