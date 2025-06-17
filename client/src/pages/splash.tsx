@@ -29,7 +29,7 @@ export default function Splash() {
         <div className="mt-16">
           <button 
             onClick={handleStart}
-            className="w-full max-w-xs bg-[hsl(9,85%,67%)] text-white py-6 px-8 rounded-2xl font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="w-full max-w-xs bg-[hsl(9,85%,67%)] text-white py-4 px-6 rounded-2xl font-semibold hover:bg-opacity-90 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
           >
             Commencer
           </button>
