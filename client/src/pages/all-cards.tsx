@@ -4,6 +4,7 @@ import { Grid, List, Plus, Camera, Search, Filter } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
+import CardAddModal from "@/components/card-add-modal";
 import type { User, Collection, Card } from "@shared/schema";
 
 export default function AllCards() {
@@ -215,6 +216,13 @@ export default function AllCards() {
           </button>
         </div>
       </main>
+
+      <CardAddModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        collections={collections || []}
+        selectedCollection={selectedCollection || undefined}
+      />
 
       <Navigation />
     </div>

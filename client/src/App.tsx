@@ -7,6 +7,7 @@ import Splash from "@/pages/splash";
 import Collections from "@/pages/collections";
 import CollectionDetail from "@/pages/collection-detail";
 import AllCards from "@/pages/all-cards";
+import Checklist from "@/pages/checklist";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Splash} />
       <Route path="/collections" component={Collections} />
       <Route path="/collection/:id" component={CollectionDetail} />
+      <Route path="/checklist/:id" component={Checklist} />
       <Route path="/all-cards" component={AllCards} />
       <Route path="/social" component={Collections} />
       <Route path="/shop" component={Collections} />

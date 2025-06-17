@@ -46,8 +46,8 @@ export default function Collections() {
                 className="w-16 h-16 rounded-full object-cover border-2 border-[hsl(9,85%,67%)]"
               />
               <div>
-                <h2 className="text-xl font-bold text-white">{user.name}</h2>
-                <p className="text-[hsl(212,23%,69%)] text-sm">@{user.username}</p>
+                <h2 className="text-xl font-bold text-white font-poppins">{user.name}</h2>
+                <p className="text-[hsl(212,23%,69%)] text-sm font-poppins">@{user.username}</p>
               </div>
             </div>
             

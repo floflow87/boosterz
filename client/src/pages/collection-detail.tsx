@@ -50,8 +50,8 @@ export default function CollectionDetail() {
                 {collection.name.split(' ')[1]}
               </div>
             </div>
-            <h1 className="text-2xl font-bold text-white">{collection.name}</h1>
-            <p className="text-white opacity-90">Saison {collection.season}</p>
+            <h1 className="text-2xl font-bold text-white font-luckiest">{collection.name}</h1>
+            <p className="text-white opacity-90 font-poppins">Saison {collection.season}</p>
           </div>
 
           <div className="flex justify-center space-x-6 text-center">
@@ -122,9 +122,12 @@ export default function CollectionDetail() {
             <Plus className="w-5 h-5 inline mr-2" />
             Ajouter carte
           </button>
-          <button className="flex-1 bg-[hsl(214,35%,22%)] text-white py-3 rounded-xl font-semibold">
-            <ArrowLeftRight className="w-5 h-5 inline mr-2" />
-            Échanger
+          <button 
+            onClick={() => window.location.href = `/checklist/${collectionId}`}
+            className="flex-1 bg-[hsl(214,35%,22%)] text-white py-3 rounded-xl font-semibold"
+          >
+            <Check className="w-5 h-5 inline mr-2" />
+            Checklist
           </button>
         </div>
       </main>
