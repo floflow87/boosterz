@@ -29,9 +29,14 @@ export const cards = pgTable("cards", {
   collectionId: integer("collection_id").notNull(),
   cardNumber: text("card_number").notNull(),
   playerName: text("player_name"),
+  teamName: text("team_name"),
+  cardType: text("card_type").notNull(), // "base", "insert", "autograph", "numbered"
+  cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", "intergalactic_hit", etc.
   imageUrl: text("image_url"),
   isOwned: boolean("is_owned").default(false).notNull(),
-  isSpecial: boolean("is_special").default(false).notNull(),
+  isRookieCard: boolean("is_rookie_card").default(false).notNull(),
+  rarity: text("rarity"), // "common", "rare", "super_rare", etc.
+  serialNumber: text("serial_number"), // pour les cartes numérotées
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -53,9 +58,14 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   collectionId: true,
   cardNumber: true,
   playerName: true,
+  teamName: true,
+  cardType: true,
+  cardSubType: true,
   imageUrl: true,
   isOwned: true,
-  isSpecial: true,
+  isRookieCard: true,
+  rarity: true,
+  serialNumber: true,
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

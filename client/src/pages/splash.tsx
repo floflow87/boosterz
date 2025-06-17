@@ -14,12 +14,8 @@ export default function Splash() {
       
       <div className="flex flex-col items-center justify-center h-screen text-center relative z-10 px-4">
         <div className="mb-8">
-          <div className="w-56 h-16 mb-4 mx-auto flex items-center justify-center">
-            <img 
-              src="/attached_assets/panini-group-logo 1_1750197572668.png" 
-              alt="Panini Logo"
-              className="h-full w-auto object-contain"
-            />
+          <div className="w-56 h-16 bg-yellow-400 rounded-lg mb-4 mx-auto flex items-center justify-center px-4">
+            <span className="text-red-600 font-bold text-xl tracking-wider">PANINI</span>
           </div>
           <h1 className="text-3xl font-bold mb-2 text-white font-luckiest">COLLECTION CARDS</h1>
           <p className="text-[hsl(212,23%,69%)] font-poppins">Gérez vos collections de cartes Panini</p>
