@@ -236,10 +236,11 @@ export default function CollectionDetail() {
                 </div>
               )}
               <div className="text-xs mt-1 text-center">
-                <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
-                  {card.playerName || '?????'}
+                <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                  {card.playerName || 'Joueur Inconnu'}
                 </div>
                 <div className="text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
+                <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
               </div>
             </div>
             ))}
@@ -263,8 +264,8 @@ export default function CollectionDetail() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
-                    {card.playerName || '?????'}
+                  <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                    {card.playerName || 'Joueur Inconnu'}
                   </div>
                   <div className="text-sm text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
                   <div className="text-xs text-[hsl(212,23%,69%)]">{card.teamName}</div>
