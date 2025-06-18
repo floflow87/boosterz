@@ -185,16 +185,14 @@ export default function CollectionDetail() {
     const variants = cards?.filter(card => 
       card.reference === baseCard.reference && 
       card.playerName === baseCard.playerName && 
-      card.teamName === baseCard.teamName
+      card.teamName === baseCard.teamName &&
+      card.cardType === "Base"
     ) || [];
     
     // Sort variants: Base first, then Laser, then Swirl
     return variants.sort((a, b) => {
-      if (a.cardType === "Base") return -1;
-      if (b.cardType === "Base") return 1;
-      if (a.cardType.includes("Laser")) return -1;
-      if (b.cardType.includes("Laser")) return 1;
-      return 0;
+      const order = { '': 0, 'Laser': 1, 'Swirl': 2 };
+      return order[a.cardSubType || ''] - order[b.cardSubType || ''];
     });
   };
 
@@ -438,6 +436,19 @@ export default function CollectionDetail() {
                       {card.numbering}
                     </div>
                   )}
+                  {/* Flèches de navigation pour les cartes Base */}
+                  {card.cardType === 'Base' && getCardVariants(card).length > 1 && (
+                    <div className="absolute top-1/2 -translate-y-1/2 right-2">
+                      <ChevronRight className="w-5 h-5 text-orange-500" />
+                    </div>
+                  )}
+                  {/* Nom et équipe sous l'image */}
+                  <div className="text-xs mt-1 text-center">
+                    <div className="font-medium text-white">
+                      {card.playerName || 'Joueur Inconnu'}
+                    </div>
+                    <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
+                  </div>
                 </>
               ) : (
                 <>
