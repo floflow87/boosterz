@@ -180,7 +180,14 @@ export default function AllCards() {
             ) : (
               <div className="space-y-3">
                 {cards.map((card) => (
-                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3">
+                  <div 
+                    key={card.id} 
+                    onClick={(e) => {
+                      e.currentTarget.classList.add('clicked');
+                      setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                    }}
+                    className="card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 cursor-pointer"
+                  >
                     <div className="w-16 h-20 bg-gray-600 rounded flex-shrink-0">
                       {card.isOwned && card.imageUrl ? (
                         <img 
@@ -190,7 +197,7 @@ export default function AllCards() {
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center opacity-50">
-                          <span className="text-gray-400 text-xs">{card.cardNumber}</span>
+                          <span className="text-gray-400 text-xs">{card.reference}</span>
                         </div>
                       )}
                     </div>
@@ -198,7 +205,7 @@ export default function AllCards() {
                       <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
                         {card.isOwned ? card.playerName : 'Carte manquante'}
                       </div>
-                      <div className="text-[hsl(212,23%,69%)] text-sm">{card.cardNumber}</div>
+                      <div className="text-[hsl(212,23%,69%)] text-sm">{card.reference}</div>
                       {card.isRookieCard && (
                         <div className="text-[hsl(9,85%,67%)] text-xs">RC</div>
                       )}
