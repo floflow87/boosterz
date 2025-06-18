@@ -12,6 +12,7 @@ interface CardPhotoImportProps {
   onClose: () => void;
   onSave: (imageData: string, cardId?: number) => void;
   availableCards: Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string; collectionId: number; }>;
+  preselectedCard?: { id: number; playerName: string; reference: string; teamName: string; };
 }
 
 interface ImageAdjustments {

@@ -616,46 +616,49 @@ export default function CollectionDetail() {
 
             {/* Action Buttons */}
             <div className="mt-6 space-y-3">
-              {!selectedCard.isOwned ? (
-                <>
-                  <button
-                    onClick={() => handleMarkAsOwned(selectedCard.id, false)}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    <Check className="w-5 h-5 inline mr-2" />
-                    Marquer comme possédée
-                  </button>
-                  <button
-                    onClick={() => handleMarkAsOwned(selectedCard.id, true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    <Plus className="w-5 h-5 inline mr-2" />
-                    Posséder + Ajouter photo
-                  </button>
-                </>
-              ) : (
-                <div className="space-y-2">
-                  <button
-                    onClick={() => handleMarkAsNotOwned(selectedCard.id)}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                  >
-                    <X className="w-5 h-5 inline mr-2" />
-                    Marquer comme manquante
-                  </button>
-                  {!selectedCard.imageUrl && (
+              {(() => {
+                const currentCard = getCurrentCard() || selectedCard;
+                return !currentCard.isOwned ? (
+                  <>
                     <button
-                      onClick={() => {
-                        setSelectedCard(null);
-                        setShowPhotoUpload(true);
-                      }}
+                      onClick={() => handleMarkAsOwned(currentCard.id, false)}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                    >
+                      <Check className="w-5 h-5 inline mr-2" />
+                      Marquer comme possédée
+                    </button>
+                    <button
+                      onClick={() => handleMarkAsOwned(currentCard.id, true)}
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
                     >
                       <Plus className="w-5 h-5 inline mr-2" />
-                      Ajouter une photo
+                      Posséder + Ajouter photo
                     </button>
-                  )}
-                </div>
-              )}
+                  </>
+                ) : (
+                  <div className="space-y-2">
+                    <button
+                      onClick={() => handleMarkAsNotOwned(currentCard.id)}
+                      className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                    >
+                      <X className="w-5 h-5 inline mr-2" />
+                      Marquer comme manquante
+                    </button>
+                    {!currentCard.imageUrl && (
+                      <button
+                        onClick={() => {
+                          setSelectedCard(null);
+                          setShowPhotoUpload(true);
+                        }}
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                      >
+                        <Plus className="w-5 h-5 inline mr-2" />
+                        Ajouter une photo
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
