@@ -82,15 +82,15 @@ export default function CollectionDetail() {
       
       if (aOrder !== bOrder) return aOrder - bOrder;
       
-      // If same rarity, sort by card number
-      const aNum = parseInt(a.cardNumber.replace(/[^0-9]/g, '')) || 0;
-      const bNum = parseInt(b.cardNumber.replace(/[^0-9]/g, '')) || 0;
+      // If same rarity, sort by reference
+      const aNum = parseInt(a.reference.replace(/[^0-9]/g, '')) || 0;
+      const bNum = parseInt(b.reference.replace(/[^0-9]/g, '')) || 0;
       return aNum - bNum;
     }
-    // Sort base cards by card number
+    // Sort base cards by reference
     if (filter === "bases") {
-      const aNum = parseInt(a.cardNumber.replace(/[^0-9]/g, '')) || 0;
-      const bNum = parseInt(b.cardNumber.replace(/[^0-9]/g, '')) || 0;
+      const aNum = parseInt(a.reference.replace(/[^0-9]/g, '')) || 0;
+      const bNum = parseInt(b.reference.replace(/[^0-9]/g, '')) || 0;
       return aNum - bNum; // Ascending order
     }
     return 0;
