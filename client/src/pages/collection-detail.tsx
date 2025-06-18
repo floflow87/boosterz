@@ -817,7 +817,6 @@ export default function CollectionDetail() {
                           reference: selectedCard.reference,
                           teamName: selectedCard.teamName || "Équipe Inconnue"
                         };
-                        setSelectedCard(null);
                         setShowPhotoUpload(true);
                       }}
                       className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"

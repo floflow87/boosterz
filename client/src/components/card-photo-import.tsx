@@ -29,7 +29,7 @@ interface ImageAdjustments {
 }
 
 export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards, preselectedCard }: CardPhotoImportProps) {
-  const [step, setStep] = useState<"import" | "edit" | "recognize" | "assign">("import");
+  const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [adjustments, setAdjustments] = useState<ImageAdjustments>({
@@ -45,9 +45,9 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     }
   });
   const [recognizedCard, setRecognizedCard] = useState<string>("");
-  const [selectedCardId, setSelectedCardId] = useState<number | undefined>();
+  const [selectedCardId, setSelectedCardId] = useState<number | undefined>(preselectedCard?.id);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [playerName, setPlayerName] = useState<string>("");
+  const [playerName, setPlayerName] = useState<string>(preselectedCard?.playerName || "");
   const [cardNumber, setCardNumber] = useState<string>("");
   const [playerCards, setPlayerCards] = useState<Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
