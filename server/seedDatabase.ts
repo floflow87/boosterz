@@ -344,9 +344,10 @@ export async function seedDatabase() {
     const cardsToInsert = [];
     let cardId = 1;
 
-    // 1. Create base cards (200 cards)
+    // 1. Create base cards (200 cards normales + 400 variantes = 600 total)
     console.log("📦 Creating base cards...");
     for (const baseCard of baseCards) {
+      // Carte de base normale
       cardsToInsert.push({
         id: cardId++,
         collectionId: 1,
@@ -360,11 +361,8 @@ export async function seedDatabase() {
         isOwned: false,
         imageUrl: null
       });
-    }
 
-    // 2. Create base variants (non-numbered) - 2 variants per base card
-    console.log("✨ Creating base variants (non-numbered)...");
-    for (const baseCard of baseCards) {
+      // 2 variantes par carte de base (Laser et Swirl)
       for (const variant of baseVariants) {
         cardsToInsert.push({
           id: cardId++,
@@ -382,7 +380,7 @@ export async function seedDatabase() {
       }
     }
 
-    // 3. Create numbered variants - 9 variants per base card
+    // 2. Create numbered variants - 9 variants per base card
     console.log("🔢 Creating numbered variants...");
     for (const baseCard of baseCards) {
       for (const variant of numberedVariants) {
@@ -402,7 +400,7 @@ export async function seedDatabase() {
       }
     }
 
-    // 4. Create Insert cards
+    // 3. Create Insert cards
     console.log("🎯 Creating Insert cards...");
     
     // Breakthrough
@@ -441,7 +439,7 @@ export async function seedDatabase() {
       });
     }
 
-    // 5. Create Autograph cards
+    // 4. Create Autograph cards
     console.log("✍️ Creating Autograph cards...");
     for (const autoCard of autographCards) {
       for (const numbering of autoCard.numberings) {
