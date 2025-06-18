@@ -18,19 +18,30 @@ interface ImageAdjustments {
   brightness: number;
   contrast: number;
   saturation: number;
-  vignette: number;
   rotation: number;
+  crop: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
 }
 
 export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "recognize" | "assign">("import");
+  const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [adjustments, setAdjustments] = useState<ImageAdjustments>({
     brightness: 100,
     contrast: 100,
     saturation: 100,
-    vignette: 0,
-    rotation: 0
+    rotation: 0,
+    crop: {
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100
+    }
   });
   const [recognizedCard, setRecognizedCard] = useState<string>("");
   const [selectedCardId, setSelectedCardId] = useState<number | undefined>();
@@ -100,18 +111,17 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
         ctx.drawImage(img, 0, 0);
 
-        if (adjustments.vignette > 0) {
-          const gradient = ctx.createRadialGradient(
-            canvas.width / 2, canvas.height / 2, 0,
-            canvas.width / 2, canvas.height / 2, Math.max(canvas.width, canvas.height) / 2
-          );
-          gradient.addColorStop(0, `rgba(0,0,0,0)`);
-          gradient.addColorStop(1, `rgba(0,0,0,${adjustments.vignette / 100})`);
+        // Apply crop if needed
+        if (adjustments.crop.width < 100 || adjustments.crop.height < 100) {
+          const cropX = (adjustments.crop.x / 100) * canvas.width;
+          const cropY = (adjustments.crop.y / 100) * canvas.height;
+          const cropWidth = (adjustments.crop.width / 100) * canvas.width;
+          const cropHeight = (adjustments.crop.height / 100) * canvas.height;
           
-          ctx.globalCompositeOperation = 'multiply';
-          ctx.fillStyle = gradient;
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
-          ctx.globalCompositeOperation = 'source-over';
+          const imageData = ctx.getImageData(cropX, cropY, cropWidth, cropHeight);
+          canvas.width = cropWidth;
+          canvas.height = cropHeight;
+          ctx.putImageData(imageData, 0, 0);
         }
 
         ctx.restore();
@@ -183,8 +193,13 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       brightness: 100,
       contrast: 100,
       saturation: 100,
-      vignette: 0,
-      rotation: 0
+      rotation: 0,
+      crop: {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100
+      }
     });
     setRecognizedCard("");
     setSelectedCardId(undefined);
@@ -199,8 +214,13 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       brightness: 100,
       contrast: 100,
       saturation: 100,
-      vignette: 0,
-      rotation: 0
+      rotation: 0,
+      crop: {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100
+      }
     });
   }, []);
 
@@ -227,65 +247,22 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
         {step === "import" && (
           <div className="space-y-4">
-            <div className="space-y-3">
-              <Button
-                variant="outline"
-                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
-                onClick={() => handleImportOption("gallery")}
-              >
-                <Image className="h-6 w-6" />
-                <span>Importer depuis la photothèque</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
-                onClick={() => handleImportOption("file")}
-              >
-                <Upload className="h-6 w-6" />
-                <span>Importer depuis un fichier</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
-                onClick={() => handleImportOption("camera")}
-              >
-                <Camera className="h-6 w-6" />
-                <span>Ouvrir l'appareil photo</span>
-              </Button>
-            </div>
-
             <input
-              ref={galleryInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            
-            <input
-              ref={cameraInputRef}
               type="file"
               accept="image/*"
               capture="environment"
               onChange={handleFileSelect}
-              className="hidden"
+              className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:bg-gray-100 cursor-pointer"
             />
+            <p className="text-sm text-gray-600 text-center">
+              Touchez pour sélectionner une photo ou utiliser l'appareil photo
+            </p>
           </div>
         )}
 
         {step === "edit" && selectedImage && (
           <div className="space-y-4">
-            <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex flex-col gap-4">
               <div className="flex-1">
                 <div className="relative bg-gray-100 rounded-lg overflow-hidden">
                   <img
@@ -301,108 +278,135 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                 </div>
               </div>
 
-              <div className="w-full lg:w-80 space-y-4">
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                    <Sun className="h-4 w-4" />
-                    Luminosité: {adjustments.brightness}%
-                  </label>
-                  <Slider
-                    value={[adjustments.brightness]}
-                    onValueChange={([value]) => setAdjustments(prev => ({ ...prev, brightness: value }))}
-                    min={0}
-                    max={200}
-                    step={1}
-                    className="w-full"
-                  />
-                </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setShowRetouchOptions(!showRetouchOptions)} className="flex-1">
+                  <Edit className="h-4 w-4 mr-2" />
+                  Retoucher
+                </Button>
+                <Button onClick={handleNextFromEdit} className="flex-1" disabled={isProcessing}>
+                  {isProcessing ? (
+                    <Search className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Search className="h-4 w-4 mr-2" />
+                  )}
+                  {isProcessing ? "Analyse..." : "Reconnaître"}
+                </Button>
+              </div>
 
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                    <Contrast className="h-4 w-4" />
-                    Contraste: {adjustments.contrast}%
-                  </label>
-                  <Slider
-                    value={[adjustments.contrast]}
-                    onValueChange={([value]) => setAdjustments(prev => ({ ...prev, contrast: value }))}
-                    min={0}
-                    max={200}
-                    step={1}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                    <Droplets className="h-4 w-4" />
-                    Saturation: {adjustments.saturation}%
-                  </label>
-                  <Slider
-                    value={[adjustments.saturation]}
-                    onValueChange={([value]) => setAdjustments(prev => ({ ...prev, saturation: value }))}
-                    min={0}
-                    max={200}
-                    step={1}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                    <CircleDot className="h-4 w-4" />
-                    Vignettage: {adjustments.vignette}%
-                  </label>
-                  <Slider
-                    value={[adjustments.vignette]}
-                    onValueChange={([value]) => setAdjustments(prev => ({ ...prev, vignette: value }))}
-                    min={0}
-                    max={100}
-                    step={1}
-                    className="w-full"
-                  />
-                </div>
-
-                <Separator />
-
-                <div>
-                  <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                    <RotateCw className="h-4 w-4" />
-                    Rotation: {adjustments.rotation}°
-                  </label>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setAdjustments(prev => ({ ...prev, rotation: (prev.rotation - 90) % 360 }))}
-                    >
-                      -90°
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setAdjustments(prev => ({ ...prev, rotation: (prev.rotation + 90) % 360 }))}
-                    >
-                      +90°
-                    </Button>
+              {showRetouchOptions && (
+                <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                      <Sun className="h-4 w-4" />
+                      Luminosité: {adjustments.brightness}%
+                    </label>
+                    <Slider
+                      value={[adjustments.brightness]}
+                      onValueChange={([value]) => setAdjustments(prev => ({ ...prev, brightness: value }))}
+                      min={0}
+                      max={200}
+                      step={1}
+                      className="w-full"
+                    />
                   </div>
-                </div>
 
-                <Separator />
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                      <Contrast className="h-4 w-4" />
+                      Contraste: {adjustments.contrast}%
+                    </label>
+                    <Slider
+                      value={[adjustments.contrast]}
+                      onValueChange={([value]) => setAdjustments(prev => ({ ...prev, contrast: value }))}
+                      min={0}
+                      max={200}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
 
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={resetAdjustments} className="flex-1">
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                      <Droplets className="h-4 w-4" />
+                      Saturation: {adjustments.saturation}%
+                    </label>
+                    <Slider
+                      value={[adjustments.saturation]}
+                      onValueChange={([value]) => setAdjustments(prev => ({ ...prev, saturation: value }))}
+                      min={0}
+                      max={200}
+                      step={1}
+                      className="w-full"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                      <CircleDot className="h-4 w-4" />
+                      Recadrage: {adjustments.crop.width}% × {adjustments.crop.height}%
+                    </label>
+                    <div className="space-y-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-xs text-gray-600">Largeur</label>
+                          <Slider
+                            value={[adjustments.crop.width]}
+                            onValueChange={([value]) => setAdjustments(prev => ({ 
+                              ...prev, 
+                              crop: { ...prev.crop, width: value }
+                            }))}
+                            min={10}
+                            max={100}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs text-gray-600">Hauteur</label>
+                          <Slider
+                            value={[adjustments.crop.height]}
+                            onValueChange={([value]) => setAdjustments(prev => ({ 
+                              ...prev, 
+                              crop: { ...prev.crop, height: value }
+                            }))}
+                            min={10}
+                            max={100}
+                            step={1}
+                            className="w-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                      <RotateCw className="h-4 w-4" />
+                      Rotation: {adjustments.rotation}°
+                    </label>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: (prev.rotation - 90) % 360 }))}
+                      >
+                        -90°
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: (prev.rotation + 90) % 360 }))}
+                      >
+                        +90°
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Button variant="outline" onClick={resetAdjustments} className="w-full">
                     Réinitialiser
                   </Button>
-                  <Button onClick={handleNextFromEdit} className="flex-1" disabled={isProcessing}>
-                    {isProcessing ? (
-                      <Search className="h-4 w-4 mr-2 animate-spin" />
-                    ) : (
-                      <Search className="h-4 w-4 mr-2" />
-                    )}
-                    {isProcessing ? "Analyse..." : "Reconnaître"}
-                  </Button>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         )}
