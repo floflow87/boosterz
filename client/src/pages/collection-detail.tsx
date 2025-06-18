@@ -52,14 +52,23 @@ export default function CollectionDetail() {
   });
 
   const filteredCards = cards?.filter((card) => {
-    if (filter === "owned") return card.isOwned;
-    if (filter === "missing") return !card.isOwned;
-    if (filter === "bases") return card.cardType === "Base";
-    if (filter === "bases_numbered") return card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
-    if (filter === "autographs") return card.cardType === "Autograph";
-    if (filter === "special_1_1") return card.cardType === "special_1_1" || card.numbering === "1/1";
-    if (filter === "hits") return card.cardType.includes("Insert");
-    return true;
+    // Ne montrer que les cartes Base originales (pas les variantes)
+    const isBaseOriginal = card.cardType === "Base" && (!card.cardSubType || card.cardSubType === '');
+    const isNotBaseCard = card.cardType !== "Base";
+    
+    // Filtrer d'abord par catégorie
+    let passesFilter = false;
+    if (filter === "owned") passesFilter = card.isOwned;
+    else if (filter === "missing") passesFilter = !card.isOwned;
+    else if (filter === "bases") passesFilter = card.cardType === "Base" && (!card.cardSubType || card.cardSubType === '');
+    else if (filter === "bases_numbered") passesFilter = card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
+    else if (filter === "autographs") passesFilter = card.cardType === "Autograph";
+    else if (filter === "special_1_1") passesFilter = card.cardType === "special_1_1" || card.numbering === "1/1";
+    else if (filter === "hits") passesFilter = card.cardType.includes("Insert");
+    else passesFilter = true;
+    
+    // Pour l'affichage général, ne montrer que les cartes Base originales ou les autres types
+    return passesFilter && (isBaseOriginal || isNotBaseCard);
   })?.sort((a, b) => {
     // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
     if (filter === "bases_numbered" && a.serialNumber && b.serialNumber) {
@@ -436,12 +445,6 @@ export default function CollectionDetail() {
                       {card.numbering}
                     </div>
                   )}
-                  {/* Flèches de navigation pour les cartes Base */}
-                  {card.cardType === 'Base' && getCardVariants(card).length > 1 && (
-                    <div className="absolute top-1/2 -translate-y-1/2 right-2">
-                      <ChevronRight className="w-5 h-5 text-orange-500" />
-                    </div>
-                  )}
                   {/* Nom et équipe sous l'image */}
                   <div className="text-xs mt-1 text-center">
                     <div className="font-medium text-white">
@@ -455,12 +458,7 @@ export default function CollectionDetail() {
                   <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
                     <HelpCircle className="w-8 h-8 text-gray-400" />
                   </div>
-                  {/* Flèches de navigation pour les cartes Base */}
-                  {card.cardType === 'Base' && getCardVariants(card).length > 1 && (
-                    <div className="absolute top-1/2 -translate-y-1/2 right-2">
-                      <ChevronRight className="w-5 h-5 text-orange-500" />
-                    </div>
-                  )}
+
                   <div className="text-xs mt-1 text-center">
                     <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
                       {card.playerName || 'Joueur Inconnu'}
@@ -564,13 +562,47 @@ export default function CollectionDetail() {
               {(() => {
                 const currentCard = getCurrentCard() || selectedCard;
                 return currentCard.isOwned && currentCard.imageUrl ? (
-                  <img 
-                    src={currentCard.imageUrl} 
-                    alt={currentCard.playerName || "Card"} 
-                    className="w-32 h-40 object-cover rounded-lg mx-auto mb-3"
-                  />
+                  <div 
+                    className="w-32 h-40 mx-auto mb-3 transform transition-transform duration-300 ease-out hover:scale-105"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const centerX = rect.width / 2;
+                      const rotateY = (x - centerX) / 8; // Mouvement de -4deg à +4deg
+                      e.currentTarget.style.transform = `scale(1.05) rotateY(${rotateY}deg)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1) rotateY(0deg)';
+                    }}
+                    style={{
+                      perspective: '1000px',
+                      transformStyle: 'preserve-3d'
+                    }}
+                  >
+                    <img 
+                      src={currentCard.imageUrl} 
+                      alt={currentCard.playerName || "Card"} 
+                      className="w-full h-full object-cover rounded-lg shadow-lg"
+                    />
+                  </div>
                 ) : (
-                  <div className="w-32 h-40 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <div 
+                    className="w-32 h-40 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3 transform transition-transform duration-300 ease-out hover:scale-105"
+                    onMouseMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const x = e.clientX - rect.left;
+                      const centerX = rect.width / 2;
+                      const rotateY = (x - centerX) / 8;
+                      e.currentTarget.style.transform = `scale(1.05) rotateY(${rotateY}deg)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1) rotateY(0deg)';
+                    }}
+                    style={{
+                      perspective: '1000px',
+                      transformStyle: 'preserve-3d'
+                    }}
+                  >
                     <HelpCircle className="w-12 h-12 text-gray-400" />
                   </div>
                 );
@@ -594,7 +626,9 @@ export default function CollectionDetail() {
                     <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)]">Type:</span>
                       <span className="text-white">
-                        {currentCard.cardType === 'Base' ? 'Base' :
+                        {currentCard.cardType === 'Base' && currentCard.cardSubType === 'Laser' ? 'Base - Laser' :
+                         currentCard.cardType === 'Base' && currentCard.cardSubType === 'Swirl' ? 'Base - Swirl' :
+                         currentCard.cardType === 'Base' ? 'Base' :
                          currentCard.cardType === 'Parallel Laser Blue' ? 'Laser' :
                          currentCard.cardType.includes('Swirl') ? 'Swirl' :
                          currentCard.cardType.includes('Laser') ? 'Laser' :
