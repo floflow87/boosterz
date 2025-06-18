@@ -202,9 +202,9 @@ export class MemStorage implements IStorage {
         userId: 1,
         name: "SCORE LIGUE 1",
         season: "23/24",
-        totalCards: 216,
-        ownedCards: 200,
-        completionPercentage: 93,
+        totalCards: 133,
+        ownedCards: 53,
+        completionPercentage: 40,
         imageUrl: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         backgroundColor: "#F37261"
       },
@@ -222,24 +222,24 @@ export class MemStorage implements IStorage {
       {
         id: 3,
         userId: 1,
-        name: "ICONZ",
-        season: "23/24",
-        totalCards: 180,
-        ownedCards: 89,
-        completionPercentage: 49,
-        imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
-        backgroundColor: "#FFD700"
+        name: "ARGENTINA",
+        season: "22/23",
+        totalCards: 89,
+        ownedCards: 82,
+        completionPercentage: 92,
+        imageUrl: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
+        backgroundColor: "#87CEEB"
       },
       {
         id: 4,
         userId: 1,
-        name: "125 ANS OM",
+        name: "QUI ES-TU?",
         season: "23/24",
-        totalCards: 89,
-        ownedCards: 34,
-        completionPercentage: 38,
+        totalCards: 312,
+        ownedCards: 87,
+        completionPercentage: 28,
         imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
-        backgroundColor: "#00A0E6"
+        backgroundColor: "#F37261"
       }
     ];
 

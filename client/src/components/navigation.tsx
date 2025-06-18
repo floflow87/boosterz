@@ -17,7 +17,7 @@ export default function Navigation() {
       return location === "/" || location === "/splash";
     }
     if (path === "/collections") {
-      return location === "/collections" || location.startsWith("/collection") || location === "/all-cards" || location === "/checklist";
+      return location === "/collections" || location.startsWith("/collection") || location === "/all-cards";
     }
     return location.startsWith(path);
   };
