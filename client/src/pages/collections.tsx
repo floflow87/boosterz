@@ -238,14 +238,30 @@ export default function Collections() {
                     className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50 relative"
                   >
                     <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center">
-                      <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
-                      <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                      {collection.name === 'SCORE LIGUE 1' ? (
+                        <>
+                          <img 
+                            src="/attached_assets/image 29_1750232088999.png" 
+                            alt="Score Ligue 1 logo"
+                            className="w-16 h-16 object-contain mx-auto mb-2"
+                          />
+                          <h3 className="font-bold text-white text-xs font-luckiest">{collection.name}</h3>
+                          <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
+                          <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                        </>
+                      )}
                     </div>
-                    <img 
-                      src={collection.imageUrl || ""} 
-                      alt={`${collection.name} cards`}
-                      className="w-full h-20 object-cover rounded-lg mb-2"
-                    />
+                    {collection.name !== 'SCORE LIGUE 1' && (
+                      <img 
+                        src={collection.imageUrl || ""} 
+                        alt={`${collection.name} cards`}
+                        className="w-full h-20 object-cover rounded-lg mb-2"
+                      />
+                    )}
                     <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
                       {collection.ownedCards}/{collection.totalCards} cartes
                     </div>
