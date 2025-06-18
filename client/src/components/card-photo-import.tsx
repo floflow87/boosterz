@@ -35,6 +35,8 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const [recognizedCard, setRecognizedCard] = useState<string>("");
   const [selectedCardId, setSelectedCardId] = useState<number | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [playerName, setPlayerName] = useState<string>("");
+  const [playerCards, setPlayerCards] = useState<Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string }>>([]);
   
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -123,13 +125,28 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     setIsProcessing(true);
     const processedImage = await processImageWithAdjustments();
     
-    // Simulate card recognition
+    // Simulate improved card recognition using actual collection data
     setTimeout(() => {
-      const randomCard = availableCards[Math.floor(Math.random() * availableCards.length)];
-      if (randomCard) {
-        setRecognizedCard(`${randomCard.playerName} - ${randomCard.cardNumber}`);
-        setSelectedCardId(randomCard.id);
+      // Get unique player names from the collection
+      const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName)));
+      
+      // Pick a random player from the actual collection
+      const recognizedPlayerName = uniquePlayers[Math.floor(Math.random() * uniquePlayers.length)];
+      
+      // Find all cards for this player
+      const cardsForPlayer = availableCards.filter(card => 
+        card.playerName === recognizedPlayerName
+      );
+      
+      if (cardsForPlayer.length > 0) {
+        // Select the first card (usually Base card)
+        const selectedCard = cardsForPlayer[0];
+        setRecognizedCard(`${selectedCard.playerName} - ${selectedCard.cardNumber}`);
+        setSelectedCardId(selectedCard.id);
+        setPlayerName(selectedCard.playerName);
+        setPlayerCards(cardsForPlayer);
       }
+      
       setIsProcessing(false);
       setStep("recognize");
     }, 2000);
@@ -142,6 +159,22 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     }
     handleClose();
   }, [processImageWithAdjustments, selectedCardId, onSave]);
+
+  const handlePlayerNameChange = useCallback((name: string) => {
+    setPlayerName(name);
+    if (name.trim()) {
+      const matchingCards = availableCards.filter(card => 
+        card.playerName.toLowerCase().includes(name.toLowerCase())
+      );
+      setPlayerCards(matchingCards);
+      if (matchingCards.length > 0) {
+        setSelectedCardId(matchingCards[0].id);
+      }
+    } else {
+      setPlayerCards([]);
+      setSelectedCardId(undefined);
+    }
+  }, [availableCards]);
 
   const handleClose = useCallback(() => {
     setStep("import");
@@ -156,6 +189,8 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     setRecognizedCard("");
     setSelectedCardId(undefined);
     setIsProcessing(false);
+    setPlayerName("");
+    setPlayerCards([]);
     onClose();
   }, [onClose]);
 
@@ -374,20 +409,75 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
         {step === "recognize" && (
           <div className="space-y-4">
-            <div className="text-center">
-              <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                <h3 className="font-semibold text-green-800 mb-2">Carte reconnue automatiquement</h3>
-                <p className="text-green-700">{recognizedCard}</p>
+            <div className="space-y-4">
+              {selectedImage && (
+                <div className="mb-4 text-center">
+                  <img
+                    src={selectedImage}
+                    alt="Photo importée"
+                    className="w-32 h-40 object-cover rounded-lg mx-auto border-2 border-gray-200"
+                  />
+                </div>
+              )}
+              
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <h3 className="font-semibold text-green-800 mb-2">Reconnaissance automatique</h3>
+                <p className="text-green-700 font-medium">{recognizedCard}</p>
+                <p className="text-xs text-green-600 mt-1">Vous pouvez modifier cette sélection ci-dessous</p>
               </div>
               
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">
-                    Modifier la référence (optionnel)
+                    Nom du joueur
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Saisir le nom du joueur..."
+                    value={playerName}
+                    onChange={(e) => handlePlayerNameChange(e.target.value)}
+                    className="w-full"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Modifiez le nom pour voir toutes les cartes de ce joueur
+                  </p>
+                </div>
+
+                {playerCards.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-black mb-2">
+                      Cartes disponibles pour {playerName} ({playerCards.length})
+                    </label>
+                    <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Sélectionner une carte" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {playerCards.map((card) => (
+                          <SelectItem key={card.id} value={card.id.toString()}>
+                            {card.cardNumber} - {card.cardType} ({card.teamName})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {playerCards.length === 0 && playerName.trim() && (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p className="text-yellow-800 text-sm">
+                      Aucune carte trouvée pour "{playerName}". Vérifiez l'orthographe ou sélectionnez manuellement.
+                    </p>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Ou sélectionner manuellement
                   </label>
                   <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Sélectionner une carte" />
+                      <SelectValue placeholder="Parcourir toutes les cartes..." />
                     </SelectTrigger>
                     <SelectContent>
                       {availableCards.map((card) => (
@@ -403,7 +493,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                   <Button variant="outline" onClick={() => setStep("edit")} className="flex-1">
                     Retour
                   </Button>
-                  <Button onClick={handleSave} className="flex-1">
+                  <Button onClick={handleSave} className="flex-1" disabled={!selectedCardId}>
                     <Check className="h-4 w-4 mr-2" />
                     Confirmer
                   </Button>
