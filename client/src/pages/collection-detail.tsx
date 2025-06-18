@@ -33,8 +33,8 @@ export default function CollectionDetail() {
   }, [collectionId, queryClient]);
 
   const updateCardImageMutation = useMutation({
-    mutationFn: async ({ cardId, imageData }: { cardId: number; imageData: string }) => {
-      return apiRequest("PATCH", `/api/cards/${cardId}/image`, { imageUrl: imageData });
+    mutationFn: async ({ cardId, imageUrl }: { cardId: number; imageUrl: string }) => {
+      return apiRequest("PATCH", `/api/cards/${cardId}/image`, { imageUrl });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
@@ -195,9 +195,9 @@ export default function CollectionDetail() {
     }
   };
 
-  const handlePhotoSave = (imageData: string, cardId?: number) => {
+  const handlePhotoSave = (imageUrl: string, cardId?: number) => {
     if (cardId) {
-      updateCardImageMutation.mutate({ cardId, imageData });
+      updateCardImageMutation.mutate({ cardId, imageUrl });
     }
     setShowPhotoUpload(false);
   };
@@ -841,7 +841,7 @@ export default function CollectionDetail() {
                             try {
                               await updateCardImageMutation.mutateAsync({
                                 cardId: currentCard.id,
-                                imageData: ""
+                                imageUrl: ""
                               });
                               toast({
                                 title: "Photo supprimée",
