@@ -14,7 +14,7 @@ import scoreLigue1Logo from "@assets/image 29_1750232088999.png";
 export default function CollectionDetail() {
   const params = useParams();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "speciales">("bases");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
@@ -55,11 +55,11 @@ export default function CollectionDetail() {
   const filteredCards = cards?.filter((card) => {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
-    if (filter === "bases") return card.cardType.toLowerCase() === "base";
-    if (filter === "bases_numbered") return card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber);
-    if (filter === "autographs") return card.cardType.toLowerCase() === "autograph";
-    if (filter === "speciales") return card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
-    if (filter === "hits") return card.cardType.toLowerCase() === "hit";
+    if (filter === "bases") return card.cardType === "base" && !card.isVariant;
+    if (filter === "bases_numbered") return card.cardType === "base_numbered" || (card.cardType === "base" && card.isVariant);
+    if (filter === "autographs") return card.cardType === "autograph";
+    if (filter === "special_1_1") return card.cardType === "special_1_1" || card.numbering === "1/1";
+    if (filter === "hits") return card.cardType === "insert" || card.cardType === "numbered";
     return true;
   })?.sort((a, b) => {
     // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
@@ -101,25 +101,15 @@ export default function CollectionDetail() {
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
   const basesCount = cards?.filter(card => 
-    card.cardType.toLowerCase() === "base" || 
-    card.cardType.toLowerCase().includes("parallel") || 
-    card.cardType.toLowerCase().includes("laser") || 
-    card.cardType.toLowerCase().includes("swirl")
+    card.cardType === "base" && !card.isVariant
   ).length || 0;
   const basesNumberedCount = cards?.filter(card => 
-    card.serialNumber && 
-    card.serialNumber !== "/1" && 
-    (card.cardType.toLowerCase().includes("parallel") || card.cardType.toLowerCase().includes("swirl") || card.cardType.toLowerCase().includes("laser"))
+    card.cardType === "base_numbered" || (card.cardType === "base" && card.isVariant)
   ).length || 0;
-  const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
-  const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
+  const autographsCount = cards?.filter(card => card.cardType === "autograph").length || 0;
+  const specialesCount = cards?.filter(card => card.cardType === "special_1_1" || card.numbering === "1/1").length || 0;
   const hitsCount = cards?.filter(card => 
-    card.cardType.toLowerCase().includes("insert") || 
-    card.cardType.toLowerCase().includes("breakthrough") ||
-    card.cardType.toLowerCase().includes("rookies") ||
-    card.cardType.toLowerCase().includes("keepers") ||
-    card.cardType.toLowerCase().includes("pure class") ||
-    card.cardType.toLowerCase().includes("score team")
+    card.cardType === "insert" || card.cardType === "numbered"
   ).length || 0;
 
   if (collectionLoading || cardsLoading) {
@@ -267,9 +257,9 @@ export default function CollectionDetail() {
               Hit ({hitsCount})
             </button>
             <button
-              onClick={() => setFilter("speciales")}
+              onClick={() => setFilter("special_1_1")}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "speciales" 
+                filter === "special_1_1" 
                   ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105 animate-pulse" 
                   : "bg-gradient-to-r from-yellow-600 to-yellow-800 text-yellow-100 hover:from-yellow-500 hover:to-yellow-700"
               }`}
@@ -342,6 +332,11 @@ export default function CollectionDetail() {
                   <div className="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
                     {card.reference}
                   </div>
+                  {card.numbering && (
+                    <div className="absolute bottom-1 right-1 bg-blue-600 bg-opacity-90 text-white text-xs px-2 py-1 rounded">
+                      {card.numbering}
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -451,7 +446,7 @@ export default function CollectionDetail() {
               <div className="flex justify-between">
                 <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
                 <span className="text-yellow-400 font-bold">
-                  {selectedCard.serialNumber ? `${Math.floor(Math.random() * 150) + 1}${selectedCard.serialNumber}` : 'Non numérotée'}
+                  {selectedCard.numbering || 'Non numérotée'}
                 </span>
               </div>
               <div className="flex justify-between">
