@@ -18,20 +18,30 @@ export class CardRecognitionEngine {
     this.teamNames = Array.from(new Set(cards.map(card => card.teamName).filter(Boolean))) as string[];
   }
 
-  // Simulate text extraction from image (in real implementation, this would use OCR)
+  // Enhanced text extraction simulation using actual card data patterns
   private simulateTextExtraction(imageData: string): string[] {
-    // In a real implementation, this would use OCR to extract text from the image
-    // For now, we'll simulate by returning common player/team name patterns
-    const simulatedTexts = [
-      "MBAPPÉ", "PARIS SAINT-GERMAIN", "PSG", "NEYMAR", "MESSI",
-      "BENZEMA", "REAL MADRID", "BAYERN", "MANCHESTER", "LIVERPOOL",
-      "BEN YEDDER", "MONACO", "LILLE", "LYON", "MARSEILLE",
-      "RENNES", "NICE", "LENS", "MONTPELLIER", "STRASBOURG"
+    // Extract texts based on actual player and team names from the collection
+    const allTexts = [
+      ...this.playerNames,
+      ...this.teamNames,
+      // Common variations and abbreviations
+      ...this.playerNames.map(name => name.split(' ').pop()).filter(Boolean),
+      ...this.teamNames.flatMap(team => this.getTeamAbbreviations(team))
     ];
     
-    // Return 2-4 random texts to simulate OCR extraction
-    const numTexts = Math.floor(Math.random() * 3) + 2;
-    const shuffled = simulatedTexts.sort(() => 0.5 - Math.random());
+    // Add some noise and variations to simulate OCR imperfection
+    const noisyTexts = allTexts.flatMap(text => [
+      text,
+      text.toUpperCase(),
+      text.toLowerCase(),
+      // Simulate OCR errors
+      text.replace(/E/g, 'F').replace(/O/g, '0'),
+      text.replace(/I/g, 'L').replace(/S/g, '5')
+    ]);
+    
+    // Return 3-6 random texts to simulate realistic OCR extraction
+    const numTexts = Math.floor(Math.random() * 4) + 3;
+    const shuffled = noisyTexts.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, numTexts);
   }
 

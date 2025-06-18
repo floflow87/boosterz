@@ -454,7 +454,8 @@ export default function CollectionDetail() {
           cardNumber: card.cardNumber,
           playerName: card.playerName || "Joueur Inconnu",
           teamName: card.teamName || "Équipe Inconnue",
-          cardType: card.cardType
+          cardType: card.cardType,
+          collectionId: card.collectionId
         }))}
       />
     </div>
