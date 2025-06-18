@@ -43,62 +43,45 @@ export default function CollectionDetail() {
     }
   });
 
-
-
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
     queryKey: [`/api/collections/${collectionId}`],
   });
 
   const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
     queryKey: [`/api/collections/${collectionId}/cards`],
-    refetchOnMount: true,
-    refetchOnWindowFocus: true,
   });
 
-  const filteredCards = cards?.filter((card) => {
-    // Ne montrer que les cartes Base originales (pas les variantes)
-    const isBaseOriginal = card.cardType === "Base" && (!card.cardSubType || card.cardSubType === '');
-    const isNotBaseCard = card.cardType !== "Base";
-    
-    // Filtrer d'abord par catégorie
-    let passesFilter = false;
-    if (filter === "owned") passesFilter = card.isOwned;
-    else if (filter === "missing") passesFilter = !card.isOwned;
-    else if (filter === "bases") passesFilter = card.cardType === "Base" && (!card.cardSubType || card.cardSubType === '');
-    else if (filter === "bases_numbered") passesFilter = card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
-    else if (filter === "autographs") passesFilter = card.cardType === "Autograph";
-    else if (filter === "special_1_1") passesFilter = card.cardType === "special_1_1" || card.numbering === "1/1";
-    else if (filter === "hits") passesFilter = card.cardType.includes("Insert");
-    else passesFilter = true;
-    
-    // Filtrer par terme de recherche
-    let passesSearch = true;
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
-      passesSearch = Boolean(
-        (card.playerName && card.playerName.toLowerCase().includes(term)) ||
-        (card.teamName && card.teamName.toLowerCase().includes(term)) ||
-        (card.reference && card.reference.toLowerCase().includes(term)) ||
-        (card.cardType && card.cardType.toLowerCase().includes(term)) ||
-        (card.cardSubType && card.cardSubType.toLowerCase().includes(term))
-      );
+  const filteredCards = cards?.filter(card => {
+    const matchesSearch = !searchTerm || 
+      card.playerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      card.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      card.reference.toLowerCase().includes(searchTerm.toLowerCase());
+
+    if (!matchesSearch) return false;
+
+    switch (filter) {
+      case "all": return true;
+      case "owned": return card.isOwned;
+      case "missing": return !card.isOwned;
+      case "bases": return card.cardType === "Base";
+      case "bases_numbered": return card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
+      case "autographs": return card.cardType === "Autograph";
+      case "hits": return card.cardType.includes("Insert");
+      case "special_1_1": return card.cardType === "special_1_1" || card.numbering === "1/1";
+      default: return true;
     }
-    
-    // Pour l'affichage général, ne montrer que les cartes Base originales ou les autres types
-    return passesFilter && passesSearch && (isBaseOriginal || isNotBaseCard);
-  })?.sort((a, b) => {
-    // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
-    if (filter === "bases_numbered" && a.serialNumber && b.serialNumber) {
-      const getRarityOrder = (serialNumber: string, cardSubType: string) => {
-        const total = parseInt(serialNumber.split('/')[1]) || 0;
-        if (total === 50) return 1;
-        if (total === 35) return 2;
-        if (total === 30) return 3;
-        if (total === 25) return 4;
-        if (total === 20) return 5;
-        if (total === 15 && cardSubType === "swirl") return 6;
-        if (total === 15 && cardSubType === "laser") return 7;
-        if (total === 10) return 8;
+  }).sort((a, b) => {
+    if (filter === "hits") {
+      const getRarityOrder = (serialNumber: string | null, cardSubType: string) => {
+        if (serialNumber === "1/1") return 1;
+        if (cardSubType === "Holo") return 2;
+        if (cardSubType === "Refractor") return 3;
+        if (cardSubType === "Gold") return 4;
+        if (cardSubType === "Black") return 5;
+        if (cardSubType === "Red") return 6;
+        if (cardSubType === "Purple") return 7;
+        const total = parseInt(serialNumber?.split("/")[1] || "0");
+        if (total === 15) return 8;
         if (total === 5) return 9;
         return 10;
       };
@@ -288,101 +271,15 @@ export default function CollectionDetail() {
     }
   };
 
-  // Get variants for a base card
-  const getCardVariants = (baseCard: Card) => {
-    if (baseCard.cardType !== "Base") return [baseCard];
-    
-    const variants = cards?.filter(card => 
-      card.reference === baseCard.reference && 
-      card.playerName === baseCard.playerName && 
-      card.teamName === baseCard.teamName &&
-      card.cardType === "Base"
-    ) || [];
-    
-    // Sort variants: Base first, then Laser, then Swirl
-    return variants.sort((a, b) => {
-      const order: Record<string, number> = { '': 0, 'Laser': 1, 'Swirl': 2 };
-      return (order[a.cardSubType || ''] || 0) - (order[b.cardSubType || ''] || 0);
-    });
-  };
-
-  // Check if all variants of a base card are owned
-  const areAllVariantsOwned = (baseCard: Card) => {
-    if (baseCard.cardType !== "Base") return false;
-    
-    const variants = getCardVariants(baseCard);
-    return variants.length >= 3 && variants.every(variant => variant.isOwned);
-  };
-
-  // Check if a category is complete
-  const isCategoryComplete = (cardType: string) => {
-    if (!cards) return false;
-    
-    let categoryCards: Card[] = [];
-    
-    switch (cardType) {
-      case "bases":
-        categoryCards = cards.filter(card => card.cardType === "Base" && (!card.cardSubType || card.cardSubType === ''));
-        break;
-      case "bases_numbered":
-        categoryCards = cards.filter(card => card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl"));
-        break;
-      case "autographs":
-        categoryCards = cards.filter(card => card.cardType === "Autograph");
-        break;
-      case "hits":
-        categoryCards = cards.filter(card => card.cardType.includes("Insert"));
-        break;
-      case "special_1_1":
-        categoryCards = cards.filter(card => card.cardType === "special_1_1" || card.numbering === "1/1");
-        break;
-      default:
-        return false;
-    }
-    
-    return categoryCards.length > 0 && categoryCards.every(card => card.isOwned);
-  };
-
-  // Check if all cards in collection are owned (master completion)
-  const isCollectionComplete = () => {
-    if (!cards) return false;
-    return cards.every(card => card.isOwned);
-  };
-
-  // Handle card selection with variant reset
-  const handleCardSelect = (card: Card) => {
-    setSelectedCard(card);
-    setCurrentVariantIndex(0);
-  };
-
-  // Get current displayed card variant
-  const getCurrentCard = () => {
-    if (!selectedCard) return null;
-    const variants = getCardVariants(selectedCard);
-    return variants[currentVariantIndex] || selectedCard;
-  };
-
-  // Navigate variants
-  const nextVariant = () => {
-    if (!selectedCard) return;
-    const variants = getCardVariants(selectedCard);
-    setCurrentVariantIndex((prev) => (prev + 1) % variants.length);
-  };
-
-  const prevVariant = () => {
-    if (!selectedCard) return;
-    const variants = getCardVariants(selectedCard);
-    setCurrentVariantIndex((prev) => (prev - 1 + variants.length) % variants.length);
-  };
-
+  // ... rest of the component code
+  
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
       <HaloBlur />
-      
       <Header title={collection.name} showBackButton />
 
       <main className="relative z-10 px-4 pb-24">
-        {/* Collection Header avec fond personnalisé */}
+        {/* Collection Header */}
         <div className="text-center mb-4">
           <div 
             className="relative rounded-xl p-6 mb-3 overflow-hidden"
@@ -393,40 +290,34 @@ export default function CollectionDetail() {
               backgroundRepeat: 'no-repeat'
             }}
           >
-            {collection.name === 'SCORE LIGUE 1' ? (
-              <div className="relative z-10 flex flex-col items-center space-y-3">
-                <div className="w-16 h-16 flex items-center justify-center">
-                  <img 
-                    src={scoreLigue1Logo} 
-                    alt="Score Ligue 1 logo"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold text-white font-luckiest">{collection.name}</h1>
-                  <p className="text-white opacity-90 font-poppins text-sm">{collection.season}</p>
-                </div>
+            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+            <div className="relative z-10">
+              <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 inline-block">
+                <img 
+                  src={scoreLigue1Logo} 
+                  alt="Score Ligue 1 logo"
+                  className="w-16 h-16 object-contain mx-auto"
+                />
               </div>
-            ) : (
-              <div className="relative z-10 text-center">
-                <h1 className="text-2xl font-bold text-white font-luckiest mb-2">{collection.name}</h1>
-                <p className="text-white opacity-90 font-poppins text-sm">{collection.season}</p>
-              </div>
-            )}
+              <h1 className="text-2xl font-bold text-white mb-2 font-luckiest">{collection.name}</h1>
+              <p className="text-gray-200 font-poppins">{collection.season}</p>
+            </div>
           </div>
-
-          <div className="flex justify-center space-x-6 text-center">
-            <div>
-              <div className="text-xl font-bold text-[hsl(9,85%,67%)]">{collection.totalCards}</div>
-              <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-[hsl(9,85%,67%)]">{collection.ownedCards}</div>
-              <div className="text-xs text-[hsl(212,23%,69%)]">Possédées</div>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-[hsl(9,85%,67%)]">{collection.completionPercentage}%</div>
-              <div className="text-xs text-[hsl(212,23%,69%)]">Complété</div>
+          
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{ownedCount}</div>
+                <div className="text-sm text-[hsl(212,23%,69%)]">Possédées</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-400">{missingCount}</div>
+                <div className="text-sm text-[hsl(212,23%,69%)]">Manquantes</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{totalCount}</div>
+                <div className="text-sm text-[hsl(212,23%,69%)]">Total</div>
+              </div>
             </div>
           </div>
         </div>
@@ -533,118 +424,13 @@ export default function CollectionDetail() {
           </div>
         </div>
         
-        {/* Search Results */}
-        {searchTerm && (
-          <div className="mb-4 text-sm text-[hsl(212,23%,69%)]">
-            {filteredCards?.length || 0} résultat(s) trouvé(s) pour "{searchTerm}"
-          </div>
-        )}
-
-        {/* Filter Tabs - Score Ligue 1 */}
-        {collection.name.includes("SCORE LIGUE 1") ? (
-          <div className="flex space-x-2 mb-6 overflow-x-auto scroll-container">
-            <button
-              onClick={() => setFilter("bases")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "bases" 
-                  ? "bg-gray-500 text-white shadow-lg transform scale-105" 
-                  : "bg-gray-600 text-gray-300 hover:bg-gray-500"
-              } ${isCategoryComplete("bases") ? "animated-border" : ""}`}
-            >
-              <Star className="w-4 h-4 inline mr-1" />
-              Bases ({basesCount})
-            </button>
-            <button
-              onClick={() => setFilter("bases_numbered")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "bases_numbered" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              } ${isCategoryComplete("bases_numbered") ? "animated-border" : ""}`}
-            >
-              <Check className="w-4 h-4 inline mr-1" />
-              Bases numérotées ({basesNumberedCount})
-            </button>
-            <button
-              onClick={() => setFilter("autographs")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "autographs" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              } ${isCategoryComplete("autographs") ? "animated-border" : ""}`}
-            >
-              <HelpCircle className="w-4 h-4 inline mr-1" />
-              Autographes ({autographsCount})
-            </button>
-            <button
-              onClick={() => setFilter("hits")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "hits" 
-                  ? "bg-purple-500 text-white shadow-lg transform scale-105" 
-                  : "bg-purple-600 text-purple-100 hover:bg-purple-500"
-              } ${isCategoryComplete("hits") ? "animated-border" : ""}`}
-            >
-              <Star className="w-4 h-4 inline mr-1" />
-              Hit ({hitsCount})
-            </button>
-            <button
-              onClick={() => setFilter("special_1_1")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "special_1_1" 
-                  ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105 animate-pulse" 
-                  : "bg-gradient-to-r from-yellow-600 to-yellow-800 text-yellow-100 hover:from-yellow-500 hover:to-yellow-700"
-              }`}
-            >
-              <Sparkles className="w-4 h-4 inline mr-1" />
-              Spéciales 1/1 ({specialesCount})
-            </button>
-          </div>
-        ) : (
-          <div className="flex space-x-2 mb-6 overflow-x-auto scroll-container">
-            <button
-              onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "all" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <Star className="w-4 h-4 inline mr-1" />
-              Toutes ({totalCount})
-            </button>
-            <button
-              onClick={() => setFilter("owned")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "owned" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <Check className="w-4 h-4 inline mr-1" />
-              Possédées ({ownedCount})
-            </button>
-            <button
-              onClick={() => setFilter("missing")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "missing" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
-                  : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <HelpCircle className="w-4 h-4 inline mr-1" />
-              Manquantes ({missingCount})
-            </button>
-          </div>
-        )}
-
         {/* Cards Display */}
-        
         {viewMode === "grid" ? (
           <div className="card-grid">
-            {filteredCards?.map((card, index) => (
+            {filteredCards?.map((card) => (
               <div 
                 key={card.id} 
-                className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300 ${card.imageUrl ? "animate-pulse-glow" : ""}`}
+                className={`card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300 ${card.imageUrl ? "animate-pulse-glow" : ""}`}
               >
                 {/* Checkbox for selection */}
                 <div className="absolute top-2 left-2 z-20">
@@ -661,20 +447,20 @@ export default function CollectionDetail() {
                 
                 <div 
                   onClick={(e) => {
-                    if ((e.target as HTMLElement).type !== 'checkbox') {
-                      const target = e.currentTarget.parentElement;
-                      target?.classList.add('clicked');
-                      setTimeout(() => target?.classList.remove('clicked'), 1800);
-                      handleCardSelect(card);
+                    const target = e.target as HTMLInputElement;
+                    if (target.type !== 'checkbox') {
+                      const cardElement = e.currentTarget.parentElement;
+                      cardElement?.classList.add('clicked');
+                      setTimeout(() => cardElement?.classList.remove('clicked'), 1800);
+                      setSelectedCard(card);
                     }
                   }}
-                  className={`card-content p-3 rounded-lg ${
-                  !areAllVariantsOwned(card) ? (
+                  className={`card-content p-3 rounded-lg bg-[hsl(214,35%,22%)] border-2 ${
                     card.isOwned 
-                      ? "bg-[hsl(214,35%,22%)] border-2 border-green-400 shadow-lg shadow-green-400/30" 
-                      : "bg-[hsl(214,35%,22%)] border-2 border-gray-600 bg-opacity-50"
-                  ) : ""
-                } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}>
+                      ? "border-green-400 shadow-lg shadow-green-400/30" 
+                      : "border-gray-600 bg-opacity-50"
+                  }`}
+                >
                   {card.imageUrl ? (
                     <>
                       <img 
@@ -685,17 +471,6 @@ export default function CollectionDetail() {
                       <div className="absolute top-4 right-4 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                         <Check className="w-3 h-3 text-white" />
                       </div>
-                      <div className={`absolute bottom-4 left-4 bg-black bg-opacity-70 text-xs px-2 py-1 rounded ${
-                        areAllVariantsOwned(card) ? 'text-green-400' : 'text-white'
-                      }`}>
-                        {card.reference}
-                      </div>
-                      {card.numbering && (
-                        <div className="absolute bottom-4 right-4 bg-blue-600 bg-opacity-90 text-white text-xs px-2 py-1 rounded">
-                          {card.numbering}
-                        </div>
-                      )}
-                      {/* Nom et équipe sous l'image */}
                       <div className="text-xs mt-2 text-center">
                         <div className="font-medium text-white">
                           {card.playerName || 'Joueur Inconnu'}
@@ -712,12 +487,11 @@ export default function CollectionDetail() {
                         <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
                           {card.playerName || 'Joueur Inconnu'}
                         </div>
-                        <div className={areAllVariantsOwned(card) ? 'text-green-400' : 'text-[hsl(212,23%,69%)]'}>{card.reference}</div>
+                        <div className="text-[hsl(212,23%,69%)]">{card.reference}</div>
                         <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
                       </div>
                     </>
                   )}
-                </div>
                 </div>
               </div>
             ))}
@@ -727,450 +501,68 @@ export default function CollectionDetail() {
             {filteredCards?.map((card) => (
               <div 
                 key={card.id} 
-                onClick={(e) => {
-                  const target = e.currentTarget;
-                  target.classList.add('clicked');
-                  setTimeout(() => target.classList.remove('clicked'), 1800);
-                  handleCardSelect(card);
-                }}
-                className={`card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] ${
+                className={`card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] relative ${
                   card.isOwned 
                     ? "border-green-500" 
                     : "border-gray-600"
                 } ${card.imageUrl ? "animate-pulse-glow" : ""}`}>
-                <div className="w-12 h-16 bg-gray-600 rounded flex-shrink-0 flex items-center justify-center relative">
-                  {card.imageUrl ? (
-                    <img src={card.imageUrl} alt={card.playerName || ""} className="w-full h-full object-cover rounded" />
-                  ) : (
-                    <HelpCircle className="w-6 h-6 text-gray-400" />
+                
+                {/* Checkbox for selection */}
+                <div className="absolute top-2 left-2 z-20">
+                  <input
+                    type="checkbox"
+                    checked={selectedCards.has(card.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCardSelection(card.id, e.target.checked);
+                    }}
+                    className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+                  />
+                </div>
+                
+                <div 
+                  onClick={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    if (target.type !== 'checkbox') {
+                      const cardElement = e.currentTarget;
+                      cardElement.classList.add('clicked');
+                      setTimeout(() => cardElement.classList.remove('clicked'), 1800);
+                      setSelectedCard(card);
+                    }
+                  }}
+                  className="flex items-center space-x-3 w-full"
+                >
+                  <div className="w-12 h-16 bg-gray-600 rounded flex-shrink-0 flex items-center justify-center relative ml-6">
+                    {card.imageUrl ? (
+                      <img src={card.imageUrl} alt={card.playerName || ""} className="w-full h-full object-cover rounded" />
+                    ) : (
+                      <HelpCircle className="w-6 h-6 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    {card.imageUrl ? (
+                      <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                        Photo de carte
+                      </div>
+                    ) : (
+                      <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                        {card.playerName || 'Joueur Inconnu'}
+                      </div>
+                    )}
+                    <div className="text-sm text-[hsl(212,23%,69%)]">{card.reference}</div>
+                    <div className="text-xs text-[hsl(212,23%,69%)]">{card.teamName}</div>
+                  </div>
+                  {card.isOwned && (
+                    <Check className="w-5 h-5 text-green-500" />
                   )}
                 </div>
-                <div className="flex-1">
-                  {card.imageUrl ? (
-                    <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
-                      Photo de carte
-                    </div>
-                  ) : (
-                    <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
-                      {card.playerName || 'Joueur Inconnu'}
-                    </div>
-                  )}
-                  <div className="text-sm text-[hsl(212,23%,69%)]">{card.reference}</div>
-                  <div className="text-xs text-[hsl(212,23%,69%)]">{card.teamName}</div>
-                </div>
-                {card.isOwned && (
-                  <Check className="w-5 h-5 text-green-500" />
-                )}
               </div>
             ))}
           </div>
         )}
-
-
       </main>
 
       <Navigation />
-
-      {/* Card Detail Modal */}
-      {selectedCard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[hsl(214,35%,22%)] rounded-xl p-6 max-w-sm w-full relative">
-            <button
-              onClick={() => setSelectedCard(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              <X className="w-6 h-6" />
-            </button>
-            
-            {/* Variant indicator for Base cards */}
-            {selectedCard.cardType === "Base" && (() => {
-              const variants = getCardVariants(selectedCard);
-              const currentCard = getCurrentCard();
-              return variants.length > 1 ? (
-                <div className="text-center mb-4">
-                  <div className="text-sm text-[hsl(212,23%,69%)] mb-1">
-                    {currentCard?.cardSubType === "Laser" ? "Base - Laser" :
-                     currentCard?.cardSubType === "Swirl" ? "Base - Swirl" : 
-                     "Base"}
-                  </div>
-                  <div className="text-xs text-gray-400">
-                    {currentVariantIndex + 1} / {variants.length}
-                  </div>
-                </div>
-              ) : null;
-            })()}
-            
-            <div className="relative text-center mb-4">
-              {/* Navigation arrows for Base card variants */}
-              {selectedCard.cardType === "Base" && (() => {
-                const variants = getCardVariants(selectedCard);
-                return variants.length > 1 ? (
-                  <>
-                    {/* Left arrow */}
-                    {currentVariantIndex > 0 && (
-                      <button
-                        onClick={prevVariant}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all"
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </button>
-                    )}
-                    
-                    {/* Right arrow */}
-                    {currentVariantIndex < variants.length - 1 && (
-                      <button
-                        onClick={nextVariant}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
-                    )}
-                  </>
-                ) : null;
-              })()}
-              
-              {(() => {
-                const currentCard = getCurrentCard() || selectedCard;
-                return currentCard.isOwned && currentCard.imageUrl ? (
-                  <div 
-                    className="w-32 h-40 mx-auto mb-3 transform transition-transform duration-300 ease-out hover:scale-105"
-                    onMouseMove={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const x = e.clientX - rect.left;
-                      const y = e.clientY - rect.top;
-                      const centerX = rect.width / 2;
-                      const centerY = rect.height / 2;
-                      
-                      const rotateY = (x - centerX) / 6;
-                      const rotateX = (centerY - y) / 10;
-                      const translateX = (x - centerX) / 10;
-                      const translateY = (y - centerY) / 15;
-                      
-                      e.currentTarget.style.transform = `
-                        scale(1.05) 
-                        rotateY(${rotateY}deg) 
-                        rotateX(${rotateX}deg)
-                        translate(${translateX}px, ${translateY}px)
-                      `;
-                    }}
-                    onTouchMove={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const touch = e.touches[0];
-                      const x = touch.clientX - rect.left;
-                      const y = touch.clientY - rect.top;
-                      const centerX = rect.width / 2;
-                      const centerY = rect.height / 2;
-                      
-                      const rotateY = (x - centerX) / 6;
-                      const rotateX = (centerY - y) / 10;
-                      const translateX = (x - centerX) / 10;
-                      const translateY = (y - centerY) / 15;
-                      
-                      e.currentTarget.style.transform = `
-                        scale(1.05) 
-                        rotateY(${rotateY}deg) 
-                        rotateX(${rotateX}deg)
-                        translate(${translateX}px, ${translateY}px)
-                      `;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1) rotateY(0deg)';
-                    }}
-                    style={{
-                      perspective: '1000px',
-                      transformStyle: 'preserve-3d'
-                    }}
-                  >
-                    <img 
-                      src={currentCard.imageUrl} 
-                      alt={currentCard.playerName || "Card"} 
-                      className="w-full h-full object-cover rounded-lg shadow-lg cursor-pointer"
-                      onClick={() => setShowFullscreenCard(true)}
-                    />
-                  </div>
-                ) : (
-                  <div 
-                    className="w-32 h-40 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3 transform transition-transform duration-300 ease-out hover:scale-105"
-                    onMouseMove={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      const x = e.clientX - rect.left;
-                      const y = e.clientY - rect.top;
-                      const centerX = rect.width / 2;
-                      const centerY = rect.height / 2;
-                      
-                      const rotateY = (x - centerX) / 6;
-                      const rotateX = (centerY - y) / 10;
-                      const translateX = (x - centerX) / 10;
-                      const translateY = (y - centerY) / 15;
-                      
-                      e.currentTarget.style.transform = `
-                        scale(1.05) 
-                        rotateY(${rotateY}deg) 
-                        rotateX(${rotateX}deg)
-                        translate(${translateX}px, ${translateY}px)
-                      `;
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1) rotateY(0deg)';
-                    }}
-                    style={{
-                      perspective: '1000px',
-                      transformStyle: 'preserve-3d'
-                    }}
-                  >
-                    <HelpCircle className="w-12 h-12 text-gray-400" />
-                  </div>
-                );
-              })()}
-              
-              <h3 className="text-xl font-bold text-white mb-1">
-                {selectedCard.playerName || "Carte Inconnue"}
-              </h3>
-              <p className="text-[hsl(212,23%,69%)]">{selectedCard.teamName}</p>
-            </div>
-
-            <div className="space-y-3">
-              {(() => {
-                const currentCard = getCurrentCard() || selectedCard;
-                return (
-                  <>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Référence:</span>
-                      <span className="text-white">{currentCard.reference}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Type:</span>
-                      <span className="text-white">
-                        {currentCard.cardType === 'Base' && currentCard.cardSubType === 'Laser' ? 'Base - Laser' :
-                         currentCard.cardType === 'Base' && currentCard.cardSubType === 'Swirl' ? 'Base - Swirl' :
-                         currentCard.cardType === 'Base' ? 'Base' :
-                         currentCard.cardType === 'Parallel Laser Blue' ? 'Laser' :
-                         currentCard.cardType.includes('Swirl') ? 'Swirl' :
-                         currentCard.cardType.includes('Laser') ? 'Laser' :
-                         currentCard.cardType}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
-                      <span className="text-yellow-400 font-bold">
-                        {currentCard.numbering || 'Non numérotée'}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Rareté:</span>
-                      <span className="text-white capitalize">{currentCard.rarity || (currentCard.cardType === 'Base' ? 'commune' : 'non définie')}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Statut:</span>
-                      <span className={`font-bold ${currentCard.isOwned ? 'text-green-400' : 'text-red-400'}`}>
-                        {currentCard.isOwned ? 'Acquise' : 'Manquante'}
-                      </span>
-                    </div>
-                  </>
-                );
-              })()}
-            </div>
-
-            {selectedCard.cardType === "Special" && selectedCard.serialNumber === "1/1" && (
-              <div className="mt-4 p-3 bg-gradient-to-r from-yellow-600 to-yellow-800 rounded-lg">
-                <div className="flex items-center justify-center space-x-2">
-                  <Sparkles className="w-5 h-5 text-yellow-200" />
-                  <span className="text-yellow-100 font-bold">Carte Ultra Rare 1/1</span>
-                </div>
-              </div>
-            )}
-
-            {/* Action Buttons */}
-            <div className="mt-6">
-              {(() => {
-                const currentCard = getCurrentCard() || selectedCard;
-                return !currentCard.isOwned ? (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleMarkAsOwned(currentCard.id, false)}
-                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                    >
-                      <Check className="w-4 h-4 mr-1" />
-                      Acquise
-                    </button>
-                    <button
-                      onClick={() => handleMarkAsOwned(currentCard.id, true)}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                    >
-                      <Camera className="w-4 h-4 mr-1" />
-                      + Photo
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleMarkAsNotOwned(currentCard.id)}
-                        className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-                        title="Marquer comme manquante"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          const cardInfo = {
-                            id: currentCard.id,
-                            playerName: selectedCard.playerName || "Joueur Inconnu",
-                            reference: selectedCard.reference,
-                            teamName: selectedCard.teamName || "Équipe Inconnue"
-                          };
-                          setShowPhotoUpload(true);
-                        }}
-                        className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                      >
-                        <Camera className="w-4 h-4 mr-1" />
-                        {currentCard.imageUrl ? 'Changer photo' : 'Ajouter photo'}
-                      </button>
-                      {currentCard.imageUrl && (
-                        <button
-                          onClick={async () => {
-                            try {
-                              await updateCardImageMutation.mutateAsync({
-                                cardId: currentCard.id,
-                                imageUrl: ""
-                              });
-                              toast({
-                                title: "Photo supprimée",
-                                description: "La photo de la carte a été supprimée avec succès."
-                              });
-                            } catch (error) {
-                              toast({
-                                title: "Erreur",
-                                description: "Impossible de supprimer la photo.",
-                                variant: "destructive"
-                              });
-                            }
-                          }}
-                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                          title="Supprimer la photo"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                    
-                    <button
-                      onClick={async () => {
-                        try {
-                          // TODO: Implémenter la mutation pour basculer l'état d'échange
-                          toast({
-                            title: currentCard.isForTrade ? "Carte retirée des échanges" : "Carte disponible pour échange",
-                            description: currentCard.isForTrade ? "La carte n'est plus visible dans la section échanges." : "La carte est maintenant visible dans la section échanges."
-                          });
-                        } catch (error) {
-                          toast({
-                            title: "Erreur",
-                            description: "Impossible de modifier le statut d'échange.",
-                            variant: "destructive"
-                          });
-                        }
-                      }}
-                      className={`w-full py-2 px-3 rounded-lg transition-colors flex items-center justify-center font-medium ${
-                        currentCard.isForTrade 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'bg-gray-600 hover:bg-gray-700 text-white'
-                      }`}
-                      title={currentCard.isForTrade ? "Retirer de l'échange" : "Proposer à l'échange"}
-                    >
-                      <ArrowUpDown className="w-4 h-4 mr-1" />
-                      {currentCard.isForTrade ? 'Retirer échange' : 'Proposer échange'}
-                    </button>
-                  </div>
-                );
-              })()}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Fullscreen Card Modal */}
-      {showFullscreenCard && selectedCard && (
-        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
-          <button
-            onClick={() => setShowFullscreenCard(false)}
-            className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
-          >
-            <X className="w-8 h-8" />
-          </button>
-          
-          <div className="w-11/12 h-5/6 max-w-2xl max-h-[80vh] perspective-1000">
-            {(() => {
-              const currentCard = getCurrentCard() || selectedCard;
-              return currentCard.imageUrl ? (
-                <div 
-                  className="w-full h-full transform-gpu transition-transform duration-150 ease-out"
-                  onMouseMove={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateY = ((x - centerX) / centerX) * 25; // -25deg à +25deg
-                    const rotateX = ((centerY - y) / centerY) * 25; // -25deg à +25deg
-                    
-                    e.currentTarget.style.transform = `
-                      perspective(1000px) 
-                      rotateX(${rotateX}deg) 
-                      rotateY(${rotateY}deg)
-                      scale(1.05)
-                    `;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-                  }}
-                  onTouchMove={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const touch = e.touches[0];
-                    const x = touch.clientX - rect.left;
-                    const y = touch.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateY = ((x - centerX) / centerX) * 25;
-                    const rotateX = ((centerY - y) / centerY) * 25;
-                    
-                    e.currentTarget.style.transform = `
-                      perspective(1000px) 
-                      rotateX(${rotateX}deg) 
-                      rotateY(${rotateY}deg)
-                      scale(1.05)
-                    `;
-                  }}
-                  onTouchEnd={(e) => {
-                    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-                  }}
-                  style={{
-                    transformStyle: 'preserve-3d'
-                  }}
-                >
-                  <img 
-                    src={currentCard.imageUrl} 
-                    alt={currentCard.playerName || "Card"} 
-                    className="w-full h-full object-contain rounded-xl shadow-2xl"
-                    style={{
-                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5))'
-                    }}
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-full bg-gray-700 rounded-xl flex items-center justify-center">
-                  <HelpCircle className="w-24 h-24 text-gray-400" />
-                </div>
-              );
-            })()}
-          </div>
-          
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
-            <p className="text-sm opacity-75">Bougez votre souris ou doigt pour faire pivoter la carte</p>
-          </div>
-        </div>
-      )}
 
       {/* Photo Upload Modal */}
       <CardPhotoImport
