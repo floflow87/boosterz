@@ -191,8 +191,8 @@ export default function CollectionDetail() {
     
     // Sort variants: Base first, then Laser, then Swirl
     return variants.sort((a, b) => {
-      const order = { '': 0, 'Laser': 1, 'Swirl': 2 };
-      return order[a.cardSubType || ''] - order[b.cardSubType || ''];
+      const order: Record<string, number> = { '': 0, 'Laser': 1, 'Swirl': 2 };
+      return (order[a.cardSubType || ''] || 0) - (order[b.cardSubType || ''] || 0);
     });
   };
 
@@ -455,6 +455,12 @@ export default function CollectionDetail() {
                   <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
                     <HelpCircle className="w-8 h-8 text-gray-400" />
                   </div>
+                  {/* Flèches de navigation pour les cartes Base */}
+                  {card.cardType === 'Base' && getCardVariants(card).length > 1 && (
+                    <div className="absolute top-1/2 -translate-y-1/2 right-2">
+                      <ChevronRight className="w-5 h-5 text-orange-500" />
+                    </div>
+                  )}
                   <div className="text-xs mt-1 text-center">
                     <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
                       {card.playerName || 'Joueur Inconnu'}
