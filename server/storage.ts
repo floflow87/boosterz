@@ -20,6 +20,7 @@ export interface IStorage {
   getCard(id: number): Promise<Card | undefined>;
   createCard(card: InsertCard): Promise<Card>;
   updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined>;
+  updateCardImage(id: number, imageUrl: string): Promise<Card | undefined>;
   toggleCardOwnership(id: number): Promise<Card | undefined>;
   
   // User Cards

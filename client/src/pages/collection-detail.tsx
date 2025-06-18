@@ -24,6 +24,23 @@ export default function CollectionDetail() {
     queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
   }, [collectionId, queryClient]);
 
+  const updateCardImageMutation = useMutation({
+    mutationFn: async ({ cardId, imageData }: { cardId: number; imageData: string }) => {
+      return apiRequest("PATCH", `/api/cards/${cardId}/image`, { imageUrl: imageData });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+    }
+  });
+
+  const handlePhotoSave = (imageData: string) => {
+    if (selectedCard) {
+      updateCardImageMutation.mutate({ cardId: selectedCard.id, imageData });
+    }
+    setShowPhotoUpload(false);
+    setSelectedCard(null);
+  };
+
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
     queryKey: [`/api/collections/${collectionId}`],
   });
@@ -337,9 +354,12 @@ export default function CollectionDetail() {
 
         {/* Action Buttons */}
         <div className="flex space-x-3 mt-6">
-          <button className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 rounded-xl font-semibold">
+          <button 
+            onClick={() => setShowPhotoUpload(true)}
+            className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 rounded-xl font-semibold hover:bg-[hsl(9,85%,60%)] transition-colors"
+          >
             <Plus className="w-5 h-5 inline mr-2" />
-            Ajouter carte
+            Ajouter photo
           </button>
         </div>
       </main>
@@ -414,6 +434,13 @@ export default function CollectionDetail() {
           </div>
         </div>
       )}
+
+      {/* Photo Upload Modal */}
+      <PhotoUploadModal
+        isOpen={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        onSave={handlePhotoSave}
+      />
     </div>
   );
 }
