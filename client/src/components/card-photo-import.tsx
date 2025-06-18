@@ -533,7 +533,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
               {selectedImage && (
                 <div className="mb-4 text-center">
                   <img
-                    src={selectedImage}
+                    src={selectedImage || ""}
                     alt="Photo importée"
                     className="w-32 h-40 object-cover rounded-lg mx-auto border-2 border-gray-200"
                   />

@@ -137,26 +137,21 @@
     gap: 1.5rem;
   }
 
-  /* Animation de contour vert dynamique pour les cartes complètes */
-  @keyframes border-chase {
-    0% {
-      background-position: 0% 50%;
+  /* Animation de pulsation verte pour les cartes complètes */
+  @keyframes green-pulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
     }
-    10% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 100% 50%;
+    50% {
+      box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
     }
   }
 
   .animated-border {
     position: relative;
-    background: linear-gradient(90deg, transparent 45%, #10b981 50%, transparent 55%);
-    background-size: 400% 100%;
-    animation: border-chase 12s ease-in-out infinite;
+    border: 2px solid #10b981;
     border-radius: 0.5rem;
-    padding: 2px;
+    animation: green-pulse 3s ease-in-out infinite;
   }
 
   .animated-border .card-content {
