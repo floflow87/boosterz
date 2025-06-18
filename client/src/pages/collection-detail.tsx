@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search, Trash2, Camera } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -22,6 +22,7 @@ export default function CollectionDetail() {
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showFullscreenCard, setShowFullscreenCard] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -682,7 +683,8 @@ export default function CollectionDetail() {
                     <img 
                       src={currentCard.imageUrl} 
                       alt={currentCard.playerName || "Card"} 
-                      className="w-full h-full object-cover rounded-lg shadow-lg"
+                      className="w-full h-full object-cover rounded-lg shadow-lg cursor-pointer"
+                      onClick={() => setShowFullscreenCard(true)}
                     />
                   </div>
                 ) : (
@@ -778,34 +780,34 @@ export default function CollectionDetail() {
             )}
 
             {/* Action Buttons */}
-            <div className="mt-6 space-y-3">
+            <div className="mt-6">
               {(() => {
                 const currentCard = getCurrentCard() || selectedCard;
                 return !currentCard.isOwned ? (
-                  <>
+                  <div className="flex gap-2">
                     <button
                       onClick={() => handleMarkAsOwned(currentCard.id, false)}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                      className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                     >
-                      <Check className="w-5 h-5 inline mr-2" />
-                      Marquer comme possédée
+                      <Check className="w-4 h-4 mr-1" />
+                      Acquise
                     </button>
                     <button
                       onClick={() => handleMarkAsOwned(currentCard.id, true)}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                     >
-                      <Plus className="w-5 h-5 inline mr-2" />
-                      Posséder + Ajouter photo
+                      <Camera className="w-4 h-4 mr-1" />
+                      + Photo
                     </button>
-                  </>
+                  </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => handleMarkAsNotOwned(currentCard.id)}
-                      className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                      className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                      title="Marquer comme manquante"
                     >
-                      <X className="w-5 h-5 inline mr-2" />
-                      Marquer comme manquante
+                      <X className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => {
@@ -818,10 +820,10 @@ export default function CollectionDetail() {
                         setSelectedCard(null);
                         setShowPhotoUpload(true);
                       }}
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                      className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                     >
-                      <Plus className="w-5 h-5 inline mr-2" />
-                      {currentCard.imageUrl ? 'Changer la photo' : 'Ajouter une photo'}
+                      <Camera className="w-4 h-4 mr-1" />
+                      {currentCard.imageUrl ? 'Changer photo' : 'Ajouter photo'}
                     </button>
                     {currentCard.imageUrl && (
                       <button
@@ -843,16 +845,100 @@ export default function CollectionDetail() {
                             });
                           }
                         }}
-                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                        title="Supprimer la photo"
                       >
-                        <X className="w-4 h-4 inline mr-2" />
-                        Supprimer la photo
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     )}
                   </div>
                 );
               })()}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Card Modal */}
+      {showFullscreenCard && selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+          <button
+            onClick={() => setShowFullscreenCard(false)}
+            className="absolute top-4 right-4 text-white hover:text-gray-300 z-10"
+          >
+            <X className="w-8 h-8" />
+          </button>
+          
+          <div className="w-3/4 h-3/4 max-w-lg max-h-96 perspective-1000">
+            {(() => {
+              const currentCard = getCurrentCard() || selectedCard;
+              return currentCard.imageUrl ? (
+                <div 
+                  className="w-full h-full transform-gpu transition-transform duration-150 ease-out"
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateY = ((x - centerX) / centerX) * 25; // -25deg à +25deg
+                    const rotateX = ((centerY - y) / centerY) * 25; // -25deg à +25deg
+                    
+                    e.currentTarget.style.transform = `
+                      perspective(1000px) 
+                      rotateX(${rotateX}deg) 
+                      rotateY(${rotateY}deg)
+                      scale(1.05)
+                    `;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                  }}
+                  onTouchMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const touch = e.touches[0];
+                    const x = touch.clientX - rect.left;
+                    const y = touch.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateY = ((x - centerX) / centerX) * 25;
+                    const rotateX = ((centerY - y) / centerY) * 25;
+                    
+                    e.currentTarget.style.transform = `
+                      perspective(1000px) 
+                      rotateX(${rotateX}deg) 
+                      rotateY(${rotateY}deg)
+                      scale(1.05)
+                    `;
+                  }}
+                  onTouchEnd={(e) => {
+                    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                  }}
+                  style={{
+                    transformStyle: 'preserve-3d'
+                  }}
+                >
+                  <img 
+                    src={currentCard.imageUrl} 
+                    alt={currentCard.playerName || "Card"} 
+                    className="w-full h-full object-contain rounded-xl shadow-2xl"
+                    style={{
+                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5))'
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-700 rounded-xl flex items-center justify-center">
+                  <HelpCircle className="w-24 h-24 text-gray-400" />
+                </div>
+              );
+            })()}
+          </div>
+          
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
+            <p className="text-sm opacity-75">Bougez votre souris ou doigt pour faire pivoter la carte</p>
           </div>
         </div>
       )}

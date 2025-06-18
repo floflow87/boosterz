@@ -142,16 +142,19 @@
     0% {
       background-position: 0% 50%;
     }
+    15% {
+      background-position: 100% 50%;
+    }
     100% {
-      background-position: 200% 50%;
+      background-position: 100% 50%;
     }
   }
 
   .animated-border {
     position: relative;
-    background: linear-gradient(90deg, transparent, #10b981, transparent);
-    background-size: 200% 100%;
-    animation: border-chase 3s linear infinite;
+    background: linear-gradient(90deg, transparent 40%, #10b981 50%, transparent 60%);
+    background-size: 300% 100%;
+    animation: border-chase 6s ease-in-out infinite;
     border-radius: 0.5rem;
     padding: 2px;
   }
