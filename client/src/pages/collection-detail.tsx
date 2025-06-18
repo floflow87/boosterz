@@ -10,6 +10,7 @@ import CardVariantsCarousel from "@/components/card-variants-carousel";
 import { apiRequest } from "@/lib/queryClient";
 import type { Collection, Card } from "@shared/schema";
 import scoreLigue1Logo from "@assets/image 29_1750232088999.png";
+import headerBackground from "@assets/Ellipse 419_1750248420742.png";
 
 export default function CollectionDetail() {
   const params = useParams();
@@ -135,28 +136,36 @@ export default function CollectionDetail() {
       <Header title={collection.name} showBackButton />
 
       <main className="relative z-10 px-4 pb-24">
-        {/* Collection Header - Plus compact */}
+        {/* Collection Header avec fond personnalisé */}
         <div className="text-center mb-4">
-          <div className="bg-gradient-to-r from-[hsl(9,85%,67%)] to-[hsl(25,100%,70%)] rounded-xl p-4 mb-3">
+          <div 
+            className="relative rounded-xl p-6 mb-3 overflow-hidden"
+            style={{
+              backgroundImage: `url(${headerBackground})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          >
             {collection.name === 'SCORE LIGUE 1' ? (
-              <>
-                <div className="flex items-center justify-center space-x-3">
-                  <div className="w-12 h-12 flex items-center justify-center">
-                    <img 
-                      src={scoreLigue1Logo} 
-                      alt="Score Ligue 1 logo"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <h1 className="text-xl font-bold text-white font-luckiest">{collection.name}</h1>
+              <div className="relative z-10 flex flex-col items-center space-y-3">
+                <div className="w-16 h-16 flex items-center justify-center">
+                  <img 
+                    src={scoreLigue1Logo} 
+                    alt="Score Ligue 1 logo"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-                <p className="text-white opacity-90 font-poppins">{collection.season}</p>
-              </>
+                <div className="text-center">
+                  <h1 className="text-2xl font-bold text-white font-luckiest">{collection.name}</h1>
+                  <p className="text-white opacity-90 font-poppins text-sm">{collection.season}</p>
+                </div>
+              </div>
             ) : (
-              <>
-                <h1 className="text-xl font-bold text-white font-luckiest mb-2">{collection.name}</h1>
-                <p className="text-white opacity-90 font-poppins">{collection.season}</p>
-              </>
+              <div className="relative z-10 text-center">
+                <h1 className="text-2xl font-bold text-white font-luckiest mb-2">{collection.name}</h1>
+                <p className="text-white opacity-90 font-poppins text-sm">{collection.season}</p>
+              </div>
             )}
           </div>
 
