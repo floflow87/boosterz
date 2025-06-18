@@ -99,7 +99,12 @@ export default function CollectionDetail() {
   const ownedCount = cards?.filter(card => card.isOwned).length || 0;
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
-  const basesCount = cards?.filter(card => card.cardType.toLowerCase() === "base").length || 0;
+  const basesCount = cards?.filter(card => 
+    card.cardType.toLowerCase() === "base" || 
+    card.cardType.toLowerCase().includes("parallel") || 
+    card.cardType.toLowerCase().includes("laser") || 
+    card.cardType.toLowerCase().includes("swirl")
+  ).length || 0;
   const basesNumberedCount = cards?.filter(card => card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber)).length || 0;
   const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
