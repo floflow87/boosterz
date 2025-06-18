@@ -47,6 +47,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const [selectedCardId, setSelectedCardId] = useState<number | undefined>();
   const [isProcessing, setIsProcessing] = useState(false);
   const [playerName, setPlayerName] = useState<string>("");
+  const [cardNumber, setCardNumber] = useState<string>("");
   const [playerCards, setPlayerCards] = useState<Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [playerSuggestions, setPlayerSuggestions] = useState<string[]>([]);
@@ -168,6 +169,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         setRecognizedCard(`${result.playerName} - ${result.matchedCard.cardNumber}`);
         setSelectedCardId(result.matchedCard.id);
         setPlayerName(result.playerName);
+        setCardNumber(result.matchedCard.cardNumber);
         
         // Find all cards for this player
         const cardsForPlayer = availableCards.filter(card => 
@@ -177,6 +179,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       } else if (result.playerName) {
         setRecognizedCard(`${result.playerName} (Équipe: ${result.teamName})`);
         setPlayerName(result.playerName);
+        setCardNumber("");
         
         // Find cards for this player
         const cardsForPlayer = availableCards.filter(card => 
@@ -185,11 +188,13 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         setPlayerCards(cardsForPlayer);
         if (cardsForPlayer.length > 0) {
           setSelectedCardId(cardsForPlayer[0].id);
+          setCardNumber(cardsForPlayer[0].cardNumber);
         }
       } else {
         // Fallback if no recognition
         setRecognizedCard("Aucune reconnaissance automatique");
         setPlayerName("");
+        setCardNumber("");
         setPlayerCards([]);
       }
       
@@ -273,6 +278,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     setSelectedCardId(undefined);
     setIsProcessing(false);
     setPlayerName("");
+    setCardNumber("");
     setPlayerCards([]);
     setShowSuggestions(false);
     setPlayerSuggestions([]);
@@ -610,13 +616,18 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">
-                    Numéro de carte (optionnel)
+                    Numéro de carte
                   </label>
                   <Input
                     type="text"
                     placeholder="Ex: #001, #A01, #NU01..."
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
                     className="w-full mb-3"
                   />
+                  <p className="text-xs text-gray-500 mb-3">
+                    Modifiez le numéro si la reconnaissance n'est pas correcte
+                  </p>
                   
                   <label className="block text-sm font-medium text-black mb-2">
                     Type de carte (optionnel)

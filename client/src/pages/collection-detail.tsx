@@ -311,7 +311,7 @@ export default function CollectionDetail() {
                     : "border-gray-600 bg-opacity-50"
                 } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}
               >
-              {card.isOwned && card.imageUrl ? (
+              {card.imageUrl ? (
                 <>
                   <img 
                     src={card.imageUrl} 
@@ -321,19 +321,24 @@ export default function CollectionDetail() {
                   <div className="absolute top-1 right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                     <Check className="w-3 h-3 text-white" />
                   </div>
+                  <div className="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                    {card.cardNumber}
+                  </div>
                 </>
               ) : (
-                <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
-                  <HelpCircle className="w-8 h-8 text-gray-400" />
-                </div>
+                <>
+                  <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
+                    <HelpCircle className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <div className="text-xs mt-1 text-center">
+                    <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                      {card.playerName || 'Joueur Inconnu'}
+                    </div>
+                    <div className="text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
+                    <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
+                  </div>
+                </>
               )}
-              <div className="text-xs mt-1 text-center">
-                <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
-                  {card.playerName || 'Joueur Inconnu'}
-                </div>
-                <div className="text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
-                <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
-              </div>
             </div>
             ))}
           </div>
@@ -348,17 +353,23 @@ export default function CollectionDetail() {
                     ? "border-green-500" 
                     : "border-gray-600"
                 }`}>
-                <div className="w-12 h-16 bg-gray-600 rounded flex-shrink-0 flex items-center justify-center">
-                  {card.isOwned && card.imageUrl ? (
+                <div className="w-12 h-16 bg-gray-600 rounded flex-shrink-0 flex items-center justify-center relative">
+                  {card.imageUrl ? (
                     <img src={card.imageUrl} alt={card.playerName || ""} className="w-full h-full object-cover rounded" />
                   ) : (
                     <HelpCircle className="w-6 h-6 text-gray-400" />
                   )}
                 </div>
                 <div className="flex-1">
-                  <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
-                    {card.playerName || 'Joueur Inconnu'}
-                  </div>
+                  {card.imageUrl ? (
+                    <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                      Photo de carte
+                    </div>
+                  ) : (
+                    <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                      {card.playerName || 'Joueur Inconnu'}
+                    </div>
+                  )}
                   <div className="text-sm text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
                   <div className="text-xs text-[hsl(212,23%,69%)]">{card.teamName}</div>
                 </div>
