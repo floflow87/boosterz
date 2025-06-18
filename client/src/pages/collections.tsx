@@ -241,7 +241,7 @@ export default function Collections() {
                       {collection.name === 'SCORE LIGUE 1' ? (
                         <>
                           <img 
-                            src="/attached_assets/image 29_1750232088999.png" 
+                            src="/attached_assets/image%2029_1750232088999.png" 
                             alt="Score Ligue 1 logo"
                             className="w-16 h-16 object-contain mx-auto mb-2"
                           />

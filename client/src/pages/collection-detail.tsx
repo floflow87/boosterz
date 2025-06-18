@@ -5,7 +5,7 @@ import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X,
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
-import PhotoUploadModal from "@/components/photo-upload-modal";
+import CardPhotoImport from "@/components/card-photo-import";
 import { apiRequest } from "@/lib/queryClient";
 import type { Collection, Card } from "@shared/schema";
 
@@ -135,7 +135,7 @@ export default function CollectionDetail() {
               <>
                 <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                   <img 
-                    src="/attached_assets/image 29_1750232088999.png" 
+                    src="/attached_assets/image%2029_1750232088999.png" 
                     alt="Score Ligue 1 logo"
                     className="w-full h-full object-contain"
                   />
@@ -194,7 +194,10 @@ export default function CollectionDetail() {
             </button>
           </div>
           
-          <button className="bg-[hsl(9,85%,67%)] text-white p-2 rounded-lg hover:bg-[hsl(9,85%,57%)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 animate-pulse-glow">
+          <button 
+            onClick={() => setShowPhotoUpload(true)}
+            className="bg-[hsl(9,85%,67%)] text-white p-2 rounded-lg hover:bg-[hsl(9,85%,57%)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 animate-pulse-glow"
+          >
             <Plus className="w-5 h-5" />
           </button>
         </div>
@@ -368,23 +371,7 @@ export default function CollectionDetail() {
           </div>
         )}
 
-        {/* Action Buttons */}
-        <div className="flex space-x-3 mt-6">
-          <button 
-            onClick={() => {
-              // Select first card for demo purposes
-              const firstCard = filteredCards?.[0];
-              if (firstCard) {
-                setSelectedCard(firstCard);
-                setShowPhotoUpload(true);
-              }
-            }}
-            className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 rounded-xl font-semibold hover:bg-[hsl(9,85%,60%)] transition-colors"
-          >
-            <Plus className="w-5 h-5 inline mr-2" />
-            Ajouter photo
-          </button>
-        </div>
+
       </main>
 
       <Navigation />
