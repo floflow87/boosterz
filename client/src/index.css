@@ -169,7 +169,7 @@
     position: relative;
     border: 2px solid #10b981;
     border-radius: 0.5rem;
-    animation: green-pulse-sonar 5s infinite;
+    animation: green-pulse-sonar 12s infinite;
   }
 
   .animated-border .card-content {

@@ -228,6 +228,41 @@ export default function CollectionDetail() {
     return variants.length >= 3 && variants.every(variant => variant.isOwned);
   };
 
+  // Check if a category is complete
+  const isCategoryComplete = (cardType: string) => {
+    if (!cards) return false;
+    
+    let categoryCards: Card[] = [];
+    
+    switch (cardType) {
+      case "bases":
+        categoryCards = cards.filter(card => card.cardType === "Base" && (!card.cardSubType || card.cardSubType === ''));
+        break;
+      case "bases_numbered":
+        categoryCards = cards.filter(card => card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl"));
+        break;
+      case "autographs":
+        categoryCards = cards.filter(card => card.cardType === "Autograph");
+        break;
+      case "hits":
+        categoryCards = cards.filter(card => card.cardType.includes("Insert"));
+        break;
+      case "special_1_1":
+        categoryCards = cards.filter(card => card.cardType === "special_1_1" || card.numbering === "1/1");
+        break;
+      default:
+        return false;
+    }
+    
+    return categoryCards.length > 0 && categoryCards.every(card => card.isOwned);
+  };
+
+  // Check if all cards in collection are owned (master completion)
+  const isCollectionComplete = () => {
+    if (!cards) return false;
+    return cards.every(card => card.isOwned);
+  };
+
   // Handle card selection with variant reset
   const handleCardSelect = (card: Card) => {
     setSelectedCard(card);
@@ -375,7 +410,7 @@ export default function CollectionDetail() {
                 filter === "bases" 
                   ? "bg-gray-500 text-white shadow-lg transform scale-105" 
                   : "bg-gray-600 text-gray-300 hover:bg-gray-500"
-              }`}
+              } ${isCategoryComplete("bases") ? "animated-border" : ""}`}
             >
               <Star className="w-4 h-4 inline mr-1" />
               Bases ({basesCount})
@@ -386,7 +421,7 @@ export default function CollectionDetail() {
                 filter === "bases_numbered" 
                   ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
                   : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              }`}
+              } ${isCategoryComplete("bases_numbered") ? "animated-border" : ""}`}
             >
               <Check className="w-4 h-4 inline mr-1" />
               Bases numérotées ({basesNumberedCount})
@@ -397,7 +432,7 @@ export default function CollectionDetail() {
                 filter === "autographs" 
                   ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
                   : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
-              }`}
+              } ${isCategoryComplete("autographs") ? "animated-border" : ""}`}
             >
               <HelpCircle className="w-4 h-4 inline mr-1" />
               Autographes ({autographsCount})
@@ -408,7 +443,7 @@ export default function CollectionDetail() {
                 filter === "hits" 
                   ? "bg-purple-500 text-white shadow-lg transform scale-105" 
                   : "bg-purple-600 text-purple-100 hover:bg-purple-500"
-              }`}
+              } ${isCategoryComplete("hits") ? "animated-border" : ""}`}
             >
               <Star className="w-4 h-4 inline mr-1" />
               Hit ({hitsCount})
