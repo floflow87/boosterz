@@ -78,13 +78,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/cards/:id/image", async (req, res) => {
     try {
       const cardId = parseInt(req.params.id);
-      const { imageUrl } = req.body;
+      const { imageUrl, imageData } = req.body;
       
-      if (!imageUrl) {
-        return res.status(400).json({ message: "Image URL is required" });
+      // Accept either imageUrl or imageData (for compatibility)
+      const finalImageUrl = imageUrl || imageData;
+      
+      if (finalImageUrl === undefined) {
+        return res.status(400).json({ message: "Image URL or image data is required" });
       }
       
-      const card = await storage.updateCardImage(cardId, imageUrl);
+      // Allow empty string for deletion
+      const card = await storage.updateCardImage(cardId, finalImageUrl);
       
       if (!card) {
         return res.status(404).json({ message: "Card not found" });
