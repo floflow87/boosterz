@@ -868,7 +868,7 @@ export default function CollectionDetail() {
             <X className="w-8 h-8" />
           </button>
           
-          <div className="w-3/4 h-3/4 max-w-lg max-h-96 perspective-1000">
+          <div className="w-11/12 h-5/6 max-w-2xl max-h-[80vh] perspective-1000">
             {(() => {
               const currentCard = getCurrentCard() || selectedCard;
               return currentCard.imageUrl ? (
