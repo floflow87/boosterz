@@ -222,7 +222,7 @@ export class MemStorage implements IStorage {
       {
         id: 3,
         userId: 1,
-        name: "ARGENTINA",
+        name: "Set 125 ans OM",
         season: "22/23",
         totalCards: 89,
         ownedCards: 82,
@@ -1378,7 +1378,7 @@ export class MemStorage implements IStorage {
         serialNumber: null
       },
       // Hit Cards (Score Team, Keepers, Hot Rookies, Pure Class, Breakthrough, Pennants, Intergalactic, Next Up)
-      // Score Team
+      // Score Team (/10)
       {
         id: 200,
         collectionId: 1,
@@ -1386,12 +1386,12 @@ export class MemStorage implements IStorage {
         playerName: "Mbappé",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "score_team",
+        cardSubType: "Score Team",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "3/10"
       },
       {
         id: 201,
@@ -1400,14 +1400,14 @@ export class MemStorage implements IStorage {
         playerName: "Ben Yedder",
         teamName: "AS Monaco",
         cardType: "Hit",
-        cardSubType: "score_team",
+        cardSubType: "Score Team",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "7/10"
       },
-      // Keepers
+      // Keepers (/15)
       {
         id: 202,
         collectionId: 1,
@@ -1415,12 +1415,12 @@ export class MemStorage implements IStorage {
         playerName: "Donnarumma",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "keepers",
+        cardSubType: "Keepers",
         imageUrl: null,
         isOwned: true,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "8/15"
       },
       {
         id: 203,
@@ -1429,14 +1429,14 @@ export class MemStorage implements IStorage {
         playerName: "Köhn",
         teamName: "AS Monaco",
         cardType: "Hit",
-        cardSubType: "keepers",
+        cardSubType: "Keepers",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "12/15"
       },
-      // Hot Rookies
+      // Hot Rookies (/15)
       {
         id: 204,
         collectionId: 1,
@@ -1444,12 +1444,12 @@ export class MemStorage implements IStorage {
         playerName: "Zaire-Emery",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "hot_rookies",
+        cardSubType: "Hot Rookies",
         imageUrl: null,
         isOwned: false,
         isRookieCard: true,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "5/15"
       },
       {
         id: 205,
@@ -1458,14 +1458,14 @@ export class MemStorage implements IStorage {
         playerName: "Wahi",
         teamName: "AS Monaco",
         cardType: "Hit",
-        cardSubType: "hot_rookies",
+        cardSubType: "Hot Rookies",
         imageUrl: null,
         isOwned: false,
         isRookieCard: true,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "11/15"
       },
-      // Pure Class
+      // Pure Class (/10)
       {
         id: 206,
         collectionId: 1,
@@ -1473,12 +1473,12 @@ export class MemStorage implements IStorage {
         playerName: "Mbappé",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "pure_class",
+        cardSubType: "Pure Class",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "2/10"
       },
       {
         id: 207,
@@ -1487,14 +1487,14 @@ export class MemStorage implements IStorage {
         playerName: "Lacazette",
         teamName: "Olympique Lyonnais",
         cardType: "Hit",
-        cardSubType: "pure_class",
+        cardSubType: "Pure Class",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "9/10"
       },
-      // Breakthrough
+      // Breakthrough (/15)
       {
         id: 208,
         collectionId: 1,
@@ -1502,12 +1502,12 @@ export class MemStorage implements IStorage {
         playerName: "Terrier",
         teamName: "Stade Rennais",
         cardType: "Hit",
-        cardSubType: "breakthrough",
+        cardSubType: "Breakthrough",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "4/15"
       },
       {
         id: 209,
@@ -1516,14 +1516,14 @@ export class MemStorage implements IStorage {
         playerName: "David",
         teamName: "LOSC Lille",
         cardType: "Hit",
-        cardSubType: "breakthrough",
+        cardSubType: "Breakthrough",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
-        serialNumber: null
+        serialNumber: "13/15"
       },
-      // Pennants
+      // Pennants (non numérotées)
       {
         id: 210,
         collectionId: 1,
@@ -1531,7 +1531,7 @@ export class MemStorage implements IStorage {
         playerName: "Hakimi",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "pennant",
+        cardSubType: "Pennants",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
@@ -1545,14 +1545,14 @@ export class MemStorage implements IStorage {
         playerName: "Fulgini",
         teamName: "RC Lens",
         cardType: "Hit",
-        cardSubType: "pennant",
+        cardSubType: "Pennants",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
         serialNumber: null
       },
-      // Intergalactic
+      // Intergalactic (non numérotées)
       {
         id: 212,
         collectionId: 1,
@@ -1560,7 +1560,7 @@ export class MemStorage implements IStorage {
         playerName: "Marquinhos",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "intergalactic",
+        cardSubType: "Intergalactic",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
@@ -1574,14 +1574,14 @@ export class MemStorage implements IStorage {
         playerName: "Zhegrova",
         teamName: "LOSC Lille",
         cardType: "Hit",
-        cardSubType: "intergalactic",
+        cardSubType: "Intergalactic",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "ultra_rare",
         serialNumber: null
       },
-      // Next Up
+      // Next Up (non numérotées)
       {
         id: 214,
         collectionId: 1,
@@ -1589,7 +1589,7 @@ export class MemStorage implements IStorage {
         playerName: "Barcola",
         teamName: "Paris Saint-Germain",
         cardType: "Hit",
-        cardSubType: "next_up",
+        cardSubType: "Next Up",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
@@ -1603,7 +1603,7 @@ export class MemStorage implements IStorage {
         playerName: "Laborde",
         teamName: "OGC Nice",
         cardType: "Hit",
-        cardSubType: "next_up",
+        cardSubType: "Next Up",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,

@@ -29,7 +29,7 @@ export default function CollectionDetail() {
     if (filter === "bases_numbered") return card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber);
     if (filter === "autographs") return card.cardType.toLowerCase() === "autograph";
     if (filter === "speciales") return card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
-    if (filter === "hits") return card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert";
+    if (filter === "hits") return card.cardType.toLowerCase() === "hit";
     return true;
   })?.sort((a, b) => {
     // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
