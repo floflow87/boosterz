@@ -424,7 +424,13 @@ export default function CollectionDetail() {
                     {card.teamName || 'Équipe Inconnue'}
                   </div>
                   <div className="text-gray-400 text-xs mt-1">
-                    {card.cardType}
+                    {card.rarity || 'Base'}
+                  </div>
+                  <div className="text-gray-400 text-xs">
+                    {(() => {
+                      const variants = getCardVariants(card);
+                      return `${variants.length} variante${variants.length > 1 ? 's' : ''}`;
+                    })()}
                   </div>
                 </div>
               </div>
@@ -522,6 +528,10 @@ export default function CollectionDetail() {
                       <span className="text-white">{currentCard?.cardSubType || "Base"}</span>
                     </div>
                     <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
+                      <span className="text-white">{currentCard?.numbering || 'Non numérotée'}</span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)]">Statut:</span>
                       <span className={`font-bold ${currentCard?.isOwned ? 'text-green-400' : 'text-red-400'}`}>
                         {currentCard?.isOwned ? 'Acquise' : 'Manquante'}
@@ -532,20 +542,28 @@ export default function CollectionDetail() {
                   {/* Action Buttons */}
                   <div className="mt-6">
                     {!currentCard?.isOwned ? (
-                      <div className="flex gap-2">
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleMarkAsOwned(currentCard?.id || 0, false)}
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Acquise
+                          </button>
+                          <button
+                            onClick={() => handleMarkAsOwned(currentCard?.id || 0, true)}
+                            className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          >
+                            <Camera className="w-4 h-4 mr-1" />
+                            Photo
+                          </button>
+                        </div>
                         <button
-                          onClick={() => handleMarkAsOwned(currentCard?.id || 0, false)}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                         >
-                          <Check className="w-4 h-4 mr-1" />
-                          Acquise
-                        </button>
-                        <button
-                          onClick={() => handleMarkAsOwned(currentCard?.id || 0, true)}
-                          className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                        >
-                          <Camera className="w-4 h-4 mr-1" />
-                          + Photo
+                          <Users className="w-4 h-4 mr-1" />
+                          Proposer un trade
                         </button>
                       </div>
                     ) : (
@@ -556,7 +574,7 @@ export default function CollectionDetail() {
                             className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                           >
                             <X className="w-4 h-4 mr-1" />
-                            Marquer comme manquante
+                            Manquante
                           </button>
                           <button
                             onClick={() => {
@@ -571,7 +589,7 @@ export default function CollectionDetail() {
                             className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                           >
                             <Camera className="w-4 h-4 mr-1" />
-                            {currentCard.imageUrl ? 'Changer photo' : 'Ajouter photo'}
+                            Photo
                           </button>
                           {currentCard.imageUrl && (
                             <button
@@ -600,6 +618,12 @@ export default function CollectionDetail() {
                             </button>
                           )}
                         </div>
+                        <button
+                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                        >
+                          <Users className="w-4 h-4 mr-1" />
+                          Proposer un trade
+                        </button>
                       </div>
                     )}
                   </div>

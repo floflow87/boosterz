@@ -339,12 +339,13 @@ export async function seedDatabase() {
     console.log("🗑️ Clearing existing cards...");
     await db.delete(cards).where(eq(cards.collectionId, 1));
 
+    const cardsToInsert = [];
     let cardId = 1;
 
     // 1. Create base cards (200 cards)
     console.log("📦 Creating base cards...");
     for (const baseCard of baseCards) {
-      await db.insert(cards).values({
+      cardsToInsert.push({
         id: cardId++,
         collectionId: 1,
         reference: baseCard.id.toString().padStart(3, '0'),
@@ -364,10 +365,10 @@ export async function seedDatabase() {
     for (const baseCard of baseCards) {
       // Parallel Swirl variants
       for (const variant of parallelSwirlVariants) {
-        await db.insert(cards).values({
+        cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `${baseCard.id.toString().padStart(3, '0')}-${variant.type.split(' ')[2].charAt(0)}`,
+          reference: `${baseCard.id.toString().padStart(3, '0')}-S${variant.type.split(' ')[2].charAt(0)}`,
           playerName: baseCard.playerName,
           teamName: baseCard.teamName,
           cardType: variant.type,
@@ -381,10 +382,10 @@ export async function seedDatabase() {
 
       // Parallel Laser variants  
       for (const variant of parallelLaserVariants) {
-        await db.insert(cards).values({
+        cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `${baseCard.id.toString().padStart(3, '0')}-${variant.type.split(' ')[2].charAt(0)}`,
+          reference: `${baseCard.id.toString().padStart(3, '0')}-L${variant.type.split(' ')[2].charAt(0)}`,
           playerName: baseCard.playerName,
           teamName: baseCard.teamName,
           cardType: variant.type,
@@ -403,7 +404,7 @@ export async function seedDatabase() {
     // Breakthrough
     for (let i = 0; i < insertBreakthrough.length; i++) {
       const card = insertBreakthrough[i];
-      await db.insert(cards).values({
+      cardsToInsert.push({
         id: cardId++,
         collectionId: 1,
         reference: `BT-${(i + 1).toString().padStart(2, '0')}`,
@@ -421,7 +422,7 @@ export async function seedDatabase() {
     // Hot Rookies
     for (let i = 0; i < insertHotRookies.length; i++) {
       const card = insertHotRookies[i];
-      await db.insert(cards).values({
+      cardsToInsert.push({
         id: cardId++,
         collectionId: 1,
         reference: `HR-${(i + 1).toString().padStart(2, '0')}`,
@@ -440,7 +441,7 @@ export async function seedDatabase() {
     console.log("✍️ Creating Autograph cards...");
     for (const autoCard of autographCards) {
       for (const numbering of autoCard.numberings) {
-        await db.insert(cards).values({
+        cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
           reference: `AUTO-${autoCard.id.toString().padStart(2, '0')}`,
@@ -456,8 +457,17 @@ export async function seedDatabase() {
       }
     }
 
+    // Insert all cards in batches
+    console.log("💾 Inserting cards in batches...");
+    const batchSize = 100;
+    for (let i = 0; i < cardsToInsert.length; i += batchSize) {
+      const batch = cardsToInsert.slice(i, i + batchSize);
+      await db.insert(cards).values(batch);
+      console.log(`Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(cardsToInsert.length / batchSize)}`);
+    }
+
     console.log("✅ Database seeding completed successfully!");
-    console.log(`📊 Total cards created: ${cardId - 1}`);
+    console.log(`📊 Total cards created: ${cardsToInsert.length}`);
     
   } catch (error) {
     console.error("❌ Error seeding database:", error);
