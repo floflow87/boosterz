@@ -205,6 +205,14 @@ export default function CollectionDetail() {
     });
   };
 
+  // Check if all variants of a base card are owned
+  const areAllVariantsOwned = (baseCard: Card) => {
+    if (baseCard.cardType !== "Base") return false;
+    
+    const variants = getCardVariants(baseCard);
+    return variants.length >= 3 && variants.every(variant => variant.isOwned);
+  };
+
   // Handle card selection with variant reset
   const handleCardSelect = (card: Card) => {
     setSelectedCard(card);
@@ -422,7 +430,9 @@ export default function CollectionDetail() {
                 key={card.id} 
                 onClick={() => handleCardSelect(card)}
                 className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-3 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
-                  card.isOwned 
+                  areAllVariantsOwned(card)
+                    ? "border-green-400 bg-opacity-100 shadow-lg shadow-green-400/30 ring-2 ring-green-300" 
+                    : card.isOwned 
                     ? "border-green-400 bg-opacity-100 shadow-lg shadow-green-400/30" 
                     : "border-gray-600 bg-opacity-50"
                 } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}
@@ -437,7 +447,9 @@ export default function CollectionDetail() {
                   <div className="absolute top-1 right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                     <Check className="w-3 h-3 text-white" />
                   </div>
-                  <div className="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
+                  <div className={`absolute bottom-1 left-1 bg-black bg-opacity-70 text-xs px-2 py-1 rounded ${
+                    areAllVariantsOwned(card) ? 'text-green-400' : 'text-white'
+                  }`}>
                     {card.reference}
                   </div>
                   {card.numbering && (
@@ -463,7 +475,7 @@ export default function CollectionDetail() {
                     <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
                       {card.playerName || 'Joueur Inconnu'}
                     </div>
-                    <div className="text-[hsl(212,23%,69%)]">{card.reference}</div>
+                    <div className={areAllVariantsOwned(card) ? 'text-green-400' : 'text-[hsl(212,23%,69%)]'}>{card.reference}</div>
                     <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
                   </div>
                 </>
@@ -567,9 +579,41 @@ export default function CollectionDetail() {
                     onMouseMove={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
                       const centerX = rect.width / 2;
-                      const rotateY = (x - centerX) / 8; // Mouvement de -4deg à +4deg
-                      e.currentTarget.style.transform = `scale(1.05) rotateY(${rotateY}deg)`;
+                      const centerY = rect.height / 2;
+                      
+                      const rotateY = (x - centerX) / 6;
+                      const rotateX = (centerY - y) / 10;
+                      const translateX = (x - centerX) / 10;
+                      const translateY = (y - centerY) / 15;
+                      
+                      e.currentTarget.style.transform = `
+                        scale(1.05) 
+                        rotateY(${rotateY}deg) 
+                        rotateX(${rotateX}deg)
+                        translate(${translateX}px, ${translateY}px)
+                      `;
+                    }}
+                    onTouchMove={(e) => {
+                      const rect = e.currentTarget.getBoundingClientRect();
+                      const touch = e.touches[0];
+                      const x = touch.clientX - rect.left;
+                      const y = touch.clientY - rect.top;
+                      const centerX = rect.width / 2;
+                      const centerY = rect.height / 2;
+                      
+                      const rotateY = (x - centerX) / 6;
+                      const rotateX = (centerY - y) / 10;
+                      const translateX = (x - centerX) / 10;
+                      const translateY = (y - centerY) / 15;
+                      
+                      e.currentTarget.style.transform = `
+                        scale(1.05) 
+                        rotateY(${rotateY}deg) 
+                        rotateX(${rotateX}deg)
+                        translate(${translateX}px, ${translateY}px)
+                      `;
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'scale(1) rotateY(0deg)';
@@ -591,9 +635,21 @@ export default function CollectionDetail() {
                     onMouseMove={(e) => {
                       const rect = e.currentTarget.getBoundingClientRect();
                       const x = e.clientX - rect.left;
+                      const y = e.clientY - rect.top;
                       const centerX = rect.width / 2;
-                      const rotateY = (x - centerX) / 8;
-                      e.currentTarget.style.transform = `scale(1.05) rotateY(${rotateY}deg)`;
+                      const centerY = rect.height / 2;
+                      
+                      const rotateY = (x - centerX) / 6;
+                      const rotateX = (centerY - y) / 10;
+                      const translateX = (x - centerX) / 10;
+                      const translateY = (y - centerY) / 15;
+                      
+                      e.currentTarget.style.transform = `
+                        scale(1.05) 
+                        rotateY(${rotateY}deg) 
+                        rotateX(${rotateX}deg)
+                        translate(${translateX}px, ${translateY}px)
+                      `;
                     }}
                     onMouseLeave={(e) => {
                       e.currentTarget.style.transform = 'scale(1) rotateY(0deg)';
