@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info } from "lucide-react";
+import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -20,6 +20,7 @@ export default function CollectionDetail() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -175,6 +176,52 @@ export default function CollectionDetail() {
       updateCardImageMutation.mutate({ cardId, imageData });
     }
     setShowPhotoUpload(false);
+  };
+
+  // Get variants for a base card
+  const getCardVariants = (baseCard: Card) => {
+    if (baseCard.cardType !== "Base") return [baseCard];
+    
+    const variants = cards?.filter(card => 
+      card.reference === baseCard.reference && 
+      card.playerName === baseCard.playerName && 
+      card.teamName === baseCard.teamName
+    ) || [];
+    
+    // Sort variants: Base first, then Laser, then Swirl
+    return variants.sort((a, b) => {
+      if (a.cardType === "Base") return -1;
+      if (b.cardType === "Base") return 1;
+      if (a.cardType.includes("Laser")) return -1;
+      if (b.cardType.includes("Laser")) return 1;
+      return 0;
+    });
+  };
+
+  // Handle card selection with variant reset
+  const handleCardSelect = (card: Card) => {
+    setSelectedCard(card);
+    setCurrentVariantIndex(0);
+  };
+
+  // Get current displayed card variant
+  const getCurrentCard = () => {
+    if (!selectedCard) return null;
+    const variants = getCardVariants(selectedCard);
+    return variants[currentVariantIndex] || selectedCard;
+  };
+
+  // Navigate variants
+  const nextVariant = () => {
+    if (!selectedCard) return;
+    const variants = getCardVariants(selectedCard);
+    setCurrentVariantIndex((prev) => (prev + 1) % variants.length);
+  };
+
+  const prevVariant = () => {
+    if (!selectedCard) return;
+    const variants = getCardVariants(selectedCard);
+    setCurrentVariantIndex((prev) => (prev - 1 + variants.length) % variants.length);
   };
 
   return (
@@ -366,7 +413,7 @@ export default function CollectionDetail() {
             {filteredCards?.map((card, index) => (
               <div 
                 key={card.id} 
-                onClick={() => setSelectedCard(card)}
+                onClick={() => handleCardSelect(card)}
                 className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-3 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
                   card.isOwned 
                     ? "border-green-400 bg-opacity-100 shadow-lg shadow-green-400/30" 
@@ -414,7 +461,7 @@ export default function CollectionDetail() {
             {filteredCards?.map((card) => (
               <div 
                 key={card.id} 
-                onClick={() => setSelectedCard(card)}
+                onClick={() => handleCardSelect(card)}
                 className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] ${
                   card.isOwned 
                     ? "border-green-500" 
@@ -464,18 +511,53 @@ export default function CollectionDetail() {
               <X className="w-6 h-6" />
             </button>
             
-            <div className="text-center mb-4">
-              {selectedCard.isOwned && selectedCard.imageUrl ? (
-                <img 
-                  src={selectedCard.imageUrl} 
-                  alt={selectedCard.playerName || "Card"} 
-                  className="w-32 h-40 object-cover rounded-lg mx-auto mb-3"
-                />
-              ) : (
-                <div className="w-32 h-40 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <HelpCircle className="w-12 h-12 text-gray-400" />
+            {/* Carousel for Base card variants */}
+            {selectedCard.cardType === "Base" && (() => {
+              const variants = getCardVariants(selectedCard);
+              const currentCard = getCurrentCard();
+              return variants.length > 1 ? (
+                <div className="flex items-center justify-between mb-4">
+                  <button
+                    onClick={prevVariant}
+                    className="text-white hover:text-[hsl(9,85%,67%)] transition-colors"
+                  >
+                    <ChevronLeft className="w-6 h-6" />
+                  </button>
+                  <div className="text-center flex-1">
+                    <div className="text-sm text-[hsl(212,23%,69%)] mb-1">
+                      {currentCard?.cardType === "Base" ? "Base" :
+                       currentCard?.cardType.includes("Laser") ? "Laser" :
+                       currentCard?.cardType.includes("Swirl") ? "Swirl" : "Variante"}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      {currentVariantIndex + 1} / {variants.length}
+                    </div>
+                  </div>
+                  <button
+                    onClick={nextVariant}
+                    className="text-white hover:text-[hsl(9,85%,67%)] transition-colors"
+                  >
+                    <ChevronRight className="w-6 h-6" />
+                  </button>
                 </div>
-              )}
+              ) : null;
+            })()}
+            
+            <div className="text-center mb-4">
+              {(() => {
+                const currentCard = getCurrentCard() || selectedCard;
+                return currentCard.isOwned && currentCard.imageUrl ? (
+                  <img 
+                    src={currentCard.imageUrl} 
+                    alt={currentCard.playerName || "Card"} 
+                    className="w-32 h-40 object-cover rounded-lg mx-auto mb-3"
+                  />
+                ) : (
+                  <div className="w-32 h-40 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <HelpCircle className="w-12 h-12 text-gray-400" />
+                  </div>
+                );
+              })()}
               
               <h3 className="text-xl font-bold text-white mb-1">
                 {selectedCard.playerName || "Carte Inconnue"}
@@ -484,35 +566,43 @@ export default function CollectionDetail() {
             </div>
 
             <div className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Référence:</span>
-                <span className="text-white">{selectedCard.reference}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Type:</span>
-                <span className="text-white">
-                  {selectedCard.cardType === 'Base' ? 'Base' :
-                   selectedCard.cardType === 'Parallel Laser Blue' ? 'Laser' :
-                   selectedCard.cardType.includes('Swirl') ? 'Swirl' :
-                   selectedCard.cardType}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
-                <span className="text-yellow-400 font-bold">
-                  {selectedCard.numbering || 'Non numérotée'}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Rareté:</span>
-                <span className="text-white capitalize">{selectedCard.rarity}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Statut:</span>
-                <span className={`font-bold ${selectedCard.isOwned ? 'text-green-400' : 'text-red-400'}`}>
-                  {selectedCard.isOwned ? 'Acquise' : 'Manquante'}
-                </span>
-              </div>
+              {(() => {
+                const currentCard = getCurrentCard() || selectedCard;
+                return (
+                  <>
+                    <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)]">Référence:</span>
+                      <span className="text-white">{currentCard.reference}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)]">Type:</span>
+                      <span className="text-white">
+                        {currentCard.cardType === 'Base' ? 'Base' :
+                         currentCard.cardType === 'Parallel Laser Blue' ? 'Laser' :
+                         currentCard.cardType.includes('Swirl') ? 'Swirl' :
+                         currentCard.cardType.includes('Laser') ? 'Laser' :
+                         currentCard.cardType}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
+                      <span className="text-yellow-400 font-bold">
+                        {currentCard.numbering || 'Non numérotée'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)]">Rareté:</span>
+                      <span className="text-white capitalize">{currentCard.rarity}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)]">Statut:</span>
+                      <span className={`font-bold ${currentCard.isOwned ? 'text-green-400' : 'text-red-400'}`}>
+                        {currentCard.isOwned ? 'Acquise' : 'Manquante'}
+                      </span>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
 
             {selectedCard.cardType === "Special" && selectedCard.serialNumber === "1/1" && (
