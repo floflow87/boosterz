@@ -28,16 +28,19 @@ export const collections = pgTable("collections", {
 export const cards = pgTable("cards", {
   id: serial("id").primaryKey(),
   collectionId: integer("collection_id").notNull(),
-  cardNumber: text("card_number").notNull(),
+  reference: text("reference").notNull(), // Ex: "004" - remplace cardNumber
   playerName: text("player_name"),
   teamName: text("team_name"),
-  cardType: text("card_type").notNull(), // "base", "insert", "autograph", "numbered"
+  cardType: text("card_type").notNull(), // "base", "base_numbered", "insert", "autograph", "numbered", "special_1_1"
   cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", "intergalactic_hit", etc.
   imageUrl: text("image_url"),
   isOwned: boolean("is_owned").default(false).notNull(),
   isRookieCard: boolean("is_rookie_card").default(false).notNull(),
   rarity: text("rarity"), // "common", "rare", "super_rare", etc.
   serialNumber: text("serial_number"), // pour les cartes numérotées
+  numbering: text("numbering"), // Ex: "125/199", "15/25", "1/1"
+  baseCardId: integer("base_card_id"), // Référence vers la carte de base pour les variantes
+  isVariant: boolean("is_variant").default(false).notNull(),
 });
 
 export const userCards = pgTable("user_cards", {
@@ -78,10 +81,18 @@ export const collectionsRelations = relations(collections, ({ one, many }) => ({
   userCards: many(userCards),
 }));
 
-export const cardsRelations = relations(cards, ({ one }) => ({
+export const cardsRelations = relations(cards, ({ one, many }) => ({
   collection: one(collections, {
     fields: [cards.collectionId],
     references: [collections.id],
+  }),
+  baseCard: one(cards, {
+    fields: [cards.baseCardId],
+    references: [cards.id],
+    relationName: "cardVariants",
+  }),
+  variants: many(cards, {
+    relationName: "cardVariants",
   }),
 }));
 
@@ -113,7 +124,7 @@ export const insertCollectionSchema = createInsertSchema(collections).pick({
 
 export const insertCardSchema = createInsertSchema(cards).pick({
   collectionId: true,
-  cardNumber: true,
+  reference: true,
   playerName: true,
   teamName: true,
   cardType: true,
@@ -123,6 +134,9 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   isRookieCard: true,
   rarity: true,
   serialNumber: true,
+  numbering: true,
+  baseCardId: true,
+  isVariant: true,
 });
 
 export const insertUserCardSchema = createInsertSchema(userCards).pick({
