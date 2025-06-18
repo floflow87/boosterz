@@ -48,6 +48,8 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const [isProcessing, setIsProcessing] = useState(false);
   const [playerName, setPlayerName] = useState<string>("");
   const [playerCards, setPlayerCards] = useState<Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string }>>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [playerSuggestions, setPlayerSuggestions] = useState<string[]>([]);
   
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -172,7 +174,18 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
   const handlePlayerNameChange = useCallback((name: string) => {
     setPlayerName(name);
-    if (name.trim()) {
+    
+    if (name.trim().length > 0) {
+      // Get unique player names for autocomplete
+      const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName)));
+      const suggestions = uniquePlayers.filter(player => 
+        player.toLowerCase().includes(name.toLowerCase())
+      ).slice(0, 5); // Limit to 5 suggestions
+      
+      setPlayerSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0 && suggestions[0].toLowerCase() !== name.toLowerCase());
+      
+      // Find matching cards
       const matchingCards = availableCards.filter(card => 
         card.playerName.toLowerCase().includes(name.toLowerCase())
       );
@@ -181,8 +194,22 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         setSelectedCardId(matchingCards[0].id);
       }
     } else {
+      setPlayerSuggestions([]);
+      setShowSuggestions(false);
       setPlayerCards([]);
       setSelectedCardId(undefined);
+    }
+  }, [availableCards]);
+
+  const handleSuggestionClick = useCallback((suggestion: string) => {
+    setPlayerName(suggestion);
+    setShowSuggestions(false);
+    const matchingCards = availableCards.filter(card => 
+      card.playerName.toLowerCase() === suggestion.toLowerCase()
+    );
+    setPlayerCards(matchingCards);
+    if (matchingCards.length > 0) {
+      setSelectedCardId(matchingCards[0].id);
     }
   }, [availableCards]);
 
@@ -207,6 +234,8 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     setIsProcessing(false);
     setPlayerName("");
     setPlayerCards([]);
+    setShowSuggestions(false);
+    setPlayerSuggestions([]);
     onClose();
   }, [onClose]);
 
@@ -248,16 +277,59 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
         {step === "import" && (
           <div className="space-y-4">
+            <div className="space-y-3">
+              <Button
+                variant="outline"
+                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
+                onClick={() => handleImportOption("gallery")}
+              >
+                <Image className="h-6 w-6" />
+                <span>Importer depuis la photothèque</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
+                onClick={() => handleImportOption("file")}
+              >
+                <Upload className="h-6 w-6" />
+                <span>Choisir le fichier</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
+                onClick={() => handleImportOption("camera")}
+              >
+                <Camera className="h-6 w-6" />
+                <span>Prendre une photo</span>
+              </Button>
+            </div>
+
             <input
+              ref={galleryInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
+            
+            <input
+              ref={cameraInputRef}
               type="file"
               accept="image/*"
               capture="environment"
               onChange={handleFileSelect}
-              className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg text-center bg-gray-50 hover:bg-gray-100 cursor-pointer"
+              className="hidden"
             />
-            <p className="text-sm text-gray-600 text-center">
-              Touchez pour sélectionner une photo ou utiliser l'appareil photo
-            </p>
           </div>
         )}
 
@@ -432,7 +504,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
               </div>
               
               <div className="space-y-4">
-                <div>
+                <div className="relative">
                   <label className="block text-sm font-medium text-black mb-2">
                     Nom du joueur
                   </label>
@@ -441,8 +513,24 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                     placeholder="Saisir le nom du joueur..."
                     value={playerName}
                     onChange={(e) => handlePlayerNameChange(e.target.value)}
+                    onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
                     className="w-full"
                   />
+                  
+                  {showSuggestions && playerSuggestions.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                      {playerSuggestions.map((suggestion, index) => (
+                        <div
+                          key={index}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-black border-b border-gray-100 last:border-b-0"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                        >
+                          {suggestion}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
                   <p className="text-xs text-gray-500 mt-1">
                     Modifiez le nom pour voir toutes les cartes de ce joueur
                   </p>
