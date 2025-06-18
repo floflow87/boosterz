@@ -112,7 +112,14 @@ export default function CollectionDetail() {
   ).length || 0;
   const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
-  const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit").length || 0;
+  const hitsCount = cards?.filter(card => 
+    card.cardType.toLowerCase().includes("insert") || 
+    card.cardType.toLowerCase().includes("breakthrough") ||
+    card.cardType.toLowerCase().includes("rookies") ||
+    card.cardType.toLowerCase().includes("keepers") ||
+    card.cardType.toLowerCase().includes("pure class") ||
+    card.cardType.toLowerCase().includes("score team")
+  ).length || 0;
 
   if (collectionLoading || cardsLoading) {
     return (
