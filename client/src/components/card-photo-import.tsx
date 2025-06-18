@@ -11,7 +11,7 @@ interface CardPhotoImportProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (imageData: string, cardId?: number) => void;
-  availableCards: Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string }>;
+  availableCards: Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string; collectionId: number; }>;
 }
 
 interface ImageAdjustments {
@@ -135,33 +135,73 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
   const handleNextFromEdit = useCallback(async () => {
     setIsProcessing(true);
-    const processedImage = await processImageWithAdjustments();
     
-    // Simulate improved card recognition using actual collection data
-    setTimeout(() => {
-      // Get unique player names from the collection
-      const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName)));
+    try {
+      const processedImage = await processImageWithAdjustments();
       
-      // Pick a random player from the actual collection
-      const recognizedPlayerName = uniquePlayers[Math.floor(Math.random() * uniquePlayers.length)];
+      if (!processedImage || typeof processedImage !== 'string') {
+        throw new Error("Failed to process image");
+      }
+
+      // Get collection ID from available cards
+      const collectionId = availableCards[0]?.collectionId || 1;
+
+      // Call the recognition API
+      const response = await fetch("/api/cards/recognize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          imageData: processedImage,
+          collectionId: collectionId
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Recognition failed");
+      }
+
+      const result = await response.json();
       
-      // Find all cards for this player
-      const cardsForPlayer = availableCards.filter(card => 
-        card.playerName === recognizedPlayerName
-      );
-      
-      if (cardsForPlayer.length > 0) {
-        // Select the first card (usually Base card)
-        const selectedCard = cardsForPlayer[0];
-        setRecognizedCard(`${selectedCard.playerName} - ${selectedCard.cardNumber}`);
-        setSelectedCardId(selectedCard.id);
-        setPlayerName(selectedCard.playerName);
+      if (result.matchedCard) {
+        setRecognizedCard(`${result.playerName} - ${result.matchedCard.cardNumber}`);
+        setSelectedCardId(result.matchedCard.id);
+        setPlayerName(result.playerName);
+        
+        // Find all cards for this player
+        const cardsForPlayer = availableCards.filter(card => 
+          card.playerName === result.playerName
+        );
         setPlayerCards(cardsForPlayer);
+      } else if (result.playerName) {
+        setRecognizedCard(`${result.playerName} (Équipe: ${result.teamName})`);
+        setPlayerName(result.playerName);
+        
+        // Find cards for this player
+        const cardsForPlayer = availableCards.filter(card => 
+          card.playerName.toLowerCase().includes(result.playerName.toLowerCase())
+        );
+        setPlayerCards(cardsForPlayer);
+        if (cardsForPlayer.length > 0) {
+          setSelectedCardId(cardsForPlayer[0].id);
+        }
+      } else {
+        // Fallback if no recognition
+        setRecognizedCard("Aucune reconnaissance automatique");
+        setPlayerName("");
+        setPlayerCards([]);
       }
       
+    } catch (error) {
+      console.error("Recognition error:", error);
+      setRecognizedCard("Erreur de reconnaissance - sélection manuelle requise");
+      setPlayerName("");
+      setPlayerCards([]);
+    } finally {
       setIsProcessing(false);
       setStep("recognize");
-    }, 2000);
+    }
   }, [processImageWithAdjustments, availableCards]);
 
   const handleSave = useCallback(async () => {

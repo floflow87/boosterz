@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { CardRecognitionEngine } from "./cardRecognition";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get user profile
@@ -91,6 +92,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(card);
     } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Card recognition endpoint
+  app.post("/api/cards/recognize", async (req, res) => {
+    try {
+      const { imageData, collectionId } = req.body;
+      
+      if (!imageData || !collectionId) {
+        return res.status(400).json({ message: "Image data and collection ID are required" });
+      }
+
+      // Get all cards from the collection for recognition
+      const cards = await storage.getCardsByCollectionId(parseInt(collectionId));
+      
+      // Initialize the recognition engine with the collection's cards
+      const recognitionEngine = new CardRecognitionEngine(cards);
+      
+      // Perform recognition
+      const result = recognitionEngine.recognizeCard(imageData);
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Card recognition error:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
