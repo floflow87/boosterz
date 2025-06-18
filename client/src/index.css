@@ -133,8 +133,34 @@
   
   .card-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Animation de contour vert dynamique pour les cartes complètes */
+  @keyframes border-chase {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+  }
+
+  .animated-border {
+    position: relative;
+    background: linear-gradient(90deg, transparent, #10b981, transparent);
+    background-size: 200% 100%;
+    animation: border-chase 3s linear infinite;
+    border-radius: 0.5rem;
+    padding: 2px;
+  }
+
+  .animated-border .card-content {
+    background: hsl(214, 35%, 22%);
+    border-radius: 0.375rem;
+    position: relative;
+    z-index: 1;
   }
 
   /* 3D Carousel Effects */

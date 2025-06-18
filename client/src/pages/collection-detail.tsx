@@ -309,13 +309,21 @@ export default function CollectionDetail() {
           </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-4">
-          <div className="relative">
+        {/* Controls */}
+        <div className="flex items-center gap-4 mb-4">
+          <button 
+            onClick={() => setShowPhotoUpload(true)}
+            className="bg-[hsl(9,85%,67%)] text-white p-2 rounded-lg hover:bg-[hsl(9,85%,57%)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 animate-pulse-glow"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+          
+          {/* Search Bar */}
+          <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Rechercher par joueur, équipe, référence ou type..."
+              placeholder="Rechercher par joueur, équipe, référence..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-[hsl(214,35%,22%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)] focus:ring-1 focus:ring-[hsl(9,85%,67%)]"
@@ -329,15 +337,7 @@ export default function CollectionDetail() {
               </button>
             )}
           </div>
-          {searchTerm && (
-            <div className="mt-2 text-sm text-[hsl(212,23%,69%)]">
-              {filteredCards?.length || 0} résultat(s) trouvé(s) pour "{searchTerm}"
-            </div>
-          )}
-        </div>
-
-        {/* Controls */}
-        <div className="flex items-center justify-between mb-4">
+          
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setViewMode("grid")}
@@ -356,14 +356,14 @@ export default function CollectionDetail() {
               <List className="w-4 h-4" />
             </button>
           </div>
-          
-          <button 
-            onClick={() => setShowPhotoUpload(true)}
-            className="bg-[hsl(9,85%,67%)] text-white p-2 rounded-lg hover:bg-[hsl(9,85%,57%)] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 animate-pulse-glow"
-          >
-            <Plus className="w-5 h-5" />
-          </button>
         </div>
+        
+        {/* Search Results */}
+        {searchTerm && (
+          <div className="mb-4 text-sm text-[hsl(212,23%,69%)]">
+            {filteredCards?.length || 0} résultat(s) trouvé(s) pour "{searchTerm}"
+          </div>
+        )}
 
         {/* Filter Tabs - Score Ligue 1 */}
         {collection.name.includes("SCORE LIGUE 1") ? (
@@ -470,58 +470,59 @@ export default function CollectionDetail() {
               <div 
                 key={card.id} 
                 onClick={() => handleCardSelect(card)}
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-3 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
-                  areAllVariantsOwned(card)
-                    ? "border-green-400 bg-opacity-100 shadow-lg shadow-green-400/30 ring-2 ring-green-300" 
-                    : card.isOwned 
-                    ? "border-green-400 bg-opacity-100 shadow-lg shadow-green-400/30" 
-                    : "border-gray-600 bg-opacity-50"
-                } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}
+                className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300`}
               >
-              {card.imageUrl ? (
-                <>
-                  <img 
-                    src={card.imageUrl} 
-                    alt={`${card.playerName} card`}
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                  <div className="absolute top-1 right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3 text-white" />
-                  </div>
-                  <div className={`absolute bottom-1 left-1 bg-black bg-opacity-70 text-xs px-2 py-1 rounded ${
-                    areAllVariantsOwned(card) ? 'text-green-400' : 'text-white'
-                  }`}>
-                    {card.reference}
-                  </div>
-                  {card.numbering && (
-                    <div className="absolute bottom-1 right-1 bg-blue-600 bg-opacity-90 text-white text-xs px-2 py-1 rounded">
-                      {card.numbering}
-                    </div>
+                <div className={`card-content p-3 rounded-lg ${
+                  !areAllVariantsOwned(card) ? (
+                    card.isOwned 
+                      ? "bg-[hsl(214,35%,22%)] border-2 border-green-400 shadow-lg shadow-green-400/30" 
+                      : "bg-[hsl(214,35%,22%)] border-2 border-gray-600 bg-opacity-50"
+                  ) : ""
+                } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}>
+                  {card.imageUrl ? (
+                    <>
+                      <img 
+                        src={card.imageUrl} 
+                        alt={`${card.playerName} card`}
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                      <div className="absolute top-4 right-4 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <Check className="w-3 h-3 text-white" />
+                      </div>
+                      <div className={`absolute bottom-4 left-4 bg-black bg-opacity-70 text-xs px-2 py-1 rounded ${
+                        areAllVariantsOwned(card) ? 'text-green-400' : 'text-white'
+                      }`}>
+                        {card.reference}
+                      </div>
+                      {card.numbering && (
+                        <div className="absolute bottom-4 right-4 bg-blue-600 bg-opacity-90 text-white text-xs px-2 py-1 rounded">
+                          {card.numbering}
+                        </div>
+                      )}
+                      {/* Nom et équipe sous l'image */}
+                      <div className="text-xs mt-2 text-center">
+                        <div className="font-medium text-white">
+                          {card.playerName || 'Joueur Inconnu'}
+                        </div>
+                        <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-full h-40 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
+                        <HelpCircle className="w-10 h-10 text-gray-400" />
+                      </div>
+                      <div className="text-xs mt-2 text-center">
+                        <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
+                          {card.playerName || 'Joueur Inconnu'}
+                        </div>
+                        <div className={areAllVariantsOwned(card) ? 'text-green-400' : 'text-[hsl(212,23%,69%)]'}>{card.reference}</div>
+                        <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
+                      </div>
+                    </>
                   )}
-                  {/* Nom et équipe sous l'image */}
-                  <div className="text-xs mt-1 text-center">
-                    <div className="font-medium text-white">
-                      {card.playerName || 'Joueur Inconnu'}
-                    </div>
-                    <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
-                    <HelpCircle className="w-8 h-8 text-gray-400" />
-                  </div>
-
-                  <div className="text-xs mt-1 text-center">
-                    <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
-                      {card.playerName || 'Joueur Inconnu'}
-                    </div>
-                    <div className={areAllVariantsOwned(card) ? 'text-green-400' : 'text-[hsl(212,23%,69%)]'}>{card.reference}</div>
-                    <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
-                  </div>
-                </>
-              )}
-            </div>
+                </div>
+              </div>
             ))}
           </div>
         ) : (
@@ -822,6 +823,32 @@ export default function CollectionDetail() {
                       <Plus className="w-5 h-5 inline mr-2" />
                       {currentCard.imageUrl ? 'Changer la photo' : 'Ajouter une photo'}
                     </button>
+                    {currentCard.imageUrl && (
+                      <button
+                        onClick={async () => {
+                          try {
+                            await updateCardImageMutation.mutateAsync({
+                              cardId: currentCard.id,
+                              imageData: ""
+                            });
+                            toast({
+                              title: "Photo supprimée",
+                              description: "La photo de la carte a été supprimée avec succès."
+                            });
+                          } catch (error) {
+                            toast({
+                              title: "Erreur",
+                              description: "Impossible de supprimer la photo.",
+                              variant: "destructive"
+                            });
+                          }
+                        }}
+                        className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors"
+                      >
+                        <X className="w-4 h-4 inline mr-2" />
+                        Supprimer la photo
+                      </button>
+                    )}
                   </div>
                 );
               })()}
