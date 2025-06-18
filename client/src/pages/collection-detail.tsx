@@ -592,7 +592,7 @@ export default function CollectionDetail() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)]">Rareté:</span>
-                      <span className="text-white capitalize">{currentCard.rarity}</span>
+                      <span className="text-white capitalize">{currentCard.rarity || (currentCard.cardType === 'Base' ? 'commune' : 'non définie')}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)]">Statut:</span>
@@ -644,18 +644,22 @@ export default function CollectionDetail() {
                       <X className="w-5 h-5 inline mr-2" />
                       Marquer comme manquante
                     </button>
-                    {!currentCard.imageUrl && (
-                      <button
-                        onClick={() => {
-                          setSelectedCard(null);
-                          setShowPhotoUpload(true);
-                        }}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
-                      >
-                        <Plus className="w-5 h-5 inline mr-2" />
-                        Ajouter une photo
-                      </button>
-                    )}
+                    <button
+                      onClick={() => {
+                        const cardInfo = {
+                          id: currentCard.id,
+                          playerName: selectedCard.playerName || "Joueur Inconnu",
+                          reference: selectedCard.reference,
+                          teamName: selectedCard.teamName || "Équipe Inconnue"
+                        };
+                        setSelectedCard(null);
+                        setShowPhotoUpload(true);
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-5 h-5 inline mr-2" />
+                      {currentCard.imageUrl ? 'Changer la photo' : 'Ajouter une photo'}
+                    </button>
                   </div>
                 );
               })()}

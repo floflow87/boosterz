@@ -28,7 +28,7 @@ interface ImageAdjustments {
   };
 }
 
-export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards }: CardPhotoImportProps) {
+export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards, preselectedCard }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "recognize" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
