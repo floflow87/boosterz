@@ -213,6 +213,18 @@ export default function CollectionDetail() {
 
   const getCardVariants = (card: Card) => {
     if (!cards) return [card];
+    
+    // Pour les bases, on ne garde que les variantes non-numérotées (Base, Laser, Swirl)
+    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+      return cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        (c.cardType === "Base" || c.cardType === "Parallel Laser" || c.cardType === "Parallel Swirl")
+      );
+    }
+    
+    // Pour les autres cartes, on garde toutes les variantes
     return cards.filter(c => 
       c.playerName === card.playerName && 
       c.teamName === card.teamName &&
