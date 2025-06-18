@@ -955,6 +955,12 @@ export default function CollectionDetail() {
           cardType: card.cardType,
           collectionId: card.collectionId
         }))}
+        preselectedCard={selectedCard ? {
+          id: selectedCard.id,
+          playerName: selectedCard.playerName || "Joueur Inconnu",
+          reference: selectedCard.reference,
+          teamName: selectedCard.teamName || "Équipe Inconnue"
+        } : undefined}
       />
     </div>
   );

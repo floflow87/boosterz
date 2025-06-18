@@ -206,7 +206,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       setPlayerCards([]);
     } finally {
       setIsProcessing(false);
-      setStep("recognize");
+      setStep("assign");
     }
   }, [processImageWithAdjustments, availableCards]);
 
@@ -308,13 +308,11 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
           <DialogTitle className="text-black">
             {step === "import" && "Importer une photo"}
             {step === "edit" && "Retoucher la photo"}
-            {step === "recognize" && "Reconnaissance automatique"}
             {step === "assign" && "Assigner à une carte"}
           </DialogTitle>
           <DialogDescription className="text-gray-600">
             {step === "import" && "Choisissez comment importer votre photo de carte"}
-            {step === "edit" && "Ajustez votre photo avant la reconnaissance"}
-            {step === "recognize" && "Vérifiez la carte reconnue automatiquement"}
+            {step === "edit" && "Ajustez votre photo avant l'assignation"}
             {step === "assign" && "Confirmez l'assignation de la photo"}
           </DialogDescription>
         </DialogHeader>
@@ -406,7 +404,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                   ) : (
                     <Search className="h-4 w-4 mr-2" />
                   )}
-                  {isProcessing ? "Analyse..." : "Reconnaître"}
+                  {isProcessing ? "Analyse..." : "Confirmer"}
                 </Button>
               </div>
 
@@ -528,7 +526,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
           </div>
         )}
 
-        {step === "recognize" && (
+        {false && step === "recognize" && (
           <div className="space-y-4">
             <div className="space-y-4">
               {selectedImage && (
