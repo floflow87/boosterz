@@ -409,35 +409,82 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
               </div>
 
               {showRetouchOptions && (
-                <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                      <Sun className="h-4 w-4" />
-                      Luminosité: {adjustments.brightness}%
-                    </label>
-                    <Slider
-                      value={[adjustments.brightness]}
-                      onValueChange={([value]) => setAdjustments(prev => ({ ...prev, brightness: value }))}
-                      min={0}
-                      max={200}
-                      step={1}
-                      className="w-full"
-                    />
+                <div className="space-y-6 p-4 bg-gray-50 rounded-lg">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                        <Sun className="h-4 w-4" />
+                        Luminosité: {adjustments.brightness}%
+                      </label>
+                      <Slider
+                        value={[adjustments.brightness]}
+                        onValueChange={([value]) => setAdjustments(prev => ({ ...prev, brightness: value }))}
+                        min={0}
+                        max={200}
+                        step={1}
+                        className="w-full"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
+                        <Contrast className="h-4 w-4" />
+                        Contraste: {adjustments.contrast}%
+                      </label>
+                      <Slider
+                        value={[adjustments.contrast]}
+                        onValueChange={([value]) => setAdjustments(prev => ({ ...prev, contrast: value }))}
+                        min={0}
+                        max={200}
+                        step={1}
+                        className="w-full"
+                      />
+                    </div>
                   </div>
 
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                      <Contrast className="h-4 w-4" />
-                      Contraste: {adjustments.contrast}%
+                      <RotateCw className="h-4 w-4" />
+                      Pivoter: {adjustments.rotation}°
                     </label>
                     <Slider
-                      value={[adjustments.contrast]}
-                      onValueChange={([value]) => setAdjustments(prev => ({ ...prev, contrast: value }))}
+                      value={[adjustments.rotation]}
+                      onValueChange={([value]) => setAdjustments(prev => ({ ...prev, rotation: value }))}
                       min={0}
-                      max={200}
-                      step={1}
+                      max={360}
+                      step={90}
                       className="w-full"
                     />
+                    <div className="flex gap-2 mt-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 0 }))}
+                      >
+                        0°
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 90 }))}
+                      >
+                        90°
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 180 }))}
+                      >
+                        180°
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 270 }))}
+                      >
+                        270°
+                      </Button>
+                    </div>
                   </div>
 
                   <div>
@@ -494,28 +541,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                     </div>
                   </div>
 
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                      <RotateCw className="h-4 w-4" />
-                      Rotation: {adjustments.rotation}°
-                    </label>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: (prev.rotation - 90) % 360 }))}
-                      >
-                        -90°
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: (prev.rotation + 90) % 360 }))}
-                      >
-                        +90°
-                      </Button>
-                    </div>
-                  </div>
+
 
                   <Button variant="outline" onClick={resetAdjustments} className="w-full">
                     Réinitialiser

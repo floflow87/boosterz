@@ -64,15 +64,12 @@ export default function CollectionDetail() {
     if (!matchesSearch) return false;
 
     switch (filter) {
-      case "all": return card.cardType === "Base" && !card.cardSubType;
-      case "owned": return card.isOwned && card.cardType === "Base" && !card.cardSubType;
-      case "missing": return !card.isOwned && card.cardType === "Base" && !card.cardSubType;
-      case "bases": return card.cardType === "Base" && !card.cardSubType;
-      case "bases_numbered": return card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
+      case "bases": return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+      case "bases_numbered": return card.cardType === "Parallel Numbered";
       case "autographs": return card.cardType === "Autograph";
       case "hits": return card.cardType.includes("Insert");
       case "special_1_1": return card.cardType === "special_1_1" || card.numbering === "1/1";
-      default: return card.cardType === "Base" && !card.cardSubType;
+      default: return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
     }
   });
 
@@ -495,9 +492,14 @@ export default function CollectionDetail() {
               
               return (
                 <>
-                  <h2 className="text-xl font-bold text-white mb-4">
-                    Détails de la carte
-                  </h2>
+                  <div className="mb-4">
+                    <h2 className="text-xl font-bold text-white">
+                      {selectedCard.playerName || 'Joueur Inconnu'}
+                    </h2>
+                    <p className="text-gray-400 text-sm">
+                      {selectedCard.teamName || 'Équipe Inconnue'}
+                    </p>
+                  </div>
 
                   {/* Variant Navigation */}
                   {variants.length > 1 && (
@@ -548,14 +550,6 @@ export default function CollectionDetail() {
 
                   {/* Card Info */}
                   <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Joueur:</span>
-                      <span className="text-white font-medium">{selectedCard.playerName || 'Inconnu'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Équipe:</span>
-                      <span className="text-white">{selectedCard.teamName || 'Inconnue'}</span>
-                    </div>
                     <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)]">Référence:</span>
                       <span className="text-white">{selectedCard.reference}</span>
