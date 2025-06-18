@@ -189,6 +189,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const handleClose = useCallback(() => {
     setStep("import");
     setSelectedImage(null);
+    setShowRetouchOptions(false);
     setAdjustments({
       brightness: 100,
       contrast: 100,
@@ -452,18 +453,22 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                     <label className="block text-sm font-medium text-black mb-2">
                       Cartes disponibles pour {playerName} ({playerCards.length})
                     </label>
-                    <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Sélectionner une carte" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {playerCards.map((card) => (
-                          <SelectItem key={card.id} value={card.id.toString()}>
-                            {card.cardNumber} - {card.cardType} ({card.teamName})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="space-y-2 max-h-32 overflow-y-auto">
+                      {playerCards.map((card) => (
+                        <div
+                          key={card.id}
+                          className={`p-3 border rounded-lg cursor-pointer transition-all ${
+                            selectedCardId === card.id 
+                              ? "border-blue-500 bg-blue-50" 
+                              : "border-gray-300 hover:border-gray-400"
+                          }`}
+                          onClick={() => setSelectedCardId(card.id)}
+                        >
+                          <div className="font-medium text-black">{card.cardNumber} - {card.cardType}</div>
+                          <div className="text-sm text-gray-600">{card.teamName}</div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
 
@@ -477,20 +482,22 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
                 <div>
                   <label className="block text-sm font-medium text-black mb-2">
-                    Ou sélectionner manuellement
+                    Numéro de carte (optionnel)
                   </label>
-                  <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Parcourir toutes les cartes..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableCards.map((card) => (
-                        <SelectItem key={card.id} value={card.id.toString()}>
-                          {card.playerName} - {card.cardNumber} ({card.cardType})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    type="text"
+                    placeholder="Ex: #001, #A01, #NU01..."
+                    className="w-full mb-3"
+                  />
+                  
+                  <label className="block text-sm font-medium text-black mb-2">
+                    Type de carte (optionnel)
+                  </label>
+                  <Input
+                    type="text"
+                    placeholder="Ex: Base, Hit, Autograph, Special..."
+                    className="w-full"
+                  />
                 </div>
                 
                 <div className="flex gap-2">
