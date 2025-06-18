@@ -294,6 +294,75 @@ export default function CollectionDetail() {
       </main>
 
       <Navigation />
+
+      {/* Card Detail Modal */}
+      {selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[hsl(214,35%,22%)] rounded-xl p-6 max-w-sm w-full relative">
+            <button
+              onClick={() => setSelectedCard(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            
+            <div className="text-center mb-4">
+              {selectedCard.isOwned && selectedCard.imageUrl ? (
+                <img 
+                  src={selectedCard.imageUrl} 
+                  alt={selectedCard.playerName || "Card"} 
+                  className="w-32 h-40 object-cover rounded-lg mx-auto mb-3"
+                />
+              ) : (
+                <div className="w-32 h-40 bg-gray-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <HelpCircle className="w-12 h-12 text-gray-400" />
+                </div>
+              )}
+              
+              <h3 className="text-xl font-bold text-white mb-1">
+                {selectedCard.playerName || "Carte Inconnue"}
+              </h3>
+              <p className="text-[hsl(212,23%,69%)]">{selectedCard.teamName}</p>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <span className="text-[hsl(212,23%,69%)]">Numéro:</span>
+                <span className="text-white">{selectedCard.cardNumber}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[hsl(212,23%,69%)]">Type:</span>
+                <span className="text-white">{selectedCard.cardType}</span>
+              </div>
+              {selectedCard.serialNumber && (
+                <div className="flex justify-between">
+                  <span className="text-[hsl(212,23%,69%)]">Numérotée:</span>
+                  <span className="text-yellow-400 font-bold">{selectedCard.serialNumber}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-[hsl(212,23%,69%)]">Rareté:</span>
+                <span className="text-white capitalize">{selectedCard.rarity}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[hsl(212,23%,69%)]">Statut:</span>
+                <span className={`font-bold ${selectedCard.isOwned ? 'text-green-400' : 'text-red-400'}`}>
+                  {selectedCard.isOwned ? 'Possédée' : 'Manquante'}
+                </span>
+              </div>
+            </div>
+
+            {selectedCard.cardType === "Special" && selectedCard.serialNumber === "1/1" && (
+              <div className="mt-4 p-3 bg-gradient-to-r from-yellow-600 to-yellow-800 rounded-lg">
+                <div className="flex items-center justify-center space-x-2">
+                  <Sparkles className="w-5 h-5 text-yellow-200" />
+                  <span className="text-yellow-100 font-bold">Carte Ultra Rare 1/1</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
