@@ -355,7 +355,14 @@ export default function CollectionDetail() {
         {/* Action Buttons */}
         <div className="flex space-x-3 mt-6">
           <button 
-            onClick={() => setShowPhotoUpload(true)}
+            onClick={() => {
+              // Select first card for demo purposes
+              const firstCard = filteredCards?.[0];
+              if (firstCard) {
+                setSelectedCard(firstCard);
+                setShowPhotoUpload(true);
+              }
+            }}
             className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 rounded-xl font-semibold hover:bg-[hsl(9,85%,60%)] transition-colors"
           >
             <Plus className="w-5 h-5 inline mr-2" />

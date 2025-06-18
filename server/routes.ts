@@ -73,6 +73,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update card image
+  app.patch("/api/cards/:id/image", async (req, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const { imageUrl } = req.body;
+      
+      if (!imageUrl) {
+        return res.status(400).json({ message: "Image URL is required" });
+      }
+      
+      const card = await storage.updateCardImage(cardId, imageUrl);
+      
+      if (!card) {
+        return res.status(404).json({ message: "Card not found" });
+      }
+      
+      res.json(card);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

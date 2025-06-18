@@ -112,6 +112,15 @@ export class DatabaseStorage implements IStorage {
     return card || undefined;
   }
 
+  async updateCardImage(id: number, imageUrl: string): Promise<Card | undefined> {
+    const [card] = await db
+      .update(cards)
+      .set({ imageUrl })
+      .where(eq(cards.id, id))
+      .returning();
+    return card || undefined;
+  }
+
   async toggleCardOwnership(id: number): Promise<Card | undefined> {
     const existingCard = await this.getCard(id);
     if (!existingCard) return undefined;
@@ -1703,6 +1712,15 @@ export class MemStorage implements IStorage {
     if (!card) return undefined;
     
     const updatedCard = { ...card, ...updates };
+    this.cards.set(id, updatedCard);
+    return updatedCard;
+  }
+
+  async updateCardImage(id: number, imageUrl: string): Promise<Card | undefined> {
+    const card = this.cards.get(id);
+    if (!card) return undefined;
+    
+    const updatedCard = { ...card, imageUrl };
     this.cards.set(id, updatedCard);
     return updatedCard;
   }

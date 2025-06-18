@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from "react";
-import { Camera, Upload, Image, X, RotateCw, Crop, Sun, Contrast, Droplets, CircleDot, Check } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Camera, Upload, Image, X, RotateCw, Sun, Contrast, Droplets, CircleDot, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
@@ -72,7 +72,7 @@ export default function PhotoUploadModal({ isOpen, onClose, onSave }: PhotoUploa
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const img = new Image();
+    const img = document.createElement('img');
     img.onload = () => {
       // Set canvas size
       canvas.width = img.width;
