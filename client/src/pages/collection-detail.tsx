@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search, Trash2, Camera } from "lucide-react";
+import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search, Trash2, Camera, ArrowUpDown } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -801,55 +801,84 @@ export default function CollectionDetail() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleMarkAsNotOwned(currentCard.id)}
-                      className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-                      title="Marquer comme manquante"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        const cardInfo = {
-                          id: currentCard.id,
-                          playerName: selectedCard.playerName || "Joueur Inconnu",
-                          reference: selectedCard.reference,
-                          teamName: selectedCard.teamName || "Équipe Inconnue"
-                        };
-                        setShowPhotoUpload(true);
-                      }}
-                      className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                    >
-                      <Camera className="w-4 h-4 mr-1" />
-                      {currentCard.imageUrl ? 'Changer photo' : 'Ajouter photo'}
-                    </button>
-                    {currentCard.imageUrl && (
+                  <div className="space-y-2">
+                    <div className="flex gap-2">
                       <button
-                        onClick={async () => {
-                          try {
-                            await updateCardImageMutation.mutateAsync({
-                              cardId: currentCard.id,
-                              imageData: ""
-                            });
-                            toast({
-                              title: "Photo supprimée",
-                              description: "La photo de la carte a été supprimée avec succès."
-                            });
-                          } catch (error) {
-                            toast({
-                              title: "Erreur",
-                              description: "Impossible de supprimer la photo.",
-                              variant: "destructive"
-                            });
-                          }
-                        }}
-                        className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                        title="Supprimer la photo"
+                        onClick={() => handleMarkAsNotOwned(currentCard.id)}
+                        className="p-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
+                        title="Marquer comme manquante"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                       </button>
-                    )}
+                      <button
+                        onClick={() => {
+                          const cardInfo = {
+                            id: currentCard.id,
+                            playerName: selectedCard.playerName || "Joueur Inconnu",
+                            reference: selectedCard.reference,
+                            teamName: selectedCard.teamName || "Équipe Inconnue"
+                          };
+                          setShowPhotoUpload(true);
+                        }}
+                        className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                      >
+                        <Camera className="w-4 h-4 mr-1" />
+                        {currentCard.imageUrl ? 'Changer photo' : 'Ajouter photo'}
+                      </button>
+                      {currentCard.imageUrl && (
+                        <button
+                          onClick={async () => {
+                            try {
+                              await updateCardImageMutation.mutateAsync({
+                                cardId: currentCard.id,
+                                imageData: ""
+                              });
+                              toast({
+                                title: "Photo supprimée",
+                                description: "La photo de la carte a été supprimée avec succès."
+                              });
+                            } catch (error) {
+                              toast({
+                                title: "Erreur",
+                                description: "Impossible de supprimer la photo.",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                          title="Supprimer la photo"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
+                    
+                    <button
+                      onClick={async () => {
+                        try {
+                          // TODO: Implémenter la mutation pour basculer l'état d'échange
+                          toast({
+                            title: currentCard.isForTrade ? "Carte retirée des échanges" : "Carte disponible pour échange",
+                            description: currentCard.isForTrade ? "La carte n'est plus visible dans la section échanges." : "La carte est maintenant visible dans la section échanges."
+                          });
+                        } catch (error) {
+                          toast({
+                            title: "Erreur",
+                            description: "Impossible de modifier le statut d'échange.",
+                            variant: "destructive"
+                          });
+                        }
+                      }}
+                      className={`w-full py-2 px-3 rounded-lg transition-colors flex items-center justify-center font-medium ${
+                        currentCard.isForTrade 
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                          : 'bg-gray-600 hover:bg-gray-700 text-white'
+                      }`}
+                      title={currentCard.isForTrade ? "Retirer de l'échange" : "Proposer à l'échange"}
+                    >
+                      <ArrowUpDown className="w-4 h-4 mr-1" />
+                      {currentCard.isForTrade ? 'Retirer échange' : 'Proposer échange'}
+                    </button>
                   </div>
                 );
               })()}

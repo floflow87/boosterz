@@ -8,6 +8,10 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   name: text("name").notNull(),
   avatar: text("avatar"),
+  bio: text("bio"),
+  isPublic: boolean("is_public").default(true).notNull(),
+  followersCount: integer("followers_count").default(0).notNull(),
+  followingCount: integer("following_count").default(0).notNull(),
   totalCards: integer("total_cards").default(0).notNull(),
   collectionsCount: integer("collections_count").default(0).notNull(),
   completionPercentage: real("completion_percentage").default(0).notNull(),
@@ -35,6 +39,7 @@ export const cards = pgTable("cards", {
   cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", "intergalactic_hit", etc.
   imageUrl: text("image_url"),
   isOwned: boolean("is_owned").default(false).notNull(),
+  isForTrade: boolean("is_for_trade").default(false).notNull(),
   isRookieCard: boolean("is_rookie_card").default(false).notNull(),
   rarity: text("rarity"), // "common", "rare", "super_rare", etc.
   serialNumber: text("serial_number"), // pour les cartes numérotées
@@ -65,6 +70,38 @@ export const userCards = pgTable("user_cards", {
   images: text("images").array(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Table pour le système de followers
+export const follows = pgTable("follows", {
+  id: serial("id").primaryKey(),
+  followerId: integer("follower_id").notNull(),
+  followingId: integer("following_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Table pour les notifications
+export const notifications = pgTable("notifications", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  type: text("type").notNull(), // "new_card", "card_for_trade", "new_follower"
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  cardId: integer("card_id"),
+  fromUserId: integer("from_user_id"),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Table pour les activités publiques
+export const activities = pgTable("activities", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  type: text("type").notNull(), // "added_card", "marked_for_trade", "completed_collection"
+  cardId: integer("card_id"),
+  collectionId: integer("collection_id"),
+  metadata: text("metadata"), // JSON pour données supplémentaires
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Relations
