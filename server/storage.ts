@@ -330,7 +330,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "1/50",
         baseCardId: null,
-        isVariant: false
+        isVariant: false,
+        variants: null
       },
       // Hit card
       {
@@ -348,7 +349,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "1/160",
         baseCardId: null,
-        isVariant: false
+        isVariant: false,
+        variants: null
       },
       // Hit card variante /15
       {
@@ -366,7 +368,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "1/15",
         baseCardId: 6,
-        isVariant: true
+        isVariant: true,
+        variants: "Numbered"
       },
       // Carte spéciale 1/1
       {
@@ -384,7 +387,8 @@ export class MemStorage implements IStorage {
         serialNumber: "001",
         numbering: "1/1",
         baseCardId: null,
-        isVariant: false
+        isVariant: false,
+        variants: null
       }
     ];
 
