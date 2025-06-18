@@ -460,12 +460,6 @@ export default function CollectionDetail() {
                 
                 {/* Card Info */}
                 <div className="p-3">
-                  <div className="text-white font-medium text-sm mb-1">
-                    {card.playerName || 'Joueur Inconnu'}
-                  </div>
-                  <div className="text-gray-400 text-xs">
-                    {card.teamName || 'Équipe Inconnue'}
-                  </div>
                   <div className="text-gray-400 text-xs mt-1">
                     {card.rarity || 'Base'}
                   </div>
@@ -502,7 +496,7 @@ export default function CollectionDetail() {
               return (
                 <>
                   <h2 className="text-xl font-bold text-white mb-4">
-                    {selectedCard.playerName || 'Joueur Inconnu'}
+                    Détails de la carte
                   </h2>
 
                   {/* Variant Navigation */}
