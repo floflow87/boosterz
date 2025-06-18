@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
+import PhotoUploadModal from "@/components/photo-upload-modal";
+import { apiRequest } from "@/lib/queryClient";
 import type { Collection, Card } from "@shared/schema";
 
 export default function CollectionDetail() {
@@ -13,6 +15,7 @@ export default function CollectionDetail() {
   const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "speciales">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
