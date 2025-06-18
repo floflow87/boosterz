@@ -60,15 +60,15 @@ export default function CollectionDetail() {
     if (!matchesSearch) return false;
 
     switch (filter) {
-      case "all": return true;
-      case "owned": return card.isOwned;
-      case "missing": return !card.isOwned;
-      case "bases": return card.cardType === "Base";
+      case "all": return card.cardType === "Base" && !card.cardSubType; // Only show base cards without variants
+      case "owned": return card.isOwned && card.cardType === "Base" && !card.cardSubType;
+      case "missing": return !card.isOwned && card.cardType === "Base" && !card.cardSubType;
+      case "bases": return card.cardType === "Base" && !card.cardSubType; // Only original base cards
       case "bases_numbered": return card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
       case "autographs": return card.cardType === "Autograph";
       case "hits": return card.cardType.includes("Insert");
       case "special_1_1": return card.cardType === "special_1_1" || card.numbering === "1/1";
-      default: return true;
+      default: return card.cardType === "Base" && !card.cardSubType;
     }
   }).sort((a, b) => {
     if (filter === "hits") {
@@ -271,7 +271,40 @@ export default function CollectionDetail() {
     }
   };
 
-  // ... rest of the component code
+  // Get variants for a base card
+  const getCardVariants = (baseCard: Card) => {
+    if (baseCard.cardType !== "Base") return [baseCard];
+    
+    const variants = cards?.filter(card => 
+      card.reference === baseCard.reference && 
+      card.playerName === baseCard.playerName && 
+      card.teamName === baseCard.teamName &&
+      card.cardType === "Base"
+    ) || [];
+    
+    // Sort variants: Base first, then Laser, then Swirl
+    return variants.sort((a, b) => {
+      const order: Record<string, number> = { '': 0, 'Laser': 1, 'Swirl': 2 };
+      return (order[a.cardSubType || ''] || 0) - (order[b.cardSubType || ''] || 0);
+    });
+  };
+
+  // Check if all variants are owned
+  const areAllVariantsOwned = (baseCard: Card) => {
+    const variants = getCardVariants(baseCard);
+    return variants.length > 0 && variants.every(variant => variant.isOwned);
+  };
+
+  const handleCardSelect = (card: Card) => {
+    setSelectedCard(card);
+    setCurrentVariantIndex(0);
+  };
+
+  const getCurrentCard = () => {
+    if (!selectedCard) return null;
+    const variants = getCardVariants(selectedCard);
+    return variants[currentVariantIndex] || selectedCard;
+  };
   
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
@@ -366,17 +399,17 @@ export default function CollectionDetail() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleBulkMarkAsOwned}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg transition-colors"
+                  title="Marquer comme acquises"
                 >
-                  <Check className="w-4 h-4" />
-                  Marquer comme acquises
+                  <Check className="w-5 h-5" />
                 </button>
                 <button
                   onClick={handleBulkMarkAsNotOwned}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-lg transition-colors"
+                  title="Marquer comme manquantes"
                 >
-                  <X className="w-4 h-4" />
-                  Marquer comme manquantes
+                  <X className="w-5 h-5" />
                 </button>
               </div>
             </div>
@@ -452,7 +485,7 @@ export default function CollectionDetail() {
                       const cardElement = e.currentTarget.parentElement;
                       cardElement?.classList.add('clicked');
                       setTimeout(() => cardElement?.classList.remove('clicked'), 1800);
-                      setSelectedCard(card);
+                      handleCardSelect(card);
                     }
                   }}
                   className={`card-content p-3 rounded-lg bg-[hsl(214,35%,22%)] border-2 ${
@@ -527,7 +560,7 @@ export default function CollectionDetail() {
                       const cardElement = e.currentTarget;
                       cardElement.classList.add('clicked');
                       setTimeout(() => cardElement.classList.remove('clicked'), 1800);
-                      setSelectedCard(card);
+                      handleCardSelect(card);
                     }
                   }}
                   className="flex items-center space-x-3 w-full"
@@ -563,6 +596,253 @@ export default function CollectionDetail() {
       </main>
 
       <Navigation />
+
+      {/* Card Detail Modal */}
+      {selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between p-6 border-b border-gray-600">
+              <h2 className="text-lg font-bold text-white font-poppins">Détails de la carte</h2>
+              <button onClick={() => setSelectedCard(null)} className="text-gray-400 hover:text-white">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="p-6">
+              {(() => {
+                const variants = getCardVariants(selectedCard);
+                const currentCard = getCurrentCard();
+                
+                return (
+                  <>
+                    {/* Variant Navigation */}
+                    {variants.length > 1 && (
+                      <div className="flex items-center justify-between mb-4 bg-[hsl(216,46%,13%)] rounded-lg p-3">
+                        <button
+                          onClick={() => {
+                            const prevVariant = currentVariantIndex > 0 ? currentVariantIndex - 1 : variants.length - 1;
+                            setCurrentVariantIndex(prevVariant);
+                          }}
+                          className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors"
+                        >
+                          <ChevronLeft className="w-4 h-4 text-white" />
+                        </button>
+                        
+                        <div className="text-center">
+                          <div className="text-white font-medium">
+                            {currentCard?.cardSubType || "Base"} ({currentVariantIndex + 1}/{variants.length})
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {currentCard?.cardSubType ? `Parallèle ${currentCard.cardSubType}` : "Carte de base"}
+                          </div>
+                        </div>
+                        
+                        <button
+                          onClick={() => {
+                            const nextVariant = currentVariantIndex < variants.length - 1 ? currentVariantIndex + 1 : 0;
+                            setCurrentVariantIndex(nextVariant);
+                          }}
+                          className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4 text-white" />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Card Image */}
+                    <div className="mb-4">
+                      {currentCard?.imageUrl ? (
+                        <div className="relative">
+                          <img 
+                            src={currentCard.imageUrl} 
+                            alt={`${currentCard.playerName} card`}
+                            className="w-full h-64 object-cover rounded-lg cursor-pointer"
+                            onClick={() => setShowFullscreenCard(true)}
+                          />
+                          <button
+                            onClick={() => setShowFullscreenCard(true)}
+                            className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-lg hover:bg-opacity-75 transition-all"
+                          >
+                            <Search className="w-4 h-4" />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="w-full h-64 bg-gray-600 rounded-lg flex items-center justify-center">
+                          <HelpCircle className="w-16 h-16 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card Info */}
+                    <div className="space-y-3 mb-6">
+                      <div className="flex justify-between">
+                        <span className="text-[hsl(212,23%,69%)]">Joueur:</span>
+                        <span className="text-white font-medium">{selectedCard.playerName || 'Inconnu'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[hsl(212,23%,69%)]">Équipe:</span>
+                        <span className="text-white">{selectedCard.teamName || 'Inconnue'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[hsl(212,23%,69%)]">Référence:</span>
+                        <span className="text-white">{selectedCard.reference}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[hsl(212,23%,69%)]">Type:</span>
+                        <span className="text-white">{currentCard?.cardSubType || "Base"}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-[hsl(212,23%,69%)]">Statut:</span>
+                        <span className={`font-bold ${currentCard?.isOwned ? 'text-green-400' : 'text-red-400'}`}>
+                          {currentCard?.isOwned ? 'Acquise' : 'Manquante'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="mt-6">
+                      {!currentCard?.isOwned ? (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleMarkAsOwned(currentCard?.id || 0, false)}
+                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          >
+                            <Check className="w-4 h-4 mr-1" />
+                            Acquise
+                          </button>
+                          <button
+                            onClick={() => handleMarkAsOwned(currentCard?.id || 0, true)}
+                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          >
+                            <Camera className="w-4 h-4 mr-1" />
+                            + Photo
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleMarkAsNotOwned(currentCard?.id || 0)}
+                              className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                            >
+                              <X className="w-4 h-4 mr-1" />
+                              Marquer comme manquante
+                            </button>
+                            <button
+                              onClick={() => {
+                                const cardInfo = {
+                                  id: currentCard.id,
+                                  playerName: selectedCard.playerName || "Joueur Inconnu",
+                                  reference: selectedCard.reference,
+                                  teamName: selectedCard.teamName || "Équipe Inconnue"
+                                };
+                                setShowPhotoUpload(true);
+                              }}
+                              className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                            >
+                              <Camera className="w-4 h-4 mr-1" />
+                              {currentCard.imageUrl ? 'Changer photo' : 'Ajouter photo'}
+                            </button>
+                            {currentCard.imageUrl && (
+                              <button
+                                onClick={async () => {
+                                  try {
+                                    await updateCardImageMutation.mutateAsync({
+                                      cardId: currentCard.id,
+                                      imageUrl: ""
+                                    });
+                                    toast({
+                                      title: "Photo supprimée",
+                                      description: "La photo de la carte a été supprimée avec succès."
+                                    });
+                                  } catch (error) {
+                                    toast({
+                                      title: "Erreur",
+                                      description: "Impossible de supprimer la photo.",
+                                      variant: "destructive"
+                                    });
+                                  }
+                                }}
+                                className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                                title="Supprimer la photo"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Card Modal */}
+      {showFullscreenCard && selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+          <button
+            onClick={() => setShowFullscreenCard(false)}
+            className="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-lg hover:bg-opacity-75 transition-all z-60"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div className="relative max-w-2xl max-h-full">
+            {(() => {
+              const currentCard = getCurrentCard();
+              return currentCard?.imageUrl ? (
+                <div 
+                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out"
+                  onMouseMove={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateY = ((x - centerX) / centerX) * 25;
+                    const rotateX = ((centerY - y) / centerY) * 25;
+                    
+                    e.currentTarget.style.transform = `
+                      perspective(1000px) 
+                      rotateX(${rotateX}deg) 
+                      rotateY(${rotateY}deg)
+                      scale(1.05)
+                    `;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
+                  }}
+                  style={{
+                    transformStyle: 'preserve-3d'
+                  }}
+                >
+                  <img 
+                    src={currentCard.imageUrl} 
+                    alt={currentCard.playerName || "Card"} 
+                    className="w-full h-full object-contain rounded-xl shadow-2xl"
+                    style={{
+                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5))'
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-700 rounded-xl flex items-center justify-center">
+                  <HelpCircle className="w-24 h-24 text-gray-400" />
+                </div>
+              );
+            })()}
+          </div>
+          
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
+            <p className="text-sm opacity-75">Bougez votre souris ou doigt pour faire pivoter la carte</p>
+          </div>
+        </div>
+      )}
 
       {/* Photo Upload Modal */}
       <CardPhotoImport
