@@ -219,21 +219,23 @@ const baseCards: BaseCard[] = [
   { id: 200, playerName: "Rasmus Nicolaisen", teamName: "Toulouse FC", isRookie: true }
 ];
 
-const parallelSwirlVariants = [
-  { type: "Parallel Swirl Red", numbering: "/30", rarity: "Rare" },
-  { type: "Parallel Swirl Bronze", numbering: "/25", rarity: "Rare" },
-  { type: "Parallel Swirl Pink", numbering: "/20", rarity: "Ultra Rare" },
-  { type: "Parallel Swirl Teal", numbering: "/15", rarity: "Ultra Rare" },
-  { type: "Parallel Swirl Gold", numbering: "/10", rarity: "Super Rare" },
-  { type: "Parallel Swirl Black", numbering: "/1", rarity: "1 of 1" }
+// Bases non numérotées - 2 variantes par carte de base (Laser et Swirl)
+const baseVariants = [
+  { type: "Parallel Laser", numbering: null, rarity: "Base" },
+  { type: "Parallel Swirl", numbering: null, rarity: "Base" }
 ];
 
-const parallelLaserVariants = [
-  { type: "Parallel Laser Blue", numbering: "/50", rarity: "Rare" },
-  { type: "Parallel Laser Orange", numbering: "/35", rarity: "Rare" },
-  { type: "Parallel Laser Purple", numbering: "/15", rarity: "Ultra Rare" },
-  { type: "Parallel Laser Green", numbering: "/5", rarity: "Super Rare" },
-  { type: "Parallel Laser Black", numbering: "/1", rarity: "1 of 1" }
+// Bases numérotées - 9 variantes par carte de base
+const numberedVariants = [
+  { type: "Parallel Numbered", numbering: "/50", rarity: "Rare" },
+  { type: "Parallel Numbered", numbering: "/35", rarity: "Rare" },
+  { type: "Parallel Numbered", numbering: "/30", rarity: "Rare" },
+  { type: "Parallel Numbered", numbering: "/25", rarity: "Ultra Rare" },
+  { type: "Parallel Numbered", numbering: "/20", rarity: "Ultra Rare" },
+  { type: "Parallel Swirl", numbering: "/15", rarity: "Ultra Rare" },
+  { type: "Parallel Laser", numbering: "/15", rarity: "Ultra Rare" },
+  { type: "Parallel Numbered", numbering: "/10", rarity: "Super Rare" },
+  { type: "Parallel Numbered", numbering: "/5", rarity: "Super Rare" }
 ];
 
 const insertBreakthrough = [
@@ -360,32 +362,14 @@ export async function seedDatabase() {
       });
     }
 
-    // 2. Create parallel variants for each base card
-    console.log("✨ Creating parallel variants...");
+    // 2. Create base variants (non-numbered) - 2 variants per base card
+    console.log("✨ Creating base variants (non-numbered)...");
     for (const baseCard of baseCards) {
-      // Parallel Swirl variants
-      for (const variant of parallelSwirlVariants) {
+      for (const variant of baseVariants) {
         cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `${baseCard.id.toString().padStart(3, '0')}-S${variant.type.split(' ')[2].charAt(0)}`,
-          playerName: baseCard.playerName,
-          teamName: baseCard.teamName,
-          cardType: variant.type,
-          cardSubType: baseCard.isRookie ? "Rookie" : null,
-          rarity: variant.rarity,
-          numbering: variant.numbering,
-          isOwned: false,
-          imageUrl: null
-        });
-      }
-
-      // Parallel Laser variants  
-      for (const variant of parallelLaserVariants) {
-        cardsToInsert.push({
-          id: cardId++,
-          collectionId: 1,
-          reference: `${baseCard.id.toString().padStart(3, '0')}-L${variant.type.split(' ')[2].charAt(0)}`,
+          reference: `${baseCard.id.toString().padStart(3, '0')}-${variant.type.includes('Laser') ? 'L' : 'S'}`,
           playerName: baseCard.playerName,
           teamName: baseCard.teamName,
           cardType: variant.type,
@@ -398,7 +382,27 @@ export async function seedDatabase() {
       }
     }
 
-    // 3. Create Insert cards
+    // 3. Create numbered variants - 9 variants per base card
+    console.log("🔢 Creating numbered variants...");
+    for (const baseCard of baseCards) {
+      for (const variant of numberedVariants) {
+        cardsToInsert.push({
+          id: cardId++,
+          collectionId: 1,
+          reference: `${baseCard.id.toString().padStart(3, '0')}-${variant.numbering?.replace('/', '')}`,
+          playerName: baseCard.playerName,
+          teamName: baseCard.teamName,
+          cardType: variant.type,
+          cardSubType: baseCard.isRookie ? "Rookie" : null,
+          rarity: variant.rarity,
+          numbering: variant.numbering,
+          isOwned: false,
+          imageUrl: null
+        });
+      }
+    }
+
+    // 4. Create Insert cards
     console.log("🎯 Creating Insert cards...");
     
     // Breakthrough
@@ -437,7 +441,7 @@ export async function seedDatabase() {
       });
     }
 
-    // 4. Create Autograph cards
+    // 5. Create Autograph cards
     console.log("✍️ Creating Autograph cards...");
     for (const autoCard of autographCards) {
       for (const numbering of autoCard.numberings) {

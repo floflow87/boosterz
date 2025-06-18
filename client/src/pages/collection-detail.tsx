@@ -220,6 +220,37 @@ export default function CollectionDetail() {
     );
   };
 
+  const getCardBorderColor = (card: Card) => {
+    if (!card.isOwned) return "border-gray-600";
+    
+    // Vert pour les bases
+    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+      return "border-green-500";
+    }
+    
+    // Bleu pour les bases numérotées  
+    if (card.cardType === "Parallel Numbered") {
+      return "border-blue-500";
+    }
+    
+    // Violet pour les hits (Insert)
+    if (card.cardType?.includes("Insert")) {
+      return "border-purple-500";
+    }
+    
+    // Gold pour les autographes
+    if (card.cardType === "Autograph") {
+      return "border-yellow-500";
+    }
+    
+    // Noir pour les spéciales
+    if (card.cardType === "special_1_1" || card.numbering === "1/1") {
+      return "border-black";
+    }
+    
+    return "border-green-500"; // Default
+  };
+
   const getCurrentCard = () => {
     if (!selectedCard) return null;
     const variants = getCardVariants(selectedCard);
@@ -358,7 +389,7 @@ export default function CollectionDetail() {
           {filteredCards?.map((card) => (
             <div 
               key={card.id} 
-              className="relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700"
+              className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(card)}`}
             >
               {/* Checkbox */}
               <div className="absolute top-2 left-2 z-20">
