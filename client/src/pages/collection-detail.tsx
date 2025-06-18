@@ -26,21 +26,35 @@ export default function CollectionDetail() {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
     if (filter === "bases") return card.cardType === "Base";
-    if (filter === "numbered") return card.serialNumber && card.serialNumber !== "/1" && card.serialNumber !== "1/1";
+    if (filter === "numbered") return card.cardType === "Numbered";
     if (filter === "autographs") return card.cardType === "Autograph";
     if (filter === "speciales") return card.cardType === "Special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
-    if (filter === "hits") return card.cardType === "Insert" || card.cardType === "Parallel" || card.rarity === "Ultra Rare";
+    if (filter === "hits") return card.cardType === "Hit";
     return true;
+  })?.sort((a, b) => {
+    // Sort numbered cards by serial number (highest number first: /50, /35, /30, /25)
+    if (filter === "numbered" && a.serialNumber && b.serialNumber) {
+      const aSerial = parseInt(a.serialNumber.split('/')[1]) || 0;
+      const bSerial = parseInt(b.serialNumber.split('/')[1]) || 0;
+      return bSerial - aSerial; // Descending order
+    }
+    // Sort base cards by card number
+    if (filter === "bases") {
+      const aNum = parseInt(a.cardNumber.replace(/[^0-9]/g, '')) || 0;
+      const bNum = parseInt(b.cardNumber.replace(/[^0-9]/g, '')) || 0;
+      return aNum - bNum; // Ascending order
+    }
+    return 0;
   });
 
   const ownedCount = cards?.filter(card => card.isOwned).length || 0;
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
   const basesCount = cards?.filter(card => card.cardType === "Base").length || 0;
-  const numberedCount = cards?.filter(card => card.serialNumber && card.serialNumber !== "/1" && card.serialNumber !== "1/1").length || 0;
+  const numberedCount = cards?.filter(card => card.cardType === "Numbered").length || 0;
   const autographsCount = cards?.filter(card => card.cardType === "Autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType === "Special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
-  const hitsCount = cards?.filter(card => card.cardType === "Insert" || card.cardType === "Parallel" || card.rarity === "Ultra Rare").length || 0;
+  const hitsCount = cards?.filter(card => card.cardType === "Hit").length || 0;
 
   if (collectionLoading || cardsLoading) {
     return (
@@ -155,6 +169,17 @@ export default function CollectionDetail() {
             >
               <HelpCircle className="w-4 h-4 inline mr-1" />
               Autographes ({autographsCount})
+            </button>
+            <button
+              onClick={() => setFilter("hits")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "hits" 
+                  ? "bg-purple-500 text-white shadow-lg transform scale-105" 
+                  : "bg-purple-600 text-purple-100 hover:bg-purple-500"
+              }`}
+            >
+              <Star className="w-4 h-4 inline mr-1" />
+              Hit ({hitsCount})
             </button>
             <button
               onClick={() => setFilter("speciales")}
