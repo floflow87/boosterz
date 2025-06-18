@@ -135,31 +135,27 @@ export default function CollectionDetail() {
       <Header title={collection.name} showBackButton />
 
       <main className="relative z-10 px-4 pb-24">
-        {/* Collection Header */}
-        <div className="text-center mb-6">
-          <div className="bg-gradient-to-r from-[hsl(9,85%,67%)] to-[hsl(25,100%,70%)] rounded-2xl p-6 mb-4">
+        {/* Collection Header - Plus compact */}
+        <div className="text-center mb-4">
+          <div className="bg-gradient-to-r from-[hsl(9,85%,67%)] to-[hsl(25,100%,70%)] rounded-xl p-4 mb-3">
             {collection.name === 'SCORE LIGUE 1' ? (
               <>
-                <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
-                  <img 
-                    src={scoreLigue1Logo} 
-                    alt="Score Ligue 1 logo"
-                    className="w-full h-full object-contain"
-                  />
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="w-12 h-12 flex items-center justify-center">
+                    <img 
+                      src={scoreLigue1Logo} 
+                      alt="Score Ligue 1 logo"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <h1 className="text-xl font-bold text-white font-luckiest">{collection.name}</h1>
                 </div>
-                <h1 className="text-2xl font-bold text-white font-luckiest">{collection.name}</h1>
                 <p className="text-white opacity-90 font-poppins">{collection.season}</p>
               </>
             ) : (
               <>
-                <div className="w-24 h-32 bg-yellow-400 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <div className="text-[hsl(216,46%,13%)] font-bold text-lg text-center">
-                    {collection.name.split(' ')[0]}<br />
-                    {collection.name.split(' ')[1]}
-                  </div>
-                </div>
-                <h1 className="text-2xl font-bold text-white font-luckiest">{collection.name}</h1>
-                <p className="text-white opacity-90 font-poppins">Saison {collection.season}</p>
+                <h1 className="text-xl font-bold text-white font-luckiest mb-2">{collection.name}</h1>
+                <p className="text-white opacity-90 font-poppins">{collection.season}</p>
               </>
             )}
           </div>

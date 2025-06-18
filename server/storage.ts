@@ -311,7 +311,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "2/200",
         baseCardId: null,
-        isVariant: false
+        isVariant: false,
+        variants: null
       },
       // Autographe
       {
