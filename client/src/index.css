@@ -151,7 +151,7 @@
     position: relative;
     border: 2px solid #10b981;
     border-radius: 0.5rem;
-    animation: green-pulse 3s ease-in-out infinite;
+    animation: green-pulse 6s ease-in-out infinite;
   }
 
   .animated-border .card-content {
