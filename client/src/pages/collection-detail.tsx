@@ -72,12 +72,13 @@ export default function CollectionDetail() {
     let passesSearch = true;
     if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
-      passesSearch = 
+      passesSearch = Boolean(
         (card.playerName && card.playerName.toLowerCase().includes(term)) ||
         (card.teamName && card.teamName.toLowerCase().includes(term)) ||
         (card.reference && card.reference.toLowerCase().includes(term)) ||
         (card.cardType && card.cardType.toLowerCase().includes(term)) ||
-        (card.cardSubType && card.cardSubType.toLowerCase().includes(term));
+        (card.cardSubType && card.cardSubType.toLowerCase().includes(term))
+      );
     }
     
     // Pour l'affichage général, ne montrer que les cartes Base originales ou les autres types
@@ -578,39 +579,53 @@ export default function CollectionDetail() {
               <X className="w-6 h-6" />
             </button>
             
-            {/* Carousel for Base card variants */}
+            {/* Variant indicator for Base cards */}
             {selectedCard.cardType === "Base" && (() => {
               const variants = getCardVariants(selectedCard);
               const currentCard = getCurrentCard();
               return variants.length > 1 ? (
-                <div className="flex items-center justify-between mb-4">
-                  <button
-                    onClick={prevVariant}
-                    className="text-white hover:text-[hsl(9,85%,67%)] transition-colors"
-                  >
-                    <ChevronLeft className="w-6 h-6" />
-                  </button>
-                  <div className="text-center flex-1">
-                    <div className="text-sm text-[hsl(212,23%,69%)] mb-1">
-                      {currentCard?.cardType === "Base" ? "Base" :
-                       currentCard?.cardType.includes("Laser") ? "Laser" :
-                       currentCard?.cardType.includes("Swirl") ? "Swirl" : "Variante"}
-                    </div>
-                    <div className="text-xs text-gray-400">
-                      {currentVariantIndex + 1} / {variants.length}
-                    </div>
+                <div className="text-center mb-4">
+                  <div className="text-sm text-[hsl(212,23%,69%)] mb-1">
+                    {currentCard?.cardSubType === "Laser" ? "Base - Laser" :
+                     currentCard?.cardSubType === "Swirl" ? "Base - Swirl" : 
+                     "Base"}
                   </div>
-                  <button
-                    onClick={nextVariant}
-                    className="text-white hover:text-[hsl(9,85%,67%)] transition-colors"
-                  >
-                    <ChevronRight className="w-6 h-6" />
-                  </button>
+                  <div className="text-xs text-gray-400">
+                    {currentVariantIndex + 1} / {variants.length}
+                  </div>
                 </div>
               ) : null;
             })()}
             
-            <div className="text-center mb-4">
+            <div className="relative text-center mb-4">
+              {/* Navigation arrows for Base card variants */}
+              {selectedCard.cardType === "Base" && (() => {
+                const variants = getCardVariants(selectedCard);
+                return variants.length > 1 ? (
+                  <>
+                    {/* Left arrow */}
+                    {currentVariantIndex > 0 && (
+                      <button
+                        onClick={prevVariant}
+                        className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                    )}
+                    
+                    {/* Right arrow */}
+                    {currentVariantIndex < variants.length - 1 && (
+                      <button
+                        onClick={nextVariant}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10 bg-black bg-opacity-50 hover:bg-opacity-75 text-white p-2 rounded-full transition-all"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    )}
+                  </>
+                ) : null;
+              })()}
+              
               {(() => {
                 const currentCard = getCurrentCard() || selectedCard;
                 return currentCard.isOwned && currentCard.imageUrl ? (
