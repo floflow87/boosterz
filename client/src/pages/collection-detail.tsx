@@ -10,7 +10,7 @@ import type { Collection, Card } from "@shared/schema";
 export default function CollectionDetail() {
   const params = useParams();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "numbered" | "autographs" | "hits" | "speciales">("bases");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "speciales">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
@@ -26,14 +26,14 @@ export default function CollectionDetail() {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
     if (filter === "bases") return card.cardType.toLowerCase() === "base";
-    if (filter === "numbered") return card.cardType.toLowerCase() === "numbered";
+    if (filter === "bases_numbered") return card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber);
     if (filter === "autographs") return card.cardType.toLowerCase() === "autograph";
     if (filter === "speciales") return card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
-    if (filter === "hits") return card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert" || card.cardType.toLowerCase() === "parallel";
+    if (filter === "hits") return card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert";
     return true;
   })?.sort((a, b) => {
-    // Sort numbered cards by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
-    if (filter === "numbered" && a.serialNumber && b.serialNumber) {
+    // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
+    if (filter === "bases_numbered" && a.serialNumber && b.serialNumber) {
       const getRarityOrder = (serialNumber: string, cardSubType: string) => {
         const total = parseInt(serialNumber.split('/')[1]) || 0;
         if (total === 50) return 1;
@@ -71,10 +71,10 @@ export default function CollectionDetail() {
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
   const basesCount = cards?.filter(card => card.cardType.toLowerCase() === "base").length || 0;
-  const numberedCount = cards?.filter(card => card.cardType.toLowerCase() === "numbered").length || 0;
+  const basesNumberedCount = cards?.filter(card => card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber)).length || 0;
   const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
-  const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert" || card.cardType.toLowerCase() === "parallel").length || 0;
+  const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert").length || 0;
 
   if (collectionLoading || cardsLoading) {
     return (
@@ -169,15 +169,15 @@ export default function CollectionDetail() {
               Bases ({basesCount})
             </button>
             <button
-              onClick={() => setFilter("numbered")}
+              onClick={() => setFilter("bases_numbered")}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "numbered" 
+                filter === "bases_numbered" 
                   ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
                   : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
               <Check className="w-4 h-4 inline mr-1" />
-              Numérotées ({numberedCount})
+              Bases numérotées ({basesNumberedCount})
             </button>
             <button
               onClick={() => setFilter("autographs")}
