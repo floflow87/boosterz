@@ -6,6 +6,7 @@ import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
+import CardVariantsCarousel from "@/components/card-variants-carousel";
 import { apiRequest } from "@/lib/queryClient";
 import type { Collection, Card } from "@shared/schema";
 import scoreLigue1Logo from "@assets/image 29_1750232088999.png";
@@ -339,7 +340,7 @@ export default function CollectionDetail() {
                     <Check className="w-3 h-3 text-white" />
                   </div>
                   <div className="absolute bottom-1 left-1 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
-                    {card.cardNumber}
+                    {card.reference}
                   </div>
                 </>
               ) : (
@@ -351,7 +352,7 @@ export default function CollectionDetail() {
                     <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-gray-300'}`}>
                       {card.playerName || 'Joueur Inconnu'}
                     </div>
-                    <div className="text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
+                    <div className="text-[hsl(212,23%,69%)]">{card.reference}</div>
                     <div className="text-[hsl(212,23%,69%)] text-xs">{card.teamName}</div>
                   </div>
                 </>
@@ -387,7 +388,7 @@ export default function CollectionDetail() {
                       {card.playerName || 'Joueur Inconnu'}
                     </div>
                   )}
-                  <div className="text-sm text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
+                  <div className="text-sm text-[hsl(212,23%,69%)]">{card.reference}</div>
                   <div className="text-xs text-[hsl(212,23%,69%)]">{card.teamName}</div>
                 </div>
                 {card.isOwned && (
@@ -436,7 +437,7 @@ export default function CollectionDetail() {
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-[hsl(212,23%,69%)]">Référence:</span>
-                <span className="text-white">{selectedCard.cardNumber}</span>
+                <span className="text-white">{selectedCard.reference}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-[hsl(212,23%,69%)]">Type:</span>
@@ -484,7 +485,7 @@ export default function CollectionDetail() {
         onSave={handlePhotoSave}
         availableCards={(filteredCards || []).map(card => ({
           id: card.id,
-          cardNumber: card.cardNumber,
+          cardNumber: card.reference,
           playerName: card.playerName || "Joueur Inconnu",
           teamName: card.teamName || "Équipe Inconnue",
           cardType: card.cardType,
