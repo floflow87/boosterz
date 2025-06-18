@@ -526,7 +526,8 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
           </div>
         )}
 
-        {false && step === "recognize" && (
+        {/* Étape de reconnaissance supprimée - va directement à l'assignation */}
+        {false && (
           <div className="space-y-4">
             <div className="space-y-4">
               {selectedImage && (
