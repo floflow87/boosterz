@@ -195,11 +195,23 @@ export default function CollectionDetail() {
     }
   };
 
-  const handlePhotoSave = (imageUrl: string, cardId?: number) => {
-    if (cardId) {
-      updateCardImageMutation.mutate({ cardId, imageUrl });
+  const handlePhotoSave = async (imageUrl: string, cardId?: number) => {
+    try {
+      if (cardId) {
+        await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+        toast({
+          title: "Photo ajoutée",
+          description: "La photo a été ajoutée avec succès."
+        });
+      }
+      setShowPhotoUpload(false);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la photo.",
+        variant: "destructive"
+      });
     }
-    setShowPhotoUpload(false);
   };
 
   // Get variants for a base card
@@ -511,7 +523,7 @@ export default function CollectionDetail() {
                   setTimeout(() => target.classList.remove('clicked'), 1800);
                   handleCardSelect(card);
                 }}
-                className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300`}
+                className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300 ${card.imageUrl ? "animate-pulse-glow" : ""}`}
               >
                 <div className={`card-content p-3 rounded-lg ${
                   !areAllVariantsOwned(card) ? (
@@ -581,7 +593,7 @@ export default function CollectionDetail() {
                   card.isOwned 
                     ? "border-green-500" 
                     : "border-gray-600"
-                }`}>
+                } ${card.imageUrl ? "animate-pulse-glow" : ""}`}>
                 <div className="w-12 h-16 bg-gray-600 rounded flex-shrink-0 flex items-center justify-center relative">
                   {card.imageUrl ? (
                     <img src={card.imageUrl} alt={card.playerName || ""} className="w-full h-full object-cover rounded" />
