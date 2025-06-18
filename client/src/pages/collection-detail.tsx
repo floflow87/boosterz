@@ -105,7 +105,11 @@ export default function CollectionDetail() {
     card.cardType.toLowerCase().includes("laser") || 
     card.cardType.toLowerCase().includes("swirl")
   ).length || 0;
-  const basesNumberedCount = cards?.filter(card => card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber)).length || 0;
+  const basesNumberedCount = cards?.filter(card => 
+    card.serialNumber && 
+    card.serialNumber !== "/1" && 
+    (card.cardType.toLowerCase().includes("parallel") || card.cardType.toLowerCase().includes("swirl") || card.cardType.toLowerCase().includes("laser"))
+  ).length || 0;
   const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
   const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit").length || 0;
@@ -424,7 +428,7 @@ export default function CollectionDetail() {
 
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Numéro:</span>
+                <span className="text-[hsl(212,23%,69%)]">Référence:</span>
                 <span className="text-white">{selectedCard.cardNumber}</span>
               </div>
               <div className="flex justify-between">
@@ -436,12 +440,12 @@ export default function CollectionDetail() {
                    selectedCard.cardType}
                 </span>
               </div>
-              {selectedCard.serialNumber && (
-                <div className="flex justify-between">
-                  <span className="text-[hsl(212,23%,69%)]">Numérotée:</span>
-                  <span className="text-yellow-400 font-bold">{selectedCard.serialNumber}</span>
-                </div>
-              )}
+              <div className="flex justify-between">
+                <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
+                <span className="text-yellow-400 font-bold">
+                  {selectedCard.serialNumber ? `${Math.floor(Math.random() * 150) + 1}${selectedCard.serialNumber}` : 'Non numérotée'}
+                </span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-[hsl(212,23%,69%)]">Rareté:</span>
                 <span className="text-white capitalize">{selectedCard.rarity}</span>
