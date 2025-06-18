@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -21,6 +21,7 @@ export default function CollectionDetail() {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -67,8 +68,20 @@ export default function CollectionDetail() {
     else if (filter === "hits") passesFilter = card.cardType.includes("Insert");
     else passesFilter = true;
     
+    // Filtrer par terme de recherche
+    let passesSearch = true;
+    if (searchTerm.trim()) {
+      const term = searchTerm.toLowerCase();
+      passesSearch = 
+        (card.playerName && card.playerName.toLowerCase().includes(term)) ||
+        (card.teamName && card.teamName.toLowerCase().includes(term)) ||
+        (card.reference && card.reference.toLowerCase().includes(term)) ||
+        (card.cardType && card.cardType.toLowerCase().includes(term)) ||
+        (card.cardSubType && card.cardSubType.toLowerCase().includes(term));
+    }
+    
     // Pour l'affichage général, ne montrer que les cartes Base originales ou les autres types
-    return passesFilter && (isBaseOriginal || isNotBaseCard);
+    return passesFilter && passesSearch && (isBaseOriginal || isNotBaseCard);
   })?.sort((a, b) => {
     // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
     if (filter === "bases_numbered" && a.serialNumber && b.serialNumber) {
@@ -293,6 +306,33 @@ export default function CollectionDetail() {
               <div className="text-xs text-[hsl(212,23%,69%)]">Complété</div>
             </div>
           </div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-4">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Rechercher par joueur, équipe, référence ou type..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-[hsl(214,35%,22%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)] focus:ring-1 focus:ring-[hsl(9,85%,67%)]"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+          {searchTerm && (
+            <div className="mt-2 text-sm text-[hsl(212,23%,69%)]">
+              {filteredCards?.length || 0} résultat(s) trouvé(s) pour "{searchTerm}"
+            </div>
+          )}
         </div>
 
         {/* Controls */}
