@@ -123,7 +123,7 @@ export default function Collections() {
                 className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group"
               >
                 <div 
-                  className="h-24 relative bg-gradient-to-br"
+                  className="h-16 relative bg-gradient-to-br"
                   style={{ 
                     background: `linear-gradient(135deg, ${collection.backgroundColor || '#F37261'}, ${collection.backgroundColor || '#F37261'}dd)` 
                   }}
