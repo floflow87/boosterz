@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search, Trash2, Camera, ArrowUpDown } from "lucide-react";
+import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info, ChevronLeft, ChevronRight, Search, Trash2, Camera, ArrowUpDown, CheckSquare, Square, Users } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -23,6 +23,8 @@ export default function CollectionDetail() {
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [showFullscreenCard, setShowFullscreenCard] = useState(false);
+  const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
+  const [showBulkActions, setShowBulkActions] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -214,6 +216,78 @@ export default function CollectionDetail() {
     }
   };
 
+  // Bulk actions functions
+  const handleCardSelection = (cardId: number, checked: boolean) => {
+    const newSelection = new Set(selectedCards);
+    if (checked) {
+      newSelection.add(cardId);
+    } else {
+      newSelection.delete(cardId);
+    }
+    setSelectedCards(newSelection);
+    setShowBulkActions(newSelection.size > 0);
+  };
+
+  const handleSelectAll = () => {
+    if (!filteredCards) return;
+    const allCardIds = new Set(filteredCards.map(card => card.id));
+    setSelectedCards(allCardIds);
+    setShowBulkActions(true);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedCards(new Set());
+    setShowBulkActions(false);
+  };
+
+  const handleBulkMarkAsOwned = async () => {
+    try {
+      const promises = Array.from(selectedCards).map(cardId => 
+        apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned: true })
+      );
+      await Promise.all(promises);
+      
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      setSelectedCards(new Set());
+      setShowBulkActions(false);
+      
+      toast({
+        title: "Cartes marquées comme acquises",
+        description: `${selectedCards.size} carte(s) marquée(s) comme acquise(s).`
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les cartes.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleBulkMarkAsNotOwned = async () => {
+    try {
+      const promises = Array.from(selectedCards).map(cardId => 
+        apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned: false })
+      );
+      await Promise.all(promises);
+      
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      setSelectedCards(new Set());
+      setShowBulkActions(false);
+      
+      toast({
+        title: "Cartes marquées comme manquantes",
+        description: `${selectedCards.size} carte(s) marquée(s) comme manquante(s).`
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les cartes.",
+        variant: "destructive"
+      });
+    }
+  };
+
   // Get variants for a base card
   const getCardVariants = (baseCard: Card) => {
     if (baseCard.cardType !== "Base") return [baseCard];
@@ -366,7 +440,60 @@ export default function CollectionDetail() {
             <Plus className="w-5 h-5" />
           </button>
           
-          {/* Search Bar */}
+          {/* Selection buttons */}
+          {selectedCards.size > 0 ? (
+            <button
+              onClick={handleDeselectAll}
+              className="bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700 transition-all flex items-center gap-2"
+            >
+              <Square className="w-4 h-4" />
+              Désélectionner tout
+            </button>
+          ) : (
+            filteredCards && filteredCards.length > 0 && (
+              <button
+                onClick={handleSelectAll}
+                className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+              >
+                <CheckSquare className="w-4 h-4" />
+                Tout sélectionner
+              </button>
+            )
+          )}
+        </div>
+
+        {/* Bulk Actions Bar */}
+        {showBulkActions && (
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 mb-4 border-2 border-blue-500">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-400" />
+                <span className="text-white font-medium">
+                  {selectedCards.size} carte(s) sélectionnée(s)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleBulkMarkAsOwned}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <Check className="w-4 h-4" />
+                  Marquer comme acquises
+                </button>
+                <button
+                  onClick={handleBulkMarkAsNotOwned}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+                >
+                  <X className="w-4 h-4" />
+                  Marquer comme manquantes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Search Bar */}
+        <div className="flex items-center gap-4 mb-6">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -517,15 +644,31 @@ export default function CollectionDetail() {
             {filteredCards?.map((card, index) => (
               <div 
                 key={card.id} 
-                onClick={(e) => {
-                  const target = e.currentTarget;
-                  target.classList.add('clicked');
-                  setTimeout(() => target.classList.remove('clicked'), 1800);
-                  handleCardSelect(card);
-                }}
                 className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300 ${card.imageUrl ? "animate-pulse-glow" : ""}`}
               >
-                <div className={`card-content p-3 rounded-lg ${
+                {/* Checkbox for selection */}
+                <div className="absolute top-2 left-2 z-20">
+                  <input
+                    type="checkbox"
+                    checked={selectedCards.has(card.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCardSelection(card.id, e.target.checked);
+                    }}
+                    className="w-5 h-5 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+                  />
+                </div>
+                
+                <div 
+                  onClick={(e) => {
+                    if ((e.target as HTMLElement).type !== 'checkbox') {
+                      const target = e.currentTarget.parentElement;
+                      target?.classList.add('clicked');
+                      setTimeout(() => target?.classList.remove('clicked'), 1800);
+                      handleCardSelect(card);
+                    }
+                  }}
+                  className={`card-content p-3 rounded-lg ${
                   !areAllVariantsOwned(card) ? (
                     card.isOwned 
                       ? "bg-[hsl(214,35%,22%)] border-2 border-green-400 shadow-lg shadow-green-400/30" 
@@ -574,6 +717,7 @@ export default function CollectionDetail() {
                       </div>
                     </>
                   )}
+                </div>
                 </div>
               </div>
             ))}
