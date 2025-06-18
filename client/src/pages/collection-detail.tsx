@@ -8,6 +8,7 @@ import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
 import CardVariantsCarousel from "@/components/card-variants-carousel";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
 import scoreLigue1Logo from "@assets/image 29_1750232088999.png";
 import headerBackground from "@assets/Ellipse 419_1750248420742.png";
@@ -20,6 +21,7 @@ export default function CollectionDetail() {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   useEffect(() => {
     // Clear cache on component mount to get fresh data
@@ -126,24 +128,19 @@ export default function CollectionDetail() {
 
   const handleMarkAsOwned = async (cardId: number, withPhoto: boolean) => {
     try {
-      const response = await apiRequest(`/api/cards/${cardId}/ownership`, {
-        method: 'POST',
-        body: JSON.stringify({ isOwned: true })
-      });
+      await apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned: true });
       
-      if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-        setSelectedCard(null);
-        
-        if (withPhoto) {
-          setShowPhotoUpload(true);
-        }
-        
-        toast({
-          title: "Carte marquée comme possédée",
-          description: "Le statut de la carte a été mis à jour."
-        });
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      setSelectedCard(null);
+      
+      if (withPhoto) {
+        setShowPhotoUpload(true);
       }
+      
+      toast({
+        title: "Carte marquée comme possédée",
+        description: "Le statut de la carte a été mis à jour."
+      });
     } catch (error) {
       toast({
         title: "Erreur",
@@ -155,20 +152,15 @@ export default function CollectionDetail() {
 
   const handleMarkAsNotOwned = async (cardId: number) => {
     try {
-      const response = await apiRequest(`/api/cards/${cardId}/ownership`, {
-        method: 'POST',
-        body: JSON.stringify({ isOwned: false })
-      });
+      await apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned: false });
       
-      if (response.ok) {
-        queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-        setSelectedCard(null);
-        
-        toast({
-          title: "Carte marquée comme manquante",
-          description: "Le statut de la carte a été mis à jour."
-        });
-      }
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      setSelectedCard(null);
+      
+      toast({
+        title: "Carte marquée comme manquante",
+        description: "Le statut de la carte a été mis à jour."
+      });
     } catch (error) {
       toast({
         title: "Erreur",
@@ -375,9 +367,9 @@ export default function CollectionDetail() {
               <div 
                 key={card.id} 
                 onClick={() => setSelectedCard(card)}
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-2 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-3 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
                   card.isOwned 
-                    ? "border-green-500 bg-opacity-100 shadow-lg" 
+                    ? "border-green-400 bg-opacity-100 shadow-lg shadow-green-400/30" 
                     : "border-gray-600 bg-opacity-50"
                 } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}
               >
@@ -518,7 +510,7 @@ export default function CollectionDetail() {
               <div className="flex justify-between">
                 <span className="text-[hsl(212,23%,69%)]">Statut:</span>
                 <span className={`font-bold ${selectedCard.isOwned ? 'text-green-400' : 'text-red-400'}`}>
-                  {selectedCard.isOwned ? 'Possédée' : 'Manquante'}
+                  {selectedCard.isOwned ? 'Acquise' : 'Manquante'}
                 </span>
               </div>
             </div>
