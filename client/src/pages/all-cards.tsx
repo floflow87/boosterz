@@ -102,8 +102,9 @@ export default function AllCards() {
               <div 
                 key={collection.id}
                 onClick={(e) => {
-                  e.currentTarget.classList.add('clicked');
-                  setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                  const target = e.currentTarget;
+                  target.classList.add('clicked');
+                  setTimeout(() => target.classList.remove('clicked'), 1800);
                   setSelectedCollection(collection.id);
                 }}
                 className="card-clickable bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer"
@@ -152,8 +153,9 @@ export default function AllCards() {
                   <div 
                     key={card.id} 
                     onClick={(e) => {
-                      e.currentTarget.classList.add('clicked');
-                      setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                      const target = e.currentTarget;
+                      target.classList.add('clicked');
+                      setTimeout(() => target.classList.remove('clicked'), 1800);
                     }}
                     className="card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-2 card-hover relative cursor-pointer"
                   >
@@ -183,8 +185,9 @@ export default function AllCards() {
                   <div 
                     key={card.id} 
                     onClick={(e) => {
-                      e.currentTarget.classList.add('clicked');
-                      setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                      const target = e.currentTarget;
+                      target.classList.add('clicked');
+                      setTimeout(() => target.classList.remove('clicked'), 1800);
                     }}
                     className="card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 cursor-pointer"
                   >

@@ -471,8 +471,9 @@ export default function CollectionDetail() {
               <div 
                 key={card.id} 
                 onClick={(e) => {
-                  e.currentTarget.classList.add('clicked');
-                  setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                  const target = e.currentTarget;
+                  target.classList.add('clicked');
+                  setTimeout(() => target.classList.remove('clicked'), 1800);
                   handleCardSelect(card);
                 }}
                 className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300`}
@@ -536,8 +537,9 @@ export default function CollectionDetail() {
               <div 
                 key={card.id} 
                 onClick={(e) => {
-                  e.currentTarget.classList.add('clicked');
-                  setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                  const target = e.currentTarget;
+                  target.classList.add('clicked');
+                  setTimeout(() => target.classList.remove('clicked'), 1800);
                   handleCardSelect(card);
                 }}
                 className={`card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] ${
