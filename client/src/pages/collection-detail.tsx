@@ -33,12 +33,11 @@ export default function CollectionDetail() {
     }
   });
 
-  const handlePhotoSave = (imageData: string) => {
-    if (selectedCard) {
-      updateCardImageMutation.mutate({ cardId: selectedCard.id, imageData });
+  const handlePhotoSave = (imageData: string, cardId?: number) => {
+    if (cardId) {
+      updateCardImageMutation.mutate({ cardId, imageData });
     }
     setShowPhotoUpload(false);
-    setSelectedCard(null);
   };
 
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
@@ -446,10 +445,17 @@ export default function CollectionDetail() {
       )}
 
       {/* Photo Upload Modal */}
-      <PhotoUploadModal
+      <CardPhotoImport
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
         onSave={handlePhotoSave}
+        availableCards={(filteredCards || []).map(card => ({
+          id: card.id,
+          cardNumber: card.cardNumber,
+          playerName: card.playerName || "Joueur Inconnu",
+          teamName: card.teamName || "Équipe Inconnue",
+          cardType: card.cardType
+        }))}
       />
     </div>
   );

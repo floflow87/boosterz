@@ -46,7 +46,10 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
+        const result = e.target?.result;
+        if (typeof result === 'string') {
+          setSelectedImage(result);
+        }
         setStep("edit");
       };
       reader.readAsDataURL(file);
@@ -112,7 +115,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         ctx.restore();
         resolve(canvas.toDataURL('image/jpeg', 0.9));
       };
-      img.src = selectedImage;
+      img.src = selectedImage || "";
     });
   }, [selectedImage, adjustments]);
 
@@ -134,7 +137,9 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
   const handleSave = useCallback(async () => {
     const processedImage = await processImageWithAdjustments();
-    onSave(processedImage, selectedCardId);
+    if (typeof processedImage === 'string') {
+      onSave(processedImage, selectedCardId);
+    }
     handleClose();
   }, [processImageWithAdjustments, selectedCardId, onSave]);
 
