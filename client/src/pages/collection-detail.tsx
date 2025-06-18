@@ -20,6 +20,8 @@ export default function CollectionDetail() {
 
   const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
     queryKey: [`/api/collections/${collectionId}/cards`],
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const filteredCards = cards?.filter((card) => {

@@ -22,6 +22,8 @@ export default function Collections() {
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
     queryKey: ["/api/users/1/collections"],
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   const { data: cards } = useQuery<Card[]>({
