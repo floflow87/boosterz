@@ -108,6 +108,53 @@ export const activities = pgTable("activities", {
 export const usersRelations = relations(users, ({ many }) => ({
   collections: many(collections),
   userCards: many(userCards),
+  followers: many(follows, { relationName: "followers" }),
+  following: many(follows, { relationName: "following" }),
+  notifications: many(notifications),
+  activities: many(activities),
+}));
+
+export const followsRelations = relations(follows, ({ one }) => ({
+  follower: one(users, {
+    fields: [follows.followerId],
+    references: [users.id],
+    relationName: "followers",
+  }),
+  following: one(users, {
+    fields: [follows.followingId],
+    references: [users.id],
+    relationName: "following",
+  }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+  }),
+  fromUser: one(users, {
+    fields: [notifications.fromUserId],
+    references: [users.id],
+  }),
+  card: one(cards, {
+    fields: [notifications.cardId],
+    references: [cards.id],
+  }),
+}));
+
+export const activitiesRelations = relations(activities, ({ one }) => ({
+  user: one(users, {
+    fields: [activities.userId],
+    references: [users.id],
+  }),
+  card: one(cards, {
+    fields: [activities.cardId],
+    references: [cards.id],
+  }),
+  collection: one(collections, {
+    fields: [activities.collectionId],
+    references: [collections.id],
+  }),
 }));
 
 export const collectionsRelations = relations(collections, ({ one, many }) => ({
@@ -206,3 +253,11 @@ export type InsertCard = z.infer<typeof insertCardSchema>;
 export type Card = typeof cards.$inferSelect;
 export type InsertUserCard = z.infer<typeof insertUserCardSchema>;
 export type UserCard = typeof userCards.$inferSelect;
+
+// Types pour les nouvelles tables sociales
+export type Follow = typeof follows.$inferSelect;
+export type InsertFollow = typeof follows.$inferInsert;
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;
+export type Activity = typeof activities.$inferSelect;
+export type InsertActivity = typeof activities.$inferInsert;

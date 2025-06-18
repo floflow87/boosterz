@@ -7,6 +7,7 @@ import Splash from "@/pages/splash";
 import Collections from "@/pages/collections";
 import CollectionDetail from "@/pages/collection-detail";
 import AllCards from "@/pages/all-cards";
+import Social from "@/pages/social";
 
 import Community from "@/pages/community";
 import Shop from "@/pages/shop";
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/collections" component={Collections} />
       <Route path="/collection/:id" component={CollectionDetail} />
       <Route path="/all-cards" component={AllCards} />
+      <Route path="/social" component={Social} />
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
