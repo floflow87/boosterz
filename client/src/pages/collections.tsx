@@ -123,7 +123,7 @@ export default function Collections() {
                 className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group"
               >
                 <div 
-                  className="h-32 relative bg-gradient-to-br"
+                  className="h-24 relative bg-gradient-to-br"
                   style={{ 
                     background: `linear-gradient(135deg, ${collection.backgroundColor || '#F37261'}, ${collection.backgroundColor || '#F37261'}dd)` 
                   }}
@@ -132,13 +132,13 @@ export default function Collections() {
                     {collection.completionPercentage}%
                   </div>
                   
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-4">
-                    <h3 className="font-bold text-white font-poppins">{collection.name}</h3>
-                    <p className="text-white/80 text-sm">{collection.season}</p>
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-3">
+                    <h3 className="font-bold text-white font-poppins text-sm">{collection.name}</h3>
+                    <p className="text-white/80 text-xs">{collection.season}</p>
                   </div>
                 </div>
                 
-                <div className="p-4">
+                <div className="p-3">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-sm text-[hsl(212,23%,69%)]">
                       {collection.ownedCards} / {collection.totalCards} cartes
