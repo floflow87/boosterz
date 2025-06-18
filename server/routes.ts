@@ -81,11 +81,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { imageUrl, imageData } = req.body;
       
       // Accept either imageUrl or imageData (for compatibility)
-      const finalImageUrl = imageUrl || imageData;
+      let finalImageUrl;
       
-      if (finalImageUrl === undefined) {
+      // If imageUrl is provided (even if empty string), use it
+      if (req.body.hasOwnProperty('imageUrl')) {
+        finalImageUrl = imageUrl;
+      } else if (req.body.hasOwnProperty('imageData')) {
+        finalImageUrl = imageData;
+      } else {
         return res.status(400).json({ message: "Image URL or image data is required" });
       }
+      
+      // finalImageUrl can now be an empty string for deletion
       
       // Allow empty string for deletion
       const card = await storage.updateCardImage(cardId, finalImageUrl);
