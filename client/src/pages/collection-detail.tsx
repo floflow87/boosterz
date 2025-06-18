@@ -32,11 +32,31 @@ export default function CollectionDetail() {
     if (filter === "hits") return card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert" || card.cardType.toLowerCase() === "parallel";
     return true;
   })?.sort((a, b) => {
-    // Sort numbered cards by serial number (highest number first: /50, /35, /30, /25)
+    // Sort numbered cards by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
     if (filter === "numbered" && a.serialNumber && b.serialNumber) {
-      const aSerial = parseInt(a.serialNumber.split('/')[1]) || 0;
-      const bSerial = parseInt(b.serialNumber.split('/')[1]) || 0;
-      return bSerial - aSerial; // Descending order
+      const getRarityOrder = (serialNumber: string, cardSubType: string) => {
+        const total = parseInt(serialNumber.split('/')[1]) || 0;
+        if (total === 50) return 1;
+        if (total === 35) return 2;
+        if (total === 30) return 3;
+        if (total === 25) return 4;
+        if (total === 20) return 5;
+        if (total === 15 && cardSubType === "swirl") return 6;
+        if (total === 15 && cardSubType === "laser") return 7;
+        if (total === 10) return 8;
+        if (total === 5) return 9;
+        return 10;
+      };
+      
+      const aOrder = getRarityOrder(a.serialNumber, a.cardSubType || "");
+      const bOrder = getRarityOrder(b.serialNumber, b.cardSubType || "");
+      
+      if (aOrder !== bOrder) return aOrder - bOrder;
+      
+      // If same rarity, sort by card number
+      const aNum = parseInt(a.cardNumber.replace(/[^0-9]/g, '')) || 0;
+      const bNum = parseInt(b.cardNumber.replace(/[^0-9]/g, '')) || 0;
+      return aNum - bNum;
     }
     // Sort base cards by card number
     if (filter === "bases") {

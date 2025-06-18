@@ -988,7 +988,8 @@ export class MemStorage implements IStorage {
         rarity: "super_rare",
         serialNumber: "1/1"
       },
-      // Numbered Cards (Base numbered - sorted by serial number)
+      // Numbered Cards (Base numbered - sorted by rarity: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5)
+      // /50 parallel
       {
         id: 108,
         collectionId: 1,
@@ -996,7 +997,7 @@ export class MemStorage implements IStorage {
         playerName: "Mbappé",
         teamName: "Paris Saint-Germain",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: false,
         isRookieCard: false,
@@ -1010,7 +1011,7 @@ export class MemStorage implements IStorage {
         playerName: "Hakimi",
         teamName: "Paris Saint-Germain",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
@@ -1024,13 +1025,14 @@ export class MemStorage implements IStorage {
         playerName: "Marquinhos",
         teamName: "Paris Saint-Germain",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "rare",
         serialNumber: "33/50"
       },
+      // /35 parallel
       {
         id: 111,
         collectionId: 1,
@@ -1038,7 +1040,7 @@ export class MemStorage implements IStorage {
         playerName: "Ben Yedder",
         teamName: "AS Monaco",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
@@ -1052,13 +1054,14 @@ export class MemStorage implements IStorage {
         playerName: "Wahi",
         teamName: "AS Monaco",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "rare",
         serialNumber: "18/35"
       },
+      // /30 parallel
       {
         id: 150,
         collectionId: 1,
@@ -1066,7 +1069,7 @@ export class MemStorage implements IStorage {
         playerName: "Lacazette",
         teamName: "Olympique Lyonnais",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
@@ -1080,13 +1083,14 @@ export class MemStorage implements IStorage {
         playerName: "Terrier",
         teamName: "Stade Rennais",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "rare",
         serialNumber: "14/30"
       },
+      // /25 parallel
       {
         id: 152,
         collectionId: 1,
@@ -1094,12 +1098,171 @@ export class MemStorage implements IStorage {
         playerName: "David",
         teamName: "LOSC Lille",
         cardType: "Numbered",
-        cardSubType: "gold_parallel",
+        cardSubType: "parallel",
         imageUrl: null,
         isOwned: false,
         isRookieCard: false,
         rarity: "rare",
         serialNumber: "09/25"
+      },
+      {
+        id: 153,
+        collectionId: 1,
+        cardNumber: "#027",
+        playerName: "Fulgini",
+        teamName: "RC Lens",
+        cardType: "Numbered",
+        cardSubType: "parallel",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "rare",
+        serialNumber: "20/25"
+      },
+      // /20 parallel
+      {
+        id: 154,
+        collectionId: 1,
+        cardNumber: "#030",
+        playerName: "Seko Fofana",
+        teamName: "RC Lens",
+        cardType: "Numbered",
+        cardSubType: "parallel",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "11/20"
+      },
+      {
+        id: 155,
+        collectionId: 1,
+        cardNumber: "#035",
+        playerName: "Zhegrova",
+        teamName: "LOSC Lille",
+        cardType: "Numbered",
+        cardSubType: "parallel",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "08/20"
+      },
+      // /15 swirl
+      {
+        id: 156,
+        collectionId: 1,
+        cardNumber: "#001",
+        playerName: "Mbappé",
+        teamName: "Paris Saint-Germain",
+        cardType: "Numbered",
+        cardSubType: "swirl",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "05/15"
+      },
+      {
+        id: 157,
+        collectionId: 1,
+        cardNumber: "#011",
+        playerName: "Ben Yedder",
+        teamName: "AS Monaco",
+        cardType: "Numbered",
+        cardSubType: "swirl",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "12/15"
+      },
+      // /15 laser
+      {
+        id: 158,
+        collectionId: 1,
+        cardNumber: "#002",
+        playerName: "Hakimi",
+        teamName: "Paris Saint-Germain",
+        cardType: "Numbered",
+        cardSubType: "laser",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "03/15"
+      },
+      {
+        id: 159,
+        collectionId: 1,
+        cardNumber: "#015",
+        playerName: "Lacazette",
+        teamName: "Olympique Lyonnais",
+        cardType: "Numbered",
+        cardSubType: "laser",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "super_rare",
+        serialNumber: "09/15"
+      },
+      // /10 gold
+      {
+        id: 160,
+        collectionId: 1,
+        cardNumber: "#001",
+        playerName: "Mbappé",
+        teamName: "Paris Saint-Germain",
+        cardType: "Numbered",
+        cardSubType: "gold",
+        imageUrl: null,
+        isOwned: true,
+        isRookieCard: false,
+        rarity: "ultra_rare",
+        serialNumber: "02/10"
+      },
+      {
+        id: 161,
+        collectionId: 1,
+        cardNumber: "#005",
+        playerName: "Ben Yedder",
+        teamName: "AS Monaco",
+        cardType: "Numbered",
+        cardSubType: "gold",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "ultra_rare",
+        serialNumber: "07/10"
+      },
+      // /5 platinum
+      {
+        id: 162,
+        collectionId: 1,
+        cardNumber: "#001",
+        playerName: "Mbappé",
+        teamName: "Paris Saint-Germain",
+        cardType: "Numbered",
+        cardSubType: "platinum",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "ultra_rare",
+        serialNumber: "01/5"
+      },
+      {
+        id: 163,
+        collectionId: 1,
+        cardNumber: "#011",
+        playerName: "Ben Yedder",
+        teamName: "AS Monaco",
+        cardType: "Numbered",
+        cardSubType: "platinum",
+        imageUrl: null,
+        isOwned: false,
+        isRookieCard: false,
+        rarity: "ultra_rare",
+        serialNumber: "03/5"
       },
       // More Autographs (Pure autographs - no numbering)
       {
