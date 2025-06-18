@@ -36,12 +36,7 @@ export default function CollectionDetail() {
     }
   });
 
-  const handlePhotoSave = (imageData: string, cardId?: number) => {
-    if (cardId) {
-      updateCardImageMutation.mutate({ cardId, imageData });
-    }
-    setShowPhotoUpload(false);
-  };
+
 
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
     queryKey: [`/api/collections/${collectionId}`],
@@ -128,6 +123,67 @@ export default function CollectionDetail() {
       </div>
     );
   }
+
+  const handleMarkAsOwned = async (cardId: number, withPhoto: boolean) => {
+    try {
+      const response = await apiRequest(`/api/cards/${cardId}/ownership`, {
+        method: 'POST',
+        body: JSON.stringify({ isOwned: true })
+      });
+      
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+        setSelectedCard(null);
+        
+        if (withPhoto) {
+          setShowPhotoUpload(true);
+        }
+        
+        toast({
+          title: "Carte marquée comme possédée",
+          description: "Le statut de la carte a été mis à jour."
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut de la carte.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleMarkAsNotOwned = async (cardId: number) => {
+    try {
+      const response = await apiRequest(`/api/cards/${cardId}/ownership`, {
+        method: 'POST',
+        body: JSON.stringify({ isOwned: false })
+      });
+      
+      if (response.ok) {
+        queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+        setSelectedCard(null);
+        
+        toast({
+          title: "Carte marquée comme manquante",
+          description: "Le statut de la carte a été mis à jour."
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour le statut de la carte.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handlePhotoSave = (imageData: string, cardId?: number) => {
+    if (cardId) {
+      updateCardImageMutation.mutate({ cardId, imageData });
+    }
+    setShowPhotoUpload(false);
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
@@ -475,6 +531,50 @@ export default function CollectionDetail() {
                 </div>
               </div>
             )}
+
+            {/* Action Buttons */}
+            <div className="mt-6 space-y-3">
+              {!selectedCard.isOwned ? (
+                <>
+                  <button
+                    onClick={() => handleMarkAsOwned(selectedCard.id, false)}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    <Check className="w-5 h-5 inline mr-2" />
+                    Marquer comme possédée
+                  </button>
+                  <button
+                    onClick={() => handleMarkAsOwned(selectedCard.id, true)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    <Plus className="w-5 h-5 inline mr-2" />
+                    Posséder + Ajouter photo
+                  </button>
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <button
+                    onClick={() => handleMarkAsNotOwned(selectedCard.id)}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5 inline mr-2" />
+                    Marquer comme manquante
+                  </button>
+                  {!selectedCard.imageUrl && (
+                    <button
+                      onClick={() => {
+                        setSelectedCard(null);
+                        setShowPhotoUpload(true);
+                      }}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors"
+                    >
+                      <Plus className="w-5 h-5 inline mr-2" />
+                      Ajouter une photo
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
