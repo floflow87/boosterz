@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { useLocation } from "wouter";
 import HaloBlur from "@/components/halo-blur";
 import paniniLogo from "@assets/panini-group-logo 1_1750197572668.png";
 
 export default function Splash() {
   const [, setLocation] = useLocation();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleStart = () => {
-    setLocation("/collections");
+    setIsLoading(true);
+    setTimeout(() => {
+      setLocation("/collections");
+    }, 1500);
   };
 
   return (
@@ -29,9 +34,21 @@ export default function Splash() {
         <div className="mt-16">
           <button 
             onClick={handleStart}
-            className="w-full max-w-xs py-4 px-6 rounded-2xl font-semibold transition-all shadow-lg bg-[hsl(9,85%,67%)] text-white hover:bg-opacity-90 hover:shadow-xl transform hover:scale-105"
+            disabled={isLoading}
+            className={`w-full max-w-xs py-4 px-6 rounded-2xl font-semibold transition-all shadow-lg ${
+              isLoading 
+                ? 'bg-gray-500 cursor-not-allowed' 
+                : 'bg-[hsl(9,85%,67%)] hover:bg-opacity-90 hover:shadow-xl transform hover:scale-105'
+            } text-white`}
           >
-            Commencer
+            {isLoading ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                Chargement...
+              </div>
+            ) : (
+              'Commencer'
+            )}
           </button>
         </div>
       </div>

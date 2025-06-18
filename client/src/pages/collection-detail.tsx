@@ -424,7 +424,12 @@ export default function CollectionDetail() {
               </div>
               <div className="flex justify-between">
                 <span className="text-[hsl(212,23%,69%)]">Type:</span>
-                <span className="text-white">{selectedCard.cardType}</span>
+                <span className="text-white">
+                  {selectedCard.cardType === 'Base' ? 'Base' :
+                   selectedCard.cardType === 'Parallel Laser Blue' ? 'Laser' :
+                   selectedCard.cardType.includes('Swirl') ? 'Swirl' :
+                   selectedCard.cardType}
+                </span>
               </div>
               {selectedCard.serialNumber && (
                 <div className="flex justify-between">
