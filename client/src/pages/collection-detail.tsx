@@ -56,11 +56,11 @@ export default function CollectionDetail() {
   const filteredCards = cards?.filter((card) => {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
-    if (filter === "bases") return card.cardType === "base" && !card.isVariant;
-    if (filter === "bases_numbered") return card.cardType === "base_numbered" || (card.cardType === "base" && card.isVariant);
-    if (filter === "autographs") return card.cardType === "autograph";
+    if (filter === "bases") return card.cardType === "Base";
+    if (filter === "bases_numbered") return card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl");
+    if (filter === "autographs") return card.cardType === "Autograph";
     if (filter === "special_1_1") return card.cardType === "special_1_1" || card.numbering === "1/1";
-    if (filter === "hits") return card.cardType === "insert" || card.cardType === "numbered";
+    if (filter === "hits") return card.cardType.includes("Insert");
     return true;
   })?.sort((a, b) => {
     // Sort bases numbered by rarity hierarchy: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10 gold, /5
@@ -102,15 +102,15 @@ export default function CollectionDetail() {
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
   const basesCount = cards?.filter(card => 
-    card.cardType === "base" && !card.isVariant
+    card.cardType === "Base"
   ).length || 0;
   const basesNumberedCount = cards?.filter(card => 
-    card.cardType === "base_numbered" || (card.cardType === "base" && card.isVariant)
+    card.cardType.includes("Parallel Laser") || card.cardType.includes("Parallel Swirl")
   ).length || 0;
-  const autographsCount = cards?.filter(card => card.cardType === "autograph").length || 0;
+  const autographsCount = cards?.filter(card => card.cardType === "Autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType === "special_1_1" || card.numbering === "1/1").length || 0;
   const hitsCount = cards?.filter(card => 
-    card.cardType === "insert" || card.cardType === "numbered"
+    card.cardType.includes("Insert")
   ).length || 0;
 
   if (collectionLoading || cardsLoading) {
@@ -312,6 +312,7 @@ export default function CollectionDetail() {
         )}
 
         {/* Cards Display */}
+        
         {viewMode === "grid" ? (
           <div className="card-grid">
             {filteredCards?.map((card, index) => (
