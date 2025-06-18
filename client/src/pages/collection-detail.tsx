@@ -8,6 +8,7 @@ import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
 import { apiRequest } from "@/lib/queryClient";
 import type { Collection, Card } from "@shared/schema";
+import scoreLigue1Logo from "@assets/image 29_1750232088999.png";
 
 export default function CollectionDetail() {
   const params = useParams();
@@ -134,7 +135,7 @@ export default function CollectionDetail() {
               <>
                 <div className="w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                   <img 
-                    src="/attached_assets/image%2029_1750232088999.png" 
+                    src={scoreLigue1Logo} 
                     alt="Score Ligue 1 logo"
                     className="w-full h-full object-contain"
                   />

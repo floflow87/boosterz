@@ -304,14 +304,11 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white text-black">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between text-black">
+          <DialogTitle className="text-black">
             {step === "import" && "Importer une photo"}
             {step === "edit" && "Retoucher la photo"}
             {step === "recognize" && "Reconnaissance automatique"}
             {step === "assign" && "Assigner à une carte"}
-            <Button variant="ghost" size="sm" onClick={handleClose}>
-              <X className="h-4 w-4" />
-            </Button>
           </DialogTitle>
           <DialogDescription className="text-gray-600">
             {step === "import" && "Choisissez comment importer votre photo de carte"}
