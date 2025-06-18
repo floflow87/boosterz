@@ -470,8 +470,12 @@ export default function CollectionDetail() {
             {filteredCards?.map((card, index) => (
               <div 
                 key={card.id} 
-                onClick={() => handleCardSelect(card)}
-                className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300`}
+                onClick={(e) => {
+                  e.currentTarget.classList.add('clicked');
+                  setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                  handleCardSelect(card);
+                }}
+                className={`${areAllVariantsOwned(card) ? 'animated-border' : ''} card-clickable rounded-lg relative transition-all cursor-pointer hover:scale-105 transform duration-300`}
               >
                 <div className={`card-content p-3 rounded-lg ${
                   !areAllVariantsOwned(card) ? (
@@ -531,8 +535,12 @@ export default function CollectionDetail() {
             {filteredCards?.map((card) => (
               <div 
                 key={card.id} 
-                onClick={() => handleCardSelect(card)}
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] ${
+                onClick={(e) => {
+                  e.currentTarget.classList.add('clicked');
+                  setTimeout(() => e.currentTarget.classList.remove('clicked'), 600);
+                  handleCardSelect(card);
+                }}
+                className={`card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] ${
                   card.isOwned 
                     ? "border-green-500" 
                     : "border-gray-600"

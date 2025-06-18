@@ -171,6 +171,60 @@
     z-index: 1;
   }
 
+  /* Effet de clic sur les cartes */
+  @keyframes card-click-ripple {
+    0% {
+      transform: scale(0);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+
+  @keyframes card-click-press {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .card-clickable {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .card-clickable:active {
+    animation: card-click-press 0.2s ease;
+  }
+
+  .card-clickable::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(243, 114, 97, 0.3);
+    transform: translate(-50%, -50%);
+    transition: all 0s;
+    z-index: 1;
+  }
+
+  .card-clickable.clicked::before {
+    animation: card-click-ripple 0.6s ease-out;
+    width: 100px;
+    height: 100px;
+  }
+
   /* 3D Carousel Effects */
   .hover\:rotate-y-12:hover {
     transform: rotateY(12deg) scale(1.1);
