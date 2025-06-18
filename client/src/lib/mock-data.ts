@@ -36,7 +36,7 @@ export const mockCollections: Collection[] = [
   {
     id: 3,
     userId: 1,
-    name: "ARGENTINA",
+    name: "Set 125 ans OM",
     season: "22/23",
     totalCards: 89,
     ownedCards: 82,

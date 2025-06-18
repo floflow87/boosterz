@@ -74,7 +74,7 @@ export default function CollectionDetail() {
   const basesNumberedCount = cards?.filter(card => card.cardType.toLowerCase() === "numbered" || (card.cardType.toLowerCase() === "parallel" && card.serialNumber)).length || 0;
   const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
   const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
-  const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert").length || 0;
+  const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit").length || 0;
 
   if (collectionLoading || cardsLoading) {
     return (
@@ -328,13 +328,6 @@ export default function CollectionDetail() {
           <button className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 rounded-xl font-semibold">
             <Plus className="w-5 h-5 inline mr-2" />
             Ajouter carte
-          </button>
-          <button 
-            onClick={() => window.location.href = `/checklist/${collectionId}`}
-            className="flex-1 bg-[hsl(214,35%,22%)] text-white py-3 rounded-xl font-semibold"
-          >
-            <Check className="w-5 h-5 inline mr-2" />
-            Checklist
           </button>
         </div>
       </main>
