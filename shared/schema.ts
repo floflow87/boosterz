@@ -41,6 +41,7 @@ export const cards = pgTable("cards", {
   numbering: text("numbering"), // Ex: "125/199", "15/25", "1/1"
   baseCardId: integer("base_card_id"), // Référence vers la carte de base pour les variantes
   isVariant: boolean("is_variant").default(false).notNull(),
+  variants: text("variants"), // Nom des variantes (ex: "Gold", "Red", "Blue")
 });
 
 export const userCards = pgTable("user_cards", {
@@ -137,6 +138,7 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   numbering: true,
   baseCardId: true,
   isVariant: true,
+  variants: true,
 });
 
 export const insertUserCardSchema = createInsertSchema(userCards).pick({

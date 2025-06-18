@@ -254,7 +254,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "1/200",
         baseCardId: null,
-        isVariant: false
+        isVariant: false,
+        variants: null
       },
       // Variante Gold de Mbappé
       {
@@ -272,7 +273,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "1/25",
         baseCardId: 1,
-        isVariant: true
+        isVariant: true,
+        variants: "Gold"
       },
       // Variante Red de Mbappé
       {
@@ -290,7 +292,8 @@ export class MemStorage implements IStorage {
         serialNumber: null,
         numbering: "1/10",
         baseCardId: 1,
-        isVariant: true
+        isVariant: true,
+        variants: "Red"
       },
       // Autre joueur base
       {
