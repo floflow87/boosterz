@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles } from "lucide-react";
+import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -12,6 +12,7 @@ export default function CollectionDetail() {
   const collectionId = params.id ? parseInt(params.id) : 1;
   const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "numbered" | "autographs" | "hits" | "speciales">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
 
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
     queryKey: [`/api/collections/${collectionId}`],
@@ -209,11 +210,14 @@ export default function CollectionDetail() {
         {viewMode === "grid" ? (
           <div className="card-grid">
             {filteredCards?.map((card, index) => (
-              <div key={card.id} className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-2 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
-                card.isOwned 
-                  ? "border-green-500 bg-opacity-100 shadow-lg" 
-                  : "border-gray-600 bg-opacity-50"
-              } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}
+              <div 
+                key={card.id} 
+                onClick={() => setSelectedCard(card)}
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 relative border-2 transition-all cursor-pointer hover:scale-105 transform duration-300 ${
+                  card.isOwned 
+                    ? "border-green-500 bg-opacity-100 shadow-lg" 
+                    : "border-gray-600 bg-opacity-50"
+                } ${card.cardType === "Autograph" ? "ring-2 ring-yellow-400" : ""}`}
               >
               {card.isOwned && card.imageUrl ? (
                 <>
@@ -233,7 +237,7 @@ export default function CollectionDetail() {
               )}
               <div className="text-xs mt-1 text-center">
                 <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
-                  {card.isOwned ? card.playerName : '?????'}
+                  {card.playerName || '?????'}
                 </div>
                 <div className="text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
               </div>
@@ -243,11 +247,14 @@ export default function CollectionDetail() {
         ) : (
           <div className="space-y-2">
             {filteredCards?.map((card) => (
-              <div key={card.id} className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all ${
-                card.isOwned 
-                  ? "border-green-500" 
-                  : "border-gray-600"
-              }`}>
+              <div 
+                key={card.id} 
+                onClick={() => setSelectedCard(card)}
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3 border-2 transition-all cursor-pointer hover:scale-[1.02] ${
+                  card.isOwned 
+                    ? "border-green-500" 
+                    : "border-gray-600"
+                }`}>
                 <div className="w-12 h-16 bg-gray-600 rounded flex-shrink-0 flex items-center justify-center">
                   {card.isOwned && card.imageUrl ? (
                     <img src={card.imageUrl} alt={card.playerName || ""} className="w-full h-full object-cover rounded" />
@@ -257,7 +264,7 @@ export default function CollectionDetail() {
                 </div>
                 <div className="flex-1">
                   <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
-                    {card.isOwned ? card.playerName : '?????'}
+                    {card.playerName || '?????'}
                   </div>
                   <div className="text-sm text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
                   <div className="text-xs text-[hsl(212,23%,69%)]">{card.teamName}</div>
