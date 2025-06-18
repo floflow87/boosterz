@@ -134,17 +134,6 @@ export default function CollectionDetail() {
               Bases ({basesCount})
             </button>
             <button
-              onClick={() => setFilter("speciales")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
-                filter === "speciales" 
-                  ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105 animate-pulse" 
-                  : "bg-gradient-to-r from-yellow-600 to-yellow-800 text-yellow-100 hover:from-yellow-500 hover:to-yellow-700"
-              }`}
-            >
-              <Sparkles className="w-4 h-4 inline mr-1" />
-              Spéciales 1/1 ({specialesCount})
-            </button>
-            <button
               onClick={() => setFilter("numbered")}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
                 filter === "numbered" 
@@ -165,6 +154,17 @@ export default function CollectionDetail() {
             >
               <HelpCircle className="w-4 h-4 inline mr-1" />
               Autographes ({autographsCount})
+            </button>
+            <button
+              onClick={() => setFilter("speciales")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+                filter === "speciales" 
+                  ? "bg-gradient-to-r from-yellow-400 to-yellow-600 text-black shadow-lg transform scale-105 animate-pulse" 
+                  : "bg-gradient-to-r from-yellow-600 to-yellow-800 text-yellow-100 hover:from-yellow-500 hover:to-yellow-700"
+              }`}
+            >
+              <Sparkles className="w-4 h-4 inline mr-1" />
+              Spéciales 1/1 ({specialesCount})
             </button>
           </div>
         ) : (
