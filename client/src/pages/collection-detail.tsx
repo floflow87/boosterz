@@ -25,11 +25,11 @@ export default function CollectionDetail() {
   const filteredCards = cards?.filter((card) => {
     if (filter === "owned") return card.isOwned;
     if (filter === "missing") return !card.isOwned;
-    if (filter === "bases") return card.cardType === "Base";
-    if (filter === "numbered") return card.cardType === "Numbered";
-    if (filter === "autographs") return card.cardType === "Autograph";
-    if (filter === "speciales") return card.cardType === "Special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
-    if (filter === "hits") return card.cardType === "Hit";
+    if (filter === "bases") return card.cardType.toLowerCase() === "base";
+    if (filter === "numbered") return card.cardType.toLowerCase() === "numbered";
+    if (filter === "autographs") return card.cardType.toLowerCase() === "autograph";
+    if (filter === "speciales") return card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1";
+    if (filter === "hits") return card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert" || card.cardType.toLowerCase() === "parallel";
     return true;
   })?.sort((a, b) => {
     // Sort numbered cards by serial number (highest number first: /50, /35, /30, /25)
@@ -50,11 +50,11 @@ export default function CollectionDetail() {
   const ownedCount = cards?.filter(card => card.isOwned).length || 0;
   const totalCount = cards?.length || 0;
   const missingCount = totalCount - ownedCount;
-  const basesCount = cards?.filter(card => card.cardType === "Base").length || 0;
-  const numberedCount = cards?.filter(card => card.cardType === "Numbered").length || 0;
-  const autographsCount = cards?.filter(card => card.cardType === "Autograph").length || 0;
-  const specialesCount = cards?.filter(card => card.cardType === "Special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
-  const hitsCount = cards?.filter(card => card.cardType === "Hit").length || 0;
+  const basesCount = cards?.filter(card => card.cardType.toLowerCase() === "base").length || 0;
+  const numberedCount = cards?.filter(card => card.cardType.toLowerCase() === "numbered").length || 0;
+  const autographsCount = cards?.filter(card => card.cardType.toLowerCase() === "autograph").length || 0;
+  const specialesCount = cards?.filter(card => card.cardType.toLowerCase() === "special" || card.serialNumber === "1/1" || card.serialNumber === "/1").length || 0;
+  const hitsCount = cards?.filter(card => card.cardType.toLowerCase() === "hit" || card.cardType.toLowerCase() === "insert" || card.cardType.toLowerCase() === "parallel").length || 0;
 
   if (collectionLoading || cardsLoading) {
     return (

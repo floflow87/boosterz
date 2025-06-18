@@ -1368,7 +1368,9 @@ export class MemStorage implements IStorage {
 
   // Collection methods
   async getCollectionsByUserId(userId: number): Promise<Collection[]> {
-    return Array.from(this.collections.values()).filter(collection => collection.userId === userId);
+    return Array.from(this.collections.values())
+      .filter(collection => collection.userId === userId)
+      .sort((a, b) => a.id - b.id);
   }
 
   async getCollection(id: number): Promise<Collection | undefined> {
