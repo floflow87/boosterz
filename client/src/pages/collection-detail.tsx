@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useEffect } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import { Plus, ArrowLeftRight, Check, HelpCircle, Grid, List, Star, Sparkles, X, Info } from "lucide-react";
 import Header from "@/components/header";
@@ -13,6 +13,13 @@ export default function CollectionDetail() {
   const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "speciales">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    // Clear cache on component mount to get fresh data
+    queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+    queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+  }, [collectionId, queryClient]);
 
   const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
     queryKey: [`/api/collections/${collectionId}`],
