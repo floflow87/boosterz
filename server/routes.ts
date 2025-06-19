@@ -458,6 +458,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Special route for Max la menace chat (ID 999)
+  app.get("/api/chat/conversations/user/999", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      // Create a mock conversation with Max la menace
+      const maxConversation = {
+        id: 999,
+        participants: [
+          { id: 1, name: "Floflow87", username: "Floflow87" },
+          { id: 999, name: "Max la menace", username: "maxlamenace" }
+        ],
+        lastMessage: {
+          id: 1,
+          content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
+          senderId: 999,
+          timestamp: new Date().toISOString()
+        },
+        unreadCount: 1
+      };
+      
+      res.json([maxConversation]);
+    } catch (error) {
+      console.error("Error fetching Max conversation:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Messages for Max la menace conversation
+  app.get("/api/chat/conversations/999/messages", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const messages = [
+        {
+          id: 1,
+          conversationId: 999,
+          senderId: 999,
+          senderName: "Max la menace",
+          content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
+          timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+          isRead: false
+        },
+        {
+          id: 2,
+          conversationId: 999,
+          senderId: 999,
+          senderName: "Max la menace",
+          content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
+          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+          isRead: false
+        }
+      ];
+      
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching Max messages:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Send message to Max la menace
+  app.post("/api/chat/conversations/999/messages", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const { content } = req.body;
+      
+      if (!content?.trim()) {
+        return res.status(400).json({ message: "Message content is required" });
+      }
+
+      const newMessage = {
+        id: Date.now(),
+        conversationId: 999,
+        senderId: 1, // Current user
+        senderName: "Floflow87",
+        content: content.trim(),
+        timestamp: new Date().toISOString(),
+        isRead: true
+      };
+
+      res.status(201).json(newMessage);
+    } catch (error) {
+      console.error("Error sending message to Max:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

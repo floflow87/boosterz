@@ -322,16 +322,14 @@ export default function Social() {
                           M
                         </div>
                         <div>
-                          <div className="flex items-center space-x-2">
-                            <h3 className="font-semibold text-white">Max la menace</h3>
-                            <span className="text-xs bg-red-500 text-white px-2 py-1 rounded">Nouveau</span>
-                          </div>
+                          <h3 className="font-semibold text-white">Max la menace</h3>
                           <p className="text-sm text-gray-400">@maxlamenace</p>
                         </div>
                       </div>
                       
                       <div className="flex space-x-2">
                         <Button
+                          onClick={() => setLocation('/chat/999')}
                           variant="outline"
                           size="sm"
                           className="border-gray-400 text-gray-400 hover:bg-gray-700"
@@ -358,104 +356,10 @@ export default function Social() {
                     </div>
                   </div>
                   
-                  {filteredUsers.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-gray-400">Aucun collectionneur trouvé</p>
-                    </div>
-                  ) : (
-                    filteredUsers.map((user) => (
-                  <div
-                    key={user.id}
-                    className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]"
-                  >
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold">
-                          {user.avatar ? (
-                            <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
-                          ) : (
-                            user.name.charAt(0).toUpperCase()
-                          )}
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-white">{user.name}</h3>
-                          <p className="text-sm text-gray-400">@{user.username}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex space-x-2">
-                        <Button
-                          onClick={() => setLocation(`/chat/${user.id}`)}
-                          variant="outline"
-                          size="sm"
-                          className="border-gray-400 text-gray-400 hover:bg-gray-700"
-                        >
-                          <MessageCircle className="w-4 h-4" />
-                        </Button>
-                        
-                        <Button
-                          onClick={() => followMutation.mutate({
-                            userId: user.id,
-                            action: user.isFollowing ? "unfollow" : "follow"
-                          })}
-                          disabled={followMutation.isPending}
-                          variant={user.isFollowing ? "outline" : "default"}
-                          size="sm"
-                          className={user.isFollowing 
-                            ? "border-gray-400 text-gray-400 hover:bg-gray-700" 
-                            : "bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)]"
-                          }
-                        >
-                          {user.isFollowing ? (
-                            <>
-                              <UserCheck className="w-4 h-4 mr-1" />
-                              Suivi
-                            </>
-                          ) : (
-                            <>
-                              <UserPlus className="w-4 h-4 mr-1" />
-                              Suivre
-                            </>
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-
-                    {user.bio && (
-                      <p className="text-sm text-gray-300 mb-3">{user.bio}</p>
-                    )}
-
-                    <div className="grid grid-cols-4 gap-4 text-center">
-                      <div>
-                        <div className="text-sm font-semibold text-[hsl(9,85%,67%)]">{user.totalCards}</div>
-                        <div className="text-xs text-gray-400">Cartes</div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-[hsl(9,85%,67%)]">{user.collectionsCount}</div>
-                        <div className="text-xs text-gray-400">Collections</div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-[hsl(9,85%,67%)]">{user.followersCount}</div>
-                        <div className="text-xs text-gray-400">Followers</div>
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-[hsl(9,85%,67%)]">{user.completionPercentage}%</div>
-                        <div className="text-xs text-gray-400">Complété</div>
-                      </div>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full mt-3 border-[hsl(214,35%,30%)] text-gray-300 hover:bg-[hsl(214,35%,30%)]"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Voir la collection
-                    </Button>
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-400">Aucun autre collectionneur pour le moment</p>
                   </div>
-                ))
-              )}
                 </>
               )}
             </div>

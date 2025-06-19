@@ -1,4 +1,4 @@
-import { ArrowLeft, Bell } from "lucide-react";
+import { ArrowLeft, Bell, MessageCircle } from "lucide-react";
 import { useLocation } from "wouter";
 
 interface HeaderProps {
@@ -28,6 +28,12 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
       </div>
       
       <div className="flex items-center space-x-3">
+        <button 
+          onClick={() => setLocation('/chat/999')}
+          className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
+        >
+          <MessageCircle className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+        </button>
         <button className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center">
           <Bell className="w-5 h-5 text-[hsl(212,23%,69%)]" />
         </button>
