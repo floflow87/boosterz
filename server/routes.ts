@@ -7,6 +7,32 @@ import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication routes
+  app.use('/api/auth', authRoutes);
+  
+  // Chat routes
+  app.use('/api/chat', chatRoutes);
+
+  // Search all users
+  app.get("/api/users/search", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const users = await storage.getAllUsers();
+      const publicUsers = users.map(user => ({
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        avatar: user.avatar,
+        bio: user.bio,
+        totalCards: user.totalCards,
+        collectionsCount: user.collectionsCount,
+        completionPercentage: user.completionPercentage
+      }));
+      res.json(publicUsers);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Get user profile
   app.get("/api/users/:id", async (req, res) => {
     try {
