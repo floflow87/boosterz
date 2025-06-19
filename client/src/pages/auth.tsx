@@ -37,7 +37,8 @@ export default function Auth() {
         title: "Connexion réussie",
         description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
       });
-      setLocation("/start");
+      // Force a page reload to update authentication state
+      window.location.href = "/";
     },
     onError: (error: any) => {
       toast({
@@ -58,7 +59,8 @@ export default function Auth() {
         title: "Compte créé",
         description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
       });
-      setLocation("/start");
+      // Force a page reload to update authentication state
+      window.location.href = "/";
     },
     onError: (error: any) => {
       toast({
