@@ -31,13 +31,13 @@ export default function Auth() {
     mutationFn: async (data: { email: string; password: string }) => {
       return apiRequest("POST", "/api/auth/login", data);
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       localStorage.setItem("authToken", data.token);
       toast({
         title: "Connexion réussie",
         description: `Bienvenue ${data.user.name}!`,
       });
-      setLocation("/");
+      setLocation("/start");
     },
     onError: (error: any) => {
       toast({
@@ -52,13 +52,13 @@ export default function Auth() {
     mutationFn: async (data: typeof formData) => {
       return apiRequest("POST", "/api/auth/register", data);
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       localStorage.setItem("authToken", data.token);
       toast({
         title: "Compte créé",
         description: `Bienvenue ${data.user.name}!`,
       });
-      setLocation("/");
+      setLocation("/start");
     },
     onError: (error: any) => {
       toast({
@@ -86,7 +86,8 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#111827]">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[#111827] relative">
+      <HaloBlur />
       <div className="w-full max-w-md">
         <div className="rounded-xl p-8 shadow-2xl border border-gray-800 bg-[24354C] font-light">
           <div className="text-center mb-8">
