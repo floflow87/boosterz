@@ -512,18 +512,19 @@ export default function CollectionDetail() {
         <div className="flex items-center mb-6">
           <button
             onClick={() => setLocation('/collections')}
-            className="p-2 rounded-lg hover:bg-gray-800 transition-colors mr-4"
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
-          <div className="flex flex-col items-center flex-1 justify-center">
+          <div className="flex flex-col items-center flex-1">
             <img 
               src={logoImage}
               alt="Ligue 1 Score"
-              className="w-20 h-20 object-contain mb-2 mx-auto"
+              className="w-20 h-20 object-contain mb-2"
             />
             <p className="text-gray-400 text-sm italic text-center">2023/24</p>
           </div>
+          <div className="w-10"></div>
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
@@ -895,9 +896,7 @@ export default function CollectionDetail() {
                             className="w-12 h-12 object-contain"
                           />
                         </div>
-                        
-                        
-                        
+
                         
                       </div>
                     )}
@@ -1144,7 +1143,8 @@ export default function CollectionDetail() {
                           setSelectedTradeCard(currentCard || selectedCard);
                           setShowTradePanel(true);
                         }}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                        className="flex-1 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                        style={{ backgroundColor: '#F37261' }}
                       >
                         <Handshake className="w-4 h-4" />
                       </button>
