@@ -198,6 +198,10 @@
     transform: scale(1.1);
   }
   
+  .animation-delay-150 {
+    animation-delay: 150ms;
+  }
+  
   .scroll-container {
     overflow-x: auto;
     overflow-y: hidden;
