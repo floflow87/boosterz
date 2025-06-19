@@ -60,7 +60,7 @@ interface NotificationItem {
 
 export default function Social() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTab, setActiveTab] = useState("discover");
+  const [activeTab, setActiveTab] = useState("forsale");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -156,20 +156,44 @@ export default function Social() {
 
       <main className="relative z-10 px-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-[hsl(214,35%,22%)] mb-6">
-            <TabsTrigger value="discover" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
-              <Users className="w-4 h-4 mr-2" />
-              Découvrir
-            </TabsTrigger>
-            <TabsTrigger value="activity" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
-              <TrendingUp className="w-4 h-4 mr-2" />
-              Activité
-            </TabsTrigger>
-            <TabsTrigger value="forsale" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
-              <Star className="w-4 h-4 mr-2" />
-              À la vente
-            </TabsTrigger>
-          </TabsList>
+          <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4">
+            <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[44px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <button
+                onClick={() => setActiveTab("forsale")}
+                className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                  activeTab === "forsale" 
+                    ? "text-white shadow-lg transform scale-105" 
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+                style={activeTab === "forsale" ? { backgroundColor: '#F37261' } : {}}
+              >
+                <Star className="w-3 h-3 mr-1 inline" />
+                À la vente
+              </button>
+              <button
+                onClick={() => setActiveTab("discover")}
+                className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                  activeTab === "discover" 
+                    ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+              >
+                <Users className="w-3 h-3 mr-1 inline" />
+                Découvrir
+              </button>
+              <button
+                onClick={() => setActiveTab("activity")}
+                className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                  activeTab === "activity" 
+                    ? "bg-purple-600 text-white shadow-lg transform scale-105" 
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+              >
+                <TrendingUp className="w-3 h-3 mr-1 inline" />
+                Activité
+              </button>
+            </div>
+          </div>
 
           <TabsContent value="discover" className="space-y-4">
             {/* Barre de recherche */}

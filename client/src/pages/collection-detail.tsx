@@ -470,8 +470,8 @@ export default function CollectionDetail() {
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
-        <div className="sticky top-0 z-50 pb-4 mb-4 bg-black pt-2 -mx-3 px-3">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[40px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="sticky top-0 z-50 pb-4 mb-2 bg-black pt-2 -mx-3 px-3">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[44px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
             onClick={() => setFilter("bases")}
             className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
@@ -527,7 +527,7 @@ export default function CollectionDetail() {
         </div>
 
         {/* Search Bar */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-center gap-3 mb-2">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
