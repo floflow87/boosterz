@@ -1,13 +1,15 @@
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
+import HaloBlur from "@/components/halo-blur";
 import { ShoppingCart, Star, Package, Truck } from "lucide-react";
 
 export default function Shop() {
   return (
-    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20">
-      <Header title="Shop" />
+    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20 relative overflow-hidden">
+      <HaloBlur />
+      <Header title="Boutique" />
       
-      <div className="p-4 space-y-6">
+      <div className="relative z-10 p-4 space-y-6">
         {/* Promotions */}
         <div className="bg-gradient-to-r from-[hsl(9,85%,67%)] to-[hsl(9,85%,57%)] rounded-lg p-4">
           <div className="flex items-center justify-between">

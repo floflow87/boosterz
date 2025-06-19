@@ -1,5 +1,6 @@
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
+import HaloBlur from "@/components/halo-blur";
 import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight } from "lucide-react";
 import { useLocation } from "wouter";
 
@@ -7,10 +8,11 @@ export default function Settings() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20">
+    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20 relative overflow-hidden">
+      <HaloBlur />
       <Header title="Réglages" />
       
-      <div className="p-4 space-y-6">
+      <div className="relative z-10 p-4 space-y-6">
 
 
         {/* Menu des paramètres */}

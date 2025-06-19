@@ -284,13 +284,31 @@ export default function CollectionDetail() {
     }
   };
 
-  const handlePhotoSave = (imageUrl: string, cardId?: number) => {
+  const handlePhotoSave = async (imageUrl: string, cardId?: number) => {
     if (cardId) {
-      // Update local state immediately for visual feedback
-      if (selectedCard && selectedCard.id === cardId) {
-        setSelectedCard({ ...selectedCard, imageUrl });
+      try {
+        // Update local state immediately for visual feedback
+        if (selectedCard && selectedCard.id === cardId) {
+          setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
+        }
+        
+        // Update card image
+        await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+        
+        // Automatically mark card as owned
+        await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+        
+        toast({
+          title: "Photo ajoutée",
+          description: "La photo a été ajoutée et la carte marquée comme acquise."
+        });
+      } catch (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter la photo.",
+          variant: "destructive"
+        });
       }
-      updateCardImageMutation.mutate({ cardId, imageUrl });
     }
     setShowPhotoUpload(false);
   };
