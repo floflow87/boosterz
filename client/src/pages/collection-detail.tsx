@@ -446,7 +446,7 @@ export default function CollectionDetail() {
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
-        <div className="sticky top-0 z-10 bg-white pb-4 mb-4">
+        <div className="sticky top-0 z-10 pb-4 mb-4">
           <div className="flex space-x-2 overflow-x-auto min-h-[40px] items-center pl-2">
             <button
             onClick={() => setFilter("bases")}
@@ -781,6 +781,18 @@ export default function CollectionDetail() {
                   
                   {/* Card Info */}
                   <div className="p-3">
+                    {currentVariant.cardType?.includes("Insert") && (
+                      <div className="text-purple-400 text-xs font-medium mb-1">
+                        {(() => {
+                          const cardType = currentVariant.cardType || "";
+                          if (cardType.includes("Hot Rookies")) return "Hot Rookies";
+                          if (cardType.includes("Keepers")) return "Keepers";
+                          if (cardType.includes("Club Legend")) return "Club Legend";
+                          if (cardType.includes("Spotlight")) return "Spotlight";
+                          return "Hit Card";
+                        })()}
+                      </div>
+                    )}
                     <div className="text-gray-400 text-xs mt-1">
                       {currentVariant.rarity || 'Base'}
                     </div>
