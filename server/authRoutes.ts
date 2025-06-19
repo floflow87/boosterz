@@ -119,7 +119,26 @@ router.post('/logout', authenticateToken, async (req: AuthRequest, res) => {
 
 // Get current user
 router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
-  res.json({ user: req.user });
+  try {
+    const user = await storage.getUser(req.user!.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      avatar: user.avatar,
+      totalCards: user.totalCards,
+      collectionsCount: user.collectionsCount,
+      completionPercentage: user.completionPercentage,
+    });
+  } catch (error) {
+    console.error('Get user error:', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur' });
+  }
 });
 
 // Update user profile
