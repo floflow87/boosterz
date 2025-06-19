@@ -13,6 +13,7 @@ interface CardPhotoImportProps {
   onSave: (imageData: string, cardId?: number) => void;
   availableCards: Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string; collectionId: number; }>;
   preselectedCard?: { id: number; playerName: string; reference: string; teamName: string; };
+  currentFilter?: string; // "bases", "bases_numbered", "hits", etc.
 }
 
 interface ImageAdjustments {
@@ -28,7 +29,7 @@ interface ImageAdjustments {
   };
 }
 
-export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards, preselectedCard }: CardPhotoImportProps) {
+export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards, preselectedCard, currentFilter }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -333,10 +334,31 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       setPlayerSuggestions(suggestions);
       setShowSuggestions(suggestions.length > 0 && suggestions[0].toLowerCase() !== name.toLowerCase());
       
-      // Find matching cards
-      const matchingCards = availableCards.filter(card => 
+      // Find matching cards based on player name and current filter
+      let matchingCards = availableCards.filter(card => 
         card.playerName.toLowerCase().includes(name.toLowerCase())
       );
+
+      // Filter cards based on current tab
+      if (currentFilter) {
+        matchingCards = matchingCards.filter(card => {
+          switch (currentFilter) {
+            case "bases":
+              return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+            case "bases_numbered":
+              return card.cardType === "Parallel Numbered";
+            case "hits":
+              return card.cardType?.includes("Insert");
+            case "autographs":
+              return card.cardType === "Autograph";
+            case "special_1_1":
+              return card.cardType === "special_1_1";
+            default:
+              return true;
+          }
+        });
+      }
+
       setPlayerCards(matchingCards);
       if (matchingCards.length > 0) {
         setSelectedCardId(matchingCards[0].id);

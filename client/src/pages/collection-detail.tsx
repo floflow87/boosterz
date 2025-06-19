@@ -445,9 +445,10 @@ export default function CollectionDetail() {
           </div>
         </div>
 
-        {/* Category Tabs - Badge Style */}
-        <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[40px] items-center pl-2">
-          <button
+        {/* Category Tabs - Badge Style - Sticky */}
+        <div className="sticky top-0 z-10 bg-white pb-4 mb-4">
+          <div className="flex space-x-2 overflow-x-auto min-h-[40px] items-center pl-2">
+            <button
             onClick={() => setFilter("bases")}
             className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${
               filter === "bases" 
@@ -498,6 +499,7 @@ export default function CollectionDetail() {
           >
             Spéciales
           </button>
+          </div>
         </div>
 
         {/* Search Bar */}
@@ -1108,7 +1110,7 @@ export default function CollectionDetail() {
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
         onSave={handlePhotoSave}
-        availableCards={(filteredCards || []).map(card => ({
+        availableCards={(cards || []).map(card => ({
           id: card.id,
           cardNumber: card.reference,
           playerName: card.playerName || "Joueur Inconnu",
@@ -1122,6 +1124,7 @@ export default function CollectionDetail() {
           reference: selectedCard.reference,
           teamName: selectedCard.teamName || "Équipe Inconnue"
         } : undefined}
+        currentFilter={filter}
       />
 
       {/* Trade Panel Modal */}
