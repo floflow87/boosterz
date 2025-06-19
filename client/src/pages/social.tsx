@@ -312,13 +312,59 @@ export default function Social() {
                 <div className="text-center py-8">
                   <div className="text-gray-400">Chargement...</div>
                 </div>
-              ) : filteredUsers.length === 0 ? (
-                <div className="text-center py-8">
-                  <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-400">Aucun collectionneur trouvé</p>
-                </div>
               ) : (
-                filteredUsers.map((user) => (
+                <>
+                  {/* Max la menace profile */}
+                  <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
+                          M
+                        </div>
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <h3 className="font-semibold text-white">Max la menace</h3>
+                            <span className="text-xs bg-red-500 text-white px-2 py-1 rounded">Nouveau</span>
+                          </div>
+                          <p className="text-sm text-gray-400">@maxlamenace</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-400 text-gray-400 hover:bg-gray-700"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+                        >
+                          Suivre
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    <div className="text-sm text-gray-300 mb-3">
+                      Collectionneur passionné
+                    </div>
+                    
+                    <div className="flex space-x-4 text-xs text-gray-400">
+                      <span>0 collections</span>
+                      <span>0 cartes</span>
+                      <span>0 abonnés</span>
+                    </div>
+                  </div>
+                  
+                  {filteredUsers.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-400">Aucun collectionneur trouvé</p>
+                    </div>
+                  ) : (
+                    filteredUsers.map((user) => (
                   <div
                     key={user.id}
                     className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]"
@@ -408,7 +454,9 @@ export default function Social() {
                       Voir la collection
                     </Button>
                   </div>
-                ))
+                    ))
+                  )}
+                </>
               )}
             </div>
           </TabsContent>

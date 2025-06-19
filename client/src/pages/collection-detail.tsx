@@ -39,10 +39,12 @@ export default function CollectionDetail() {
       const categoryTabs = document.getElementById('category-tabs');
       if (categoryTabs) {
         const scrollY = window.scrollY;
-        if (scrollY > 100) {
-          categoryTabs.style.backgroundColor = 'rgba(0, 0, 0, 0.9)';
+        if (scrollY > 50) {
+          categoryTabs.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+          categoryTabs.style.backdropFilter = 'blur(10px)';
         } else {
           categoryTabs.style.backgroundColor = 'transparent';
+          categoryTabs.style.backdropFilter = 'none';
         }
       }
     };
@@ -546,7 +548,7 @@ export default function CollectionDetail() {
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
-        <div className="sticky top-0 z-50 pb-4 mb-2 pt-2 -mx-3 px-3 transition-colors duration-300" id="category-tabs">
+        <div className="sticky top-0 z-50 pb-4 mb-2 pt-2 -mx-3 px-3 transition-all duration-300" id="category-tabs">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[52px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
             onClick={() => setFilter("bases")}
@@ -849,16 +851,6 @@ export default function CollectionDetail() {
                 >
                   {/* Card Image */}
                   <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400">
-                    {/* Player Info Overlay */}
-                    <div className="absolute top-2 left-2 right-2 z-10 bg-black bg-opacity-70 rounded-lg p-2">
-                      <div className="text-white font-bold text-xs mb-1">
-                        {currentVariant.playerName}
-                      </div>
-                      <div className="text-gray-300 text-xs">
-                        {currentVariant.teamName}
-                      </div>
-                    </div>
-                    
                     {currentVariant.imageUrl ? (
                       <img 
                         src={currentVariant.imageUrl} 
@@ -953,6 +945,12 @@ export default function CollectionDetail() {
                         })()}
                       </div>
                     )}
+                    <div className="text-white font-bold text-sm mb-1">
+                      {currentVariant.playerName}
+                    </div>
+                    <div className="text-gray-400 text-xs mb-1">
+                      {currentVariant.teamName}
+                    </div>
                     <div className="text-gray-400 text-xs">
                       Référence: {currentVariant.reference}
                     </div>
