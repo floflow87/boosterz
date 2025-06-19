@@ -614,13 +614,15 @@ export default function CollectionDetail() {
               }));
             };
             
+            // Check if all variants are owned (card is complete)
+            const allVariantsOwned = variants.every(variant => variant.isOwned);
             const animationName = getCardAnimationName(currentVariant);
             
             return (
               <div 
                 key={playerKey}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(currentVariant)}`}
-                style={currentVariant.isOwned && animationName ? {
+                style={allVariantsOwned && animationName ? {
                   animation: `${animationName} 3s infinite`
                 } : {}}
               >

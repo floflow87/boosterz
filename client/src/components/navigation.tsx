@@ -23,7 +23,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white backdrop-blur-lg px-3 py-2 z-20 shadow-lg rounded-t-[20px]">
+    <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg px-3 py-2 z-20 shadow-lg rounded-t-[20px]" style={{ backgroundColor: '#131B2F' }}>
       <div className="flex justify-around items-center max-w-sm mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -36,7 +36,7 @@ export default function Navigation() {
               className={`nav-item flex flex-col items-center p-2 transition-all duration-300 ${
                 active 
                   ? "text-[#F37261] rounded-full" 
-                  : "text-[#111B31] hover:bg-gray-100 rounded-lg"
+                  : "text-white hover:bg-gray-700 rounded-lg"
               }`}
               style={active ? {
                 boxShadow: '0 0 0 6px rgba(243, 114, 97, 0.15)'
