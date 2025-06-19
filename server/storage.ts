@@ -254,6 +254,7 @@ export class MemStorage implements IStorage {
       isPublic: true,
       followersCount: 0,
       followingCount: 0,
+      isFirstLogin: false,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -279,6 +280,7 @@ export class MemStorage implements IStorage {
       isPublic: true,
       followersCount: 0,
       followingCount: 0,
+      isFirstLogin: false,
       createdAt: new Date(),
       updatedAt: new Date()
     };
