@@ -52,6 +52,9 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const [playerCards, setPlayerCards] = useState<Array<{ id: number; cardNumber: string; playerName: string; teamName: string; cardType: string }>>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [playerSuggestions, setPlayerSuggestions] = useState<string[]>([]);
+  const [cardType, setCardType] = useState("");
+  const [cardTypeSuggestions, setCardTypeSuggestions] = useState<string[]>([]);
+  const [showCardTypeSuggestions, setShowCardTypeSuggestions] = useState(false);
   
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -320,6 +323,9 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     setPlayerCards([]);
     setShowSuggestions(false);
     setPlayerSuggestions([]);
+    setCardType("");
+    setCardTypeSuggestions([]);
+    setShowCardTypeSuggestions(false);
     onClose();
   }, [onClose]);
 
@@ -692,11 +698,47 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                   <label className="block text-sm font-medium text-black mb-2">
                     Type de carte (optionnel)
                   </label>
-                  <Input
-                    type="text"
-                    placeholder="Ex: Base, Hit, Autograph, Special..."
-                    className="w-full"
-                  />
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Ex: Base, Hit, Autograph, Special..."
+                      value={cardType}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setCardType(value);
+                        
+                        if (value.length > 0) {
+                          const uniqueTypes = Array.from(new Set(availableCards.map(card => card.cardType).filter(Boolean)));
+                          const suggestions = uniqueTypes.filter(type => 
+                            type.toLowerCase().includes(value.toLowerCase())
+                          );
+                          setCardTypeSuggestions(suggestions);
+                          setShowCardTypeSuggestions(suggestions.length > 0);
+                        } else {
+                          setShowCardTypeSuggestions(false);
+                        }
+                      }}
+                      onBlur={() => setTimeout(() => setShowCardTypeSuggestions(false), 150)}
+                      className="w-full"
+                    />
+                    
+                    {showCardTypeSuggestions && cardTypeSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                        {cardTypeSuggestions.map((suggestion, index) => (
+                          <div
+                            key={index}
+                            className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-black border-b border-gray-100 last:border-b-0"
+                            onClick={() => {
+                              setCardType(suggestion);
+                              setShowCardTypeSuggestions(false);
+                            }}
+                          >
+                            {suggestion}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 
                 <div className="flex gap-2">
