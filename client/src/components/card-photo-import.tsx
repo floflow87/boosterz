@@ -346,22 +346,24 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white text-black">
-        <DialogHeader>
-          <DialogTitle className="text-black">
-            {step === "import" && "Importer une photo"}
-            {step === "edit" && "Retoucher la photo"}
-            {step === "assign" && "Assigner à une carte"}
-          </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {step === "import" && "Choisissez comment importer votre photo de carte"}
-            {step === "edit" && "Ajustez votre photo avant l'assignation"}
-            {step === "assign" && "Confirmez l'assignation de la photo"}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-w-5xl max-h-[95vh] overflow-y-auto bg-white text-black p-0">
+        <div className="p-6">
+          <DialogHeader>
+            <DialogTitle className="text-black">
+              {step === "import" && "Importer une photo"}
+              {step === "edit" && "Retoucher la photo"}
+              {step === "assign" && "Assigner à une carte"}
+            </DialogTitle>
+            <DialogDescription className="text-gray-600">
+              {step === "import" && "Choisissez comment importer votre photo de carte"}
+              {step === "edit" && "Ajustez votre photo avant l'assignation"}
+              {step === "assign" && "Confirmez l'assignation de la photo"}
+            </DialogDescription>
+          </DialogHeader>
+        </div>
 
         {step === "import" && (
-          <div className="space-y-4">
+          <div className="space-y-4 px-6 pb-6">
             <div className="space-y-3">
               <Button
                 variant="outline"
@@ -419,7 +421,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         )}
 
         {step === "edit" && selectedImage && (
-          <div className="space-y-4">
+          <div className="space-y-4 px-6 pb-6">
             <div className="flex flex-col gap-4">
               <div className="flex-1">
                 <div className="relative bg-gray-100 rounded-lg overflow-hidden">
@@ -597,7 +599,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
 
         {/* Assignment Step */}
         {step === "assign" && (
-          <div className="space-y-4">
+          <div className="space-y-4 px-6 pb-6">
             <div className="space-y-4">
               {selectedImage && (
                 <div className="mb-4 text-center">

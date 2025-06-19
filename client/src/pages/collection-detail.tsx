@@ -21,6 +21,7 @@ export default function CollectionDetail() {
   const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [cardVariantIndexes, setCardVariantIndexes] = useState<Record<string, number>>({});
+  const [panStates, setPanStates] = useState<Record<string, { x: number; y: number; scale: number }>>({});
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -466,6 +467,29 @@ export default function CollectionDetail() {
                 setShowBulkActions(newSelection.size > 0);
               }
             };
+
+            const handleCardPan = (cardId: number, startX: number, startY: number, currentX: number, currentY: number) => {
+              const deltaX = currentX - startX;
+              const deltaY = currentY - startY;
+              const cardKey = `card-${cardId}`;
+              
+              setPanStates(prev => ({
+                ...prev,
+                [cardKey]: {
+                  x: deltaX,
+                  y: deltaY,
+                  scale: 1.1
+                }
+              }));
+            };
+
+            const resetCardPan = (cardId: number) => {
+              const cardKey = `card-${cardId}`;
+              setPanStates(prev => ({
+                ...prev,
+                [cardKey]: { x: 0, y: 0, scale: 1 }
+              }));
+            };
             
             return (
               <div 
@@ -540,7 +564,23 @@ export default function CollectionDetail() {
                       <img 
                         src={currentVariant.imageUrl} 
                         alt={currentVariant.playerName || ""} 
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-105 active:scale-110"
+                        style={{
+                          touchAction: 'pan-x pan-y',
+                          willChange: 'transform'
+                        }}
+                        onTouchStart={(e) => {
+                          e.currentTarget.style.transition = 'transform 0.1s ease-out';
+                        }}
+                        onTouchEnd={(e) => {
+                          e.currentTarget.style.transition = 'transform 0.3s ease-out';
+                        }}
+                        onMouseDown={(e) => {
+                          e.currentTarget.style.transition = 'transform 0.1s ease-out';
+                        }}
+                        onMouseUp={(e) => {
+                          e.currentTarget.style.transition = 'transform 0.3s ease-out';
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
