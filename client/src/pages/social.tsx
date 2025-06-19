@@ -454,8 +454,8 @@ export default function Social() {
                       Voir la collection
                     </Button>
                   </div>
-                    ))
-                  )}
+                ))
+              )}
                 </>
               )}
             </div>
