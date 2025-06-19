@@ -38,7 +38,7 @@ export default function Auth() {
         description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
       });
       // Force a page reload to update authentication state
-      window.location.href = "/";
+      window.location.href = "/collections";
     },
     onError: (error: any) => {
       toast({
@@ -60,7 +60,7 @@ export default function Auth() {
         description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
       });
       // Force a page reload to update authentication state
-      window.location.href = "/";
+      window.location.href = "/collections";
     },
     onError: (error: any) => {
       toast({
