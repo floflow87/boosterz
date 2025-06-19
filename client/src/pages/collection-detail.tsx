@@ -359,7 +359,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("bases_numbered")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "bases_numbered" 
                 ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -369,7 +369,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("hits")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "hits" 
                 ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -379,7 +379,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("autographs")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "autographs" 
                 ? "bg-yellow-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -389,7 +389,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("special_1_1")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "special_1_1" 
                 ? "bg-black text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -734,26 +734,86 @@ export default function CollectionDetail() {
                   )}
 
                   {/* Card Image */}
-                  <div className="mb-4">
+                  <div className="mb-4 relative">
                     {currentCard?.imageUrl ? (
-                      <div className="relative">
+                      <div 
+                        className="relative w-full h-80 perspective-1000"
+                        style={{ perspective: '1000px' }}
+                      >
                         <img 
                           src={currentCard.imageUrl} 
                           alt={`${currentCard.playerName} card`}
-                          className="w-full h-64 object-cover rounded-lg cursor-pointer"
+                          className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500"
+                          style={{
+                            transformStyle: 'preserve-3d',
+                            willChange: 'transform'
+                          }}
                           onClick={() => setShowFullscreenCard(true)}
+                          onTouchStart={(e) => {
+                            e.preventDefault();
+                            const target = e.currentTarget;
+                            if (!target || !e.touches[0]) return;
+                            
+                            const touch = e.touches[0];
+                            const rect = target.getBoundingClientRect();
+                            const startX = touch.clientX - rect.left;
+                            const startY = touch.clientY - rect.top;
+                            let rotateX = 0;
+                            let rotateY = 0;
+                            
+                            const handleTouchMove = (moveEvent: TouchEvent) => {
+                              if (!moveEvent.touches[0]) return;
+                              const moveTouch = moveEvent.touches[0];
+                              const moveX = moveTouch.clientX - rect.left;
+                              const moveY = moveTouch.clientY - rect.top;
+                              const deltaX = moveX - startX;
+                              const deltaY = moveY - startY;
+                              rotateY = deltaX * 0.3;
+                              rotateX = -deltaY * 0.3;
+                              target.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                            };
+                            
+                            const handleTouchEnd = () => {
+                              target.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                              document.removeEventListener('touchmove', handleTouchMove);
+                              document.removeEventListener('touchend', handleTouchEnd);
+                            };
+                            
+                            document.addEventListener('touchmove', handleTouchMove);
+                            document.addEventListener('touchend', handleTouchEnd);
+                          }}
                         />
                         <button
                           onClick={() => setShowFullscreenCard(true)}
-                          className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-lg hover:bg-opacity-75 transition-all"
+                          className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-lg hover:bg-opacity-75 transition-all z-10"
                         >
                           <Search className="w-4 h-4" />
                         </button>
                       </div>
                     ) : (
-                      <div className="w-full h-64 bg-gray-600 rounded-lg flex items-center justify-center">
+                      <div className="w-full h-80 bg-gray-600 rounded-lg flex items-center justify-center">
                         <HelpCircle className="w-16 h-16 text-gray-400" />
                       </div>
+                    )}
+                    
+                    {/* Carousel arrows aligned with card */}
+                    {variants.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setCurrentVariantIndex(Math.max(0, currentVariantIndex - 1))}
+                          disabled={currentVariantIndex === 0}
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 p-3 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed z-10"
+                        >
+                          <ChevronLeft className="w-5 h-5 text-white" />
+                        </button>
+                        <button
+                          onClick={() => setCurrentVariantIndex(Math.min(variants.length - 1, currentVariantIndex + 1))}
+                          disabled={currentVariantIndex === variants.length - 1}
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-3 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed z-10"
+                        >
+                          <ChevronRight className="w-5 h-5 text-white" />
+                        </button>
+                      </>
                     )}
                   </div>
 
