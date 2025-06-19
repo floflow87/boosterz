@@ -284,6 +284,52 @@ const insertHotRookies = [
   { playerName: "Eli Junior Kroupi", teamName: "FC Lorient", isRookie: true }
 ];
 
+// Hits avec variantes (Base, /15, /10)
+const insertStarsOfTheGame = [
+  { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
+  { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
+  { playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille" },
+  { playerName: "Jonathan David", teamName: "LOSC Lille" },
+  { playerName: "Wissam Ben Yedder", teamName: "AS Monaco" },
+  { playerName: "Folarin Balogun", teamName: "AS Monaco" },
+  { playerName: "Randal Kolo Muani", teamName: "Paris Saint-Germain" },
+  { playerName: "Warren Zaïre-Emery", teamName: "Paris Saint-Germain" },
+  { playerName: "Rayan Cherki", teamName: "Olympique Lyonnais" },
+  { playerName: "Vitinha", teamName: "Paris Saint-Germain" }
+];
+
+const insertLegends = [
+  { playerName: "Thierry Henry", teamName: "AS Monaco" },
+  { playerName: "Zinedine Zidane", teamName: "Olympique de Marseille" },
+  { playerName: "Michel Platini", teamName: "AS Nancy" },
+  { playerName: "Just Fontaine", teamName: "Stade de Reims" },
+  { playerName: "Raymond Kopa", teamName: "Stade de Reims" },
+  { playerName: "Jean-Pierre Papin", teamName: "Olympique de Marseille" },
+  { playerName: "Didier Deschamps", teamName: "FC Nantes" },
+  { playerName: "Laurent Blanc", teamName: "Montpellier Hérault SC" }
+];
+
+// Inserts spéciaux sans variantes (rareté élevée)
+const insertPennants = [
+  { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
+  { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
+  { playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille" },
+  { playerName: "Jonathan David", teamName: "LOSC Lille" }
+];
+
+const insertNextUp = [
+  { playerName: "Warren Zaïre-Emery", teamName: "Paris Saint-Germain" },
+  { playerName: "Rayan Cherki", teamName: "Olympique Lyonnais" },
+  { playerName: "Eliesse Ben Seghir", teamName: "AS Monaco" },
+  { playerName: "Bradley Barcola", teamName: "Paris Saint-Germain" }
+];
+
+const insertIntergalactic = [
+  { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
+  { playerName: "Thierry Henry", teamName: "AS Monaco" },
+  { playerName: "Zinedine Zidane", teamName: "Olympique de Marseille" }
+];
+
 const autographCards: AutoCard[] = [
   { id: 1, playerName: "Dragan Stojković", teamName: "Olympique de Marseille", numberings: ["/199", "/10", "/1"] },
   { id: 2, playerName: "Fabrizio Ravanelli", teamName: "Olympique de Marseille", numberings: ["/199", "/10", "/1"] },
@@ -403,37 +449,143 @@ export async function seedDatabase() {
     // 3. Create Insert cards
     console.log("🎯 Creating Insert cards...");
     
-    // Breakthrough
+    // Hit variants (Base, /15, /10)
+    const hitVariants = [
+      { numbering: null, rarity: "Hit" },
+      { numbering: "1/15", rarity: "Super Hit" },
+      { numbering: "1/10", rarity: "Ultra Hit" }
+    ];
+    
+    // Breakthrough with variants
     for (let i = 0; i < insertBreakthrough.length; i++) {
       const card = insertBreakthrough[i];
+      for (const variant of hitVariants) {
+        cardsToInsert.push({
+          id: cardId++,
+          collectionId: 1,
+          reference: `BT-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          playerName: card.playerName,
+          teamName: card.teamName,
+          cardType: "Insert Breakthrough",
+          cardSubType: card.isRookie ? "Rookie" : null,
+          rarity: variant.rarity,
+          numbering: variant.numbering,
+          isOwned: false,
+          imageUrl: null
+        });
+      }
+    }
+
+    // Hot Rookies with variants
+    for (let i = 0; i < insertHotRookies.length; i++) {
+      const card = insertHotRookies[i];
+      for (const variant of hitVariants) {
+        cardsToInsert.push({
+          id: cardId++,
+          collectionId: 1,
+          reference: `HR-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          playerName: card.playerName,
+          teamName: card.teamName,
+          cardType: "Insert Hot Rookies",
+          cardSubType: "Rookie",
+          rarity: variant.rarity,
+          numbering: variant.numbering,
+          isOwned: false,
+          imageUrl: null
+        });
+      }
+    }
+
+    // Stars of the Game with variants
+    for (let i = 0; i < insertStarsOfTheGame.length; i++) {
+      const card = insertStarsOfTheGame[i];
+      for (const variant of hitVariants) {
+        cardsToInsert.push({
+          id: cardId++,
+          collectionId: 1,
+          reference: `SOG-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          playerName: card.playerName,
+          teamName: card.teamName,
+          cardType: "Insert Stars of the Game",
+          cardSubType: null,
+          rarity: variant.rarity,
+          numbering: variant.numbering,
+          isOwned: false,
+          imageUrl: null
+        });
+      }
+    }
+
+    // Legends with variants
+    for (let i = 0; i < insertLegends.length; i++) {
+      const card = insertLegends[i];
+      for (const variant of hitVariants) {
+        cardsToInsert.push({
+          id: cardId++,
+          collectionId: 1,
+          reference: `LEG-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          playerName: card.playerName,
+          teamName: card.teamName,
+          cardType: "Insert Legends",
+          cardSubType: null,
+          rarity: variant.rarity,
+          numbering: variant.numbering,
+          isOwned: false,
+          imageUrl: null
+        });
+      }
+    }
+
+    // Special inserts (single high-rarity cards)
+    // Pennants
+    for (let i = 0; i < insertPennants.length; i++) {
+      const card = insertPennants[i];
       cardsToInsert.push({
         id: cardId++,
         collectionId: 1,
-        reference: `BT-${(i + 1).toString().padStart(2, '0')}`,
+        reference: `PEN-${(i + 1).toString().padStart(2, '0')}`,
         playerName: card.playerName,
         teamName: card.teamName,
-        cardType: "Insert Breakthrough",
-        cardSubType: card.isRookie ? "Rookie" : null,
-        rarity: "Hit",
-        numbering: "/15",
+        cardType: "Insert Pennants",
+        cardSubType: null,
+        rarity: "Ultra Rare",
+        numbering: "1/25",
         isOwned: false,
         imageUrl: null
       });
     }
 
-    // Hot Rookies
-    for (let i = 0; i < insertHotRookies.length; i++) {
-      const card = insertHotRookies[i];
+    // Next Up
+    for (let i = 0; i < insertNextUp.length; i++) {
+      const card = insertNextUp[i];
       cardsToInsert.push({
         id: cardId++,
         collectionId: 1,
-        reference: `HR-${(i + 1).toString().padStart(2, '0')}`,
+        reference: `NU-${(i + 1).toString().padStart(2, '0')}`,
         playerName: card.playerName,
         teamName: card.teamName,
-        cardType: "Insert Hot Rookies",
+        cardType: "Insert Next Up",
         cardSubType: "Rookie",
-        rarity: "Hit",
-        numbering: "/10",
+        rarity: "Ultra Rare",
+        numbering: "1/20",
+        isOwned: false,
+        imageUrl: null
+      });
+    }
+
+    // Intergalactic
+    for (let i = 0; i < insertIntergalactic.length; i++) {
+      const card = insertIntergalactic[i];
+      cardsToInsert.push({
+        id: cardId++,
+        collectionId: 1,
+        reference: `IG-${(i + 1).toString().padStart(2, '0')}`,
+        playerName: card.playerName,
+        teamName: card.teamName,
+        cardType: "Insert Intergalactic",
+        cardSubType: null,
+        rarity: "Legendary",
+        numbering: "1/15",
         isOwned: false,
         imageUrl: null
       });
