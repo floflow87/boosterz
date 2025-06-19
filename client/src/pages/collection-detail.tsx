@@ -779,7 +779,7 @@ export default function CollectionDetail() {
                   className="cursor-pointer hover:bg-gray-700 transition-colors"
                 >
                   {/* Card Image */}
-                  <div className="aspect-[3/4] bg-gray-600 relative">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400">
                     {currentVariant.imageUrl ? (
                       <img 
                         src={currentVariant.imageUrl} 
@@ -837,11 +837,32 @@ export default function CollectionDetail() {
                         }}
                       />
                     ) : (
-                      <img 
-                        src={cardDefaultImage} 
-                        alt="Carte par défaut" 
-                        className="w-full h-full object-contain p-4"
-                      />
+                      <div className="w-full h-full flex flex-col items-center justify-center text-white p-4">
+                        {/* Score Ligue 1 Logo */}
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 opacity-80">
+                          <img 
+                            src={logoImage} 
+                            alt="Score Ligue 1" 
+                            className="w-12 h-12 object-contain"
+                          />
+                        </div>
+                        
+                        {/* Card reference */}
+                        <div className="text-center">
+                          <div className="text-lg font-bold mb-1">#{currentVariant.reference}</div>
+                          <div className="text-xs opacity-70 text-center leading-tight">
+                            {currentVariant.playerName?.toUpperCase() || 'JOUEUR'}
+                          </div>
+                          <div className="text-xs opacity-50 mt-1">
+                            {currentVariant.teamName}
+                          </div>
+                        </div>
+                        
+                        {/* Camera icon for adding photo */}
+                        <div className="absolute bottom-2 right-2 p-1 bg-black bg-opacity-50 rounded-lg">
+                          <Camera className="w-4 h-4 text-white opacity-70" />
+                        </div>
+                      </div>
                     )}
                     
                     {/* Player Info Overlay */}
