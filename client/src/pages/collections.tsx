@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -121,11 +121,19 @@ export default function Collections() {
         {user && (
           <div className="flex flex-col items-center text-center mb-8 mt-4">
             <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg relative">
-              <img 
-                src={avatarImage} 
-                alt="Avatar utilisateur"
-                className="w-20 h-20 rounded-full object-cover border-2 border-white"
-              />
+              {user.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt="Avatar utilisateur"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
+                />
+              ) : (
+                <img 
+                  src={avatarImage} 
+                  alt="Avatar par défaut"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
+                />
+              )}
               <div className="absolute -top-1 -right-1 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
                 <Trophy className="w-4 h-4 text-white" />
               </div>
@@ -199,25 +207,30 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="collection-grid">
+          <div className="collection-grid gap-6">
             {collections?.map((collection) => (
               <div 
                 key={collection.id}
                 onClick={() => handleCollectionClick(collection.id)}
-                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative"
+                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative mb-6"
               >
                 {/* Header with title and card count */}
                 <div className="p-4 pb-2">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-bold text-white font-poppins text-base">{collection.name}</h3>
-                      <p className="text-white/60 text-sm italic">{collection.season}</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
+                        <CreditCard className="w-4 h-4 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-white font-poppins text-base">{collection.name}</h3>
+                        <p className="text-white/60 text-sm italic">{collection.season}</p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-1 rounded-full font-medium">
                         x{collection.ownedCards}
                       </div>
-                      {collection.id !== 1 && !collection.name?.includes("SCORE LIGUE 1") && (
+                      {!collection.name?.includes("SCORE LIGUE 1") && (
                         <button
                           onClick={(e) => handleDeleteCollection(collection, e)}
                           className="opacity-0 group-hover:opacity-100 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200 text-xs"
