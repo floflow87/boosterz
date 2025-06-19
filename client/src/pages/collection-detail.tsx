@@ -446,8 +446,8 @@ export default function CollectionDetail() {
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
-        <div className="sticky top-0 z-10 pb-4 mb-4">
-          <div className="flex space-x-2 overflow-x-auto min-h-[40px] items-center pl-2">
+        <div className="sticky top-0 z-50 pb-4 mb-4 bg-black pt-2 -mx-3 px-3">
+          <div className="flex space-x-2 overflow-x-hidden min-h-[40px] items-center pl-2">
             <button
             onClick={() => setFilter("bases")}
             className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${
@@ -635,7 +635,17 @@ export default function CollectionDetail() {
             return (
               <div 
                 key={playerKey}
-                className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(currentVariant)}`}
+                className={`relative bg-gray-800 rounded-xl overflow-hidden transition-all duration-200 ${
+                  selectedCards.has(currentVariant.id) 
+                    ? `border-4 ${getCardBorderColor(currentVariant)} shadow-lg ring-2 ring-opacity-50 ${
+                        getCardBorderColor(currentVariant) === 'border-green-500' ? 'ring-green-400' :
+                        getCardBorderColor(currentVariant) === 'border-blue-500' ? 'ring-blue-400' :
+                        getCardBorderColor(currentVariant) === 'border-purple-500' ? 'ring-purple-400' :
+                        getCardBorderColor(currentVariant) === 'border-yellow-500' ? 'ring-yellow-400' :
+                        'ring-gray-400'
+                      }`
+                    : `border-2 ${getCardBorderColor(currentVariant)}`
+                }`}
                 style={allVariantsOwned && animationName ? {
                   animation: `${animationName} 3s infinite`
                 } : {}}

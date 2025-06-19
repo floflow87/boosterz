@@ -58,6 +58,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get marketplace cards (cards for trade/sale)
+  app.get("/api/cards/marketplace", async (req, res) => {
+    try {
+      // Get all cards that are marked for trade
+      const allCards = await storage.getCardsByCollectionId(1); // For now, get from first collection
+      const marketplaceCards = allCards.filter(card => card.isForTrade);
+      res.json(marketplaceCards);
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Toggle card ownership
   app.patch("/api/cards/:id/toggle", async (req, res) => {
     try {

@@ -448,6 +448,70 @@ export default function Collections() {
             </div>
           </>
         )}
+
+        {/* Marketplace Tab Content */}
+        {activeTab === "marketplace" && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Cartes à la vente</h3>
+            
+            {marketplaceCards && marketplaceCards.length > 0 ? (
+              <div className="space-y-4">
+                {marketplaceCards.filter(card => card.isForTrade).map((card) => (
+                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 flex items-center space-x-4">
+                    <div className="w-16 h-20 bg-gray-600 rounded-lg flex-shrink-0">
+                      {card.imageUrl ? (
+                        <img 
+                          src={card.imageUrl} 
+                          alt={`${card.playerName} card`}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          #{card.reference}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1">
+                      <h4 className="font-bold text-white">{card.playerName}</h4>
+                      <p className="text-[hsl(212,23%,69%)] text-sm">{card.reference} - {card.teamName}</p>
+                      {card.tradeDescription && (
+                        <p className="text-[hsl(212,23%,69%)] text-sm mt-1">{card.tradeDescription}</p>
+                      )}
+                      {card.tradePrice && !card.tradeOnly && (
+                        <p className="text-[hsl(9,85%,67%)] font-bold mt-1">{card.tradePrice}</p>
+                      )}
+                      {card.tradeOnly && (
+                        <span className="inline-block bg-orange-600 text-white text-xs px-2 py-1 rounded-full mt-1">
+                          Échange uniquement
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div className="flex flex-col space-y-2">
+                      <button className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm">
+                        Marquer vendue
+                      </button>
+                      <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
+                        Retirer
+                      </button>
+                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                        {card.tradeOnly ? "Mettre en vente" : "Échange seul"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-2">Aucune carte en vente</div>
+                <p className="text-[hsl(212,23%,69%)] text-sm">
+                  Utilisez le panneau d'échange sur vos cartes pour les mettre en vente
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </main>
 
       <CardAddModal
