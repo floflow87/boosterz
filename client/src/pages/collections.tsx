@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import avatarImage from "@assets/image_1750196240581.png";
 import cardStackIcon from "@assets/image_1750351528484.png";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
+import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
@@ -200,89 +201,82 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="overflow-x-auto pb-4">
-            <div className="flex space-x-6 px-2" style={{ width: 'max-content' }}>
-              {collections?.map((collection) => (
-                <div 
-                  key={collection.id}
-                  onClick={() => handleCollectionClick(collection.id)}
-                  className="flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative"
-                >
-                  {/* Header with title and delete button */}
-                  <div className="p-6 pb-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-bold text-white font-poppins text-xl">{collection.name}</h3>
-                        <p className="text-white/60 text-base italic">{collection.season}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        {!collection.name?.includes("SCORE LIGUE 1") && (
-                          <button
-                            onClick={(e) => handleDeleteCollection(collection, e)}
-                            className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
-                            title="Supprimer la collection"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        )}
+          <div className="relative pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="collections-scroll overflow-x-auto">
+              <div className="flex space-x-6 px-4" style={{ width: 'max-content' }}>
+                {collections?.map((collection) => (
+                  <div 
+                    key={collection.id}
+                    onClick={() => handleCollectionClick(collection.id)}
+                    className="collection-item flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative"
+                  >
+                    {/* Header with title and delete button */}
+                    <div className="p-6 pb-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-bold text-white font-poppins text-xl">{collection.name}</h3>
+                          <p className="text-white/60 text-base italic">{collection.season}</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          {!collection.name?.includes("SCORE LIGUE 1") && (
+                            <button
+                              onClick={(e) => handleDeleteCollection(collection, e)}
+                              className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
+                              title="Supprimer la collection"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Card carousel area - larger and more prominent */}
-                  <div className="h-64 relative flex items-center justify-center overflow-hidden px-6 pb-4">
-                    {/* Carousel container with background color matching the page */}
-                    <div className="relative w-full max-w-md h-48 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-6 shadow-2xl">
-                      {/* Main card content */}
-                      <div className="bg-white rounded-xl h-full p-4 shadow-lg relative overflow-hidden">
-                        <div className="text-2xl font-bold text-gray-800 mb-3">
-                          {collection.name}
-                        </div>
-                        <div className="text-sm text-gray-600 leading-relaxed">
-                          <div className="text-blue-500 font-semibold mb-2">Collection complète à {collection.completionPercentage}%</div>
-                          <div className="text-gray-500">
-                            {collection.ownedCards} cartes possédées sur {collection.totalCards} au total. 
-                            Explorez cette collection et découvrez toutes les cartes disponibles.
-                          </div>
+                    {/* Card carousel area with golden cards image */}
+                    <div className="h-64 relative flex items-center justify-center overflow-hidden px-6 pb-4">
+                      {/* Carousel container with background color matching the page */}
+                      <div className="relative w-full max-w-md h-48 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-6 shadow-2xl">
+                        {/* Main card content with golden cards image */}
+                        <div className="bg-white rounded-xl h-full p-4 shadow-lg relative overflow-hidden flex items-center justify-center">
+                          <img 
+                            src={goldenCardsIcon}
+                            alt="Golden trading cards"
+                            className="w-32 h-32 object-contain rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.3)]"
+                          />
                         </div>
                         
-                        {/* Decorative elements */}
-                        <div className="absolute top-2 right-2 w-8 h-8 bg-gradient-to-br from-[hsl(216,46%,13%)] to-[hsl(214,35%,20%)] rounded-full opacity-20"></div>
-                        <div className="absolute bottom-2 left-2 w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full opacity-30"></div>
+                        {/* Background decorative cards */}
+                        <div className="absolute -right-4 -top-4 w-32 h-44 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
+                        <div className="absolute -left-4 -bottom-4 w-32 h-44 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
                       </div>
-                      
-                      {/* Background decorative cards */}
-                      <div className="absolute -right-4 -top-4 w-32 h-44 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
-                      <div className="absolute -left-4 -bottom-4 w-32 h-44 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
+                    </div>
+                    
+                    {/* Progress bar */}
+                    <div className="px-6 pb-6">
+                      <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-3">
+                        <div 
+                          className="bg-[hsl(9,85%,67%)] h-3 rounded-full transition-all duration-300"
+                          style={{ width: `${collection.completionPercentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between text-sm text-white/60 mt-2">
+                        <span>{collection.completionPercentage}% complété</span>
+                        <span>{collection.totalCards - collection.ownedCards} cartes manquantes</span>
+                      </div>
                     </div>
                   </div>
-                  
-                  {/* Progress bar */}
-                  <div className="px-6 pb-6">
-                    <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-3">
-                      <div 
-                        className="bg-[hsl(9,85%,67%)] h-3 rounded-full transition-all duration-300"
-                        style={{ width: `${collection.completionPercentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="flex justify-between text-sm text-white/60 mt-2">
-                      <span>{collection.completionPercentage}% complété</span>
-                      <span>{collection.totalCards - collection.ownedCards} cartes manquantes</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))}
 
-              {/* Add Collection Button */}
-              <div 
-                onClick={() => setShowAddModal(true)}
-                className="flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center"
-              >
-                <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Plus className="w-8 h-8 text-white" />
+                {/* Add Collection Button */}
+                <div 
+                  onClick={() => setShowAddModal(true)}
+                  className="collection-item flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center"
+                >
+                  <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <Plus className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
+                  <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
                 </div>
-                <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
-                <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
               </div>
             </div>
           </div>

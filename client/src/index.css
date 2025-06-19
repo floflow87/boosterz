@@ -213,6 +213,21 @@
     display: none;
   }
 
+  /* Collections scroll styles */
+  .collections-scroll::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .collections-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .collection-item {
+    scroll-snap-align: center;
+  }
+
   .collection-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
