@@ -287,58 +287,131 @@ const insertHotRookies = [
 // Hits avec variantes (Base, /15, /10)
 const insertKeepers = [
   { playerName: "Gianluigi Donnarumma", teamName: "Paris Saint-Germain" },
-  { playerName: "Lucas Chevalier", teamName: "LOSC Lille" },
   { playerName: "Brice Samba", teamName: "RC Lens" },
-  { playerName: "Matz Sels", teamName: "RC Strasbourg Alsace" },
   { playerName: "Marco Bizot", teamName: "Stade Brestois 29" },
-  { playerName: "Steve Mandanda", teamName: "Stade Rennais FC" },
   { playerName: "Alban Lafont", teamName: "FC Nantes" },
-  { playerName: "Pau López", teamName: "Olympique de Marseille" }
+  { playerName: "Lucas Chevalier", teamName: "LOSC Lille", isRookie: true },
+  { playerName: "Anthony Lopes", teamName: "Olympique Lyonnais" },
+  { playerName: "Steve Mandanda", teamName: "Stade Rennais FC" },
+  { playerName: "Philipp Köhn", teamName: "AS Monaco" },
+  { playerName: "Guillaume Restes", teamName: "Toulouse FC", isRookie: true },
+  { playerName: "Mory Diaw", teamName: "Clermont Foot 63" }
 ];
 
 const insertScoreTeam = [
-  { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
-  { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
-  { playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille" },
-  { playerName: "Jonathan David", teamName: "LOSC Lille" },
-  { playerName: "Wissam Ben Yedder", teamName: "AS Monaco" },
+  { playerName: "Angel Gomes", teamName: "LOSC Lille" },
+  { playerName: "Matz Sels", teamName: "RC Strasbourg Alsace" },
+  { playerName: "Achraf Hakimi", teamName: "Paris Saint-Germain" },
+  { playerName: "Matthieu Udol", teamName: "FC Metz" },
+  { playerName: "Quentin Merlin", teamName: "FC Nantes" },
+  { playerName: "Corentin Tolisso", teamName: "Olympique Lyonnais" },
+  { playerName: "Jean-Clair Todibo", teamName: "OGC Nice" },
+  { playerName: "Pau López", teamName: "Olympique de Marseille" },
+  { playerName: "Nemanja Matić", teamName: "Stade Rennais FC" },
+  { playerName: "Elye Wahi", teamName: "RC Lens" },
+  { playerName: "Nicolás Tagliafico", teamName: "Olympique Lyonnais" },
   { playerName: "Folarin Balogun", teamName: "AS Monaco" },
-  { playerName: "Randal Kolo Muani", teamName: "Paris Saint-Germain" },
-  { playerName: "Warren Zaïre-Emery", teamName: "Paris Saint-Germain" },
-  { playerName: "Rayan Cherki", teamName: "Olympique Lyonnais" },
-  { playerName: "Vitinha", teamName: "Paris Saint-Germain" }
+  { playerName: "Montassar Talbi", teamName: "FC Lorient" },
+  { playerName: "Mohamed Daramy", teamName: "Stade de Reims" },
+  { playerName: "Ousmane Dembélé", teamName: "Paris Saint-Germain" },
+  { playerName: "Daler Kuzyaev", teamName: "Havre AC" },
+  { playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille" },
+  { playerName: "Mostafa Mohamed", teamName: "FC Nantes" },
+  { playerName: "Takumi Minamino", teamName: "AS Monaco" },
+  { playerName: "Terem Moffi", teamName: "OGC Nice" }
 ];
 
 const insertPureClass = [
-  { playerName: "Thierry Henry", teamName: "AS Monaco" },
-  { playerName: "Zinedine Zidane", teamName: "Olympique de Marseille" },
-  { playerName: "Michel Platini", teamName: "AS Nancy" },
-  { playerName: "Just Fontaine", teamName: "Stade de Reims" },
-  { playerName: "Raymond Kopa", teamName: "Stade de Reims" },
-  { playerName: "Jean-Pierre Papin", teamName: "Olympique de Marseille" },
-  { playerName: "Didier Deschamps", teamName: "FC Nantes" },
-  { playerName: "Laurent Blanc", teamName: "Montpellier Hérault SC" }
+  { playerName: "Jonathan David", teamName: "LOSC Lille" },
+  { playerName: "Dante", teamName: "OGC Nice" },
+  { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
+  { playerName: "Wissam Ben Yedder", teamName: "AS Monaco" },
+  { playerName: "Randal Kolo Muani", teamName: "Paris Saint-Germain" },
+  { playerName: "Jordan Veretout", teamName: "Olympique de Marseille" },
+  { playerName: "Khéphren Thuram", teamName: "OGC Nice" },
+  { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
+  { playerName: "Thomas Foket", teamName: "Stade de Reims" },
+  { playerName: "Moussa Sissoko", teamName: "FC Nantes" },
+  { playerName: "Kevin Danso", teamName: "RC Lens" },
+  { playerName: "Yvon Mvogo", teamName: "FC Lorient" },
+  { playerName: "Jonathan Clauss", teamName: "Olympique de Marseille" },
+  { playerName: "Kévin Gameiro", teamName: "RC Strasbourg Alsace" },
+  { playerName: "Youssouf Fofana", teamName: "AS Monaco" },
+  { playerName: "Laurent Abergel", teamName: "FC Lorient" },
+  { playerName: "Rayan Cherki", teamName: "Olympique Lyonnais" },
+  { playerName: "Arthur Theate", teamName: "Stade Rennais FC" },
+  { playerName: "Amine Gouiri", teamName: "Stade Rennais FC" },
+  { playerName: "Rémy Cabella", teamName: "LOSC Lille" }
 ];
 
 // Inserts spéciaux sans variantes (base uniquement)
 const insertPennants = [
+  { playerName: "Ousmane Dembélé", teamName: "Paris Saint-Germain" },
+  { playerName: "Habib Diarra", teamName: "RC Strasbourg Alsace" },
+  { playerName: "Achraf Hakimi", teamName: "Paris Saint-Germain" },
+  { playerName: "Eliesse Ben Seghir", teamName: "AS Monaco" },
+  { playerName: "Randal Kolo Muani", teamName: "Paris Saint-Germain" },
+  { playerName: "Terem Moffi", teamName: "OGC Nice" },
+  { playerName: "Gonçalo Ramos", teamName: "Paris Saint-Germain" },
+  { playerName: "Fabián Ruiz", teamName: "Paris Saint-Germain" },
   { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
+  { playerName: "Jonathan David", teamName: "LOSC Lille" },
+  { playerName: "Ângelo", teamName: "RC Strasbourg Alsace" },
+  { playerName: "Folarin Balogun", teamName: "AS Monaco" },
+  { playerName: "Warren Zaïre-Emery", teamName: "Paris Saint-Germain" },
+  { playerName: "Marco Asensio", teamName: "Paris Saint-Germain" },
+  { playerName: "Thijs Dallinga", teamName: "Toulouse FC" },
   { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
-  { playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille" },
-  { playerName: "Jonathan David", teamName: "LOSC Lille" }
+  { playerName: "Gianluigi Donnarumma", teamName: "Paris Saint-Germain" },
+  { playerName: "David Trezeguet", teamName: "AS Monaco" },
+  { playerName: "Edinson Cavani", teamName: "Paris Saint-Germain" },
+  { playerName: "William Saliba", teamName: "OGC Nice" }
 ];
 
 const insertNextUp = [
+  { playerName: "Eliesse Ben Seghir", teamName: "AS Monaco", isRookie: true },
   { playerName: "Warren Zaïre-Emery", teamName: "Paris Saint-Germain" },
+  { playerName: "Martín Satriano", teamName: "Stade Brestois 29" },
+  { playerName: "Bafodé Diakité", teamName: "LOSC Lille" },
+  { playerName: "Arnaud Kalimuendo", teamName: "Stade Rennais FC" },
+  { playerName: "Marquinos", teamName: "FC Nantes" },
+  { playerName: "Vitinha", teamName: "Olympique de Marseille" },
+  { playerName: "Lucas Chevalier", teamName: "LOSC Lille", isRookie: true },
+  { playerName: "Ethan Mbappé", teamName: "Paris Saint-Germain", isRookie: true },
   { playerName: "Rayan Cherki", teamName: "Olympique Lyonnais" },
-  { playerName: "Eliesse Ben Seghir", teamName: "AS Monaco" },
-  { playerName: "Bradley Barcola", teamName: "Paris Saint-Germain" }
+  { playerName: "Elye Wahi", teamName: "RC Lens" },
+  { playerName: "Mohamed Daramy", teamName: "Stade de Reims" },
+  { playerName: "Bradley Barcola", teamName: "Paris Saint-Germain", isRookie: true },
+  { playerName: "Saël Kumbedi", teamName: "Olympique Lyonnais" },
+  { playerName: "Adson", teamName: "FC Nantes", isRookie: true },
+  { playerName: "Ângelo", teamName: "RC Strasbourg Alsace", isRookie: true },
+  { playerName: "Désiré Doué", teamName: "Stade Rennais FC" },
+  { playerName: "Khéphren Thuram", teamName: "OGC Nice" },
+  { playerName: "Thijs Dallinga", teamName: "Toulouse FC" },
+  { playerName: "Leny Yoro", teamName: "LOSC Lille" }
 ];
 
 const insertIntergalactic = [
+  { playerName: "Folarin Balogun", teamName: "AS Monaco" },
   { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
-  { playerName: "Thierry Henry", teamName: "AS Monaco" },
-  { playerName: "Zinedine Zidane", teamName: "Olympique de Marseille" }
+  { playerName: "Marquinos", teamName: "FC Nantes" },
+  { playerName: "Elye Wahi", teamName: "RC Lens" },
+  { playerName: "Ousmane Dembélé", teamName: "Paris Saint-Germain" },
+  { playerName: "Khéphren Thuram", teamName: "OGC Nice" },
+  { playerName: "Achraf Hakimi", teamName: "Paris Saint-Germain" },
+  { playerName: "Rayan Cherki", teamName: "Olympique Lyonnais" },
+  { playerName: "Mohamed Daramy", teamName: "Stade de Reims" },
+  { playerName: "Leny Yoro", teamName: "LOSC Lille", isRookie: true },
+  { playerName: "Jonathan David", teamName: "LOSC Lille" },
+  { playerName: "Wissam Ben Yedder", teamName: "AS Monaco" },
+  { playerName: "Takumi Minamino", teamName: "AS Monaco" },
+  { playerName: "Amine Gouiri", teamName: "Stade Rennais FC" },
+  { playerName: "Gonçalo Ramos", teamName: "Paris Saint-Germain" },
+  { playerName: "Randal Kolo Muani", teamName: "Paris Saint-Germain" },
+  { playerName: "Bradley Barcola", teamName: "Paris Saint-Germain", isRookie: true },
+  { playerName: "David Beckham", teamName: "Paris Saint-Germain" },
+  { playerName: "William Saliba", teamName: "Olympique de Marseille" },
+  { playerName: "Eric Cantona", teamName: "Olympique de Marseille" }
 ];
 
 const autographCards: AutoCard[] = [
