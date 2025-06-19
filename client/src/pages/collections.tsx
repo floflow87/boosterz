@@ -103,7 +103,7 @@ export default function Collections() {
 
         {/* Navigation Tabs */}
         <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '57px' }}>
-          <div className="flex justify-between overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="flex space-x-4 overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button 
               onClick={() => setActiveTab("cards")}
               className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${

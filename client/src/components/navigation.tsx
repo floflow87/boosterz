@@ -23,7 +23,7 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg px-3 py-2 z-20 shadow-lg rounded-t-[20px]" style={{ backgroundColor: '#131B2F' }}>
+    <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg px-3 py-4 z-20 shadow-lg rounded-t-[20px]" style={{ backgroundColor: '#131B2F' }}>
       <div className="flex justify-around items-center max-w-sm mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;

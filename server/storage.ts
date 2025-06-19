@@ -232,9 +232,9 @@ export class MemStorage implements IStorage {
     // User 1: Floflow87 (with existing collections and cards)
     const user1: User = {
       id: 1,
-      username: "floflow87",
+      username: "Floflow87",
       name: "Floflow87",
-      email: "floflow87@test.com",
+      email: "flotest@yopmail.com",
       password: "$2b$10$ht0lxrfvziNHBCAmNISNweoTubJgtX172uhwIbTrHqOgccK83z9p.",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       totalCards: 482,
@@ -257,9 +257,9 @@ export class MemStorage implements IStorage {
     // User 2: Max la Menace (empty collections)
     const user2: User = {
       id: 2,
-      username: "maxlamenace",
+      username: "Max la Menace",
       name: "Max la Menace",
-      email: "maxlamenace@test.com",
+      email: "Max@yopmail.com",
       password: "$2b$10$ht0lxrfvziNHBCAmNISNweoTubJgtX172uhwIbTrHqOgccK83z9p.",
       avatar: null,
       totalCards: 0,
@@ -278,7 +278,7 @@ export class MemStorage implements IStorage {
       updatedAt: new Date()
     };
     this.users.set(2, user2);
-    this.currentUserId = 2;
+    this.currentUserId = 3;
 
     // Collections mock data
     const collections: Collection[] = [
