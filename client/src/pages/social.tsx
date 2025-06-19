@@ -60,6 +60,7 @@ interface NotificationItem {
 
 export default function Social() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [forSaleSearchTerm, setForSaleSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -105,6 +106,72 @@ export default function Social() {
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Mock cards for sale data
+  const cardsForSale = [
+    {
+      id: 1,
+      playerName: "Kylian Mbappé",
+      teamName: "PSG",
+      cardType: "Base",
+      price: "15€",
+      imageUrl: null,
+      seller: "Alex_Collector"
+    },
+    {
+      id: 2,
+      playerName: "Lionel Messi",
+      teamName: "PSG", 
+      cardType: "Parallel Laser",
+      price: "45€",
+      imageUrl: null,
+      seller: "CardMaster92"
+    },
+    {
+      id: 3,
+      playerName: "Neymar Jr",
+      teamName: "PSG",
+      cardType: "Insert Keepers",
+      price: "30€",
+      imageUrl: null,
+      seller: "PSG_Fan"
+    },
+    {
+      id: 4,
+      playerName: "Gianluigi Donnarumma",
+      teamName: "PSG",
+      cardType: "Autograph",
+      price: "85€",
+      imageUrl: null,
+      seller: "GoalKeeper_King"
+    },
+    {
+      id: 5,
+      playerName: "Karim Benzema",
+      teamName: "Real Madrid",
+      cardType: "Parallel Numbered",
+      price: "120€",
+      imageUrl: null,
+      seller: "Madrid_Collector"
+    },
+    {
+      id: 6,
+      playerName: "Erling Haaland",
+      teamName: "Manchester City",
+      cardType: "Insert Hot Rookies",
+      price: "95€",
+      imageUrl: null,
+      seller: "City_Fan2023"
+    }
+  ];
+
+  // Filtrer les cartes à la vente selon la recherche
+  const filteredCardsForSale = cardsForSale.filter(card =>
+    card.playerName.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
+    card.teamName.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
+    card.cardType.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
+    card.seller.toLowerCase().includes(forSaleSearchTerm.toLowerCase())
   );
 
   const getActivityIcon = (type: string) => {
@@ -411,43 +478,22 @@ export default function Social() {
               <Input
                 type="text"
                 placeholder="Rechercher des cartes..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                value={forSaleSearchTerm}
+                onChange={(e) => setForSaleSearchTerm(e.target.value)}
                 className="pl-10 bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400"
               />
             </div>
             
-            {/* Mock cards for sale - Replace with real API call */}
+            {/* Cards for sale with search functionality */}
             <div className="grid grid-cols-2 gap-4">
-              {[
-                {
-                  id: 1,
-                  playerName: "Kylian Mbappé",
-                  teamName: "PSG",
-                  cardType: "Base",
-                  price: "15€",
-                  imageUrl: null,
-                  seller: "Alex_Collector"
-                },
-                {
-                  id: 2,
-                  playerName: "Lionel Messi",
-                  teamName: "PSG", 
-                  cardType: "Parallel Laser",
-                  price: "45€",
-                  imageUrl: null,
-                  seller: "CardMaster92"
-                },
-                {
-                  id: 3,
-                  playerName: "Neymar Jr",
-                  teamName: "PSG",
-                  cardType: "Insert Keepers",
-                  price: "30€",
-                  imageUrl: null,
-                  seller: "PSG_Fan"
-                }
-              ].map((card) => (
+              {filteredCardsForSale.length === 0 ? (
+                <div className="col-span-2 text-center py-8">
+                  <div className="text-gray-400">
+                    {forSaleSearchTerm ? "Aucune carte trouvée" : "Aucune carte en vente"}
+                  </div>
+                </div>
+              ) : (
+                filteredCardsForSale.map((card) => (
                 <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 border border-[hsl(214,35%,30%)]">
                   <div className="aspect-[3/4] bg-gray-600 rounded mb-2 flex items-center justify-center">
                     {card.imageUrl ? (
@@ -467,7 +513,8 @@ export default function Social() {
                     </div>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           </TabsContent>
 
