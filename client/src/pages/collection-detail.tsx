@@ -297,12 +297,31 @@ export default function CollectionDetail() {
       });
     }
     
-    // Pour les autres cartes, on garde toutes les variantes
-    return cards.filter(c => 
-      c.playerName === card.playerName && 
-      c.teamName === card.teamName &&
-      c.collectionId === card.collectionId
-    );
+    // Pour les hits avec variantes (Base, /15, /10)
+    const hitTypes = ["Insert Keepers", "Insert Breakthrough", "Insert Score Team", "Insert Pure Class", "Insert Hot Rookies"];
+    if (hitTypes.some(type => card.cardType?.includes(type))) {
+      const hitVariants = cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        c.cardType === card.cardType
+      );
+      
+      // Trier par ordre: Base, /15, /10
+      return hitVariants.sort((a, b) => {
+        const getVariantOrder = (numbering: string | null) => {
+          if (!numbering) return 1; // Base
+          if (numbering === "1/15") return 2;
+          if (numbering === "1/10") return 3;
+          return 4;
+        };
+        
+        return getVariantOrder(a.numbering) - getVariantOrder(b.numbering);
+      });
+    }
+    
+    // Pour les autres cartes (autographes, inserts spéciaux), une seule version
+    return [card];
   };
 
   const getCardBorderColor = (card: Card) => {

@@ -285,7 +285,18 @@ const insertHotRookies = [
 ];
 
 // Hits avec variantes (Base, /15, /10)
-const insertStarsOfTheGame = [
+const insertKeepers = [
+  { playerName: "Gianluigi Donnarumma", teamName: "Paris Saint-Germain" },
+  { playerName: "Lucas Chevalier", teamName: "LOSC Lille" },
+  { playerName: "Brice Samba", teamName: "RC Lens" },
+  { playerName: "Matz Sels", teamName: "RC Strasbourg Alsace" },
+  { playerName: "Marco Bizot", teamName: "Stade Brestois 29" },
+  { playerName: "Steve Mandanda", teamName: "Stade Rennais FC" },
+  { playerName: "Alban Lafont", teamName: "FC Nantes" },
+  { playerName: "Pau López", teamName: "Olympique de Marseille" }
+];
+
+const insertScoreTeam = [
   { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
   { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
   { playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille" },
@@ -298,7 +309,7 @@ const insertStarsOfTheGame = [
   { playerName: "Vitinha", teamName: "Paris Saint-Germain" }
 ];
 
-const insertLegends = [
+const insertPureClass = [
   { playerName: "Thierry Henry", teamName: "AS Monaco" },
   { playerName: "Zinedine Zidane", teamName: "Olympique de Marseille" },
   { playerName: "Michel Platini", teamName: "AS Nancy" },
@@ -309,7 +320,7 @@ const insertLegends = [
   { playerName: "Laurent Blanc", teamName: "Montpellier Hérault SC" }
 ];
 
-// Inserts spéciaux sans variantes (rareté élevée)
+// Inserts spéciaux sans variantes (base uniquement)
 const insertPennants = [
   { playerName: "Kylian Mbappé", teamName: "Paris Saint-Germain" },
   { playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais" },
@@ -496,17 +507,17 @@ export async function seedDatabase() {
       }
     }
 
-    // Stars of the Game with variants
-    for (let i = 0; i < insertStarsOfTheGame.length; i++) {
-      const card = insertStarsOfTheGame[i];
+    // Keepers with variants
+    for (let i = 0; i < insertKeepers.length; i++) {
+      const card = insertKeepers[i];
       for (const variant of hitVariants) {
         cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `SOG-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          reference: `KEP-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
           playerName: card.playerName,
           teamName: card.teamName,
-          cardType: "Insert Stars of the Game",
+          cardType: "Insert Keepers",
           cardSubType: null,
           rarity: variant.rarity,
           numbering: variant.numbering,
@@ -516,17 +527,17 @@ export async function seedDatabase() {
       }
     }
 
-    // Legends with variants
-    for (let i = 0; i < insertLegends.length; i++) {
-      const card = insertLegends[i];
+    // Score Team with variants
+    for (let i = 0; i < insertScoreTeam.length; i++) {
+      const card = insertScoreTeam[i];
       for (const variant of hitVariants) {
         cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `LEG-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          reference: `ST-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
           playerName: card.playerName,
           teamName: card.teamName,
-          cardType: "Insert Legends",
+          cardType: "Insert Score Team",
           cardSubType: null,
           rarity: variant.rarity,
           numbering: variant.numbering,
@@ -536,7 +547,27 @@ export async function seedDatabase() {
       }
     }
 
-    // Special inserts (single high-rarity cards)
+    // Pure Class with variants
+    for (let i = 0; i < insertPureClass.length; i++) {
+      const card = insertPureClass[i];
+      for (const variant of hitVariants) {
+        cardsToInsert.push({
+          id: cardId++,
+          collectionId: 1,
+          reference: `PC-${(i + 1).toString().padStart(2, '0')}${variant.numbering ? `-${variant.numbering.replace('1/', '')}` : ''}`,
+          playerName: card.playerName,
+          teamName: card.teamName,
+          cardType: "Insert Pure Class",
+          cardSubType: null,
+          rarity: variant.rarity,
+          numbering: variant.numbering,
+          isOwned: false,
+          imageUrl: null
+        });
+      }
+    }
+
+    // Special inserts (base versions only)
     // Pennants
     for (let i = 0; i < insertPennants.length; i++) {
       const card = insertPennants[i];
@@ -549,7 +580,7 @@ export async function seedDatabase() {
         cardType: "Insert Pennants",
         cardSubType: null,
         rarity: "Ultra Rare",
-        numbering: "1/25",
+        numbering: null,
         isOwned: false,
         imageUrl: null
       });
@@ -567,7 +598,7 @@ export async function seedDatabase() {
         cardType: "Insert Next Up",
         cardSubType: "Rookie",
         rarity: "Ultra Rare",
-        numbering: "1/20",
+        numbering: null,
         isOwned: false,
         imageUrl: null
       });
@@ -585,7 +616,7 @@ export async function seedDatabase() {
         cardType: "Insert Intergalactic",
         cardSubType: null,
         rarity: "Legendary",
-        numbering: "1/15",
+        numbering: null,
         isOwned: false,
         imageUrl: null
       });
