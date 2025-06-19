@@ -156,7 +156,7 @@ export default function Social() {
 
       <main className="relative z-10 px-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-[hsl(214,35%,22%)] mb-6">
+          <TabsList className="grid w-full grid-cols-3 bg-[hsl(214,35%,22%)] mb-6">
             <TabsTrigger value="discover" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
               <Users className="w-4 h-4 mr-2" />
               Découvrir
@@ -164,6 +164,10 @@ export default function Social() {
             <TabsTrigger value="activity" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
               <TrendingUp className="w-4 h-4 mr-2" />
               Activité
+            </TabsTrigger>
+            <TabsTrigger value="forsale" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
+              <Star className="w-4 h-4 mr-2" />
+              À la vente
             </TabsTrigger>
           </TabsList>
 
@@ -345,6 +349,60 @@ export default function Social() {
             )}
           </TabsContent>
 
+          <TabsContent value="forsale" className="space-y-4">
+            {/* Mock cards for sale - Replace with real API call */}
+            <div className="grid grid-cols-2 gap-4">
+              {[
+                {
+                  id: 1,
+                  playerName: "Kylian Mbappé",
+                  teamName: "PSG",
+                  cardType: "Base",
+                  price: "15€",
+                  imageUrl: null,
+                  seller: "Alex_Collector"
+                },
+                {
+                  id: 2,
+                  playerName: "Lionel Messi",
+                  teamName: "PSG", 
+                  cardType: "Parallel Laser",
+                  price: "45€",
+                  imageUrl: null,
+                  seller: "CardMaster92"
+                },
+                {
+                  id: 3,
+                  playerName: "Neymar Jr",
+                  teamName: "PSG",
+                  cardType: "Insert Keepers",
+                  price: "30€",
+                  imageUrl: null,
+                  seller: "PSG_Fan"
+                }
+              ].map((card) => (
+                <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 border border-[hsl(214,35%,30%)]">
+                  <div className="aspect-[3/4] bg-gray-600 rounded mb-2 flex items-center justify-center">
+                    {card.imageUrl ? (
+                      <img src={card.imageUrl} alt={card.playerName} className="w-full h-full object-cover rounded" />
+                    ) : (
+                      <div className="text-gray-400 text-xs text-center">
+                        Photo non disponible
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-white font-medium text-sm">{card.playerName}</h4>
+                    <p className="text-gray-400 text-xs">{card.teamName} • {card.cardType}</p>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[hsl(9,85%,67%)] font-bold text-sm">{card.price}</span>
+                      <span className="text-gray-400 text-xs">par {card.seller}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </TabsContent>
 
         </Tabs>
       </main>
