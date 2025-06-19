@@ -232,8 +232,8 @@ const numberedVariants = [
   { type: "Parallel Numbered", numbering: "/30", rarity: "Rare" },
   { type: "Parallel Numbered", numbering: "/25", rarity: "Ultra Rare" },
   { type: "Parallel Numbered", numbering: "/20", rarity: "Ultra Rare" },
-  { type: "Parallel Swirl", numbering: "/15", rarity: "Ultra Rare" },
-  { type: "Parallel Laser", numbering: "/15", rarity: "Ultra Rare" },
+  { type: "Parallel Numbered", numbering: "/15", rarity: "Ultra Rare" },
+  { type: "Parallel Numbered", numbering: "/15", rarity: "Ultra Rare" },
   { type: "Parallel Numbered", numbering: "/10", rarity: "Super Rare" },
   { type: "Parallel Numbered", numbering: "/5", rarity: "Super Rare" }
 ];
