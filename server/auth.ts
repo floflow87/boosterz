@@ -63,15 +63,26 @@ export class AuthService {
 
   // Get user by token (simplified for memory storage)
   static async getUserByToken(token: string) {
+    console.log('🔍 Verifying token:', token?.substring(0, 20) + '...');
+    
     const decoded = this.verifyToken(token);
-    if (!decoded) return null;
+    if (!decoded) {
+      console.log('❌ Token verification failed');
+      return null;
+    }
+    
+    console.log('✅ Token decoded, userId:', decoded.userId);
 
     // Get user from storage directly using userId from token
     const { storage } = await import('./storage');
     const user = await storage.getUser(decoded.userId);
     
-    if (!user) return null;
+    if (!user) {
+      console.log('❌ User not found in storage for id:', decoded.userId);
+      return null;
+    }
 
+    console.log('✅ User found:', user.username);
     return {
       id: user.id,
       username: user.username,
