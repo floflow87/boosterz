@@ -61,30 +61,25 @@ export class AuthService {
     await db.delete(sessions).where(eq(sessions.token, token));
   }
 
-  // Get user by session token
+  // Get user by token (simplified for memory storage)
   static async getUserByToken(token: string) {
-    const session = await db
-      .select()
-      .from(sessions)
-      .where(and(eq(sessions.token, token), gt(sessions.expiresAt, new Date())))
-      .limit(1);
+    const decoded = this.verifyToken(token);
+    if (!decoded) return null;
 
-    if (session.length === 0) return null;
+    // Get user from storage directly using userId from token
+    const { storage } = await import('./storage');
+    const user = await storage.getUser(decoded.userId);
+    
+    if (!user) return null;
 
-    const user = await db
-      .select({
-        id: users.id,
-        username: users.username,
-        email: users.email,
-        name: users.name,
-        avatar: users.avatar,
-        bio: users.bio,
-      })
-      .from(users)
-      .where(eq(users.id, session[0].userId))
-      .limit(1);
-
-    return user[0] || null;
+    return {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name,
+      avatar: user.avatar,
+      bio: user.bio,
+    };
   }
 }
 
