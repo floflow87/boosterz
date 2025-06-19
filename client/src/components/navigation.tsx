@@ -9,7 +9,6 @@ const navItems = [
   { id: "book", icon: BookOpen, label: "Book", path: "/collections" },
   { id: "shop", icon: ShoppingCart, label: "Boutique", path: "/shop" },
   { id: "settings", icon: Settings, label: "Réglages", path: "/settings" },
-  { id: "logout", icon: LogOut, label: "Déconnexion", path: "/logout", isLogout: true },
 ];
 
 export default function Navigation() {
@@ -17,18 +16,7 @@ export default function Navigation() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleNavigation = (item: any) => {
-    if (item.isLogout) {
-      setIsLoggingOut(true);
-      // Clear authentication
-      localStorage.removeItem("authToken");
-      // Simulate logout delay
-      setTimeout(() => {
-        setLocation("/auth");
-        setIsLoggingOut(false);
-      }, 1000);
-    } else {
-      setLocation(item.path);
-    }
+    setLocation(item.path);
   };
 
   const isActive = (path: string) => {
@@ -40,10 +28,6 @@ export default function Navigation() {
     }
     return location.startsWith(path);
   };
-
-  if (isLoggingOut) {
-    return <LoadingScreen />;
-  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg px-3 py-4 z-20 shadow-lg rounded-t-[20px]" style={{ backgroundColor: '#131B2F', height: '80px' }}>

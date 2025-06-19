@@ -1,320 +1,205 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
-import { Send, ArrowLeft, Search, MessageCircle, User } from "lucide-react";
+import { useLocation, useParams } from "wouter";
+import { Send, ArrowLeft, MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useToast } from "@/hooks/use-toast";
+import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest } from "@/lib/queryClient";
-import Navigation from "@/components/navigation";
-
-interface User {
-  id: number;
-  username: string;
-  name: string;
-  avatar?: string;
-}
-
-interface Conversation {
-  id: number;
-  user1Id: number;
-  user2Id: number;
-  lastMessageAt: string;
-  otherUser: User;
-}
-
-interface Message {
-  id: number;
-  conversationId: number;
-  senderId: number;
-  content: string;
-  isRead: boolean;
-  createdAt: string;
-  sender: User;
-}
+import { useToast } from "@/hooks/use-toast";
+import type { Message, Conversation, User } from "@shared/schema";
 
 export default function Chat() {
+  const params = useParams();
   const [, setLocation] = useLocation();
-  const [selectedConversation, setSelectedConversation] = useState<number | null>(null);
   const [newMessage, setNewMessage] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  
+  const userId = parseInt(params.userId || "0");
+  const currentUserId = 1; // Current logged-in user
 
-  // Get auth token
-  const token = localStorage.getItem("authToken");
-  if (!token) {
-    setLocation("/auth");
-    return null;
-  }
-
-  // Get conversations
-  const { data: conversations = [] } = useQuery<Conversation[]>({
-    queryKey: ["/api/chat/conversations"],
-    queryFn: () => apiRequest("GET", "/api/chat/conversations", undefined, {
-      headers: { Authorization: `Bearer ${token}` }
-    }),
+  // Get or create conversation
+  const { data: conversation, isLoading: conversationLoading } = useQuery<Conversation>({
+    queryKey: [`/api/chat/conversations/user/${userId}`],
+    enabled: !!userId,
   });
 
-  // Get messages for selected conversation
-  const { data: messages = [] } = useQuery<Message[]>({
-    queryKey: [`/api/chat/conversations/${selectedConversation}/messages`],
-    queryFn: () => apiRequest("GET", `/api/chat/conversations/${selectedConversation}/messages`, undefined, {
-      headers: { Authorization: `Bearer ${token}` }
-    }),
-    enabled: !!selectedConversation,
+  // Get messages for this conversation
+  const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
+    queryKey: [`/api/chat/conversations/${conversation?.id}/messages`],
+    enabled: !!conversation?.id,
+    refetchInterval: 3000, // Auto-refresh every 3 seconds
   });
 
-  // Get all users for search
-  const { data: users = [] } = useQuery<User[]>({
-    queryKey: ["/api/users/search"],
-    queryFn: () => apiRequest("GET", "/api/users/search", undefined, {
-      headers: { Authorization: `Bearer ${token}` }
-    }),
+  // Get other user info
+  const { data: otherUser, isLoading: userLoading } = useQuery<User>({
+    queryKey: [`/api/users/${userId}`],
+    enabled: !!userId,
   });
 
-  // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async ({ conversationId, content }: { conversationId: number; content: string }) => {
-      return apiRequest("POST", `/api/chat/conversations/${conversationId}/messages`, { content }, {
-        headers: { Authorization: `Bearer ${token}` }
+    mutationFn: async (messageContent: string) => {
+      if (!conversation?.id) {
+        // Create conversation first
+        const newConversation = await apiRequest("POST", "/api/chat/conversations", {
+          user1Id: currentUserId,
+          user2Id: userId,
+        });
+        return apiRequest("POST", `/api/chat/conversations/${newConversation.id}/messages`, {
+          content: messageContent,
+          senderId: currentUserId,
+        });
+      }
+      return apiRequest("POST", `/api/chat/conversations/${conversation.id}/messages`, {
+        content: messageContent,
+        senderId: currentUserId,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${selectedConversation}/messages`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/chat/conversations"] });
       setNewMessage("");
+      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${conversation?.id}/messages`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/user/${userId}`] });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Erreur",
-        description: "Impossible d'envoyer le message",
+        description: error.message || "Impossible d'envoyer le message",
         variant: "destructive",
       });
     },
   });
 
-  // Create conversation mutation
-  const createConversationMutation = useMutation({
-    mutationFn: async (otherUserId: number) => {
-      return apiRequest("POST", "/api/chat/conversations", { otherUserId }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-    },
-    onSuccess: (conversation) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/chat/conversations"] });
-      setSelectedConversation(conversation.id);
-    },
-    onError: () => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer la conversation",
-        variant: "destructive",
-      });
-    },
-  });
+  const handleSendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim()) return;
+    
+    sendMessageMutation.mutate(newMessage.trim());
+  };
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newMessage.trim() || !selectedConversation) return;
+  // Mark messages as read when opening conversation
+  useEffect(() => {
+    if (conversation?.id) {
+      apiRequest("PUT", `/api/chat/conversations/${conversation.id}/read`, {});
+    }
+  }, [conversation?.id]);
 
-    sendMessageMutation.mutate({
-      conversationId: selectedConversation,
-      content: newMessage.trim(),
-    });
-  };
+  if (conversationLoading || messagesLoading || userLoading) {
+    return <LoadingScreen />;
+  }
 
-  const startConversation = (userId: number) => {
-    createConversationMutation.mutate(userId);
-  };
-
-  const filteredUsers = users.filter(user => 
-    user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-  };
+  if (!otherUser) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-2">Utilisateur introuvable</h2>
+          <Button onClick={() => setLocation("/social")} variant="outline">
+            Retour
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <main className="flex h-screen">
-        {/* Conversations sidebar */}
-        <div className="w-80 bg-gray-900 border-r border-gray-800 flex flex-col">
-          <div className="p-4 border-b border-gray-800">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white">Messages</h2>
-              <button
-                onClick={() => setLocation("/")}
-                className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                <ArrowLeft className="w-5 h-5" />
-              </button>
-            </div>
-            
-            {/* Search users */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Rechercher un utilisateur..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 bg-gray-800 border-gray-700 text-white"
+    <div className="min-h-screen bg-black text-white flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900">
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setLocation("/social")}
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            {otherUser.avatar ? (
+              <img 
+                src={otherUser.avatar} 
+                alt={otherUser.name}
+                className="w-full h-full rounded-full object-cover"
               />
-            </div>
-          </div>
-
-          {/* Search results */}
-          {searchQuery && (
-            <div className="border-b border-gray-800 max-h-48 overflow-y-auto">
-              {filteredUsers.map((user) => (
-                <button
-                  key={user.id}
-                  onClick={() => {
-                    startConversation(user.id);
-                    setSearchQuery("");
-                  }}
-                  className="w-full p-3 hover:bg-gray-800 flex items-center space-x-3 transition-colors"
-                >
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    {user.avatar ? (
-                      <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
-                    ) : (
-                      <User className="w-5 h-5 text-white" />
-                    )}
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="font-medium text-white">{user.name}</p>
-                    <p className="text-sm text-gray-400">@{user.username}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Conversations list */}
-          <div className="flex-1 overflow-y-auto">
-            {conversations.length === 0 ? (
-              <div className="p-6 text-center text-gray-400">
-                <MessageCircle className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Aucune conversation</p>
-                <p className="text-sm">Recherchez un utilisateur pour commencer</p>
-              </div>
             ) : (
-              conversations.map((conversation) => (
-                <button
-                  key={conversation.id}
-                  onClick={() => setSelectedConversation(conversation.id)}
-                  className={`w-full p-4 hover:bg-gray-800 flex items-center space-x-3 transition-colors ${
-                    selectedConversation === conversation.id ? "bg-gray-800" : ""
-                  }`}
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-                    {conversation.otherUser.avatar ? (
-                      <img 
-                        src={conversation.otherUser.avatar} 
-                        alt={conversation.otherUser.name} 
-                        className="w-12 h-12 rounded-full object-cover" 
-                      />
-                    ) : (
-                      <User className="w-6 h-6 text-white" />
-                    )}
-                  </div>
-                  <div className="flex-1 text-left">
-                    <p className="font-medium text-white">{conversation.otherUser.name}</p>
-                    <p className="text-sm text-gray-400">@{conversation.otherUser.username}</p>
-                  </div>
-                </button>
-              ))
+              <span className="text-sm font-bold text-white">
+                {otherUser.name?.charAt(0) || otherUser.username?.charAt(0)}
+              </span>
             )}
           </div>
+          <div>
+            <h2 className="font-semibold">{otherUser.name || otherUser.username}</h2>
+            <p className="text-xs text-gray-400">@{otherUser.username}</p>
+          </div>
         </div>
+        <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors">
+          <MoreVertical className="w-5 h-5" />
+        </button>
+      </div>
 
-        {/* Chat area */}
-        <div className="flex-1 flex flex-col">
-          {selectedConversation ? (
-            <>
-              {/* Chat header */}
-              <div className="p-4 border-b border-gray-800 bg-gray-900">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
-                    <User className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-white">
-                      {conversations.find(c => c.id === selectedConversation)?.otherUser.name}
-                    </p>
-                    <p className="text-sm text-gray-400">En ligne</p>
-                  </div>
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages && messages.length > 0 ? (
+          messages.map((message) => {
+            const isOwn = message.senderId === currentUserId;
+            return (
+              <div
+                key={message.id}
+                className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
+                    isOwn
+                      ? "bg-[hsl(9,85%,67%)] text-white"
+                      : "bg-gray-800 text-white"
+                  }`}
+                >
+                  <p className="text-sm">{message.content}</p>
+                  <p className={`text-xs mt-1 ${isOwn ? "text-white/70" : "text-gray-400"}`}>
+                    {new Date(message.createdAt).toLocaleTimeString("fr-FR", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
                 </div>
               </div>
-
-              {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={`flex ${message.sender.id === 1 ? "justify-end" : "justify-start"}`}
-                  >
-                    <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        message.sender.id === 1
-                          ? "bg-[#F37261] text-white"
-                          : "bg-gray-800 text-white"
-                      }`}
-                    >
-                      <p>{message.content}</p>
-                      <p className="text-xs opacity-70 mt-1">
-                        {formatTime(message.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* Message input */}
-              <div className="p-4 border-t border-gray-800 bg-gray-900">
-                <form onSubmit={handleSendMessage} className="flex space-x-3">
-                  <Input
-                    type="text"
-                    placeholder="Tapez votre message..."
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    className="flex-1 bg-gray-800 border-gray-700 text-white"
-                  />
-                  <Button
-                    type="submit"
-                    disabled={!newMessage.trim() || sendMessageMutation.isPending}
-                    style={{ backgroundColor: '#F37261' }}
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
-                </form>
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-400">
-              <div className="text-center">
-                <MessageCircle className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                <p className="text-xl mb-2">Sélectionnez une conversation</p>
-                <p>Choisissez une conversation pour commencer à discuter</p>
-              </div>
+            );
+          })
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-gray-400">
+              <p className="text-lg mb-2">Aucun message</p>
+              <p className="text-sm">Commencez la conversation avec {otherUser.name || otherUser.username}</p>
             </div>
-          )}
-        </div>
-      </main>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
 
-      <Navigation />
+      {/* Message Input */}
+      <div className="p-4 border-t border-gray-800 bg-gray-900">
+        <form onSubmit={handleSendMessage} className="flex space-x-2">
+          <Input
+            value={newMessage}
+            onChange={(e) => setNewMessage(e.target.value)}
+            placeholder="Tapez votre message..."
+            className="flex-1 bg-gray-800 border-gray-700 text-white"
+            disabled={sendMessageMutation.isPending}
+          />
+          <Button
+            type="submit"
+            disabled={!newMessage.trim() || sendMessageMutation.isPending}
+            className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

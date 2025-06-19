@@ -13,6 +13,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat routes
   app.use('/api/chat', chatRoutes);
 
+  // Get conversation between two users
+  app.get("/api/chat/conversations/user/:userId", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const currentUserId = req.user?.id || 1;
+      const otherUserId = parseInt(req.params.userId);
+      
+      const conversation = await storage.getConversation(currentUserId, otherUserId);
+      res.json(conversation);
+    } catch (error) {
+      console.error("Error fetching conversation:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Search all users
   app.get("/api/users/search", optionalAuth, async (req: AuthRequest, res) => {
     try {

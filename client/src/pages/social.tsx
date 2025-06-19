@@ -273,7 +273,7 @@ export default function Social() {
                       
                       <div className="flex space-x-2">
                         <Button
-                          onClick={() => setLocation('/chat')}
+                          onClick={() => setLocation(`/chat/${user.id}`)}
                           variant="outline"
                           size="sm"
                           className="border-gray-400 text-gray-400 hover:bg-gray-700"
