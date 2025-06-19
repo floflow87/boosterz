@@ -429,14 +429,22 @@ export default function CollectionDetail() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-2 gap-3">
-          {filteredCards?.map((card, index) => {
+          {filteredCards?.map((card) => {
             const variants = getCardVariants(card);
-            const currentVariantIdx = cardVariantIndexes[`${card.playerName}-${card.teamName}`] || 0;
+            const playerKey = `${card.playerName}-${card.teamName}`;
+            const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
             const currentVariant = variants[currentVariantIdx] || card;
+            
+            const handleVariantChange = (direction: 'prev' | 'next') => {
+              const newIndex = direction === 'prev' 
+                ? Math.max(0, currentVariantIdx - 1)
+                : Math.min(variants.length - 1, currentVariantIdx + 1);
+              setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+            };
             
             return (
               <div 
-                key={`${card.playerName}-${card.teamName}`}
+                key={playerKey}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(currentVariant)}`}
               >
                 {/* Checkbox */}
@@ -458,9 +466,7 @@ export default function CollectionDetail() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        const playerKey = `${card.playerName}-${card.teamName}`;
-                        const newIndex = Math.max(0, currentVariantIdx - 1);
-                        setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+                        handleVariantChange('prev');
                       }}
                       disabled={currentVariantIdx === 0}
                       className="p-1 text-white disabled:opacity-30 hover:bg-white hover:bg-opacity-20 rounded"
@@ -473,9 +479,7 @@ export default function CollectionDetail() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        const playerKey = `${card.playerName}-${card.teamName}`;
-                        const newIndex = Math.min(variants.length - 1, currentVariantIdx + 1);
-                        setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+                        handleVariantChange('next');
                       }}
                       disabled={currentVariantIdx === variants.length - 1}
                       className="p-1 text-white disabled:opacity-30 hover:bg-white hover:bg-opacity-20 rounded"
