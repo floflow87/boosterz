@@ -526,21 +526,17 @@ export class MemStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    for (const user of this.users.values()) {
-      if (user.username.toLowerCase() === username.toLowerCase()) {
-        return user;
-      }
-    }
-    return undefined;
+    console.log('Looking for username:', username);
+    console.log('Available users:', Array.from(this.users.values()).map(u => u.username));
+    const users = Array.from(this.users.values());
+    const found = users.find(user => user.username.toLowerCase() === username.toLowerCase());
+    console.log('Found user:', found ? found.username : 'not found');
+    return found;
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    for (const user of this.users.values()) {
-      if (user.email === email) {
-        return user;
-      }
-    }
-    return undefined;
+    const users = Array.from(this.users.values());
+    return users.find(user => user.email === email);
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
@@ -690,4 +686,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();

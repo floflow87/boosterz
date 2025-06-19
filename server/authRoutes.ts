@@ -64,19 +64,25 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
+    console.log('Login attempt with:', { email, password: '***' });
     
     // Try to find user by email first, then by username
     let user = await storage.getUserByEmail(email);
+    console.log('User found by email:', user ? user.username : 'not found');
     if (!user) {
       user = await storage.getUserByUsername(email); // Try username if email fails
+      console.log('User found by username:', user ? user.username : 'not found');
     }
     
     if (!user || !user.password) {
+      console.log('No user found or no password');
       return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
     }
 
     // Verify password
+    console.log('Verifying password for user:', user.username);
     const isValidPassword = await AuthService.verifyPassword(password, user.password);
+    console.log('Password verification result:', isValidPassword);
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
     }
