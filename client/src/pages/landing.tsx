@@ -182,24 +182,7 @@ export default function Landing() {
               </button>
             </div>
 
-            {/* Demo accounts */}
-            <div className="mt-6 pt-4 border-t border-gray-700">
-              <p className="text-xs text-gray-400 text-center mb-2">Comptes de démonstration :</p>
-              <div className="flex flex-col gap-2 text-xs">
-                <button
-                  onClick={() => setFormData({ username: "floflow87", email: "", name: "", password: "Test25" })}
-                  className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,60%)] transition-colors"
-                >
-                  Floflow87 (avec collections)
-                </button>
-                <button
-                  onClick={() => setFormData({ username: "maxlamenace", email: "", name: "", password: "Test25" })}
-                  className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,60%)] transition-colors"
-                >
-                  Max la Menace (compte vide)
-                </button>
-              </div>
-            </div>
+            
           </div>
         </div>
       </div>
