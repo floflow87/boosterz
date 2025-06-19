@@ -85,7 +85,7 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[111B31]">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[#111827]">
       <div className="w-full max-w-md">
         <div className="bg-gray-900 rounded-xl p-8 shadow-2xl border border-gray-800">
           <div className="text-center mb-8">
