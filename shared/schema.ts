@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, real, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, real, timestamp, varchar } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -6,7 +6,14 @@ import { z } from "zod";
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull().unique(),
+  password: text("password").notNull(),
   name: text("name").notNull(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  phone: varchar("phone", { length: 20 }),
+  address: text("address"),
+  city: varchar("city", { length: 100 }),
+  postalCode: varchar("postal_code", { length: 10 }),
+  country: varchar("country", { length: 100 }),
   avatar: text("avatar"),
   bio: text("bio"),
   isPublic: boolean("is_public").default(true).notNull(),
@@ -15,6 +22,8 @@ export const users = pgTable("users", {
   totalCards: integer("total_cards").default(0).notNull(),
   collectionsCount: integer("collections_count").default(0).notNull(),
   completionPercentage: real("completion_percentage").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 export const collections = pgTable("collections", {
@@ -107,6 +116,34 @@ export const activities = pgTable("activities", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Chat conversations table
+export const conversations = pgTable("conversations", {
+  id: serial("id").primaryKey(),
+  user1Id: integer("user1_id").notNull(),
+  user2Id: integer("user2_id").notNull(),
+  lastMessageAt: timestamp("last_message_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Chat messages table
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  conversationId: integer("conversation_id").notNull(),
+  senderId: integer("sender_id").notNull(),
+  content: text("content").notNull(),
+  isRead: boolean("is_read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// User sessions table for authentication
+export const sessions = pgTable("sessions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  token: text("token").notNull().unique(),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   collections: many(collections),
@@ -195,10 +232,67 @@ export const userCardsRelations = relations(userCards, ({ one }) => ({
   }),
 }));
 
+export const conversationsRelations = relations(conversations, ({ one, many }) => ({
+  user1: one(users, {
+    fields: [conversations.user1Id],
+    references: [users.id],
+    relationName: "user1Conversations",
+  }),
+  user2: one(users, {
+    fields: [conversations.user2Id],
+    references: [users.id],
+    relationName: "user2Conversations",
+  }),
+  messages: many(messages),
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  conversation: one(conversations, {
+    fields: [messages.conversationId],
+    references: [conversations.id],
+  }),
+  sender: one(users, {
+    fields: [messages.senderId],
+    references: [users.id],
+  }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
+}));
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
+  password: true,
   name: true,
+  email: true,
+  phone: true,
+  address: true,
+  city: true,
+  postalCode: true,
+  country: true,
   avatar: true,
+  bio: true,
+});
+
+export const insertConversationSchema = createInsertSchema(conversations).pick({
+  user1Id: true,
+  user2Id: true,
+});
+
+export const insertMessageSchema = createInsertSchema(messages).pick({
+  conversationId: true,
+  senderId: true,
+  content: true,
+});
+
+export const insertSessionSchema = createInsertSchema(sessions).pick({
+  userId: true,
+  token: true,
+  expiresAt: true,
 });
 
 export const insertCollectionSchema = createInsertSchema(collections).pick({
