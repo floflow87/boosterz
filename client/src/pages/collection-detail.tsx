@@ -933,20 +933,35 @@ export default function CollectionDetail() {
                   {/* Card Info */}
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Référence:</span>
-                      <span className="text-white">{selectedCard.reference}</span>
+                      <span className="text-[hsl(212,23%,69%)] text-xs">Référence:</span>
+                      <span className="text-white text-xs">{selectedCard.reference}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Type:</span>
-                      <span className="text-white">{currentCard?.cardSubType || "Base"}</span>
+                      <span className="text-[hsl(212,23%,69%)] text-xs">Type:</span>
+                      <span className="text-white text-xs">{currentCard?.cardSubType || "Base"}</span>
+                    </div>
+                    {currentCard?.cardType?.includes("Insert") && (
+                      <div className="flex justify-between">
+                        <span className="text-[hsl(212,23%,69%)] text-xs">Description:</span>
+                        <span className="text-white text-xs">
+                          {(() => {
+                            const cardType = currentCard?.cardType || "";
+                            if (cardType.includes("Hot Rookies")) return "Hot Rookies";
+                            if (cardType.includes("Keepers")) return "Keepers";
+                            if (cardType.includes("Club Legend")) return "Club Legend";
+                            if (cardType.includes("Spotlight")) return "Spotlight";
+                            return "Hit Card";
+                          })()}
+                        </span>
+                      </div>
+                    )}
+                    <div className="flex justify-between">
+                      <span className="text-[hsl(212,23%,69%)] text-xs">Numérotation:</span>
+                      <span className="text-white text-xs">{currentCard?.numbering || 'Non numérotée'}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Numérotation:</span>
-                      <span className="text-white">{currentCard?.numbering || 'Non numérotée'}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)]">Statut:</span>
-                      <span className={`font-bold ${currentCard?.isOwned ? 'text-green-400' : 'text-red-400'}`}>
+                      <span className="text-[hsl(212,23%,69%)] text-xs">Statut:</span>
+                      <span className={`font-bold text-xs ${currentCard?.isOwned ? 'text-green-400' : 'text-red-400'}`}>
                         {currentCard?.isOwned ? 'Acquise' : 'Manquante'}
                       </span>
                     </div>
