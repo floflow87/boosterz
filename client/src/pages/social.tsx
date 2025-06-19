@@ -219,7 +219,7 @@ export default function Social() {
               </p>
               <button
                 onClick={() => setActiveTab("discover")}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                className="px-6 py-3 bg-[#F37261] hover:bg-[#e5624f] text-white font-medium rounded-lg transition-colors"
               >
                 Découvrir
               </button>

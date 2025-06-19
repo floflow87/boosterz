@@ -76,27 +76,7 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* À propos */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-bold font-luckiest">Application</h2>
-          
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Version</span>
-                <span className="font-poppins">1.0.0</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Base de données</span>
-                <span className="font-poppins">Score Ligue 1 2023/24</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-[hsl(212,23%,69%)]">Dernière mise à jour</span>
-                <span className="font-poppins">Aujourd'hui</span>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         {/* Déconnexion */}
         <div className="pt-4">

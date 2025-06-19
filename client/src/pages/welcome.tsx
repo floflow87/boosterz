@@ -10,14 +10,14 @@ export default function Welcome() {
   const steps = [
     {
       icon: Gift,
-      title: "Bienvenue !",
-      description: "Félicitations ! Vous recevez automatiquement la collection Score Ligue 1 2023/24 pour commencer votre aventure.",
+      title: "Félicitations !",
+      description: "Commencez votre aventure en complétant votre PC avec la checklist de la collection Score Ligue 1 2023/24.",
       buttonText: "Continuer"
     },
     {
       icon: Star,
       title: "Collectionnez",
-      description: "Découvrez plus de 600 cartes différentes avec des variantes uniques et des cartes spéciales à collectionner.",
+      description: "Quand le digital se met au services de vos collections de cartes : Agrémentez votre catalogue grâce à des centaines de collections disponibles !",
       buttonText: "Continuer"
     },
     {
@@ -29,7 +29,7 @@ export default function Welcome() {
     {
       icon: Trophy,
       title: "Prêt à commencer !",
-      description: "Votre collection vous attend. Explorez, collectionnez et devenez le meilleur collectionneur !",
+      description: "Votre collection vous attend. Explorez, collectionnez et devenez le plus gros collectionneur de votre cercle d'amis !",
       buttonText: "Commencer"
     }
   ];
@@ -82,7 +82,7 @@ export default function Welcome() {
         {currentStep === 0 && (
           <div className="mb-8">
             <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm font-semibold inline-block animate-pulse">
-              🎁 Collection Score Ligue 1 2023/24 offerte !
+              🎁 Checklist de la collection Score Ligue 1 2023/24 disponible
             </div>
           </div>
         )}
