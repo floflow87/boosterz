@@ -266,6 +266,37 @@ export default function CollectionDetail() {
       );
     }
     
+    // Pour les bases numérotées, on récupère toutes les 9 variantes
+    if (card.cardType === "Parallel Numbered") {
+      const numberedVariants = cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        c.cardType === "Parallel Numbered"
+      );
+      
+      // Trier par ordre de rareté: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10, /5
+      return numberedVariants.sort((a, b) => {
+        const getRarityOrder = (numbering: string, subType: string) => {
+          if (numbering === "1/50") return 1;
+          if (numbering === "1/35") return 2;
+          if (numbering === "1/30") return 3;
+          if (numbering === "1/25") return 4;
+          if (numbering === "1/20") return 5;
+          if (numbering === "1/15" && subType === "swirl") return 6;
+          if (numbering === "1/15" && subType === "laser") return 7;
+          if (numbering === "1/10") return 8;
+          if (numbering === "1/5") return 9;
+          return 10;
+        };
+        
+        const aOrder = getRarityOrder(a.numbering || "", a.cardSubType || "");
+        const bOrder = getRarityOrder(b.numbering || "", b.cardSubType || "");
+        
+        return aOrder - bOrder;
+      });
+    }
+    
     // Pour les autres cartes, on garde toutes les variantes
     return cards.filter(c => 
       c.playerName === card.playerName && 
@@ -543,6 +574,8 @@ export default function CollectionDetail() {
                   {currentVariant.cardType === "Base" ? "Base" : 
                    currentVariant.cardType === "Parallel Laser" ? "Laser" :
                    currentVariant.cardType === "Parallel Swirl" ? "Swirl" : 
+                   currentVariant.cardType === "Parallel Numbered" ? 
+                     (currentVariant.numbering?.replace("1/", "/") || "Numbered") :
                    currentVariant.cardType}
                 </div>
                 

@@ -227,15 +227,15 @@ const baseVariants = [
 
 // Bases numérotées - 9 variantes par carte de base
 const numberedVariants = [
-  { type: "Parallel Numbered", numbering: "/50", rarity: "Rare" },
-  { type: "Parallel Numbered", numbering: "/35", rarity: "Rare" },
-  { type: "Parallel Numbered", numbering: "/30", rarity: "Rare" },
-  { type: "Parallel Numbered", numbering: "/25", rarity: "Ultra Rare" },
-  { type: "Parallel Numbered", numbering: "/20", rarity: "Ultra Rare" },
-  { type: "Parallel Numbered", numbering: "/15", rarity: "Ultra Rare" },
-  { type: "Parallel Numbered", numbering: "/15", rarity: "Ultra Rare" },
-  { type: "Parallel Numbered", numbering: "/10", rarity: "Super Rare" },
-  { type: "Parallel Numbered", numbering: "/5", rarity: "Super Rare" }
+  { type: "Parallel Numbered", numbering: "1/50", rarity: "Rare", subType: null },
+  { type: "Parallel Numbered", numbering: "1/35", rarity: "Rare", subType: null },
+  { type: "Parallel Numbered", numbering: "1/30", rarity: "Rare", subType: null },
+  { type: "Parallel Numbered", numbering: "1/25", rarity: "Ultra Rare", subType: null },
+  { type: "Parallel Numbered", numbering: "1/20", rarity: "Ultra Rare", subType: null },
+  { type: "Parallel Numbered", numbering: "1/15", rarity: "Ultra Rare", subType: "swirl" },
+  { type: "Parallel Numbered", numbering: "1/15", rarity: "Ultra Rare", subType: "laser" },
+  { type: "Parallel Numbered", numbering: "1/10", rarity: "Super Rare", subType: null },
+  { type: "Parallel Numbered", numbering: "1/5", rarity: "Super Rare", subType: null }
 ];
 
 const insertBreakthrough = [
@@ -387,11 +387,11 @@ export async function seedDatabase() {
         cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `${baseCard.id.toString().padStart(3, '0')}-${variant.numbering?.replace('/', '')}`,
+          reference: `${baseCard.id.toString().padStart(3, '0')}-${variant.numbering?.replace('1/', '')}${variant.subType ? `-${variant.subType}` : ''}`,
           playerName: baseCard.playerName,
           teamName: baseCard.teamName,
           cardType: variant.type,
-          cardSubType: baseCard.isRookie ? "Rookie" : null,
+          cardSubType: variant.subType || (baseCard.isRookie ? "Rookie" : null),
           rarity: variant.rarity,
           numbering: variant.numbering,
           isOwned: false,

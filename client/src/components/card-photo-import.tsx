@@ -603,11 +603,68 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
             <div className="space-y-4">
               {selectedImage && (
                 <div className="mb-4 text-center">
-                  <img
-                    src={selectedImage || ""}
-                    alt="Photo importée"
-                    className="w-32 h-40 object-cover rounded-lg mx-auto border-2 border-gray-200"
-                  />
+                  <div 
+                    className="w-48 h-64 mx-auto perspective-1000"
+                    style={{ perspective: '1000px' }}
+                  >
+                    <img
+                      src={selectedImage || ""}
+                      alt="Photo importée"
+                      className="w-full h-full object-cover rounded-lg border-2 border-gray-200 cursor-pointer transition-transform duration-500 hover:scale-105"
+                      style={{
+                        transformStyle: 'preserve-3d',
+                        willChange: 'transform'
+                      }}
+                      onMouseDown={(e) => {
+                        const startX = e.clientX;
+                        const startY = e.clientY;
+                        let rotateX = 0;
+                        let rotateY = 0;
+                        
+                        const handleMouseMove = (moveEvent: MouseEvent) => {
+                          const deltaX = moveEvent.clientX - startX;
+                          const deltaY = moveEvent.clientY - startY;
+                          rotateY = deltaX * 0.5;
+                          rotateX = -deltaY * 0.5;
+                          e.currentTarget.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                        };
+                        
+                        const handleMouseUp = () => {
+                          e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                          document.removeEventListener('mousemove', handleMouseMove);
+                          document.removeEventListener('mouseup', handleMouseUp);
+                        };
+                        
+                        document.addEventListener('mousemove', handleMouseMove);
+                        document.addEventListener('mouseup', handleMouseUp);
+                      }}
+                      onTouchStart={(e) => {
+                        const touch = e.touches[0];
+                        const startX = touch.clientX;
+                        const startY = touch.clientY;
+                        let rotateX = 0;
+                        let rotateY = 0;
+                        
+                        const handleTouchMove = (moveEvent: TouchEvent) => {
+                          const moveTouch = moveEvent.touches[0];
+                          const deltaX = moveTouch.clientX - startX;
+                          const deltaY = moveTouch.clientY - startY;
+                          rotateY = deltaX * 0.5;
+                          rotateX = -deltaY * 0.5;
+                          e.currentTarget.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                        };
+                        
+                        const handleTouchEnd = () => {
+                          e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                          document.removeEventListener('touchmove', handleTouchMove);
+                          document.removeEventListener('touchend', handleTouchEnd);
+                        };
+                        
+                        document.addEventListener('touchmove', handleTouchMove);
+                        document.addEventListener('touchend', handleTouchEnd);
+                      }}
+                    />
+                  </div>
                 </div>
               )}
               
