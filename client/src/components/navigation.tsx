@@ -68,13 +68,7 @@ export default function Navigation() {
           );
         })}
         
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="nav-item flex flex-col items-center p-2 transition-all duration-300 text-gray-400 hover:text-red-400"
-        >
-          <LogOut className="w-5 h-5 transition-transform" />
-        </button>
+
       </div>
     </nav>
   );

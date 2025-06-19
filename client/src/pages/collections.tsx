@@ -232,21 +232,19 @@ export default function Collections() {
                     </div>
 
                     {/* Card carousel area with golden cards image */}
-                    <div className="h-64 relative flex items-center justify-center overflow-hidden px-6 pb-4">
+                    <div className="h-48 relative flex items-center justify-center overflow-hidden px-6 pb-4">
                       {/* Carousel container with background color matching the page */}
-                      <div className="relative w-full max-w-md h-48 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-6 shadow-2xl">
-                        {/* Main card content with golden cards image */}
-                        <div className="bg-white rounded-xl h-full p-4 shadow-lg relative overflow-hidden flex items-center justify-center">
-                          <img 
-                            src={goldenCardsIcon}
-                            alt="Golden trading cards"
-                            className="w-32 h-32 object-contain rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.3)]"
-                          />
-                        </div>
+                      <div className="relative w-full max-w-md h-32 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-4 shadow-2xl flex items-center justify-center">
+                        {/* Golden cards image - direct placement without white background */}
+                        <img 
+                          src={goldenCardsIcon}
+                          alt="Golden trading cards"
+                          className="w-40 h-40 object-contain rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.3)]"
+                        />
                         
                         {/* Background decorative cards */}
-                        <div className="absolute -right-4 -top-4 w-32 h-44 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
-                        <div className="absolute -left-4 -bottom-4 w-32 h-44 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
+                        <div className="absolute -right-4 -top-4 w-24 h-32 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
+                        <div className="absolute -left-4 -bottom-4 w-24 h-32 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
                       </div>
                     </div>
                     
