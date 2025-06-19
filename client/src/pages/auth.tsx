@@ -52,6 +52,11 @@ export default function Auth() {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  // Show loading screen during login
+  if (loginMutation.isPending) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-md">
