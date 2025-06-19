@@ -143,18 +143,22 @@ export default function Auth() {
 
             <div>
               <Label htmlFor="email" className="text-white mb-2 block">
-                Email
+                {mode === "login" ? "Nom d'utilisateur ou Email" : "Email"}
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                {mode === "login" ? (
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                ) : (
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                )}
                 <Input
                   id="email"
-                  type="email"
+                  type={mode === "login" ? "text" : "email"}
                   required
                   value={formData.email}
                   onChange={(e) => updateFormData("email", e.target.value)}
                   className="bg-gray-800 border-gray-700 text-white pl-10"
-                  placeholder="votre@email.com"
+                  placeholder={mode === "login" ? "Floflow87 ou votre@email.com" : "votre@email.com"}
                 />
               </div>
             </div>
