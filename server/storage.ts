@@ -1,6 +1,6 @@
 import { users, collections, cards, userCards, conversations, messages, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, or, ilike } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -76,6 +76,22 @@ export class DatabaseStorage implements IStorage {
       .where(eq(users.id, id))
       .returning();
     return user || undefined;
+  }
+
+  async searchUsers(query: string): Promise<User[]> {
+    const result = await db.select().from(users).where(
+      or(
+        ilike(users.name, `%${query}%`),
+        ilike(users.username, `%${query}%`),
+        ilike(users.email, `%${query}%`)
+      )
+    );
+    return result;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    const result = await db.select().from(users);
+    return result;
   }
 
   async getCollectionsByUserId(userId: number): Promise<Collection[]> {
@@ -194,7 +210,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserCard(id: number): Promise<boolean> {
     const result = await db.delete(userCards).where(eq(userCards.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   async updateCardTrade(id: number, tradeData: { tradeDescription?: string; tradePrice?: string; tradeOnly: boolean; isForTrade: boolean }): Promise<Card | undefined> {
@@ -218,6 +234,60 @@ export class DatabaseStorage implements IStorage {
       .returning();
     
     return updatedCard || undefined;
+  }
+
+  // Chat system methods
+  async getConversations(userId: number): Promise<Conversation[]> {
+    const result = await db.select().from(conversations).where(
+      or(
+        eq(conversations.user1Id, userId),
+        eq(conversations.user2Id, userId)
+      )
+    );
+    return result;
+  }
+
+  async getConversation(user1Id: number, user2Id: number): Promise<Conversation | undefined> {
+    const [conversation] = await db.select().from(conversations).where(
+      or(
+        and(eq(conversations.user1Id, user1Id), eq(conversations.user2Id, user2Id)),
+        and(eq(conversations.user1Id, user2Id), eq(conversations.user2Id, user1Id))
+      )
+    );
+    return conversation || undefined;
+  }
+
+  async createConversation(conversation: InsertConversation): Promise<Conversation> {
+    const [newConversation] = await db
+      .insert(conversations)
+      .values(conversation)
+      .returning();
+    return newConversation;
+  }
+
+  async getMessages(conversationId: number): Promise<Message[]> {
+    const result = await db.select().from(messages).where(eq(messages.conversationId, conversationId));
+    return result;
+  }
+
+  async createMessage(message: InsertMessage): Promise<Message> {
+    const [newMessage] = await db
+      .insert(messages)
+      .values(message)
+      .returning();
+    return newMessage;
+  }
+
+  async markMessagesAsRead(conversationId: number, userId: number): Promise<void> {
+    await db
+      .update(messages)
+      .set({ isRead: true })
+      .where(
+        and(
+          eq(messages.conversationId, conversationId),
+          eq(messages.receiverId, userId)
+        )
+      );
   }
 }
 
@@ -682,4 +752,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
