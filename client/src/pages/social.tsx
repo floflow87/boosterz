@@ -185,10 +185,9 @@ export default function Social() {
                 onClick={() => setActiveTab("discover")}
                 className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "discover" 
-                    ? "text-white shadow-lg transform scale-105" 
+                    ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
-                style={activeTab === "discover" ? { backgroundColor: '#F37261' } : {}}
               >
                 <Users className="w-3 h-3 mr-1 inline" />
                 Découvrir

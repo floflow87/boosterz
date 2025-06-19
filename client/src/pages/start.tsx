@@ -10,9 +10,7 @@ export default function Start() {
   const queryClient = useQueryClient();
 
   const completeFirstLoginMutation = useMutation({
-    mutationFn: () => apiRequest("/api/auth/complete-first-login", {
-      method: "POST",
-    }),
+    mutationFn: () => apiRequest("/api/auth/complete-first-login", "POST"),
     onSuccess: () => {
       // Invalidate user query to update isFirstLogin status
       queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
@@ -50,34 +48,17 @@ export default function Start() {
           Découvrez, collectionnez et échangez vos cartes préférées avec la communauté
         </p>
 
-        {/* Features */}
-        <div className="flex justify-center space-x-8 mb-12">
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-blue-600/20 rounded-full flex items-center justify-center mb-2">
-              <Star className="w-6 h-6 text-blue-400" />
-            </div>
-            <span className="text-sm text-gray-400">Collections</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-purple-600/20 rounded-full flex items-center justify-center mb-2">
-              <Users className="w-6 h-6 text-purple-400" />
-            </div>
-            <span className="text-sm text-gray-400">Communauté</span>
-          </div>
-          <div className="flex flex-col items-center">
-            <div className="w-12 h-12 bg-green-600/20 rounded-full flex items-center justify-center mb-2">
-              <Trophy className="w-6 h-6 text-green-400" />
-            </div>
-            <span className="text-sm text-gray-400">Échanges</span>
-          </div>
-        </div>
-
         {/* Start Button */}
         <button
           onClick={handleStart}
-          className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[hsl(9,85%,67%)] to-orange-500 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+          disabled={completeFirstLoginMutation.isPending}
+          className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-[hsl(9,85%,67%)] to-white text-[hsl(9,85%,67%)] font-semibold rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-70 disabled:cursor-not-allowed"
         >
-          <Play className="w-5 h-5 mr-2" />
+          {completeFirstLoginMutation.isPending ? (
+            <div className="w-5 h-5 border-2 border-[hsl(9,85%,67%)] border-t-transparent rounded-full animate-spin mr-2" />
+          ) : (
+            <CreditCard className="w-5 h-5 mr-2" />
+          )}
           Commencer
         </button>
       </div>

@@ -26,7 +26,7 @@ function Router() {
   });
 
   const isAuthenticated = !!user;
-  const isFirstLogin = user?.isFirstLogin;
+  const isFirstLogin = user && 'isFirstLogin' in user ? user.isFirstLogin : false;
 
   if (isLoading) {
     return (

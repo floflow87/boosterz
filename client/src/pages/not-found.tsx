@@ -23,7 +23,6 @@ export default function NotFound() {
           </button>
         </div>
       </div>
-      <Navigation />
     </div>
   );
 }
