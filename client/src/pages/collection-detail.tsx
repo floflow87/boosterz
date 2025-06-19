@@ -60,6 +60,8 @@ export default function CollectionDetail() {
 
   const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
     queryKey: [`/api/collections/${collectionId}/cards`],
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
   // Scroll to top when page loads
