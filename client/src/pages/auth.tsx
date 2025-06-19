@@ -35,7 +35,7 @@ export default function Auth() {
       localStorage.setItem("authToken", data.token);
       toast({
         title: "Connexion réussie",
-        description: `Bienvenue ${data.user.name}!`,
+        description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
       });
       setLocation("/start");
     },
@@ -56,7 +56,7 @@ export default function Auth() {
       localStorage.setItem("authToken", data.token);
       toast({
         title: "Compte créé",
-        description: `Bienvenue ${data.user.name}!`,
+        description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
       });
       setLocation("/start");
     },
