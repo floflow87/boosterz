@@ -37,6 +37,18 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
 
+    // Create default Score Ligue 1 23/24 collection for new user
+    await storage.createCollection({
+      userId: user.id,
+      name: "SCORE LIGUE 1",
+      season: "23/24",
+      totalCards: 2900,
+      ownedCards: 0,
+      completionPercentage: 0,
+      imageUrl: null,
+      backgroundColor: null
+    });
+
     // Generate JWT token directly
     const token = AuthService.generateToken(user.id);
 
