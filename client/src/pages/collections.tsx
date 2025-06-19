@@ -125,18 +125,30 @@ export default function Collections() {
                 className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group"
               >
                 <div 
-                  className="h-16 relative bg-gradient-to-br"
+                  className="h-24 relative bg-gradient-to-br flex items-center justify-center"
                   style={{ 
                     background: `linear-gradient(135deg, ${collection.backgroundColor || '#F37261'}, ${collection.backgroundColor || '#F37261'}dd)` 
                   }}
                 >
-                  <div className="absolute top-3 right-3 bg-black/20 text-white text-xs px-2 py-1 rounded-full">
-                    {collection.completionPercentage}%
-                  </div>
-                  
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/50 to-transparent p-3">
+                  {/* Collection Logo */}
+                  <div className="flex flex-col items-center justify-center text-center">
+                    {collection.name === 'SCORE LIGUE 1' ? (
+                      <img 
+                        src="/attached_assets/image%2029_1750232088999.png" 
+                        alt="Score Ligue 1 logo"
+                        className="w-12 h-12 object-contain mb-1"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-1">
+                        <Layers className="w-6 h-6 text-white" />
+                      </div>
+                    )}
                     <h3 className="font-bold text-white font-poppins text-sm">{collection.name}</h3>
                     <p className="text-white/80 text-xs">{collection.season}</p>
+                  </div>
+                  
+                  <div className="absolute top-2 right-2 bg-black/20 text-white text-xs px-2 py-1 rounded-full">
+                    {collection.completionPercentage}%
                   </div>
                 </div>
                 
