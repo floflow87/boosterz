@@ -110,7 +110,15 @@ export default function CollectionDetail() {
       }
     });
     
-    return Array.from(playerGroups.values());
+    return Array.from(playerGroups.values()).sort((a, b) => {
+      // Extract number from reference (e.g., "01" from "SL2324-01")
+      const getCardNumber = (ref: string) => {
+        const match = ref.match(/-(\d+)$/);
+        return match ? parseInt(match[1], 10) : 999;
+      };
+      
+      return getCardNumber(a.reference) - getCardNumber(b.reference);
+    });
   };
 
   const filteredCards = getUniquePlayerCards();
@@ -461,7 +469,7 @@ export default function CollectionDetail() {
 
         {/* Category Tabs - Badge Style - Sticky */}
         <div className="sticky top-0 z-50 pb-4 mb-4 bg-black pt-2 -mx-3 px-3">
-          <div className="flex space-x-2 overflow-x-hidden min-h-[40px] items-center pl-2">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[40px] items-center pl-2">
             <button
             onClick={() => setFilter("bases")}
             className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${

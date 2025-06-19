@@ -129,7 +129,7 @@ export default function CardTradePanel({ card, isOpen, onClose }: CardTradePanel
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1"
+              className="flex-1 text-black"
             >
               Annuler
             </Button>

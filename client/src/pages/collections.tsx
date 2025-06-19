@@ -46,13 +46,12 @@ export default function Collections() {
 
   if (userLoading || collectionsLoading) {
     return (
-      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-[hsl(9,85%,67%)] border-t-transparent rounded-full animate-spin"></div>
             <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-orange-400 rounded-full animate-spin animation-delay-150"></div>
           </div>
-          <div className="text-white font-poppins text-lg animate-pulse">Chargement des collections...</div>
         </div>
       </div>
     );
