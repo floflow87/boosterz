@@ -132,12 +132,20 @@ export default function CollectionDetail() {
           if (/^\d+$/.test(ref)) {
             return parseInt(ref, 10);
           }
-          // Pour les références avec tiret comme "SL2324-01", "001-L", etc.
-          const match = ref.match(/-?(\d+)(?:-|$)/);
+          // Pour les références avec suffixe comme "001-L", "001-S", etc.
+          const match = ref.match(/^(\d+)/);
           return match ? parseInt(match[1], 10) : 999;
         };
         
-        return getCardNumber(a.reference) - getCardNumber(b.reference);
+        const aNum = getCardNumber(a.reference);
+        const bNum = getCardNumber(b.reference);
+        
+        // Si les numéros de base sont identiques, trier par référence complète
+        if (aNum === bNum) {
+          return a.reference.localeCompare(b.reference);
+        }
+        
+        return aNum - bNum;
       });
     }
     

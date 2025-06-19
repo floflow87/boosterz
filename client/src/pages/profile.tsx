@@ -101,7 +101,8 @@ export default function Profile() {
       phone: "",
       address: "",
       city: "",
-      bio: ""
+      bio: "",
+      avatar: ""
     });
   };
 
@@ -167,7 +168,7 @@ export default function Profile() {
             <div className="w-32 h-32 bg-gradient-to-br from-[hsl(9,85%,67%)] to-orange-500 rounded-full flex items-center justify-center mb-4">
               {(isEditing && formData.avatar) || user?.avatar ? (
                 <img 
-                  src={isEditing && formData.avatar ? formData.avatar : user?.avatar} 
+                  src={isEditing && formData.avatar ? formData.avatar : user?.avatar || ""} 
                   alt="Avatar"
                   className="w-28 h-28 rounded-full object-cover"
                 />
