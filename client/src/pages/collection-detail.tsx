@@ -128,7 +128,12 @@ export default function CollectionDetail() {
       // Pour les autres filtres, trier par numéro de référence
       sortedCards.sort((a, b) => {
         const getCardNumber = (ref: string) => {
-          const match = ref.match(/-(\d+)$/);
+          // Pour les références simples comme "001", "002", etc.
+          if (/^\d+$/.test(ref)) {
+            return parseInt(ref, 10);
+          }
+          // Pour les références avec tiret comme "SL2324-01", "001-L", etc.
+          const match = ref.match(/-?(\d+)(?:-|$)/);
           return match ? parseInt(match[1], 10) : 999;
         };
         

@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Camera, Edit, Save, X } from "lucide-react";
+import { ArrowLeft, Camera, Edit, Save, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import HaloBlur from "@/components/halo-blur";
 import { apiRequest } from "@/lib/queryClient";
@@ -12,6 +12,7 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -19,7 +20,8 @@ export default function Profile() {
     phone: "",
     address: "",
     city: "",
-    bio: ""
+    bio: "",
+    avatar: ""
   });
 
   const { data: user, isLoading } = useQuery<User>({
@@ -49,6 +51,27 @@ export default function Profile() {
     }
   });
 
+  const handleAvatarUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "Erreur",
+          description: "La taille de l'image ne doit pas dépasser 5MB.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64Image = e.target?.result as string;
+        setFormData(prev => ({ ...prev, avatar: base64Image }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleEdit = () => {
     if (user) {
       setFormData({
@@ -58,7 +81,8 @@ export default function Profile() {
         phone: user.phone || "",
         address: user.address || "",
         city: user.city || "",
-        bio: user.bio || ""
+        bio: user.bio || "",
+        avatar: user.avatar || ""
       });
       setIsEditing(true);
     }
@@ -141,9 +165,9 @@ export default function Profile() {
         <div className="flex flex-col items-center mb-8">
           <div className="relative">
             <div className="w-32 h-32 bg-gradient-to-br from-[hsl(9,85%,67%)] to-orange-500 rounded-full flex items-center justify-center mb-4">
-              {user?.avatar ? (
+              {(isEditing && formData.avatar) || user?.avatar ? (
                 <img 
-                  src={user.avatar} 
+                  src={isEditing && formData.avatar ? formData.avatar : user?.avatar} 
                   alt="Avatar"
                   className="w-28 h-28 rounded-full object-cover"
                 />
@@ -156,10 +180,20 @@ export default function Profile() {
               )}
             </div>
             {isEditing && (
-              <button className="absolute bottom-2 right-2 p-2 bg-[hsl(9,85%,67%)] rounded-full shadow-lg">
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-2 right-2 p-2 bg-[hsl(9,85%,67%)] rounded-full shadow-lg hover:bg-[hsl(9,85%,60%)] transition-colors"
+              >
                 <Camera className="w-4 h-4 text-white" />
               </button>
             )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarUpload}
+              className="hidden"
+            />
           </div>
         </div>
 
