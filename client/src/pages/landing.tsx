@@ -21,7 +21,7 @@ export default function Landing() {
   const authMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      return await apiRequest(endpoint, "POST", data);
+      return await apiRequest("POST", endpoint, data);
     },
     onSuccess: (response: any) => {
       localStorage.setItem('authToken', response.token);
@@ -75,20 +75,6 @@ export default function Landing() {
             <h1 className="text-4xl md:text-5xl font-bold font-luckiest mb-4">
               <span className="text-[hsl(9,85%,67%)]">Card</span>Collector
             </h1>
-            <p className="text-xl text-gray-300 mb-8">
-              L'application ultime pour gérer vos collections de cartes de sport
-            </p>
-            
-            {/* Features grid */}
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {features.map((feature, index) => (
-                <div key={index} className="bg-gray-800/50 rounded-lg p-4 border border-gray-700/50">
-                  <feature.icon className="w-8 h-8 text-[hsl(9,85%,67%)] mb-2" />
-                  <h3 className="font-semibold mb-1">{feature.title}</h3>
-                  <p className="text-sm text-gray-400">{feature.description}</p>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Right side - Auth form */}
