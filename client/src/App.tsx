@@ -16,24 +16,38 @@ import Shop from "@/pages/shop";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
 import Welcome from "@/pages/welcome";
+import Landing from "@/pages/landing";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  const authToken = localStorage.getItem('authToken');
+  const onboardingCompleted = localStorage.getItem('onboarding_completed');
+  
+  // Check authentication state
+  if (!authToken) {
+    return <Landing />;
+  }
+  
+  // Check if user needs onboarding
+  if (!onboardingCompleted) {
+    return <Welcome />;
+  }
+
   return (
     <Switch>
-      <Route path="/" component={Splash} />
+      <Route path="/" component={Collections} />
       <Route path="/collections" component={Collections} />
       <Route path="/collection/:id" component={CollectionDetail} />
       <Route path="/all-cards" component={AllCards} />
       <Route path="/social" component={Social} />
       <Route path="/chat" component={Chat} />
       <Route path="/chat/:userId" component={UserChat} />
-      <Route path="/auth" component={Auth} />
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
       <Route path="/profile" component={Profile} />
       <Route path="/welcome" component={Welcome} />
+      <Route path="/landing" component={Landing} />
       <Route component={NotFound} />
     </Switch>
   );

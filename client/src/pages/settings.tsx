@@ -98,7 +98,14 @@ export default function Settings() {
 
         {/* Déconnexion */}
         <div className="pt-4">
-          <button className="w-full bg-red-600 hover:bg-red-700 rounded-lg p-4 flex items-center justify-center space-x-2 transition-colors">
+          <button 
+            onClick={() => {
+              localStorage.removeItem('authToken');
+              localStorage.removeItem('onboarding_completed');
+              window.location.reload();
+            }}
+            className="w-full bg-red-600 hover:bg-red-700 rounded-lg p-4 flex items-center justify-center space-x-2 transition-colors"
+          >
             <LogOut className="w-5 h-5" />
             <span className="font-bold font-poppins">Se déconnecter</span>
           </button>
