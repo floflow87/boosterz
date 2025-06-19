@@ -1123,6 +1123,18 @@ export default function CollectionDetail() {
           teamName: selectedCard.teamName || "Équipe Inconnue"
         } : undefined}
       />
+
+      {/* Trade Panel Modal */}
+      {selectedTradeCard && (
+        <CardTradePanel
+          card={selectedTradeCard}
+          isOpen={showTradePanel}
+          onClose={() => {
+            setShowTradePanel(false);
+            setSelectedTradeCard(null);
+          }}
+        />
+      )}
     </div>
   );
 }

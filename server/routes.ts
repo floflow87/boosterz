@@ -327,6 +327,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update card trade information
+  app.post("/api/cards/:id/trade", async (req, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const { tradeDescription, tradePrice, tradeOnly, isForTrade } = req.body;
+      
+      // For now, just update the basic card properties we can handle
+      const card = await storage.updateCard(cardId, {
+        isForTrade: isForTrade || false
+      });
+      
+      if (!card) {
+        return res.status(404).json({ message: "Card not found" });
+      }
+      
+      res.json(card);
+    } catch (error) {
+      console.error("Error updating card trade info:", error);
+      res.status(500).json({ message: "Failed to update card trade info" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
