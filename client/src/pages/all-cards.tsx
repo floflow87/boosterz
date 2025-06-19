@@ -5,6 +5,7 @@ import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 import CardAddModal from "@/components/card-add-modal";
+import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
@@ -19,11 +20,11 @@ export default function AllCards() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: user } = useQuery<User>({
+  const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ["/api/users/1"],
   });
 
-  const { data: collections } = useQuery<Collection[]>({
+  const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
     queryKey: ["/api/users/1/collections"],
   });
 
@@ -31,6 +32,10 @@ export default function AllCards() {
     queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
     enabled: !!selectedCollection,
   });
+
+  if (userLoading || collectionsLoading) {
+    return <LoadingScreen message="Chargement des cartes..." />;
+  }
 
   const deleteCollectionMutation = useMutation({
     mutationFn: async (collectionId: number) => {
