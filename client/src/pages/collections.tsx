@@ -34,6 +34,7 @@ export default function Collections() {
   const { data: marketplaceCards } = useQuery<Card[]>({
     queryKey: ["/api/cards/marketplace"],
     enabled: activeTab === "marketplace",
+    staleTime: 1 * 60 * 1000, // 1 minute
   });
 
   const handleCollectionClick = (collectionId: number) => {

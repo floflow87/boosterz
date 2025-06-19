@@ -459,19 +459,19 @@ export default function CollectionDetail() {
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
-          <div className="flex flex-col items-center flex-1">
+          <div className="flex flex-col items-center flex-1 justify-center">
             <img 
               src={logoImage}
               alt="Ligue 1 Score"
-              className="w-20 h-20 object-contain mb-2"
+              className="w-20 h-20 object-contain mb-2 mx-auto"
             />
-            <p className="text-gray-400 text-sm italic">2023/24</p>
+            <p className="text-gray-400 text-sm italic text-center">2023/24</p>
           </div>
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
         <div className="sticky top-0 z-50 pb-4 mb-4 bg-black pt-2 -mx-3 px-3">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[40px] items-center pl-2">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[40px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
             onClick={() => setFilter("bases")}
             className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${
@@ -1056,6 +1056,15 @@ export default function CollectionDetail() {
                       >
                         <Handshake className="w-4 h-4" />
                       </button>
+                      {currentCard?.imageUrl && (
+                        <button
+                          onClick={() => setShowFullscreenCard(true)}
+                          className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+                          title="Agrandir l'image"
+                        >
+                          <Search className="w-4 h-4" />
+                        </button>
+                      )}
                       {currentCard?.imageUrl && (
                         <button
                           onClick={async () => {
