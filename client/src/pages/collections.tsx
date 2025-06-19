@@ -10,6 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import avatarImage from "@assets/image_1750196240581.png";
 import cardStackIcon from "@assets/image_1750351528484.png";
+import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
@@ -268,17 +269,11 @@ export default function Collections() {
                     
                     {/* Front card */}
                     <div className="w-24 h-32 bg-white rounded-lg shadow-xl relative z-10">
-                      {collection.name === 'SCORE LIGUE 1' ? (
-                        <img 
-                          src="/attached_assets/image%2029_1750232088999.png" 
-                          alt="Score Ligue 1 card"
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
-                          <Layers className="w-8 h-8 text-white" />
-                        </div>
-                      )}
+                      <img 
+                        src={goldCardsImage} 
+                        alt="Trading cards"
+                        className="w-full h-full object-cover rounded-lg"
+                      />
                     </div>
                   </div>
                 </div>
@@ -372,9 +367,9 @@ export default function Collections() {
                   <div 
                     key={collection.id}
                     onClick={() => setSelectedCollection(collection.id)}
-                    className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50 relative"
+                    className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50 relative group"
                   >
-                    <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center">
+                    <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center relative">
                       {collection.name === 'SCORE LIGUE 1' ? (
                         <>
                           <img 
@@ -391,14 +386,16 @@ export default function Collections() {
                           <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
                         </>
                       )}
+                      {!collection.name?.includes("SCORE LIGUE 1") && (
+                        <button
+                          onClick={(e) => handleDeleteCollection(collection, e)}
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200 text-xs"
+                          title="Supprimer la collection"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
                     </div>
-                    {collection.name !== 'SCORE LIGUE 1' && (
-                      <img 
-                        src={collection.imageUrl || ""} 
-                        alt={`${collection.name} cards`}
-                        className="w-full h-20 object-cover rounded-lg mb-2"
-                      />
-                    )}
                     <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
                       {collection.ownedCards}/{collection.totalCards} cartes
                     </div>
