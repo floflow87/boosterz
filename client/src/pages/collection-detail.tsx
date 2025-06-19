@@ -20,6 +20,7 @@ export default function CollectionDetail() {
   const [showFullscreenCard, setShowFullscreenCard] = useState(false);
   const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
+  const [cardVariantIndexes, setCardVariantIndexes] = useState<Record<string, number>>({});
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -55,23 +56,53 @@ export default function CollectionDetail() {
     queryKey: [`/api/collections/${collectionId}/cards`],
   });
 
-  const filteredCards = cards?.filter(card => {
-    const matchesSearch = !searchTerm || 
-      card.playerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.reference.toLowerCase().includes(searchTerm.toLowerCase());
+  // Group cards by player and show only one card per player
+  const getUniquePlayerCards = () => {
+    if (!cards) return [];
+    
+    const playerGroups = new Map();
+    
+    cards.forEach(card => {
+      const matchesSearch = !searchTerm || 
+        card.playerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.reference.toLowerCase().includes(searchTerm.toLowerCase());
 
-    if (!matchesSearch) return false;
+      if (!matchesSearch) return;
 
-    switch (filter) {
-      case "bases": return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-      case "bases_numbered": return card.cardType === "Parallel Numbered";
-      case "autographs": return card.cardType === "Autograph";
-      case "hits": return card.cardType.includes("Insert");
-      case "special_1_1": return card.cardType === "special_1_1" || card.numbering === "1/1";
-      default: return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-    }
-  });
+      let includeCard = false;
+      switch (filter) {
+        case "bases": 
+          includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+          break;
+        case "bases_numbered": 
+          includeCard = card.cardType === "Parallel Numbered";
+          break;
+        case "autographs": 
+          includeCard = card.cardType === "Autograph";
+          break;
+        case "hits": 
+          includeCard = card.cardType.includes("Insert");
+          break;
+        case "special_1_1": 
+          includeCard = card.cardType === "special_1_1" || card.numbering === "1/1";
+          break;
+        default: 
+          includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+      }
+
+      if (includeCard) {
+        const playerKey = `${card.playerName}-${card.teamName}`;
+        if (!playerGroups.has(playerKey)) {
+          playerGroups.set(playerKey, card);
+        }
+      }
+    });
+    
+    return Array.from(playerGroups.values());
+  };
+
+  const filteredCards = getUniquePlayerCards();
 
   if (collectionLoading || cardsLoading) {
     return (
@@ -269,54 +300,54 @@ export default function CollectionDetail() {
   return (
     <div className="min-h-screen bg-black text-white">
       <main className="px-3 pt-3 pb-20">
-        {/* Category Tabs */}
-        <div className="flex items-center mb-4 border-b border-gray-700 overflow-x-auto">
+        {/* Category Tabs - Badge Style */}
+        <div className="flex space-x-2 mb-4 overflow-x-auto">
           <button
             onClick={() => setFilter("bases")}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "bases" 
-                ? "text-white border-b-2 border-white" 
-                : "text-gray-400"
+                ? "bg-green-600 text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
             Bases
           </button>
           <button
             onClick={() => setFilter("bases_numbered")}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "bases_numbered" 
-                ? "text-white border-b-2 border-white" 
-                : "text-gray-400"
+                ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
             Bases numérotées
           </button>
           <button
             onClick={() => setFilter("hits")}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "hits" 
-                ? "text-white border-b-2 border-white" 
-                : "text-gray-400"
+                ? "bg-purple-600 text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
             Hits
           </button>
           <button
             onClick={() => setFilter("autographs")}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "autographs" 
-                ? "text-white border-b-2 border-white" 
-                : "text-gray-400"
+                ? "bg-yellow-600 text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
             Autographes
           </button>
           <button
             onClick={() => setFilter("special_1_1")}
-            className={`px-4 py-3 text-sm font-medium whitespace-nowrap ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "special_1_1" 
-                ? "text-white border-b-2 border-white" 
-                : "text-gray-400"
+                ? "bg-black text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
             Spéciales
@@ -341,9 +372,12 @@ export default function CollectionDetail() {
             <div className="w-4 h-4 border border-gray-400"></div>
           </button>
           
-          {/* Info icon */}
-          <button className="p-3 bg-gray-900 border border-gray-700 rounded-lg">
-            <div className="w-4 h-4 bg-gray-600 rounded-full"></div>
+          {/* Photo upload button */}
+          <button 
+            onClick={() => setShowPhotoUpload(true)}
+            className="p-3 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-lg transition-colors"
+          >
+            <Camera className="w-4 h-4 text-white" />
           </button>
         </div>
 
@@ -395,81 +429,120 @@ export default function CollectionDetail() {
 
         {/* Cards Grid */}
         <div className="grid grid-cols-2 gap-3">
-          {filteredCards?.map((card) => (
-            <div 
-              key={card.id} 
-              className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(card)}`}
-            >
-              {/* Checkbox */}
-              <div className="absolute top-2 left-2 z-20">
-                <input
-                  type="checkbox"
-                  checked={selectedCards.has(card.id)}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    handleCardSelection(card.id, e.target.checked);
-                  }}
-                  className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
-                />
-              </div>
-              
-              {/* Card Number Badge */}
-              <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
-                {card.reference}
-              </div>
-              
-              {/* Ownership Status */}
-              {card.isOwned && (
-                <div className="absolute top-8 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
-                  Acquise
-                </div>
-              )}
-              
-              {/* Card Content */}
+          {filteredCards?.map((card, index) => {
+            const variants = getCardVariants(card);
+            const currentVariantIdx = cardVariantIndexes[`${card.playerName}-${card.teamName}`] || 0;
+            const currentVariant = variants[currentVariantIdx] || card;
+            
+            return (
               <div 
-                onClick={() => handleCardSelect(card)}
-                className="cursor-pointer hover:bg-gray-700 transition-colors"
+                key={`${card.playerName}-${card.teamName}`}
+                className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(currentVariant)}`}
               >
-                {/* Card Image */}
-                <div className="aspect-[3/4] bg-gray-600 relative">
-                  {card.imageUrl ? (
-                    <img 
-                      src={card.imageUrl} 
-                      alt={card.playerName || ""} 
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <HelpCircle className="w-12 h-12 text-gray-400 opacity-50" />
-                    </div>
-                  )}
-                  
-                  {/* Player Info Overlay */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
-                    <div className="text-white font-bold text-sm">
-                      {card.playerName?.toUpperCase() || 'JOUEUR INCONNU'}
-                    </div>
-                    <div className="text-gray-300 text-xs">
-                      {card.teamName}
-                    </div>
-                  </div>
+                {/* Checkbox */}
+                <div className="absolute top-2 left-2 z-20">
+                  <input
+                    type="checkbox"
+                    checked={selectedCards.has(currentVariant.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCardSelection(currentVariant.id, e.target.checked);
+                    }}
+                    className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
+                  />
                 </div>
                 
-                {/* Card Info */}
-                <div className="p-3">
-                  <div className="text-gray-400 text-xs mt-1">
-                    {card.rarity || 'Base'}
+                {/* Variant Navigation */}
+                {variants.length > 1 && (
+                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-1 bg-black bg-opacity-70 rounded-lg px-2 py-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const playerKey = `${card.playerName}-${card.teamName}`;
+                        const newIndex = Math.max(0, currentVariantIdx - 1);
+                        setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+                      }}
+                      disabled={currentVariantIdx === 0}
+                      className="p-1 text-white disabled:opacity-30 hover:bg-white hover:bg-opacity-20 rounded"
+                    >
+                      <ChevronLeft className="w-3 h-3" />
+                    </button>
+                    <span className="text-white text-xs font-medium">
+                      {currentVariantIdx + 1}/{variants.length}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const playerKey = `${card.playerName}-${card.teamName}`;
+                        const newIndex = Math.min(variants.length - 1, currentVariantIdx + 1);
+                        setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+                      }}
+                      disabled={currentVariantIdx === variants.length - 1}
+                      className="p-1 text-white disabled:opacity-30 hover:bg-white hover:bg-opacity-20 rounded"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
                   </div>
-                  <div className="text-gray-400 text-xs">
-                    {(() => {
-                      const variants = getCardVariants(card);
-                      return `${variants.length} variante${variants.length > 1 ? 's' : ''}`;
-                    })()}
+                )}
+                
+                {/* Card Type Badge */}
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+                  {currentVariant.cardType === "Base" ? "Base" : 
+                   currentVariant.cardType === "Parallel Laser" ? "Laser" :
+                   currentVariant.cardType === "Parallel Swirl" ? "Swirl" : 
+                   currentVariant.cardType}
+                </div>
+                
+                {/* Ownership Status */}
+                {currentVariant.isOwned && (
+                  <div className="absolute top-8 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                    Acquise
+                  </div>
+                )}
+                
+                {/* Card Content */}
+                <div 
+                  onClick={() => handleCardSelect(currentVariant)}
+                  className="cursor-pointer hover:bg-gray-700 transition-colors"
+                >
+                  {/* Card Image */}
+                  <div className="aspect-[3/4] bg-gray-600 relative">
+                    {currentVariant.imageUrl ? (
+                      <img 
+                        src={currentVariant.imageUrl} 
+                        alt={currentVariant.playerName || ""} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <HelpCircle className="w-12 h-12 text-gray-400 opacity-50" />
+                      </div>
+                    )}
+                    
+                    {/* Player Info Overlay */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
+                      <div className="text-white font-bold text-sm">
+                        {currentVariant.playerName?.toUpperCase() || 'JOUEUR INCONNU'}
+                      </div>
+                      <div className="text-gray-300 text-xs">
+                        {currentVariant.teamName}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Card Info */}
+                  <div className="p-3">
+                    <div className="text-gray-400 text-xs mt-1">
+                      {currentVariant.rarity || 'Base'}
+                    </div>
+                    <div className="text-gray-400 text-xs">
+                      Référence: {currentVariant.reference}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </main>
 
