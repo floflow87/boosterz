@@ -14,6 +14,10 @@ export default function AllCards() {
   const [viewMode, setViewMode] = useState<"grid" | "gallery">("grid");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: user } = useQuery<User>({
     queryKey: ["/api/users/1"],
@@ -27,6 +31,51 @@ export default function AllCards() {
     queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
     enabled: !!selectedCollection,
   });
+
+  const deleteCollectionMutation = useMutation({
+    mutationFn: async (collectionId: number) => {
+      return apiRequest("DELETE", `/api/collections/${collectionId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      toast({
+        title: "Collection supprimée",
+        description: "La collection a été supprimée avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      setShowDeleteModal(false);
+      setCollectionToDelete(null);
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la collection.",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleDeleteCollection = (collection: Collection, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    if (collection.id === 1 || collection.name?.includes("SCORE LIGUE 1")) {
+      toast({
+        title: "Action non autorisée",
+        description: "La collection Score Ligue 1 2023/24 ne peut pas être supprimée.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setCollectionToDelete(collection);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteCollection = () => {
+    if (collectionToDelete) {
+      deleteCollectionMutation.mutate(collectionToDelete.id);
+    }
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
@@ -110,15 +159,24 @@ export default function AllCards() {
                   setTimeout(() => target.classList.remove('clicked'), 1800);
                   setSelectedCollection(collection.id);
                 }}
-                className="card-clickable bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer"
+                className="card-clickable bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer group"
               >
-                <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center">
+                <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center relative">
                   <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
                   <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                  {!collection.name?.includes("SCORE LIGUE 1") && (
+                    <button
+                      onClick={(e) => handleDeleteCollection(collection, e)}
+                      className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200 text-xs"
+                      title="Supprimer la collection"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                  )}
                 </div>
                 <img 
-                  src={collection.imageUrl || ""} 
-                  alt={`${collection.name} cards`}
+                  src={goldCardsImage} 
+                  alt="Trading cards"
                   className="w-full h-20 object-cover rounded-lg mb-2"
                 />
                 <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
@@ -247,6 +305,44 @@ export default function AllCards() {
         collections={collections || []}
         selectedCollection={selectedCollection || undefined}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && collectionToDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[hsl(214,35%,22%)] rounded-xl p-6 max-w-sm w-full">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                <Trash2 className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-white">Supprimer la collection</h3>
+                <p className="text-sm text-gray-400">Cette action est irréversible</p>
+              </div>
+            </div>
+            
+            <p className="text-gray-300 mb-6">
+              Êtes-vous sûr de vouloir supprimer la collection "<span className="font-medium text-white">{collectionToDelete.name}</span>" ? 
+              Toutes les cartes de cette collection seront également supprimées.
+            </p>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="flex-1 py-2 px-4 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmDeleteCollection}
+                disabled={deleteCollectionMutation.isPending}
+                className="flex-1 py-2 px-4 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+              >
+                {deleteCollectionMutation.isPending ? "Suppression..." : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Navigation />
     </div>
