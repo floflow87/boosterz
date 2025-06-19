@@ -516,13 +516,12 @@ export default function CollectionDetail() {
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
-          <div className="flex flex-col items-center flex-1">
-            <h1 className="text-xl font-bold text-white text-center mb-1">
+          <div className="flex flex-col flex-1 ml-2">
+            <h1 className="text-xl font-bold text-white mb-1">
               {collection?.name || "Collection"}
             </h1>
-            <p className="text-gray-400 text-sm italic text-center">2023/24</p>
+            <p className="text-gray-400 text-sm italic">2023/24</p>
           </div>
-          <div className="w-10"></div>
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
