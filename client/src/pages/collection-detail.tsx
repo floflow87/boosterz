@@ -502,7 +502,7 @@ export default function CollectionDetail() {
   };
 
   if (collectionLoading || cardsLoading) {
-    return <LoadingScreen />;
+    return <LoadingScreen message="Chargement de la collection..." />;
   }
 
   return (
@@ -517,11 +517,9 @@ export default function CollectionDetail() {
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
           <div className="flex flex-col items-center flex-1">
-            <img 
-              src={logoImage}
-              alt="Ligue 1 Score"
-              className="w-20 h-20 object-contain mb-2"
-            />
+            <h1 className="text-xl font-bold text-white text-center mb-1">
+              {collection?.name || "Collection"}
+            </h1>
             <p className="text-gray-400 text-sm italic text-center">2023/24</p>
           </div>
           <div className="w-10"></div>
@@ -585,7 +583,7 @@ export default function CollectionDetail() {
         </div>
 
         {/* Search Bar */}
-        <div className="flex items-center gap-3 mb-2">
+        <div className="flex items-center gap-3 mb-2 mt-2">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
@@ -652,7 +650,8 @@ export default function CollectionDetail() {
             <div className="mb-4">
               <button
                 onClick={handleSelectAll}
-                className="text-blue-400 text-sm hover:text-blue-300"
+                className="text-sm hover:opacity-80"
+                style={{ color: '#F37261' }}
               >
                 Tout sélectionner
               </button>
