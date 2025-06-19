@@ -22,16 +22,13 @@ export default function Profile() {
     bio: ""
   });
 
-  const { data: user, isLoading } = useQuery({
+  const { data: user, isLoading } = useQuery<User>({
     queryKey: ["/api/users/1"]
   });
 
   const updateProfileMutation = useMutation({
     mutationFn: async (userData: Partial<User>) => {
-      return await apiRequest("/api/auth/profile", {
-        method: "PUT",
-        body: JSON.stringify(userData)
-      });
+      return await apiRequest("/api/auth/profile", "PUT", userData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users/1"] });

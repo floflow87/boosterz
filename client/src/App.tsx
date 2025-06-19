@@ -14,6 +14,8 @@ import Auth from "@/pages/auth";
 import Community from "@/pages/community";
 import Shop from "@/pages/shop";
 import Settings from "@/pages/settings";
+import Profile from "@/pages/profile";
+import Welcome from "@/pages/welcome";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -30,6 +32,8 @@ function Router() {
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
+      <Route path="/profile" component={Profile} />
+      <Route path="/welcome" component={Welcome} />
       <Route component={NotFound} />
     </Switch>
   );
