@@ -30,12 +30,14 @@ export default function Profile() {
     mutationFn: async (userData: Partial<User>) => {
       return await apiRequest("PUT", "/api/users/1", userData);
     },
-    onSuccess: () => {
+    onSuccess: (updatedUser) => {
       queryClient.invalidateQueries({ queryKey: ["/api/users/1"] });
+      queryClient.setQueryData(["/api/users/1"], updatedUser);
       setIsEditing(false);
       toast({
         title: "Profil mis à jour",
-        description: "Vos informations ont été sauvegardées avec succès."
+        description: "Vos informations ont été sauvegardées avec succès.",
+        className: "bg-green-600 text-white border-green-700"
       });
     },
     onError: () => {

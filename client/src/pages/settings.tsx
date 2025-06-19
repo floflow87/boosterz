@@ -78,6 +78,26 @@ export default function Settings() {
 
 
 
+        {/* Revoir la visite guidée */}
+        <div className="pt-4">
+          <button 
+            onClick={() => {
+              localStorage.removeItem('onboarding_completed');
+              setLocation('/welcome');
+            }}
+            className="w-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,30%)] rounded-lg p-4 flex items-center justify-between transition-colors"
+          >
+            <div className="flex items-center space-x-3">
+              <HelpCircle className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+              <div className="text-left">
+                <h3 className="font-bold font-poppins">Revoir la visite guidée</h3>
+                <p className="text-sm text-[hsl(212,23%,69%)]">Reprendre l'introduction</p>
+              </div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+          </button>
+        </div>
+
         {/* Déconnexion */}
         <div className="pt-4">
           <button 

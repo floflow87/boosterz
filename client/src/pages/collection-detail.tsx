@@ -112,15 +112,31 @@ export default function CollectionDetail() {
       }
     });
     
-    return Array.from(playerGroups.values()).sort((a, b) => {
-      // Extract number from reference (e.g., "01" from "SL2324-01")
-      const getCardNumber = (ref: string) => {
-        const match = ref.match(/-(\d+)$/);
-        return match ? parseInt(match[1], 10) : 999;
-      };
-      
-      return getCardNumber(a.reference) - getCardNumber(b.reference);
-    });
+    let sortedCards = Array.from(playerGroups.values());
+    
+    // Pour les hits, trier par type de carte puis par joueur
+    if (filter === "hits") {
+      sortedCards.sort((a, b) => {
+        // D'abord par type de carte
+        if (a.cardType !== b.cardType) {
+          return a.cardType.localeCompare(b.cardType);
+        }
+        // Puis par nom de joueur
+        return (a.playerName || "").localeCompare(b.playerName || "");
+      });
+    } else {
+      // Pour les autres filtres, trier par numéro de référence
+      sortedCards.sort((a, b) => {
+        const getCardNumber = (ref: string) => {
+          const match = ref.match(/-(\d+)$/);
+          return match ? parseInt(match[1], 10) : 999;
+        };
+        
+        return getCardNumber(a.reference) - getCardNumber(b.reference);
+      });
+    }
+    
+    return sortedCards;
   };
 
   const filteredCards = getUniquePlayerCards();
