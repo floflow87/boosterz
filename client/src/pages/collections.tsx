@@ -11,7 +11,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"collections" | "cards">("collections");
+  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace">("collections");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel">("grid");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -31,6 +31,11 @@ export default function Collections() {
     enabled: !!selectedCollection && activeTab === "cards",
   });
 
+  const { data: marketplaceCards } = useQuery<Card[]>({
+    queryKey: ["/api/cards/marketplace"],
+    enabled: activeTab === "marketplace",
+  });
+
   const handleCollectionClick = (collectionId: number) => {
     if (activeTab === "collections") {
       setLocation(`/collection/${collectionId}`);
@@ -42,7 +47,13 @@ export default function Collections() {
   if (userLoading || collectionsLoading) {
     return (
       <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-[hsl(9,85%,67%)] border-t-transparent rounded-full animate-spin"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-orange-400 rounded-full animate-spin animation-delay-150"></div>
+          </div>
+          <div className="text-white font-poppins text-lg animate-pulse">Chargement des collections...</div>
+        </div>
       </div>
     );
   }
@@ -112,6 +123,16 @@ export default function Collections() {
           >
             Collections
           </button>
+          <button 
+            onClick={() => setActiveTab("marketplace")}
+            className={`pb-2 font-medium ${
+              activeTab === "marketplace" 
+                ? "text-[hsl(9,85%,67%)] border-b-2 border-[hsl(9,85%,67%)]" 
+                : "text-[hsl(212,23%,69%)]"
+            }`}
+          >
+            A la vente
+          </button>
           <button className="pb-2 text-[hsl(212,23%,69%)]">Decks</button>
         </div>
 
@@ -128,7 +149,7 @@ export default function Collections() {
                 <div className="p-4 pb-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
+                      <h3 className="font-bold text-white font-poppins text-base">{collection.name}</h3>
                       <p className="text-white/60 text-sm italic">{collection.season}</p>
                     </div>
                     <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-1 rounded-full font-medium">
@@ -138,12 +159,7 @@ export default function Collections() {
                 </div>
 
                 {/* Card carousel area */}
-                <div 
-                  className="h-48 relative bg-gradient-to-br flex items-center justify-center overflow-hidden"
-                  style={{ 
-                    background: `linear-gradient(135deg, ${collection.backgroundColor || '#F37261'}, ${collection.backgroundColor || '#F37261'}dd)` 
-                  }}
-                >
+                <div className="h-48 relative flex items-center justify-center overflow-hidden bg-slate-700">
                   {/* Simulated card carousel - multiple overlapping cards */}
                   <div className="relative flex items-center justify-center">
                     {/* Back cards */}
