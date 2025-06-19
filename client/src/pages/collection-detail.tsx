@@ -134,8 +134,15 @@ export default function CollectionDetail() {
 
   const handleSelectAll = () => {
     if (!filteredCards) return;
-    const allCardIds = new Set(filteredCards.map(card => card.id));
-    setSelectedCards(allCardIds);
+    // Only select the currently visible variant for each player
+    const visibleCardIds = new Set(filteredCards.map(card => {
+      const variants = getCardVariants(card);
+      const playerKey = `${card.playerName}-${card.teamName}`;
+      const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
+      const currentVariant = variants[currentVariantIdx] || card;
+      return currentVariant.id;
+    }));
+    setSelectedCards(visibleCardIds);
     setShowBulkActions(true);
   };
 
@@ -301,7 +308,7 @@ export default function CollectionDetail() {
     <div className="min-h-screen bg-black text-white">
       <main className="px-3 pt-3 pb-20">
         {/* Category Tabs - Badge Style */}
-        <div className="flex space-x-2 mb-4 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 mb-4">
           <button
             onClick={() => setFilter("bases")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
