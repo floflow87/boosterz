@@ -21,7 +21,13 @@ export default function Landing() {
   const authMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      return await apiRequest("POST", endpoint, data);
+      
+      // For login, send username as email field since backend expects email field
+      const requestData = isLogin 
+        ? { email: data.username, password: data.password }
+        : data;
+      
+      return await apiRequest("POST", endpoint, requestData);
     },
     onSuccess: (response: any) => {
       localStorage.setItem('authToken', response.token);
