@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake } from "lucide-react";
 import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
@@ -11,6 +11,7 @@ import logoImage from "@assets/image 29_1750317707391.png";
 
 export default function CollectionDetail() {
   const params = useParams();
+  const [, setLocation] = useLocation();
   const collectionId = params.id ? parseInt(params.id) : 1;
   const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
@@ -424,13 +425,21 @@ export default function CollectionDetail() {
     <div className="min-h-screen bg-black text-white">
       <main className="px-3 pt-3 pb-20" id="collection-top">
         {/* Collection Header */}
-        <div className="flex flex-col items-center mb-6">
-          <img 
-            src={logoImage}
-            alt="Ligue 1 Score"
-            className="w-20 h-20 object-contain mb-2"
-          />
-          <p className="text-gray-400 text-sm italic">2023/24</p>
+        <div className="flex items-center mb-6">
+          <button
+            onClick={() => setLocation('/collections')}
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors mr-4"
+          >
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+          <div className="flex flex-col items-center flex-1">
+            <img 
+              src={logoImage}
+              alt="Ligue 1 Score"
+              className="w-20 h-20 object-contain mb-2"
+            />
+            <p className="text-gray-400 text-sm italic">2023/24</p>
+          </div>
         </div>
 
         {/* Category Tabs - Badge Style */}
