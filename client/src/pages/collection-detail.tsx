@@ -9,6 +9,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
 import logoImage from "@assets/image 29_1750317707391.png";
+import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
 
 export default function CollectionDetail() {
   const params = useParams();
@@ -518,10 +519,10 @@ export default function CollectionDetail() {
 
         {/* Category Tabs - Badge Style - Sticky */}
         <div className="sticky top-0 z-50 pb-4 mb-2 bg-black pt-2 -mx-3 px-3">
-          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[44px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[52px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
             onClick={() => setFilter("bases")}
-            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "bases" 
                 ? "text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
