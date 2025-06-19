@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Eye, EyeOff, User, Mail, Lock, Phone, MapPin } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,33 +10,25 @@ import { apiRequest } from "@/lib/queryClient";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
-  const [mode, setMode] = useState<"login" | "register">("login");
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    username: "",
-    name: "",
-    phone: "",
-    address: "",
-    city: "",
-    postalCode: "",
-    country: "",
   });
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
       return apiRequest("POST", "/api/auth/login", data);
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       localStorage.setItem("authToken", data.token);
       toast({
         title: "Connexion réussie",
         description: `Bienvenue ${data.user.name}!`,
       });
-      setLocation("/");
+      setLocation("/collections");
     },
     onError: (error: any) => {
       toast({
@@ -47,37 +39,12 @@ export default function Auth() {
     },
   });
 
-  const registerMutation = useMutation({
-    mutationFn: async (data: typeof formData) => {
-      return apiRequest("POST", "/api/auth/register", data);
-    },
-    onSuccess: (data) => {
-      localStorage.setItem("authToken", data.token);
-      toast({
-        title: "Compte créé",
-        description: `Bienvenue ${data.user.name}!`,
-      });
-      setLocation("/");
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erreur d'inscription",
-        description: error.message || "Impossible de créer le compte",
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (mode === "login") {
-      loginMutation.mutate({
-        email: formData.email,
-        password: formData.password,
-      });
-    } else {
-      registerMutation.mutate(formData);
-    }
+    loginMutation.mutate({
+      email: formData.email,
+      password: formData.password,
+    });
   };
 
   const updateFormData = (field: string, value: string) => {
@@ -88,16 +55,7 @@ export default function Auth() {
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="bg-gray-900 rounded-xl p-8 shadow-2xl border border-gray-800">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              {mode === "login" ? "Connexion" : "Inscription"}
-            </h1>
-            <p className="text-gray-400">
-              {mode === "login" 
-                ? "Connectez-vous à votre compte" 
-                : "Créez votre compte pour commencer"}
-            </p>
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {mode === "register" && (
