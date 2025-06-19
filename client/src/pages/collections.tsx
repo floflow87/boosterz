@@ -201,14 +201,75 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="relative pb-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="relative pb-4 wallet-container">
+            <style>{`
+              .wallet-container {
+                perspective: 1000px;
+              }
+              
+              .collections-scroll {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                scroll-behavior: smooth;
+              }
+              
+              .collections-scroll::-webkit-scrollbar {
+                display: none;
+              }
+              
+              .collection-wallet-item {
+                transform-style: preserve-3d;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+              }
+              
+              .collection-wallet-item:hover {
+                transform: translateY(-8px) rotateY(5deg) scale(1.02);
+                box-shadow: 0 12px 40px rgba(243, 114, 97, 0.25);
+              }
+              
+              .collection-wallet-item:nth-child(even):hover {
+                transform: translateY(-8px) rotateY(-5deg) scale(1.02);
+              }
+              
+              .wallet-card-display {
+                position: relative;
+                overflow: hidden;
+                background: linear-gradient(135deg, hsl(216,46%,13%) 0%, hsl(214,35%,15%) 50%, hsl(214,35%,20%) 100%);
+              }
+              
+              .wallet-card-stack {
+                position: relative;
+                transform-style: preserve-3d;
+              }
+              
+              .wallet-card-layer {
+                position: absolute;
+                transition: all 0.3s ease;
+                border-radius: 20px;
+                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(1) {
+                transform: translateX(-8px) translateY(-4px) rotateZ(-3deg);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(2) {
+                transform: translateX(0px) translateY(-2px) rotateZ(0deg);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(3) {
+                transform: translateX(8px) translateY(-6px) rotateZ(3deg);
+              }
+            `}</style>
+            
             <div className="collections-scroll overflow-x-auto">
-              <div className="flex space-x-6 px-4" style={{ width: 'max-content' }}>
+              <div className="flex space-x-8 px-6" style={{ width: 'max-content' }}>
                 {collections?.map((collection) => (
                   <div 
                     key={collection.id}
                     onClick={() => handleCollectionClick(collection.id)}
-                    className="collection-item flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative"
+                    className="collection-wallet-item flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
                   >
                     {/* Header with title and delete button */}
                     <div className="p-6 pb-4">
@@ -231,20 +292,23 @@ export default function Collections() {
                       </div>
                     </div>
 
-                    {/* Card carousel area with golden cards image */}
-                    <div className="h-40 relative flex items-center justify-center overflow-hidden px-6 pb-3">
-                      {/* Carousel container with background color matching the page */}
-                      <div className="relative w-full max-w-md h-28 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-4 shadow-2xl flex items-center justify-center">
-                        {/* Golden cards image - direct placement without white background */}
-                        <img 
-                          src={goldenCardsIcon}
-                          alt="Golden trading cards"
-                          className="w-36 h-36 object-contain rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.3)]"
-                        />
+                    {/* Card carousel area with wallet-style display */}
+                    <div className="h-40 relative flex items-center justify-center overflow-hidden px-6 pb-3 wallet-card-display">
+                      {/* Wallet-style card stack container */}
+                      <div className="relative w-full max-w-md h-32 flex items-center justify-center wallet-card-stack">
+                        {/* Background card layers for wallet effect */}
+                        <div className="wallet-card-layer w-24 h-32 bg-white/10" style={{ zIndex: 1 }}></div>
+                        <div className="wallet-card-layer w-24 h-32 bg-white/15" style={{ zIndex: 2 }}></div>
+                        <div className="wallet-card-layer w-24 h-32 bg-white/20" style={{ zIndex: 3 }}></div>
                         
-                        {/* Background decorative cards */}
-                        <div className="absolute -right-4 -top-4 w-20 h-28 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
-                        <div className="absolute -left-4 -bottom-4 w-20 h-28 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
+                        {/* Main card with golden cards image */}
+                        <div className="relative w-32 h-32 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-3 shadow-2xl flex items-center justify-center" style={{ zIndex: 4 }}>
+                          <img 
+                            src={goldenCardsIcon}
+                            alt="Golden trading cards"
+                            className="w-28 h-28 object-contain rounded-[20px] shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                          />
+                        </div>
                       </div>
                     </div>
                     
