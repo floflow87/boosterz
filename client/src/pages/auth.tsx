@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import HaloBlur from "@/components/halo-blur";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -28,20 +27,16 @@ export default function Auth() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: async (data: { identifier: string; password: string }) => {
-      const response = await apiRequest("POST", "/api/auth/login", data);
-      return response.json();
+    mutationFn: async (data: { email: string; password: string }) => {
+      return apiRequest("POST", "/api/auth/login", data);
     },
-    onSuccess: (data: any) => {
-      if (data.token) {
-        localStorage.setItem("authToken", data.token);
-        toast({
-          title: "Connexion réussie",
-          description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
-        });
-        // Force a page reload to update authentication state
-        window.location.href = "/collections";
-      }
+    onSuccess: (data) => {
+      localStorage.setItem("authToken", data.token);
+      toast({
+        title: "Connexion réussie",
+        description: `Bienvenue ${data.user.name}!`,
+      });
+      setLocation("/");
     },
     onError: (error: any) => {
       toast({
@@ -54,19 +49,15 @@ export default function Auth() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const response = await apiRequest("POST", "/api/auth/register", data);
-      return response.json();
+      return apiRequest("POST", "/api/auth/register", data);
     },
-    onSuccess: (data: any) => {
-      if (data.token) {
-        localStorage.setItem("authToken", data.token);
-        toast({
-          title: "Compte créé",
-          description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
-        });
-        // Force a page reload to update authentication state
-        window.location.href = "/collections";
-      }
+    onSuccess: (data) => {
+      localStorage.setItem("authToken", data.token);
+      toast({
+        title: "Compte créé",
+        description: `Bienvenue ${data.user.name}!`,
+      });
+      setLocation("/");
     },
     onError: (error: any) => {
       toast({
@@ -81,7 +72,7 @@ export default function Auth() {
     e.preventDefault();
     if (mode === "login") {
       loginMutation.mutate({
-        identifier: formData.email, // Use identifier for login
+        email: formData.email,
         password: formData.password,
       });
     } else {
@@ -94,10 +85,9 @@ export default function Auth() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-[#111827] relative">
-      <HaloBlur />
+    <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-md">
-        <div className="rounded-xl p-8 shadow-2xl border border-gray-800 bg-[24354C] font-light">
+        <div className="bg-gray-900 rounded-xl p-8 shadow-2xl border border-gray-800">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
               {mode === "login" ? "Connexion" : "Inscription"}
@@ -149,22 +139,18 @@ export default function Auth() {
 
             <div>
               <Label htmlFor="email" className="text-white mb-2 block">
-                {mode === "login" ? "Nom d'utilisateur ou Email" : "Email"}
+                Email
               </Label>
               <div className="relative">
-                {mode === "login" ? (
-                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                ) : (
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                )}
+                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <Input
                   id="email"
-                  type={mode === "login" ? "text" : "email"}
+                  type="email"
                   required
                   value={formData.email}
                   onChange={(e) => updateFormData("email", e.target.value)}
                   className="bg-gray-800 border-gray-700 text-white pl-10"
-                  placeholder={mode === "login" ? "Floflow87 ou votre@email.com" : "votre@email.com"}
+                  placeholder="votre@email.com"
                 />
               </div>
             </div>

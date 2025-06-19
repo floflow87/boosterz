@@ -5,9 +5,7 @@ import { Users, MessageCircle, Trophy, Star } from "lucide-react";
 export default function Community() {
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20">
-      <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,18%)]">
-        <h1 className="text-2xl font-bold">Communauté</h1>
-      </div>
+      <Header title="Communauté" />
       
       <div className="p-4 space-y-6">
         {/* Stats de la communauté */}

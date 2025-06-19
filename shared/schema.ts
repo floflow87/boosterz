@@ -22,7 +22,6 @@ export const users = pgTable("users", {
   totalCards: integer("total_cards").default(0).notNull(),
   collectionsCount: integer("collections_count").default(0).notNull(),
   completionPercentage: real("completion_percentage").default(0).notNull(),
-  isFirstLogin: boolean("is_first_login").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -277,12 +276,6 @@ export const insertUserSchema = createInsertSchema(users).pick({
   country: true,
   avatar: true,
   bio: true,
-});
-
-// Login schema that accepts username or email
-export const loginSchema = z.object({
-  identifier: z.string().min(1), // Can be username or email
-  password: z.string().min(6),
 });
 
 export const insertConversationSchema = createInsertSchema(conversations).pick({

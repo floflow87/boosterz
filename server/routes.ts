@@ -87,26 +87,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all cards across collections
-  app.get("/api/cards/all", async (req, res) => {
-    try {
-      // Get all collections for the user
-      const collections = await storage.getCollectionsByUserId(1); // Assuming user ID 1 for now
-      let allCards: any[] = [];
-      
-      // Fetch cards from all collections
-      for (const collection of collections) {
-        const cards = await storage.getCardsByCollectionId(collection.id);
-        allCards = allCards.concat(cards);
-      }
-      
-      res.json(allCards);
-    } catch (error) {
-      console.error("Error fetching all cards:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
-
   // Get marketplace cards (cards for trade/sale)
   app.get("/api/cards/marketplace", async (req, res) => {
     try {

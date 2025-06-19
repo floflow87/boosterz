@@ -157,7 +157,7 @@ export default function Social() {
       <main className="relative z-10 px-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4">
-            <div className="flex space-x-4 overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="flex justify-between overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <button
                 onClick={() => setActiveTab("featured")}
                 className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
@@ -185,7 +185,7 @@ export default function Social() {
                 onClick={() => setActiveTab("discover")}
                 className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "discover" 
-                    ? "bg-[hsl(9,85%,67%)] text-white shadow-lg transform scale-105" 
+                    ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >

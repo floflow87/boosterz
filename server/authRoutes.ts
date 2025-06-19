@@ -6,9 +6,9 @@ import { z } from 'zod';
 
 const router = Router();
 
-// Simple login schema
+// Login schema
 const loginSchema = z.object({
-  identifier: z.string().min(1),
+  email: z.string().email(),
   password: z.string().min(6),
 });
 
@@ -37,20 +37,8 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
 
-    // Create default Score Ligue 1 23/24 collection for new user
-    await storage.createCollection({
-      userId: user.id,
-      name: "SCORE LIGUE 1",
-      season: "23/24",
-      totalCards: 2900,
-      ownedCards: 0,
-      completionPercentage: 0,
-      imageUrl: null,
-      backgroundColor: null
-    });
-
-    // Generate JWT token directly
-    const token = AuthService.generateToken(user.id);
+    // Create session
+    const token = await AuthService.createSession(user.id);
 
     res.status(201).json({
       message: 'Compte créé avec succès',
@@ -75,31 +63,22 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   try {
-    const { identifier, password } = req.body;
+    const { email, password } = loginSchema.parse(req.body);
     
-    // Basic validation
-    if (!identifier || !password || password.length < 6) {
-      return res.status(400).json({ message: 'Identifiant et mot de passe requis (minimum 6 caractères)' });
-    }
-    
-    // Find user by username or email
-    let user = await storage.getUserByUsername(identifier);
-    if (!user) {
-      user = await storage.getUserByEmail(identifier);
-    }
-    
+    // Find user by email
+    const user = await storage.getUserByEmail(email);
     if (!user || !user.password) {
-      return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
+      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
     // Verify password
     const isValidPassword = await AuthService.verifyPassword(password, user.password);
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
+      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    // Generate JWT token directly
-    const token = AuthService.generateToken(user.id);
+    // Create session
+    const token = await AuthService.createSession(user.id);
 
     res.json({
       message: 'Connexion réussie',
@@ -140,27 +119,7 @@ router.post('/logout', authenticateToken, async (req: AuthRequest, res) => {
 
 // Get current user
 router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
-  try {
-    const user = await storage.getUser(req.user!.id);
-    if (!user) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
-    }
-
-    res.json({
-      id: user.id,
-      username: user.username,
-      email: user.email,
-      name: user.name,
-      avatar: user.avatar,
-      totalCards: user.totalCards,
-      collectionsCount: user.collectionsCount,
-      completionPercentage: user.completionPercentage,
-      isFirstLogin: user.isFirstLogin,
-    });
-  } catch (error) {
-    console.error('Get user error:', error);
-    res.status(500).json({ message: 'Erreur lors de la récupération de l\'utilisateur' });
-  }
+  res.json({ user: req.user });
 });
 
 // Update user profile
@@ -197,24 +156,6 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
   } catch (error) {
     console.error('Profile update error:', error);
     res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });
-  }
-});
-
-// Mark first login as complete
-router.post('/complete-first-login', authenticateToken, async (req: AuthRequest, res) => {
-  try {
-    const userId = req.user!.id;
-    
-    const updatedUser = await storage.updateUser(userId, { isFirstLogin: false });
-    
-    if (!updatedUser) {
-      return res.status(404).json({ message: 'Utilisateur non trouvé' });
-    }
-    
-    res.json({ message: 'Première connexion marquée comme terminée' });
-  } catch (error) {
-    console.error('Error completing first login:', error);
-    res.status(500).json({ message: 'Erreur lors de la mise à jour' });
   }
 });
 

@@ -1,28 +1,21 @@
-import { AlertCircle, Home } from "lucide-react";
-import { useLocation } from "wouter";
-import Navigation from "@/components/navigation";
+import { Card, CardContent } from "@/components/ui/card";
+import { AlertCircle } from "lucide-react";
 
 export default function NotFound() {
-  const [, setLocation] = useLocation();
-
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-4">
-        <div className="text-center">
-          <AlertCircle className="h-16 w-16 text-[hsl(9,85%,67%)] mx-auto mb-4" />
-          <h1 className="text-3xl font-bold mb-2">Page introuvable</h1>
-          <p className="text-gray-400 mb-6">
-            La page que vous cherchez n'existe pas.
+    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+      <Card className="w-full max-w-md mx-4">
+        <CardContent className="pt-6">
+          <div className="flex mb-4 gap-2">
+            <AlertCircle className="h-8 w-8 text-red-500" />
+            <h1 className="text-2xl font-bold text-gray-900">404 Page Not Found</h1>
+          </div>
+
+          <p className="mt-4 text-sm text-gray-600">
+            Did you forget to add the page to the router?
           </p>
-          <button
-            onClick={() => setLocation("/collections")}
-            className="bg-[hsl(9,85%,67%)] text-white px-6 py-3 rounded-lg flex items-center space-x-2 mx-auto hover:bg-[hsl(9,85%,60%)] transition-colors"
-          >
-            <Home className="w-4 h-4" />
-            <span>Retour à l'accueil</span>
-          </button>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

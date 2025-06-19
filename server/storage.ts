@@ -55,11 +55,6 @@ export class DatabaseStorage implements IStorage {
     return user || undefined;
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user || undefined;
-  }
-
   async createUser(insertUser: InsertUser): Promise<User> {
     const [user] = await db
       .insert(users)
@@ -237,9 +232,9 @@ export class MemStorage implements IStorage {
     // User 1: Floflow87 (with existing collections and cards)
     const user1: User = {
       id: 1,
-      username: "Floflow87",
+      username: "floflow87",
       name: "Floflow87",
-      email: "flotest@yopmail.com",
+      email: "floflow87@test.com",
       password: "$2b$10$ht0lxrfvziNHBCAmNISNweoTubJgtX172uhwIbTrHqOgccK83z9p.",
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       totalCards: 482,
@@ -254,7 +249,6 @@ export class MemStorage implements IStorage {
       isPublic: true,
       followersCount: 0,
       followingCount: 0,
-      isFirstLogin: false,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -263,9 +257,9 @@ export class MemStorage implements IStorage {
     // User 2: Max la Menace (empty collections)
     const user2: User = {
       id: 2,
-      username: "Max la Menace",
+      username: "maxlamenace",
       name: "Max la Menace",
-      email: "Max@yopmail.com",
+      email: "maxlamenace@test.com",
       password: "$2b$10$ht0lxrfvziNHBCAmNISNweoTubJgtX172uhwIbTrHqOgccK83z9p.",
       avatar: null,
       totalCards: 0,
@@ -280,12 +274,11 @@ export class MemStorage implements IStorage {
       isPublic: true,
       followersCount: 0,
       followingCount: 0,
-      isFirstLogin: false,
       createdAt: new Date(),
       updatedAt: new Date()
     };
     this.users.set(2, user2);
-    this.currentUserId = 3;
+    this.currentUserId = 2;
 
     // Collections mock data
     const collections: Collection[] = [
@@ -526,15 +519,6 @@ export class MemStorage implements IStorage {
     return undefined;
   }
 
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    for (const user of this.users.values()) {
-      if (user.email === email) {
-        return user;
-      }
-    }
-    return undefined;
-  }
-
   async createUser(insertUser: InsertUser): Promise<User> {
     const user: User = { 
       ...insertUser, 
@@ -673,4 +657,4 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

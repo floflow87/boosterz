@@ -213,15 +213,6 @@
     display: none;
   }
 
-  .scrollbar-hide {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
   .collection-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
