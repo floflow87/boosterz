@@ -405,6 +405,18 @@ export default function Social() {
           </TabsContent>
 
           <TabsContent value="forsale" className="space-y-4">
+            {/* Barre de recherche pour cartes à la vente */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                type="text"
+                placeholder="Rechercher des cartes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400"
+              />
+            </div>
+            
             {/* Mock cards for sale - Replace with real API call */}
             <div className="grid grid-cols-2 gap-4">
               {[

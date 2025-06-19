@@ -6,6 +6,7 @@ import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
 import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
+import HaloBlur from "@/components/halo-blur";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
@@ -506,8 +507,9 @@ export default function CollectionDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden">
-      <main className="px-3 pt-3 pb-20" id="collection-top">
+    <div className="min-h-screen bg-black text-white overflow-x-hidden relative">
+      <HaloBlur />
+      <main className="px-3 pt-3 pb-20 relative z-10" id="collection-top">
         {/* Collection Header */}
         <div className="flex items-start mb-6">
           <button
@@ -923,6 +925,12 @@ export default function CollectionDetail() {
                         })()}
                       </div>
                     )}
+                    <div className="text-white font-bold text-sm mb-1">
+                      {currentVariant.playerName}
+                    </div>
+                    <div className="text-gray-400 text-xs mb-1">
+                      {currentVariant.teamName}
+                    </div>
                     <div className="text-gray-400 text-xs">
                       Référence: {currentVariant.reference}
                     </div>
