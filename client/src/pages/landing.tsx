@@ -30,14 +30,11 @@ export default function Landing() {
       return await apiRequest("POST", endpoint, requestData);
     },
     onSuccess: (response: any) => {
+      console.log('Login success response:', response);
       localStorage.setItem('authToken', response.token);
       
-      // Si c'est un nouvel utilisateur (inscription), aller à la page de bienvenue
-      if (!isLogin || response.isNewUser) {
-        setLocation('/welcome');
-      } else {
-        setLocation('/collections');
-      }
+      // Force page reload to trigger router re-evaluation
+      window.location.href = '/collections';
     },
     onError: (error: any) => {
       toast({
