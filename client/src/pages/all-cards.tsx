@@ -34,7 +34,7 @@ export default function AllCards() {
   });
 
   if (userLoading || collectionsLoading) {
-    return <LoadingScreen message="Chargement des cartes..." />;
+    return <LoadingScreen />;
   }
 
   const deleteCollectionMutation = useMutation({

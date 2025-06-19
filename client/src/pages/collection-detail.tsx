@@ -485,7 +485,7 @@ export default function CollectionDetail() {
   };
 
   if (collectionLoading || cardsLoading) {
-    return <LoadingScreen message="Chargement de la collection..." />;
+    return <LoadingScreen />;
   }
 
   return (

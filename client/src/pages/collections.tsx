@@ -102,7 +102,7 @@ export default function Collections() {
   };
 
   if (userLoading || collectionsLoading) {
-    return <LoadingScreen message="Chargement de vos collections..." />;
+    return <LoadingScreen />;
   }
 
   return (
