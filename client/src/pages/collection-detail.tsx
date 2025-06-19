@@ -314,7 +314,7 @@ export default function CollectionDetail() {
     <div className="min-h-screen bg-black text-white">
       <main className="px-3 pt-3 pb-20">
         {/* Category Tabs - Badge Style */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex space-x-2 mb-4 overflow-x-auto">
           <button
             onClick={() => setFilter("bases")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
@@ -453,6 +453,18 @@ export default function CollectionDetail() {
                 ? Math.max(0, currentVariantIdx - 1)
                 : Math.min(variants.length - 1, currentVariantIdx + 1);
               setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+              
+              // Update selection to reflect the new variant
+              const newVariant = variants[newIndex];
+              if (selectedCards.has(currentVariant.id) && newVariant) {
+                const newSelection = new Set(selectedCards);
+                newSelection.delete(currentVariant.id);
+                if (newVariant.id !== currentVariant.id) {
+                  // Don't auto-select the new variant
+                }
+                setSelectedCards(newSelection);
+                setShowBulkActions(newSelection.size > 0);
+              }
             };
             
             return (
