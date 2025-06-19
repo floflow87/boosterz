@@ -104,6 +104,12 @@ export default function CollectionDetail() {
 
   const filteredCards = getUniquePlayerCards();
 
+  // Calculate numbered bases count (excluding 1/1 cards)
+  const numberedBasesCount = cards?.filter(card => 
+    card.cardType === "Parallel Numbered" && 
+    card.numbering !== "1/1"
+  ).length || 0;
+
   if (collectionLoading || cardsLoading) {
     return (
       <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
@@ -327,7 +333,7 @@ export default function CollectionDetail() {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Bases numérotées
+            Bases numérotées ({numberedBasesCount})
           </button>
           <button
             onClick={() => setFilter("hits")}
