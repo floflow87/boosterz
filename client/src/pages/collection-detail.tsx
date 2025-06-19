@@ -564,22 +564,56 @@ export default function CollectionDetail() {
                       <img 
                         src={currentVariant.imageUrl} 
                         alt={currentVariant.playerName || ""} 
-                        className="w-full h-full object-cover transition-transform duration-300 ease-out hover:scale-105 active:scale-110"
+                        className="w-full h-full object-cover transition-transform duration-300 ease-out"
                         style={{
                           touchAction: 'pan-x pan-y',
-                          willChange: 'transform'
+                          willChange: 'transform',
+                          transform: (() => {
+                            const cardKey = `card-${currentVariant.id}`;
+                            const panState = panStates[cardKey];
+                            if (panState) {
+                              return `translate(${panState.x * 0.3}px, ${panState.y * 0.3}px) scale(${panState.scale})`;
+                            }
+                            return 'translate(0px, 0px) scale(1)';
+                          })()
                         }}
                         onTouchStart={(e) => {
-                          e.currentTarget.style.transition = 'transform 0.1s ease-out';
-                        }}
-                        onTouchEnd={(e) => {
-                          e.currentTarget.style.transition = 'transform 0.3s ease-out';
+                          e.preventDefault();
+                          const touch = e.touches[0];
+                          const startX = touch.clientX;
+                          const startY = touch.clientY;
+                          
+                          const handleTouchMove = (moveEvent: TouchEvent) => {
+                            const moveTouch = moveEvent.touches[0];
+                            handleCardPan(currentVariant.id, startX, startY, moveTouch.clientX, moveTouch.clientY);
+                          };
+                          
+                          const handleTouchEnd = () => {
+                            setTimeout(() => resetCardPan(currentVariant.id), 100);
+                            document.removeEventListener('touchmove', handleTouchMove);
+                            document.removeEventListener('touchend', handleTouchEnd);
+                          };
+                          
+                          document.addEventListener('touchmove', handleTouchMove, { passive: false });
+                          document.addEventListener('touchend', handleTouchEnd);
                         }}
                         onMouseDown={(e) => {
-                          e.currentTarget.style.transition = 'transform 0.1s ease-out';
-                        }}
-                        onMouseUp={(e) => {
-                          e.currentTarget.style.transition = 'transform 0.3s ease-out';
+                          e.preventDefault();
+                          const startX = e.clientX;
+                          const startY = e.clientY;
+                          
+                          const handleMouseMove = (moveEvent: MouseEvent) => {
+                            handleCardPan(currentVariant.id, startX, startY, moveEvent.clientX, moveEvent.clientY);
+                          };
+                          
+                          const handleMouseUp = () => {
+                            setTimeout(() => resetCardPan(currentVariant.id), 100);
+                            document.removeEventListener('mousemove', handleMouseMove);
+                            document.removeEventListener('mouseup', handleMouseUp);
+                          };
+                          
+                          document.addEventListener('mousemove', handleMouseMove);
+                          document.addEventListener('mouseup', handleMouseUp);
                         }}
                       />
                     ) : (
