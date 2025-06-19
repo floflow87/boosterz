@@ -57,6 +57,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const [showCardTypeSuggestions, setShowCardTypeSuggestions] = useState(false);
   
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -608,6 +609,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                     style={{ perspective: '1000px' }}
                   >
                     <img
+                      ref={imageRef}
                       src={selectedImage || ""}
                       alt="Photo importée"
                       className="w-full h-full object-cover rounded-lg border-2 border-gray-200 cursor-pointer transition-transform duration-500 hover:scale-105"
@@ -616,6 +618,10 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                         willChange: 'transform'
                       }}
                       onMouseDown={(e) => {
+                        e.preventDefault();
+                        const target = imageRef.current;
+                        if (!target) return;
+                        
                         const startX = e.clientX;
                         const startY = e.clientY;
                         let rotateX = 0;
@@ -626,11 +632,15 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                           const deltaY = moveEvent.clientY - startY;
                           rotateY = deltaX * 0.5;
                           rotateX = -deltaY * 0.5;
-                          e.currentTarget.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                          if (target) {
+                            target.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                          }
                         };
                         
                         const handleMouseUp = () => {
-                          e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                          if (target) {
+                            target.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                          }
                           document.removeEventListener('mousemove', handleMouseMove);
                           document.removeEventListener('mouseup', handleMouseUp);
                         };
@@ -639,6 +649,10 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                         document.addEventListener('mouseup', handleMouseUp);
                       }}
                       onTouchStart={(e) => {
+                        e.preventDefault();
+                        const target = imageRef.current;
+                        if (!target || !e.touches[0]) return;
+                        
                         const touch = e.touches[0];
                         const startX = touch.clientX;
                         const startY = touch.clientY;
@@ -646,16 +660,21 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
                         let rotateY = 0;
                         
                         const handleTouchMove = (moveEvent: TouchEvent) => {
+                          if (!moveEvent.touches[0]) return;
                           const moveTouch = moveEvent.touches[0];
                           const deltaX = moveTouch.clientX - startX;
                           const deltaY = moveTouch.clientY - startY;
                           rotateY = deltaX * 0.5;
                           rotateX = -deltaY * 0.5;
-                          e.currentTarget.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                          if (target) {
+                            target.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                          }
                         };
                         
                         const handleTouchEnd = () => {
-                          e.currentTarget.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                          if (target) {
+                            target.style.transform = 'rotateX(0deg) rotateY(0deg)';
+                          }
                           document.removeEventListener('touchmove', handleTouchMove);
                           document.removeEventListener('touchend', handleTouchEnd);
                         };
