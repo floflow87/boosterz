@@ -9,7 +9,7 @@ import CardAddModal from "@/components/card-add-modal";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import avatarImage from "@assets/image_1750196240581.png";
-import cardStackIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750349734399.png";
+import cardStackIcon from "@assets/image_1750351528484.png";
 import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
