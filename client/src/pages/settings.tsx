@@ -1,43 +1,17 @@
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function Settings() {
+  const [, setLocation] = useLocation();
+
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20">
       <Header title="Réglages" />
       
       <div className="p-4 space-y-6">
-        {/* Profil utilisateur */}
-        <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
-            </div>
-            <div className="flex-1">
-              <h2 className="text-xl font-bold font-poppins">FLORENT MARTIN</h2>
-              <p className="text-[hsl(212,23%,69%)]">@flo87</p>
-              <p className="text-sm text-[hsl(212,23%,69%)]">Membre depuis 2023</p>
-            </div>
-            <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
-          </div>
-        </div>
 
-        {/* Statistiques */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">387</div>
-            <div className="text-xs text-[hsl(212,23%,69%)]">Cartes totales</div>
-          </div>
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">1</div>
-            <div className="text-xs text-[hsl(212,23%,69%)]">Collections</div>
-          </div>
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">15%</div>
-            <div className="text-xs text-[hsl(212,23%,69%)]">Complétude</div>
-          </div>
-        </div>
 
         {/* Menu des paramètres */}
         <div className="space-y-4">
@@ -45,12 +19,16 @@ export default function Settings() {
           
           <div className="space-y-2">
             {[
-              { icon: User, title: "Profil", subtitle: "Modifier vos informations" },
-              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes" },
-              { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données" },
-              { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact" }
+              { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile" },
+              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null },
+              { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null },
+              { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null }
             ].map((item, index) => (
-              <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
+              <div 
+                key={index} 
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${item.path ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
+                onClick={() => item.path && setLocation(item.path)}
+              >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <item.icon className="w-5 h-5 text-[hsl(9,85%,67%)]" />

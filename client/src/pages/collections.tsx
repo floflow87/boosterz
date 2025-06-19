@@ -102,11 +102,11 @@ export default function Collections() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '57px' }}>
-          <div className="flex justify-between overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '65px' }}>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[48px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button 
               onClick={() => setActiveTab("cards")}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "cards" 
                   ? "text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -118,7 +118,7 @@ export default function Collections() {
             </button>
             <button 
               onClick={() => setActiveTab("collections")}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "collections" 
                   ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -129,7 +129,7 @@ export default function Collections() {
             </button>
             <button 
               onClick={() => setActiveTab("marketplace")}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "marketplace" 
                   ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -138,7 +138,7 @@ export default function Collections() {
               <TrendingUp className="w-3 h-3 mr-1 inline" />
               A la vente
             </button>
-            <button className="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
+            <button className="px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
               <Package className="w-3 h-3 mr-1 inline" />
               Decks
             </button>
