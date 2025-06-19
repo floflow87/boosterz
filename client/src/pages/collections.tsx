@@ -200,94 +200,101 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="collection-grid gap-6">
+          <div className="space-y-6">
             {collections?.map((collection) => (
               <div 
                 key={collection.id}
                 onClick={() => handleCollectionClick(collection.id)}
-                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative mb-6"
+                className="w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-[1.02] transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative"
               >
-                {/* Header with title and card count */}
-                <div className="p-4 pb-2">
+                {/* Header with title, card count and delete button */}
+                <div className="p-6 pb-4">
                   <div className="flex justify-between items-start">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg flex items-center justify-center">
                         <img 
                           src={cardStackIcon} 
                           alt="Collection icon"
-                          className="w-8 h-8 object-contain"
+                          className="w-10 h-10 object-contain"
                         />
                       </div>
                       <div>
-                        <h3 className="font-bold text-white font-poppins text-base">{collection.name}</h3>
-                        <p className="text-white/60 text-sm italic">{collection.season}</p>
+                        <h3 className="font-bold text-white font-poppins text-xl">{collection.name}</h3>
+                        <p className="text-white/60 text-base italic">{collection.season}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-1 rounded-full font-medium">
-                        x{collection.ownedCards}
+                    <div className="flex items-center gap-3">
+                      <div className="bg-[hsl(9,85%,67%)] text-white text-base px-4 py-2 rounded-full font-medium">
+                        {collection.ownedCards}/{collection.totalCards}
                       </div>
                       {!collection.name?.includes("SCORE LIGUE 1") && (
                         <button
                           onClick={(e) => handleDeleteCollection(collection, e)}
-                          className="opacity-0 group-hover:opacity-100 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200 text-xs"
+                          className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
                           title="Supprimer la collection"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Card carousel area */}
-                <div className="h-48 relative flex items-center justify-center overflow-hidden bg-slate-700">
-                  {/* Simulated card carousel - multiple overlapping cards */}
-                  <div className="relative flex items-center justify-center">
-                    {/* Back cards */}
-                    <div className="absolute -left-8 -top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform rotate-12 opacity-40">
-                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg"></div>
-                    </div>
-                    <div className="absolute -right-8 -top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform -rotate-12 opacity-40">
-                      <div className="w-full h-full bg-gradient-to-br from-green-500 to-blue-500 rounded-lg"></div>
-                    </div>
-                    <div className="absolute -left-6 top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform rotate-6 opacity-60">
-                      <div className="w-full h-full bg-gradient-to-br from-red-500 to-orange-500 rounded-lg"></div>
-                    </div>
-                    <div className="absolute -right-6 top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform -rotate-6 opacity-60">
-                      <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg"></div>
+                {/* Card carousel area - larger and more prominent */}
+                <div className="h-64 relative flex items-center justify-center overflow-hidden px-6 pb-4">
+                  {/* Carousel container mimicking the image */}
+                  <div className="relative w-full max-w-md h-48 bg-gradient-to-br from-purple-400 via-purple-500 to-purple-600 rounded-2xl p-6 shadow-2xl">
+                    {/* Main card content */}
+                    <div className="bg-white rounded-xl h-full p-4 shadow-lg relative overflow-hidden">
+                      <div className="text-2xl font-bold text-gray-800 mb-3">
+                        {collection.name}
+                      </div>
+                      <div className="text-sm text-gray-600 leading-relaxed">
+                        <div className="text-blue-500 font-semibold mb-2">Collection complète à {collection.completionPercentage}%</div>
+                        <div className="text-gray-500">
+                          {collection.ownedCards} cartes possédées sur {collection.totalCards} au total. 
+                          Explorez cette collection et découvrez toutes les cartes disponibles.
+                        </div>
+                      </div>
+                      
+                      {/* Decorative elements */}
+                      <div className="absolute top-2 right-2 w-8 h-8 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full opacity-20"></div>
+                      <div className="absolute bottom-2 left-2 w-6 h-6 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full opacity-30"></div>
                     </div>
                     
-                    {/* Front card */}
-                    <div className="w-24 h-32 bg-white rounded-lg shadow-xl relative z-10">
-                      <img 
-                        src={goldCardsImage} 
-                        alt="Trading cards"
-                        className="w-full h-full object-cover rounded-lg"
-                      />
-                    </div>
+                    {/* Background decorative cards */}
+                    <div className="absolute -right-4 -top-4 w-32 h-44 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
+                    <div className="absolute -left-4 -bottom-4 w-32 h-44 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
                   </div>
                 </div>
                 
-                <div className="p-4 pt-2">
-                  <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                {/* Progress bar */}
+                <div className="px-6 pb-6">
+                  <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-3">
                     <div 
-                      className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
+                      className="bg-[hsl(9,85%,67%)] h-3 rounded-full transition-all duration-300"
                       style={{ width: `${collection.completionPercentage}%` }}
                     ></div>
+                  </div>
+                  <div className="flex justify-between text-sm text-white/60 mt-2">
+                    <span>{collection.completionPercentage}% complété</span>
+                    <span>{collection.totalCards - collection.ownedCards} cartes manquantes</span>
                   </div>
                 </div>
               </div>
             ))}
 
-            {/* Add Collection Button */}
-            <div className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group">
-              <div className="h-full flex flex-col items-center justify-center p-6 text-center">
-                <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                  <Plus className="w-6 h-6 text-white" />
+            {/* Add Collection Button - also full width */}
+            <div 
+              onClick={() => setShowAddModal(true)}
+              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8"
+            >
+              <div className="flex flex-col items-center justify-center text-center">
+                <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Plus className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="font-bold text-white mb-1 font-poppins">Nouvelle Collection</h3>
-                <p className="text-[hsl(212,23%,69%)] text-sm">Ajouter une collection</p>
+                <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
+                <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
               </div>
             </div>
           </div>
@@ -450,17 +457,9 @@ export default function Collections() {
                           style={{ perspective: '1000px' }}
                         >
                           <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 w-40 transition-all duration-300 hover:scale-110 hover:rotate-y-12 hover:shadow-2xl transform-gpu group-hover:z-10 relative">
-                            {card.isOwned && card.imageUrl ? (
-                              <img 
-                                src={card.imageUrl} 
-                                alt={`${card.playerName} card`}
-                                className="w-full h-48 object-cover rounded-lg mb-2"
-                              />
-                            ) : (
-                              <div className="w-full h-48 bg-gray-600 rounded-lg flex items-center justify-center opacity-50 mb-2">
-                                <span className="text-gray-400 text-xs font-poppins">#{card.reference}</span>
-                              </div>
-                            )}
+                            <div className="w-full h-48 bg-gray-600 rounded-lg flex items-center justify-center opacity-50 mb-2">
+                              <span className="text-gray-400 text-xs font-poppins">#{card.reference}</span>
+                            </div>
                             <div className="text-center font-poppins">
                               <div className={`font-medium text-sm ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
                                 {card.isOwned ? card.playerName : '?????'}
@@ -480,17 +479,9 @@ export default function Collections() {
                     {cards.map((card) => (
                       <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3">
                         <div className="w-16 h-20 bg-gray-600 rounded flex-shrink-0">
-                          {card.isOwned && card.imageUrl ? (
-                            <img 
-                              src={card.imageUrl} 
-                              alt={`${card.playerName} card`}
-                              className="w-full h-full object-cover rounded"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center opacity-50">
-                              <span className="text-gray-400 text-xs">{card.reference}</span>
-                            </div>
-                          )}
+                          <div className="w-full h-full flex items-center justify-center opacity-50">
+                            <span className="text-gray-400 text-xs">{card.reference}</span>
+                          </div>
                         </div>
                         <div className="flex-1 font-poppins">
                           <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
@@ -537,17 +528,9 @@ export default function Collections() {
                 {marketplaceCards.filter(card => card.isForTrade).map((card) => (
                   <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 flex items-center space-x-4">
                     <div className="w-16 h-20 bg-gray-600 rounded-lg flex-shrink-0">
-                      {card.imageUrl ? (
-                        <img 
-                          src={card.imageUrl} 
-                          alt={`${card.playerName} card`}
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
-                          #{card.reference}
-                        </div>
-                      )}
+                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        #{card.reference}
+                      </div>
                     </div>
                     
                     <div className="flex-1">
