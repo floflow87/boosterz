@@ -203,10 +203,27 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         setRecognizedCard(`Joueur reconnu: ${recognizedPlayerName} (${Math.round(confidence * 100)}% confiance)`);
         setPlayerName(recognizedPlayerName);
         
-        // Find cards for this player
-        const cardsForPlayer = availableCards.filter(card => 
-          card.playerName === recognizedPlayerName
-        );
+        // Find cards for this player filtered by current category
+        const cardsForPlayer = availableCards.filter(card => {
+          if (card.playerName !== recognizedPlayerName) return false;
+          
+          // Filter by current category tab
+          if (currentFilter) {
+            switch (currentFilter) {
+              case "bases":
+                return card.cardType === "Base";
+              case "bases_numbered":
+                return card.cardType.includes("Parallel");
+              case "hits":
+                return card.cardType.includes("Insert");
+              case "autos":
+                return card.cardType.includes("Auto");
+              default:
+                return true;
+            }
+          }
+          return true;
+        });
         setPlayerCards(cardsForPlayer);
         if (cardsForPlayer.length > 0) {
           setSelectedCardId(cardsForPlayer[0].id);

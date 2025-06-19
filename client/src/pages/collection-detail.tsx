@@ -835,28 +835,7 @@ export default function CollectionDetail() {
                     </p>
                   </div>
 
-                  {/* Variant Navigation */}
-                  {variants.length > 1 && (
-                    <div className="flex items-center justify-between mb-4">
-                      <button
-                        onClick={() => setCurrentVariantIndex(Math.max(0, currentVariantIndex - 1))}
-                        disabled={currentVariantIndex === 0}
-                        className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronLeft className="w-4 h-4 text-white" />
-                      </button>
-                      <span className="text-white text-sm">
-                        {currentVariantIndex + 1} / {variants.length}
-                      </span>
-                      <button
-                        onClick={() => setCurrentVariantIndex(Math.min(variants.length - 1, currentVariantIndex + 1))}
-                        disabled={currentVariantIndex === variants.length - 1}
-                        className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <ChevronRight className="w-4 h-4 text-white" />
-                      </button>
-                    </div>
-                  )}
+
 
                   {/* Card Image */}
                   <div className="mb-4 relative">

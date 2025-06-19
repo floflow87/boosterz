@@ -302,7 +302,11 @@ export class MemStorage implements IStorage {
         numbering: "1/25",
         baseCardId: 1,
         isVariant: true,
-        variants: "Gold"
+        variants: "Gold",
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Variante Red de Mbappé
       {
@@ -321,7 +325,11 @@ export class MemStorage implements IStorage {
         numbering: "1/10",
         baseCardId: 1,
         isVariant: true,
-        variants: "Red"
+        variants: "Red",
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Autre joueur base
       {
@@ -560,6 +568,22 @@ export class MemStorage implements IStorage {
 
   async deleteUserCard(id: number): Promise<boolean> {
     return this.userCards.delete(id);
+  }
+
+  async updateCardTrade(id: number, tradeData: { tradeDescription?: string; tradePrice?: string; tradeOnly: boolean; isForTrade: boolean }): Promise<Card | undefined> {
+    const card = this.cards.get(id);
+    if (!card) return undefined;
+
+    const updatedCard: Card = {
+      ...card,
+      isForTrade: tradeData.isForTrade,
+      tradeDescription: tradeData.tradeDescription || null,
+      tradePrice: tradeData.tradePrice || null,
+      tradeOnly: tradeData.tradeOnly,
+    };
+
+    this.cards.set(id, updatedCard);
+    return updatedCard;
   }
 }
 
