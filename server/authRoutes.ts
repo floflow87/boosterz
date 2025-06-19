@@ -6,9 +6,9 @@ import { z } from 'zod';
 
 const router = Router();
 
-// Login schema
+// Login schema - accept either email or username
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1), // Changed to accept username too
   password: z.string().min(6),
 });
 
@@ -65,16 +65,20 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
     
-    // Find user by email
-    const user = await storage.getUserByEmail(email);
+    // Try to find user by email first, then by username
+    let user = await storage.getUserByEmail(email);
+    if (!user) {
+      user = await storage.getUserByUsername(email); // Try username if email fails
+    }
+    
     if (!user || !user.password) {
-      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+      return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
     }
 
     // Verify password
     const isValidPassword = await AuthService.verifyPassword(password, user.password);
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
+      return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
     }
 
     // Create session
