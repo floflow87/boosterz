@@ -6,8 +6,11 @@ export interface IStorage {
   // Users
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
+  searchUsers(query: string): Promise<User[]>;
+  getAllUsers(): Promise<User[]>;
   
   // Collections
   getCollectionsByUserId(userId: number): Promise<Collection[]>;
