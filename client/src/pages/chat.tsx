@@ -22,10 +22,12 @@ export default function Chat() {
   const currentUserId = 1; // Current logged-in user
 
   // Get or create conversation
-  const { data: conversation, isLoading: conversationLoading } = useQuery<Conversation>({
+  const { data: conversations, isLoading: conversationLoading } = useQuery<Conversation[]>({
     queryKey: [`/api/chat/conversations/user/${userId}`],
     enabled: !!userId,
   });
+
+  const conversation = conversations?.[0];
 
   // Get messages for this conversation
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
@@ -34,17 +36,17 @@ export default function Chat() {
     refetchInterval: 3000, // Auto-refresh every 3 seconds
   });
 
-  // Get other user info (skip for Max la menace)
-  const { data: otherUser, isLoading: userLoading } = useQuery<User>({
+  // Get other user info with fallback for non-existent users
+  const { data: otherUser, isLoading: userLoading, isError: userError } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
-    enabled: !!userId && userId !== 999,
+    enabled: !!userId,
   });
 
-  // Handle Max la menace as special case
-  const maxLaMenace = userId === 999 ? {
-    id: 999,
-    name: "Max la menace",
-    username: "maxlamenace"
+  // Create fallback user data when user doesn't exist
+  const fallbackUser = userError ? {
+    id: userId,
+    name: userId === 999 ? "Max la menace" : `Utilisateur ${userId}`,
+    username: userId === 999 ? "maxlamenace" : `user${userId}`
   } : null;
 
   const sendMessageMutation = useMutation({
@@ -98,8 +100,8 @@ export default function Chat() {
     }
   }, [conversation?.id]);
 
-  const isLoading = conversationLoading || messagesLoading || (userLoading && userId !== 999);
-  const displayUser = maxLaMenace || otherUser;
+  const isLoading = conversationLoading || messagesLoading || (userLoading && !userError);
+  const displayUser = fallbackUser || otherUser;
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -130,21 +132,21 @@ export default function Chat() {
             <ArrowLeft className="w-5 h-5" />
           </button>
           <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-            {otherUser.avatar ? (
+            {(displayUser as any)?.avatar ? (
               <img 
-                src={otherUser.avatar} 
-                alt={otherUser.name}
+                src={(displayUser as any).avatar} 
+                alt={displayUser.name}
                 className="w-full h-full rounded-full object-cover"
               />
             ) : (
               <span className="text-sm font-bold text-white">
-                {otherUser.name?.charAt(0) || otherUser.username?.charAt(0)}
+                {displayUser.name?.charAt(0) || displayUser.username?.charAt(0)}
               </span>
             )}
           </div>
           <div>
-            <h2 className="font-semibold">{otherUser.name || otherUser.username}</h2>
-            <p className="text-xs text-gray-400">@{otherUser.username}</p>
+            <h2 className="font-semibold">{displayUser.name || displayUser.username}</h2>
+            <p className="text-xs text-gray-400">@{displayUser.username}</p>
           </div>
         </div>
         <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors">
@@ -184,7 +186,7 @@ export default function Chat() {
           <div className="flex items-center justify-center h-full">
             <div className="text-center text-gray-400">
               <p className="text-lg mb-2">Aucun message</p>
-              <p className="text-sm">Commencez la conversation avec {otherUser.name || otherUser.username}</p>
+              <p className="text-sm">Commencez la conversation avec {displayUser.name || displayUser.username}</p>
             </div>
           </div>
         )}

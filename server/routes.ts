@@ -458,66 +458,93 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Special route for Max la menace chat (ID 999)
-  app.get("/api/chat/conversations/user/999", optionalAuth, async (req: AuthRequest, res) => {
+  // Generic route for any user chat conversation
+  app.get("/api/chat/conversations/user/:targetUserId", optionalAuth, async (req: AuthRequest, res) => {
     try {
-      // Create a mock conversation with Max la menace
-      const maxConversation = {
-        id: 999,
+      const targetUserId = parseInt(req.params.targetUserId);
+      
+      // Create a conversation structure for any user ID
+      const conversation = {
+        id: targetUserId,
         participants: [
           { id: 1, name: "Floflow87", username: "Floflow87" },
-          { id: 999, name: "Max la menace", username: "maxlamenace" }
+          { 
+            id: targetUserId, 
+            name: targetUserId === 999 ? "Max la menace" : `Utilisateur ${targetUserId}`, 
+            username: targetUserId === 999 ? "maxlamenace" : `user${targetUserId}` 
+          }
         ],
         lastMessage: {
           id: 1,
-          content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
-          senderId: 999,
+          content: targetUserId === 999 ? "Salut ! J'ai vu ta collection, elle est impressionnante !" : "Salut !",
+          senderId: targetUserId,
           timestamp: new Date().toISOString()
         },
         unreadCount: 1
       };
       
-      res.json([maxConversation]);
+      res.json([conversation]);
     } catch (error) {
-      console.error("Error fetching Max conversation:", error);
+      console.error("Error fetching conversation:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
 
-  // Messages for Max la menace conversation
-  app.get("/api/chat/conversations/999/messages", optionalAuth, async (req: AuthRequest, res) => {
+  // Generic messages for any conversation
+  app.get("/api/chat/conversations/:conversationId/messages", optionalAuth, async (req: AuthRequest, res) => {
     try {
-      const messages = [
-        {
-          id: 1,
-          conversationId: 999,
-          senderId: 999,
-          senderName: "Max la menace",
-          content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
-          timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-          isRead: false
-        },
-        {
-          id: 2,
-          conversationId: 999,
-          senderId: 999,
-          senderName: "Max la menace",
-          content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
-          timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-          isRead: false
-        }
-      ];
+      const conversationId = parseInt(req.params.conversationId);
+      
+      let messages = [];
+      
+      if (conversationId === 999) {
+        // Special messages for Max la menace
+        messages = [
+          {
+            id: 1,
+            conversationId: 999,
+            senderId: 999,
+            senderName: "Max la menace",
+            content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
+            timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+            isRead: false
+          },
+          {
+            id: 2,
+            conversationId: 999,
+            senderId: 999,
+            senderName: "Max la menace",
+            content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
+            timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+            isRead: false
+          }
+        ];
+      } else {
+        // Default message for other users
+        messages = [
+          {
+            id: 1,
+            conversationId: conversationId,
+            senderId: conversationId,
+            senderName: `Utilisateur ${conversationId}`,
+            content: "Salut !",
+            timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+            isRead: false
+          }
+        ];
+      }
       
       res.json(messages);
     } catch (error) {
-      console.error("Error fetching Max messages:", error);
+      console.error("Error fetching messages:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
 
-  // Send message to Max la menace
-  app.post("/api/chat/conversations/999/messages", optionalAuth, async (req: AuthRequest, res) => {
+  // Send message to any conversation
+  app.post("/api/chat/conversations/:conversationId/messages", optionalAuth, async (req: AuthRequest, res) => {
     try {
+      const conversationId = parseInt(req.params.conversationId);
       const { content } = req.body;
       
       if (!content?.trim()) {
@@ -526,7 +553,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const newMessage = {
         id: Date.now(),
-        conversationId: 999,
+        conversationId: conversationId,
         senderId: 1, // Current user
         senderName: "Floflow87",
         content: content.trim(),
@@ -536,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(201).json(newMessage);
     } catch (error) {
-      console.error("Error sending message to Max:", error);
+      console.error("Error sending message:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
