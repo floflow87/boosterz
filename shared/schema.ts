@@ -47,6 +47,9 @@ export const cards = pgTable("cards", {
   baseCardId: integer("base_card_id"), // Référence vers la carte de base pour les variantes
   isVariant: boolean("is_variant").default(false).notNull(),
   variants: text("variants"), // Nom des variantes (ex: "Gold", "Red", "Blue")
+  tradeDescription: text("trade_description"), // Description pour trade/vente
+  tradePrice: text("trade_price"), // Prix indicatif pour trade/vente
+  tradeOnly: boolean("trade_only").default(false).notNull(), // Si true, pas de prix affiché
 });
 
 export const userCards = pgTable("user_cards", {

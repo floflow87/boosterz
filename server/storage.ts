@@ -22,6 +22,7 @@ export interface IStorage {
   updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined>;
   updateCardImage(id: number, imageUrl: string): Promise<Card | undefined>;
   toggleCardOwnership(id: number): Promise<Card | undefined>;
+  updateCardTrade(id: number, tradeData: { tradeDescription?: string; tradePrice?: string; tradeOnly: boolean; isForTrade: boolean }): Promise<Card | undefined>;
   
   // User Cards
   getUserCardsByUserId(userId: number): Promise<UserCard[]>;
@@ -169,6 +170,29 @@ export class DatabaseStorage implements IStorage {
     const result = await db.delete(userCards).where(eq(userCards.id, id));
     return result.rowCount > 0;
   }
+
+  async updateCardTrade(id: number, tradeData: { tradeDescription?: string; tradePrice?: string; tradeOnly: boolean; isForTrade: boolean }): Promise<Card | undefined> {
+    const updateData: any = {
+      isForTrade: tradeData.isForTrade,
+      tradeDescription: tradeData.tradeDescription,
+      tradeOnly: tradeData.tradeOnly
+    };
+
+    // Only set price if not trade only
+    if (!tradeData.tradeOnly) {
+      updateData.tradePrice = tradeData.tradePrice;
+    } else {
+      updateData.tradePrice = null;
+    }
+
+    const [updatedCard] = await db
+      .update(cards)
+      .set(updateData)
+      .where(eq(cards.id, id))
+      .returning();
+    
+    return updatedCard || undefined;
+  }
 }
 
 export class MemStorage implements IStorage {
@@ -249,13 +273,17 @@ export class MemStorage implements IStorage {
         cardSubType: null,
         imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=120&h=160",
         isOwned: true,
+        isForTrade: false,
         isRookieCard: false,
         rarity: "common",
         serialNumber: null,
         numbering: "1/200",
         baseCardId: null,
         isVariant: false,
-        variants: null
+        variants: null,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Variante Gold de Mbappé
       {
