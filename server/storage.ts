@@ -440,7 +440,11 @@ export class MemStorage implements IStorage {
         numbering: "1/1",
         baseCardId: null,
         isVariant: false,
-        variants: null
+        variants: null,
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       }
     ];
 
