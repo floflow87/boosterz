@@ -37,8 +37,8 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
 
-    // Create session
-    const token = await AuthService.createSession(user.id);
+    // Generate JWT token directly
+    const token = AuthService.generateToken(user.id);
 
     res.status(201).json({
       message: 'Compte créé avec succès',
@@ -77,8 +77,8 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Email ou mot de passe incorrect' });
     }
 
-    // Create session
-    const token = await AuthService.createSession(user.id);
+    // Generate JWT token directly
+    const token = AuthService.generateToken(user.id);
 
     res.json({
       message: 'Connexion réussie',
