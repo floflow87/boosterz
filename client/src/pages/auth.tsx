@@ -28,17 +28,20 @@ export default function Auth() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: async (data: { email: string; password: string }) => {
-      return apiRequest("POST", "/api/auth/login", data);
+    mutationFn: async (data: { identifier: string; password: string }) => {
+      const response = await apiRequest("POST", "/api/auth/login", data);
+      return response.json();
     },
     onSuccess: (data: any) => {
-      localStorage.setItem("authToken", data.token);
-      toast({
-        title: "Connexion réussie",
-        description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
-      });
-      // Force a page reload to update authentication state
-      window.location.href = "/collections";
+      if (data.token) {
+        localStorage.setItem("authToken", data.token);
+        toast({
+          title: "Connexion réussie",
+          description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
+        });
+        // Force a page reload to update authentication state
+        window.location.href = "/collections";
+      }
     },
     onError: (error: any) => {
       toast({
@@ -51,16 +54,19 @@ export default function Auth() {
 
   const registerMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      return apiRequest("POST", "/api/auth/register", data);
+      const response = await apiRequest("POST", "/api/auth/register", data);
+      return response.json();
     },
     onSuccess: (data: any) => {
-      localStorage.setItem("authToken", data.token);
-      toast({
-        title: "Compte créé",
-        description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
-      });
-      // Force a page reload to update authentication state
-      window.location.href = "/collections";
+      if (data.token) {
+        localStorage.setItem("authToken", data.token);
+        toast({
+          title: "Compte créé",
+          description: `Bienvenue ${data.user?.name || data.user?.username || 'utilisateur'}!`,
+        });
+        // Force a page reload to update authentication state
+        window.location.href = "/collections";
+      }
     },
     onError: (error: any) => {
       toast({
