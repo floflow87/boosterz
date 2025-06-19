@@ -383,6 +383,37 @@ export default function CollectionDetail() {
     return "border-green-500"; // Default
   };
 
+  const getCardAnimationName = (card: Card) => {
+    if (!card.isOwned) return null;
+    
+    // Vert pour les bases
+    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+      return "pulse-shadow-green";
+    }
+    
+    // Bleu pour les bases numérotées  
+    if (card.cardType === "Parallel Numbered") {
+      return "pulse-shadow-blue";
+    }
+    
+    // Violet pour les hits (Insert)
+    if (card.cardType?.includes("Insert")) {
+      return "pulse-shadow-purple";
+    }
+    
+    // Gold pour les autographes
+    if (card.cardType === "Autograph") {
+      return "pulse-shadow-yellow";
+    }
+    
+    // Noir pour les spéciales
+    if (card.cardType === "special_1_1" || card.numbering === "1/1") {
+      return "pulse-shadow-black";
+    }
+    
+    return "pulse-shadow-green"; // Default green
+  };
+
   const getCurrentCard = () => {
     if (!selectedCard) return null;
     const variants = getCardVariants(selectedCard);
@@ -583,13 +614,14 @@ export default function CollectionDetail() {
               }));
             };
             
+            const animationName = getCardAnimationName(currentVariant);
+            
             return (
               <div 
                 key={playerKey}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(currentVariant)}`}
-                style={currentVariant.isOwned ? {
-                  animation: 'pulse-shadow-card 3s infinite',
-                  boxShadow: '0 0 0 0 rgba(243, 114, 97, 0.4)'
+                style={currentVariant.isOwned && animationName ? {
+                  animation: `${animationName} 3s infinite`
                 } : {}}
               >
                 {/* Checkbox */}
