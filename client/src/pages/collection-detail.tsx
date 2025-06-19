@@ -218,6 +218,11 @@ export default function CollectionDetail() {
 
   const handleMarkAsOwned = async (cardId: number, withPhoto: boolean) => {
     try {
+      // Update local state immediately for visual feedback
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: true });
+      }
+      
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
       if (withPhoto) {
         setShowPhotoUpload(true);
@@ -227,6 +232,10 @@ export default function CollectionDetail() {
         description: "La carte a été marquée comme acquise avec succès."
       });
     } catch (error) {
+      // Revert local state on error
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: false });
+      }
       toast({
         title: "Erreur",
         description: "Impossible de marquer la carte comme acquise.",
@@ -237,12 +246,21 @@ export default function CollectionDetail() {
 
   const handleMarkAsNotOwned = async (cardId: number) => {
     try {
+      // Update local state immediately for visual feedback
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: false });
+      }
+      
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: false });
       toast({
         title: "Carte marquée comme manquante",
         description: "La carte a été marquée comme manquante avec succès."
       });
     } catch (error) {
+      // Revert local state on error
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: true });
+      }
       toast({
         title: "Erreur",
         description: "Impossible de marquer la carte comme manquante.",
@@ -253,6 +271,10 @@ export default function CollectionDetail() {
 
   const handlePhotoSave = (imageUrl: string, cardId?: number) => {
     if (cardId) {
+      // Update local state immediately for visual feedback
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, imageUrl });
+      }
       updateCardImageMutation.mutate({ cardId, imageUrl });
     }
     setShowPhotoUpload(false);
@@ -429,17 +451,12 @@ export default function CollectionDetail() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
             <input
               type="text"
-              placeholder="Filtrer par joueur ou équipe"
+              placeholder="Rechercher par joueur ou équipe"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 placeholder:text-sm focus:outline-none focus:border-blue-500"
             />
           </div>
-          
-          {/* Bookmark icon */}
-          <button className="p-3 bg-gray-900 border border-gray-700 rounded-lg">
-            <div className="w-4 h-4 border border-gray-400"></div>
-          </button>
           
           {/* Photo upload button */}
           <button 

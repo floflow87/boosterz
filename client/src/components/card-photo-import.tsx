@@ -156,15 +156,44 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       let recognizedPlayerName = "";
       let confidence = 0;
       
-      // Check against available players
+      // Check against available players with enhanced matching
       const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName)));
       
       for (const text of extractedTexts) {
         for (const playerName of uniquePlayers) {
-          const similarity = calculateSimilarity(text.toLowerCase(), playerName.toLowerCase());
-          if (similarity > confidence && similarity > 0.6) {
-            confidence = similarity;
+          // Try exact match first
+          const exactSimilarity = calculateSimilarity(text.toLowerCase(), playerName.toLowerCase());
+          if (exactSimilarity > confidence && exactSimilarity > 0.6) {
+            confidence = exactSimilarity;
             recognizedPlayerName = playerName;
+          }
+          
+          // Try matching individual words (for partial name recognition)
+          const textWords = text.toLowerCase().split(/\s+/);
+          const nameWords = playerName.toLowerCase().split(/\s+/);
+          
+          for (const textWord of textWords) {
+            for (const nameWord of nameWords) {
+              if (textWord.length > 2 && nameWord.length > 2) {
+                const wordSimilarity = calculateSimilarity(textWord, nameWord);
+                if (wordSimilarity > 0.8 && wordSimilarity > confidence * 0.8) {
+                  confidence = Math.max(confidence, wordSimilarity * 0.9);
+                  recognizedPlayerName = playerName;
+                }
+              }
+            }
+          }
+          
+          // Try last name matching (often more prominent on cards)
+          const lastName = nameWords[nameWords.length - 1];
+          if (lastName && lastName.length > 3) {
+            for (const textWord of textWords) {
+              const lastNameSimilarity = calculateSimilarity(textWord, lastName);
+              if (lastNameSimilarity > 0.85 && lastNameSimilarity > confidence * 0.7) {
+                confidence = Math.max(confidence, lastNameSimilarity * 0.8);
+                recognizedPlayerName = playerName;
+              }
+            }
           }
         }
       }
@@ -201,17 +230,31 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   }, [processImageWithAdjustments, availableCards]);
 
   const simulateTextExtraction = useCallback((imageData: string): string[] => {
-    // This is a simulation of OCR. In a real app, you'd use an OCR service like Tesseract.js
-    // For now, return some common player name patterns that might be found on cards
-    return [
-      "WISSAM BEN YEDDER",
-      "KYLIAN MBAPPÉ", 
-      "ALEXANDRE LACAZETTE",
-      "PIERRE-EMERICK AUBAMEYANG",
-      "JONATHAN DAVID",
-      "FOLARIN BALOGUN"
+    // Enhanced OCR simulation that extracts text patterns commonly found on football cards
+    // In a real implementation, this would use Tesseract.js or similar OCR library
+    
+    // Generate realistic text patterns based on player names from the available cards
+    const commonPatterns = availableCards.map(card => card.playerName.toUpperCase());
+    
+    // Add common text elements found on cards
+    const cardTextElements = [
+      ...commonPatterns,
+      // Team names
+      ...Array.from(new Set(availableCards.map(card => card.teamName.toUpperCase()))),
+      // Common card text
+      "ROOKIE CARD", "RC", "AUTOGRAPH", "AUTO", "INSERT", "PARALLEL",
+      "SCORE", "PANINI", "TOPPS", "UPPER DECK",
+      // Numbers and positions
+      "#1", "#2", "#3", "#4", "#5", "#6", "#7", "#8", "#9", "#10",
+      "GK", "DEF", "MID", "ATT", "FW"
     ];
-  }, []);
+    
+    // Simulate extracting 3-8 text elements from the image
+    const numExtracted = Math.floor(Math.random() * 6) + 3;
+    const shuffled = [...cardTextElements].sort(() => 0.5 - Math.random());
+    
+    return shuffled.slice(0, numExtracted);
+  }, [availableCards]);
 
   const calculateSimilarity = useCallback((str1: string, str2: string): number => {
     const longer = str1.length > str2.length ? str1 : str2;
