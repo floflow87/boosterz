@@ -40,7 +40,8 @@ export default function Welcome() {
     } else {
       // Marquer l'utilisateur comme ayant terminé l'onboarding
       localStorage.setItem('onboarding_completed', 'true');
-      setLocation('/collections');
+      // Forcer le rechargement de la page pour que le Router détecte le changement
+      window.location.href = '/collections';
     }
   };
 
@@ -99,7 +100,7 @@ export default function Welcome() {
           <button
             onClick={() => {
               localStorage.setItem('onboarding_completed', 'true');
-              setLocation('/collections');
+              window.location.href = '/collections';
             }}
             className="mt-4 text-gray-400 hover:text-white transition-colors text-sm"
           >
