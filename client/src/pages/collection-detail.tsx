@@ -7,6 +7,7 @@ import CardPhotoImport from "@/components/card-photo-import";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
+import logoImage from "@assets/image 29_1750317707391.png";
 
 export default function CollectionDetail() {
   const params = useParams();
@@ -391,6 +392,16 @@ export default function CollectionDetail() {
   return (
     <div className="min-h-screen bg-black text-white">
       <main className="px-3 pt-3 pb-20" id="collection-top">
+        {/* Collection Header */}
+        <div className="flex flex-col items-center mb-6">
+          <img 
+            src={logoImage}
+            alt="Ligue 1 Score"
+            className="w-20 h-20 object-contain mb-2"
+          />
+          <p className="text-gray-400 text-sm italic">2023/24</p>
+        </div>
+
         {/* Category Tabs - Badge Style */}
         <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[40px] items-center">
           <button
@@ -461,7 +472,7 @@ export default function CollectionDetail() {
           {/* Photo upload button */}
           <button 
             onClick={() => setShowPhotoUpload(true)}
-            className="p-3 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-lg transition-colors"
+            className="p-3 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-lg transition-colors animate-pulse"
           >
             <Camera className="w-4 h-4 text-white" />
           </button>
