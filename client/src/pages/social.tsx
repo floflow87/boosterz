@@ -156,11 +156,11 @@ export default function Social() {
 
       <main className="relative z-10 px-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4">
-            <div className="flex justify-between overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '65px' }}>
+            <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[48px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               <button
                 onClick={() => setActiveTab("featured")}
-                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "featured" 
                     ? "bg-yellow-600 text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -171,7 +171,7 @@ export default function Social() {
               </button>
               <button
                 onClick={() => setActiveTab("forsale")}
-                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "forsale" 
                     ? "text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -183,18 +183,19 @@ export default function Social() {
               </button>
               <button
                 onClick={() => setActiveTab("discover")}
-                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "discover" 
-                    ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                    ? "text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
+                style={activeTab === "discover" ? { backgroundColor: '#F37261' } : {}}
               >
                 <Users className="w-3 h-3 mr-1 inline" />
                 Découvrir
               </button>
               <button
                 onClick={() => setActiveTab("activity")}
-                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "activity" 
                     ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
