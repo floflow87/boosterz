@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { ArrowLeft, Camera, Edit, Save, X, Upload } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import HaloBlur from "@/components/halo-blur";
+import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest } from "@/lib/queryClient";
 import type { User } from "@shared/schema";
 
@@ -107,15 +108,7 @@ export default function Profile() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="relative">
-            <div className="w-16 h-16 border-4 border-[hsl(9,85%,67%)] border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (

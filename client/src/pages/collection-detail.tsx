@@ -1148,15 +1148,7 @@ export default function CollectionDetail() {
                       >
                         <Handshake className="w-4 h-4" />
                       </button>
-                      {currentCard?.imageUrl && (
-                        <button
-                          onClick={() => setShowFullscreenCard(true)}
-                          className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-                          title="Agrandir l'image"
-                        >
-                          <Search className="w-4 h-4" />
-                        </button>
-                      )}
+
                       {currentCard?.imageUrl && (
                         <button
                           onClick={async () => {

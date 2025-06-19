@@ -19,6 +19,16 @@ export default function Navigation() {
     setLocation(item.path);
   };
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      setLocation("/login");
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   const isActive = (path: string) => {
     if (path === "/") {
       return location === "/" || location === "/splash";
@@ -28,6 +38,10 @@ export default function Navigation() {
     }
     return location.startsWith(path);
   };
+
+  if (isLoggingOut) {
+    return <LoadingScreen />;
+  }
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg px-3 py-4 z-20 shadow-lg rounded-t-[20px]" style={{ backgroundColor: '#131B2F', height: '80px' }}>
@@ -53,6 +67,14 @@ export default function Navigation() {
             </button>
           );
         })}
+        
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="nav-item flex flex-col items-center p-2 transition-all duration-300 text-gray-400 hover:text-red-400"
+        >
+          <LogOut className="w-5 h-5 transition-transform" />
+        </button>
       </div>
     </nav>
   );
