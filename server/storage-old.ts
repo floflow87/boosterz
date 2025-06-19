@@ -30,6 +30,10 @@ export interface IStorage {
   createUserCard(userCard: InsertUserCard): Promise<UserCard>;
   updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined>;
   deleteUserCard(id: number): Promise<boolean>;
+  
+  // Chat Messages
+  createMessage(message: { conversationId: number; senderId: number; content: string; isRead: boolean }): Promise<any>;
+  getMessagesByConversation(conversationId: number): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {

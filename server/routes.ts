@@ -459,7 +459,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generic route for any user chat conversation
-  app.get("/api/chat/conversations/user/:targetUserId", optionalAuth, async (req: AuthRequest, res) => {
+  app.get("/api/chat/conversations/user/:targetUserId", async (req, res) => {
     try {
       const targetUserId = parseInt(req.params.targetUserId);
       
@@ -491,7 +491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Generic messages for any conversation
-  app.get("/api/chat/conversations/:conversationId/messages", optionalAuth, async (req: AuthRequest, res) => {
+  app.get("/api/chat/conversations/:conversationId/messages", async (req, res) => {
     try {
       const conversationId = parseInt(req.params.conversationId);
       
@@ -551,10 +551,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Message content is required" });
       }
 
+      // Create and return message response
       const newMessage = {
         id: Date.now(),
         conversationId: conversationId,
-        senderId: 1, // Current user
+        senderId: 1,
         senderName: "Floflow87",
         content: content.trim(),
         timestamp: new Date().toISOString(),
