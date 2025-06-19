@@ -387,15 +387,6 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
               <Button
                 variant="outline"
                 className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
-                onClick={() => handleImportOption("gallery")}
-              >
-                <Image className="h-6 w-6" />
-                <span>Importer depuis la photothèque</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                className="w-full h-16 flex items-center gap-3 text-black border-gray-300 hover:bg-gray-50"
                 onClick={() => handleImportOption("file")}
               >
                 <Upload className="h-6 w-6" />

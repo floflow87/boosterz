@@ -64,26 +64,10 @@ export default function CardVariantsCarousel({
 
   return (
     <div className="bg-gray-800 rounded-lg p-4">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4">
         <h3 className="text-lg font-semibold text-white">
           {currentCard.playerName} - Variantes ({currentIndex + 1}/{allCards.length})
         </h3>
-        <div className="flex space-x-2">
-          <button
-            onClick={goToPrevious}
-            disabled={allCards.length <= 1}
-            className="p-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
-          >
-            <ChevronLeft className="w-4 h-4 text-white" />
-          </button>
-          <button
-            onClick={goToNext}
-            disabled={allCards.length <= 1}
-            className="p-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-md"
-          >
-            <ChevronRight className="w-4 h-4 text-white" />
-          </button>
-        </div>
       </div>
 
       <div className="flex space-x-4">

@@ -57,6 +57,11 @@ export default function CollectionDetail() {
     queryKey: [`/api/collections/${collectionId}/cards`],
   });
 
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [collectionId]);
+
   // Group cards by player and show only one card per player
   const getUniquePlayerCards = () => {
     if (!cards) return [];
@@ -363,12 +368,12 @@ export default function CollectionDetail() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <main className="px-3 pt-3 pb-20">
+      <main className="px-3 pt-3 pb-20" id="collection-top">
         {/* Category Tabs - Badge Style */}
-        <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[48px] items-center">
+        <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[40px] items-center">
           <button
             onClick={() => setFilter("bases")}
-            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${
               filter === "bases" 
                 ? "bg-green-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -378,7 +383,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("bases_numbered")}
-            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "bases_numbered" 
                 ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -388,7 +393,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("hits")}
-            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "hits" 
                 ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -398,7 +403,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("autographs")}
-            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "autographs" 
                 ? "bg-yellow-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -408,7 +413,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("special_1_1")}
-            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "special_1_1" 
                 ? "bg-black text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
