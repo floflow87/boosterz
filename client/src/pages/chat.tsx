@@ -51,18 +51,9 @@ export default function Chat() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageContent: string) => {
-      if (!conversation?.id) {
-        // Create conversation first
-        const newConversation = await apiRequest("POST", "/api/chat/conversations", {
-          user1Id: currentUserId,
-          user2Id: userId,
-        });
-        return apiRequest("POST", `/api/chat/conversations/${newConversation.id}/messages`, {
-          content: messageContent,
-          senderId: currentUserId,
-        });
-      }
-      return apiRequest("POST", `/api/chat/conversations/${conversation.id}/messages`, {
+      // Use the userId as conversation ID since our backend is set up this way
+      const conversationId = conversation?.id || userId;
+      return apiRequest("POST", `/api/chat/conversations/${conversationId}/messages`, {
         content: messageContent,
         senderId: currentUserId,
       });
