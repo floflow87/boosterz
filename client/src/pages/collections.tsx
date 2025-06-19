@@ -102,38 +102,47 @@ export default function Collections() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="flex space-x-6 mb-6 border-b border-[hsl(214,35%,22%)]">
-          <button 
-            onClick={() => setActiveTab("cards")}
-            className={`pb-2 font-medium ${
-              activeTab === "cards" 
-                ? "text-[hsl(9,85%,67%)] border-b-2 border-[hsl(9,85%,67%)]" 
-                : "text-[hsl(212,23%,69%)]"
-            }`}
-          >
-            Toutes les cartes
-          </button>
-          <button 
-            onClick={() => setActiveTab("collections")}
-            className={`pb-2 font-medium ${
-              activeTab === "collections" 
-                ? "text-[hsl(9,85%,67%)] border-b-2 border-[hsl(9,85%,67%)]" 
-                : "text-[hsl(212,23%,69%)]"
-            }`}
-          >
-            Collections
-          </button>
-          <button 
-            onClick={() => setActiveTab("marketplace")}
-            className={`pb-2 font-medium ${
-              activeTab === "marketplace" 
-                ? "text-[hsl(9,85%,67%)] border-b-2 border-[hsl(9,85%,67%)]" 
-                : "text-[hsl(212,23%,69%)]"
-            }`}
-          >
-            A la vente
-          </button>
-          <button className="pb-2 text-[hsl(212,23%,69%)]">Decks</button>
+        <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '57px' }}>
+          <div className="flex justify-between overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <button 
+              onClick={() => setActiveTab("cards")}
+              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "cards" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+              style={activeTab === "cards" ? { backgroundColor: '#F37261' } : {}}
+            >
+              <Star className="w-3 h-3 mr-1 inline" />
+              Toutes les cartes
+            </button>
+            <button 
+              onClick={() => setActiveTab("collections")}
+              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "collections" 
+                  ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+            >
+              <Users className="w-3 h-3 mr-1 inline" />
+              Collections
+            </button>
+            <button 
+              onClick={() => setActiveTab("marketplace")}
+              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "marketplace" 
+                  ? "bg-purple-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+            >
+              <TrendingUp className="w-3 h-3 mr-1 inline" />
+              A la vente
+            </button>
+            <button className="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
+              <Package className="w-3 h-3 mr-1 inline" />
+              Decks
+            </button>
+          </div>
         </div>
 
         {/* Collections Tab Content */}

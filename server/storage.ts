@@ -229,17 +229,52 @@ export class MemStorage implements IStorage {
   }
 
   private initializeMockData() {
-    // User mock data
-    const user: User = {
+    // User 1: Floflow87 (with existing collections and cards)
+    const user1: User = {
       id: 1,
-      username: "flo87",
-      name: "FLORENT MAR...",
+      username: "floflow87",
+      name: "Floflow87",
+      email: "floflow87@test.com",
+      password: "$2b$10$hash_for_Test25", // Test25 hashed
       avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
       totalCards: 482,
       collectionsCount: 2,
-      completionPercentage: 76.5
+      completionPercentage: 76.5,
+      address: null,
+      phone: null,
+      city: null,
+      bio: null,
+      isPublic: true,
+      followersCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
-    this.users.set(1, user);
+    this.users.set(1, user1);
+
+    // User 2: Max la Menace (empty collections)
+    const user2: User = {
+      id: 2,
+      username: "maxlamenace",
+      name: "Max la Menace",
+      email: "maxlamenace@test.com",
+      password: "$2b$10$hash_for_Test25", // Test25 hashed
+      avatar: null,
+      totalCards: 0,
+      collectionsCount: 0,
+      completionPercentage: 0,
+      address: null,
+      phone: null,
+      city: null,
+      bio: null,
+      isPublic: true,
+      followersCount: 0,
+      followingCount: 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.users.set(2, user2);
+    this.currentUserId = 2;
 
     // Collections mock data
     const collections: Collection[] = [
