@@ -113,42 +113,42 @@ export default function Collections() {
       <main className="relative z-10 px-4 pb-24">
         {/* User Profile Section */}
         {user && (
-          <div className="flex flex-col items-center text-center mb-8 mt-4">
-            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-4 shadow-lg relative">
+          <div className="flex flex-col items-center text-center mb-4 mt-2">
+            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg relative">
               {user.avatar ? (
                 <img 
                   src={user.avatar} 
                   alt="Avatar utilisateur"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white"
                 />
               ) : (
                 <img 
                   src={avatarImage} 
                   alt="Avatar par défaut"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white"
                 />
               )}
-              <div className="absolute -top-1 -right-1 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                <Trophy className="w-4 h-4 text-white" />
+              <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                <Trophy className="w-3 h-3 text-white" />
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
-            <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-4">@{user.username}</p>
+            <h2 className="text-xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
+            <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
             
-            <div className="flex space-x-6 text-center">
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-xl border border-[hsl(9,85%,67%)]/30">
-                <Star className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
-                <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString()}</div>
+            <div className="flex space-x-4 text-center">
+              <div className="bg-[hsl(214,35%,22%)] p-2 rounded-lg border border-[hsl(9,85%,67%)]/30">
+                <Star className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString()}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
               </div>
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-xl border border-[hsl(9,85%,67%)]/30">
-                <Trophy className="w-5 h-5 text-green-400 mx-auto mb-1" />
-                <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{user.collectionsCount}</div>
+              <div className="bg-[hsl(214,35%,22%)] p-2 rounded-lg border border-[hsl(9,85%,67%)]/30">
+                <Trophy className="w-4 h-4 text-green-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-[hsl(9,85%,67%)]">{user.collectionsCount}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Collections</div>
               </div>
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-xl border border-[hsl(9,85%,67%)]/30">
-                <Award className="w-5 h-5 text-purple-400 mx-auto mb-1" />
-                <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">{user.completionPercentage}%</div>
+              <div className="bg-[hsl(214,35%,22%)] p-2 rounded-lg border border-[hsl(9,85%,67%)]/30">
+                <Award className="w-4 h-4 text-purple-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-[hsl(9,85%,67%)]">{user.completionPercentage}%</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Complété</div>
               </div>
             </div>
@@ -156,11 +156,11 @@ export default function Collections() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="sticky top-0 z-50 pb-4 mb-4 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '65px' }}>
-          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[48px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="sticky top-0 z-50 pb-2 mb-2 bg-[hsl(216,46%,13%)] pt-1 -mx-4 px-4" style={{ height: '50px' }}>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[36px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button 
               onClick={() => setActiveTab("cards")}
-              className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "cards" 
                   ? "text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -172,7 +172,7 @@ export default function Collections() {
             </button>
             <button 
               onClick={() => setActiveTab("collections")}
-              className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "collections" 
                   ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -183,7 +183,7 @@ export default function Collections() {
             </button>
             <button 
               onClick={() => setActiveTab("marketplace")}
-              className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "marketplace" 
                   ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -192,7 +192,7 @@ export default function Collections() {
               <TrendingUp className="w-3 h-3 mr-1 inline" />
               A la vente
             </button>
-            <button className="px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
+            <button className="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
               <Package className="w-3 h-3 mr-1 inline" />
               Decks
             </button>
