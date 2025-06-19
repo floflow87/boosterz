@@ -348,7 +348,11 @@ export class MemStorage implements IStorage {
         numbering: "2/200",
         baseCardId: null,
         isVariant: false,
-        variants: null
+        variants: null,
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Autographe
       {
@@ -367,7 +371,11 @@ export class MemStorage implements IStorage {
         numbering: "1/50",
         baseCardId: null,
         isVariant: false,
-        variants: null
+        variants: null,
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Hit card
       {
@@ -386,7 +394,11 @@ export class MemStorage implements IStorage {
         numbering: "1/160",
         baseCardId: null,
         isVariant: false,
-        variants: null
+        variants: null,
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Hit card variante /15
       {
@@ -405,7 +417,11 @@ export class MemStorage implements IStorage {
         numbering: "1/15",
         baseCardId: 6,
         isVariant: true,
-        variants: "Numbered"
+        variants: "Numbered",
+        isForTrade: false,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false
       },
       // Carte spéciale 1/1
       {
