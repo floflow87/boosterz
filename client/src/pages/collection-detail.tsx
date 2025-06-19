@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams } from "wouter";
-import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake } from "lucide-react";
 import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
 import { apiRequest } from "@/lib/queryClient";
@@ -865,91 +865,82 @@ export default function CollectionDetail() {
 
                   {/* Action Buttons */}
                   <div className="mt-6">
-                    {!currentCard?.isOwned ? (
-                      <div className="space-y-2">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleMarkAsOwned(currentCard?.id || 0, false)}
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                          >
-                            <Check className="w-4 h-4 mr-1" />
-                            Acquise
-                          </button>
-                          <button
-                            onClick={() => handleMarkAsOwned(currentCard?.id || 0, true)}
-                            className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                          >
-                            <Camera className="w-4 h-4 mr-1" />
-                            Photo
-                          </button>
-                        </div>
+                    <div className="flex gap-2">
+                      {!currentCard?.isOwned ? (
                         <button
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          onClick={async () => {
+                            try {
+                              await handleMarkAsOwned(currentCard?.id || 0, false);
+                              // Visual feedback - the status will update automatically via query invalidation
+                            } catch (error) {
+                              console.error("Error marking card as owned:", error);
+                            }
+                          }}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                         >
-                          <Users className="w-4 h-4 mr-1" />
-                          Proposer un trade
+                          <Check className="w-4 h-4" />
                         </button>
-                      </div>
-                    ) : (
-                      <div className="space-y-2">
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleMarkAsNotOwned(currentCard?.id || 0)}
-                            className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                          >
-                            <X className="w-4 h-4 mr-1" />
-                            Manquante
-                          </button>
-                          <button
-                            onClick={() => {
-                              const cardInfo = {
-                                id: currentCard.id,
-                                playerName: selectedCard.playerName || "Joueur Inconnu",
-                                reference: selectedCard.reference,
-                                teamName: selectedCard.teamName || "Équipe Inconnue"
-                              };
-                              setShowPhotoUpload(true);
-                            }}
-                            className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
-                          >
-                            <Camera className="w-4 h-4 mr-1" />
-                            Photo
-                          </button>
-                          {currentCard.imageUrl && (
-                            <button
-                              onClick={async () => {
-                                try {
-                                  await updateCardImageMutation.mutateAsync({
-                                    cardId: currentCard.id,
-                                    imageUrl: ""
-                                  });
-                                  toast({
-                                    title: "Photo supprimée",
-                                    description: "La photo de la carte a été supprimée avec succès."
-                                  });
-                                } catch (error) {
-                                  toast({
-                                    title: "Erreur",
-                                    description: "Impossible de supprimer la photo.",
-                                    variant: "destructive"
-                                  });
-                                }
-                              }}
-                              className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-                              title="Supprimer la photo"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
+                      ) : (
                         <button
-                          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                          onClick={async () => {
+                            try {
+                              await handleMarkAsNotOwned(currentCard?.id || 0);
+                              // Visual feedback - the status will update automatically via query invalidation
+                            } catch (error) {
+                              console.error("Error marking card as not owned:", error);
+                            }
+                          }}
+                          className="flex-1 bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                         >
-                          <Users className="w-4 h-4 mr-1" />
-                          Proposer un trade
+                          <Minus className="w-4 h-4" />
                         </button>
-                      </div>
-                    )}
+                      )}
+                      <button
+                        onClick={() => {
+                          const cardInfo = {
+                            id: currentCard?.id || 0,
+                            playerName: selectedCard.playerName || "Joueur Inconnu",
+                            reference: selectedCard.reference,
+                            teamName: selectedCard.teamName || "Équipe Inconnue"
+                          };
+                          setShowPhotoUpload(true);
+                        }}
+                        className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                      >
+                        <Camera className="w-4 h-4" />
+                      </button>
+                      <button
+                        className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
+                      >
+                        <Handshake className="w-4 h-4" />
+                      </button>
+                      {currentCard?.imageUrl && (
+                        <button
+                          onClick={async () => {
+                            try {
+                              await updateCardImageMutation.mutateAsync({
+                                cardId: currentCard.id,
+                                imageUrl: ""
+                              });
+                              toast({
+                                title: "Photo supprimée",
+                                description: "La photo de la carte a été supprimée avec succès."
+                              });
+                            } catch (error) {
+                              toast({
+                                title: "Erreur",
+                                description: "Impossible de supprimer la photo.",
+                                variant: "destructive"
+                              });
+                            }
+                          }}
+                          className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+                          title="Supprimer la photo"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </>
               );

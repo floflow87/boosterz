@@ -89,6 +89,23 @@ export default function CardVariantsCarousel({
                 <div className="absolute bottom-2 left-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded">
                   {currentCard.reference}
                 </div>
+                {/* Navigation arrows on image */}
+                {allCards.length > 1 && (
+                  <>
+                    <button
+                      onClick={goToPrevious}
+                      className="absolute left-1 top-1/2 transform -translate-y-1/2 p-1 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full"
+                    >
+                      <ChevronLeft className="w-4 h-4 text-white" />
+                    </button>
+                    <button
+                      onClick={goToNext}
+                      className="absolute right-1 top-1/2 transform -translate-y-1/2 p-1 bg-black bg-opacity-50 hover:bg-opacity-70 rounded-full"
+                    >
+                      <ChevronRight className="w-4 h-4 text-white" />
+                    </button>
+                  </>
+                )}
               </>
             ) : (
               <div className="w-full h-full flex items-center justify-center">
