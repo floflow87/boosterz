@@ -26,6 +26,7 @@ function Router() {
   });
 
   const isAuthenticated = !!user;
+  const isFirstLogin = user?.isFirstLogin;
 
   if (isLoading) {
     return (
@@ -47,9 +48,14 @@ function Router() {
           <Route path="/auth" component={Auth} />
           <Route component={Auth} />
         </>
-      ) : (
+      ) : isFirstLogin ? (
         <>
           <Route path="/" component={Start} />
+          <Route component={Start} />
+        </>
+      ) : (
+        <>
+          <Route path="/" component={Collections} />
           <Route path="/start" component={Start} />
           <Route path="/collections" component={Collections} />
           <Route path="/collection/:id" component={CollectionDetail} />

@@ -155,6 +155,7 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
       totalCards: user.totalCards,
       collectionsCount: user.collectionsCount,
       completionPercentage: user.completionPercentage,
+      isFirstLogin: user.isFirstLogin,
     });
   } catch (error) {
     console.error('Get user error:', error);
@@ -196,6 +197,24 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res) => {
   } catch (error) {
     console.error('Profile update error:', error);
     res.status(500).json({ message: 'Erreur lors de la mise à jour du profil' });
+  }
+});
+
+// Mark first login as complete
+router.post('/complete-first-login', authenticateToken, async (req: AuthRequest, res) => {
+  try {
+    const userId = req.user!.id;
+    
+    const updatedUser = await storage.updateUser(userId, { isFirstLogin: false });
+    
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+    
+    res.json({ message: 'Première connexion marquée comme terminée' });
+  } catch (error) {
+    console.error('Error completing first login:', error);
+    res.status(500).json({ message: 'Erreur lors de la mise à jour' });
   }
 });
 

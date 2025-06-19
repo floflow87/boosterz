@@ -1,28 +1,46 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Play, Star, Trophy, Users } from "lucide-react";
+import { CreditCard, Layers } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import HaloBlur from "@/components/halo-blur";
 
 export default function Start() {
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
+
+  const completeFirstLoginMutation = useMutation({
+    mutationFn: () => apiRequest("/api/auth/complete-first-login", {
+      method: "POST",
+    }),
+    onSuccess: () => {
+      // Invalidate user query to update isFirstLogin status
+      queryClient.invalidateQueries({ queryKey: ["/api/auth/me"] });
+      setLocation("/collections");
+    },
+  });
 
   const handleStart = () => {
-    setLocation("/collections");
+    completeFirstLoginMutation.mutate();
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden">
       <HaloBlur />
       
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center flex-1 px-6 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center">
         {/* Logo/Icon */}
-        <div className="w-32 h-32 bg-gradient-to-br from-[hsl(9,85%,67%)] to-orange-500 rounded-full flex items-center justify-center mb-8 shadow-2xl">
-          <Trophy className="w-16 h-16 text-white" />
+        <div className="w-32 h-32 bg-gradient-to-br from-[hsl(9,85%,67%)] to-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-8 shadow-2xl">
+          <div className="relative">
+            <CreditCard className="w-12 h-12 text-white absolute -rotate-12" />
+            <CreditCard className="w-12 h-12 text-white/80 absolute rotate-12 translate-x-2" />
+            <Layers className="w-8 h-8 text-white/60 absolute bottom-0 right-0" />
+          </div>
         </div>
 
         {/* Welcome Text */}
-        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-[hsl(9,85%,67%)] to-orange-400 bg-clip-text text-transparent">
+        <h1 className="text-5xl mb-4 text-[hsl(9,85%,67%)]" style={{ fontFamily: "'Luckiest Guy', cursive" }}>
           Bienvenue !
         </h1>
         <p className="text-xl text-gray-300 mb-2">

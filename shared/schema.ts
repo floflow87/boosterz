@@ -22,6 +22,7 @@ export const users = pgTable("users", {
   totalCards: integer("total_cards").default(0).notNull(),
   collectionsCount: integer("collections_count").default(0).notNull(),
   completionPercentage: real("completion_percentage").default(0).notNull(),
+  isFirstLogin: boolean("is_first_login").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
