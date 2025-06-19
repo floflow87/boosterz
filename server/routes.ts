@@ -1,6 +1,9 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import authRoutes from "./authRoutes";
+import chatRoutes from "./chatRoutes";
+import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 
 export async function registerRoutes(app: Express): Promise<Server> {

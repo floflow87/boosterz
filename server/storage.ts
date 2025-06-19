@@ -1,4 +1,4 @@
-import { users, collections, cards, userCards, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard } from "@shared/schema";
+import { users, collections, cards, userCards, conversations, messages, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, and } from "drizzle-orm";
 
@@ -34,6 +34,14 @@ export interface IStorage {
   createUserCard(userCard: InsertUserCard): Promise<UserCard>;
   updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined>;
   deleteUserCard(id: number): Promise<boolean>;
+
+  // Chat system
+  getConversations(userId: number): Promise<Conversation[]>;
+  getConversation(user1Id: number, user2Id: number): Promise<Conversation | undefined>;
+  createConversation(conversation: InsertConversation): Promise<Conversation>;
+  getMessages(conversationId: number): Promise<Message[]>;
+  createMessage(message: InsertMessage): Promise<Message>;
+  markMessagesAsRead(conversationId: number, userId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
