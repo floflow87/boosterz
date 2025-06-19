@@ -315,14 +315,14 @@ export default function Collections() {
                           />
                         ) : (
                           <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
-                            <span className="text-gray-400 text-xs font-poppins">#{card.cardNumber}</span>
+                            <span className="text-gray-400 text-xs font-poppins">#{card.reference}</span>
                           </div>
                         )}
                         <div className="text-xs mt-1 text-center font-poppins">
                           <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
                             {card.isOwned ? card.playerName : '?????'}
                           </div>
-                          <div className="text-[hsl(212,23%,69%)]">{card.cardNumber}</div>
+                          <div className="text-[hsl(212,23%,69%)]">{card.reference}</div>
                         </div>
                       </div>
                     ))}
@@ -345,14 +345,14 @@ export default function Collections() {
                               />
                             ) : (
                               <div className="w-full h-48 bg-gray-600 rounded-lg flex items-center justify-center opacity-50 mb-2">
-                                <span className="text-gray-400 text-xs font-poppins">#{card.cardNumber}</span>
+                                <span className="text-gray-400 text-xs font-poppins">#{card.reference}</span>
                               </div>
                             )}
                             <div className="text-center font-poppins">
                               <div className={`font-medium text-sm ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
                                 {card.isOwned ? card.playerName : '?????'}
                               </div>
-                              <div className="text-[hsl(212,23%,69%)] text-xs">{card.cardNumber}</div>
+                              <div className="text-[hsl(212,23%,69%)] text-xs">{card.reference}</div>
                               {card.cardType !== "Base" && (
                                 <div className="text-[hsl(9,85%,67%)] text-xs mt-1">{card.cardType}</div>
                               )}
@@ -375,7 +375,7 @@ export default function Collections() {
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center opacity-50">
-                              <span className="text-gray-400 text-xs">{card.cardNumber}</span>
+                              <span className="text-gray-400 text-xs">{card.reference}</span>
                             </div>
                           )}
                         </div>
@@ -383,7 +383,7 @@ export default function Collections() {
                           <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
                             {card.isOwned ? card.playerName : 'Carte manquante'}
                           </div>
-                          <div className="text-[hsl(212,23%,69%)] text-sm">{card.cardNumber}</div>
+                          <div className="text-[hsl(212,23%,69%)] text-sm">{card.reference}</div>
                           {card.isRookieCard && (
                             <div className="text-[hsl(9,85%,67%)] text-xs">RC</div>
                           )}
