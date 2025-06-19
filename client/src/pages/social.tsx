@@ -4,6 +4,7 @@ import { useLocation } from "wouter";
 import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
@@ -154,7 +155,7 @@ export default function Social() {
 
       <main className="relative z-10 px-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 bg-[hsl(214,35%,22%)] mb-6">
+          <TabsList className="grid w-full grid-cols-2 bg-[hsl(214,35%,22%)] mb-6">
             <TabsTrigger value="discover" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
               <Users className="w-4 h-4 mr-2" />
               Découvrir
@@ -162,10 +163,6 @@ export default function Social() {
             <TabsTrigger value="activity" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
               <TrendingUp className="w-4 h-4 mr-2" />
               Activité
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="data-[state=active]:bg-[hsl(9,85%,67%)]">
-              <Bell className="w-4 h-4 mr-2" />
-              Notifications
             </TabsTrigger>
           </TabsList>
 
@@ -214,31 +211,42 @@ export default function Social() {
                         </div>
                       </div>
                       
-                      <Button
-                        onClick={() => followMutation.mutate({
-                          userId: user.id,
-                          action: user.isFollowing ? "unfollow" : "follow"
-                        })}
-                        disabled={followMutation.isPending}
-                        variant={user.isFollowing ? "outline" : "default"}
-                        size="sm"
-                        className={user.isFollowing 
-                          ? "border-gray-400 text-gray-400 hover:bg-gray-700" 
-                          : "bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)]"
-                        }
-                      >
-                        {user.isFollowing ? (
-                          <>
-                            <UserCheck className="w-4 h-4 mr-1" />
-                            Suivi
-                          </>
-                        ) : (
-                          <>
-                            <UserPlus className="w-4 h-4 mr-1" />
-                            Suivre
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex space-x-2">
+                        <Button
+                          onClick={() => setLocation('/chat')}
+                          variant="outline"
+                          size="sm"
+                          className="border-gray-400 text-gray-400 hover:bg-gray-700"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                        </Button>
+                        
+                        <Button
+                          onClick={() => followMutation.mutate({
+                            userId: user.id,
+                            action: user.isFollowing ? "unfollow" : "follow"
+                          })}
+                          disabled={followMutation.isPending}
+                          variant={user.isFollowing ? "outline" : "default"}
+                          size="sm"
+                          className={user.isFollowing 
+                            ? "border-gray-400 text-gray-400 hover:bg-gray-700" 
+                            : "bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)]"
+                          }
+                        >
+                          {user.isFollowing ? (
+                            <>
+                              <UserCheck className="w-4 h-4 mr-1" />
+                              Suivi
+                            </>
+                          ) : (
+                            <>
+                              <UserPlus className="w-4 h-4 mr-1" />
+                              Suivre
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     </div>
 
                     {user.bio && (
@@ -336,44 +344,7 @@ export default function Social() {
             )}
           </TabsContent>
 
-          <TabsContent value="notifications" className="space-y-4">
-            {notificationsLoading ? (
-              <div className="text-center py-8">
-                <div className="text-gray-400">Chargement...</div>
-              </div>
-            ) : notifications.length === 0 ? (
-              <div className="text-center py-8">
-                <Bell className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-400">Aucune notification</p>
-              </div>
-            ) : (
-              notifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 border ${
-                    notification.isRead ? "border-[hsl(214,35%,30%)]" : "border-[hsl(9,85%,67%)]"
-                  }`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-white mb-1">{notification.title}</h4>
-                      <p className="text-gray-300 text-sm mb-2">{notification.message}</p>
-                      
-                      {notification.fromUser && (
-                        <div className="text-xs text-gray-400">
-                          De {notification.fromUser.name} • {formatTimeAgo(notification.createdAt)}
-                        </div>
-                      )}
-                    </div>
-                    
-                    {!notification.isRead && (
-                      <div className="w-2 h-2 bg-[hsl(9,85%,67%)] rounded-full mt-2"></div>
-                    )}
-                  </div>
-                </div>
-              ))
-            )}
-          </TabsContent>
+
         </Tabs>
       </main>
 
