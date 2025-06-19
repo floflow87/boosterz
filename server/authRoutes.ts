@@ -6,9 +6,9 @@ import { z } from 'zod';
 
 const router = Router();
 
-// Login schema - accepts username or email
+// Simple login schema
 const loginSchema = z.object({
-  email: z.string().min(1), // Changed to accept any string (username or email)
+  identifier: z.string().min(1),
   password: z.string().min(6),
 });
 
@@ -63,12 +63,17 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = loginSchema.parse(req.body);
+    const { identifier, password } = req.body;
+    
+    // Basic validation
+    if (!identifier || !password || password.length < 6) {
+      return res.status(400).json({ message: 'Identifiant et mot de passe requis (minimum 6 caractères)' });
+    }
     
     // Find user by username or email
-    let user = await storage.getUserByUsername(email);
+    let user = await storage.getUserByUsername(identifier);
     if (!user) {
-      user = await storage.getUserByEmail(email);
+      user = await storage.getUserByEmail(identifier);
     }
     
     if (!user || !user.password) {

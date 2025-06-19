@@ -278,6 +278,12 @@ export const insertUserSchema = createInsertSchema(users).pick({
   bio: true,
 });
 
+// Login schema that accepts username or email
+export const loginSchema = z.object({
+  identifier: z.string().min(1), // Can be username or email
+  password: z.string().min(6),
+});
+
 export const insertConversationSchema = createInsertSchema(conversations).pick({
   user1Id: true,
   user2Id: true,

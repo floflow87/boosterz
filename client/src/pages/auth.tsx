@@ -75,7 +75,7 @@ export default function Auth() {
     e.preventDefault();
     if (mode === "login") {
       loginMutation.mutate({
-        email: formData.email,
+        identifier: formData.email, // Use identifier for login
         password: formData.password,
       });
     } else {
