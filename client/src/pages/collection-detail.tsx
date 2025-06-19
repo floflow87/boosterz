@@ -408,9 +408,10 @@ export default function CollectionDetail() {
             onClick={() => setFilter("bases")}
             className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${
               filter === "bases" 
-                ? "bg-green-600 text-white shadow-lg transform scale-105" 
+                ? "text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
+            style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
           >
             Bases
           </button>
@@ -472,11 +473,15 @@ export default function CollectionDetail() {
           {/* Photo upload button */}
           <button 
             onClick={() => setShowPhotoUpload(true)}
-            className="p-3 bg-green-600 hover:bg-green-700 border border-green-500 rounded-lg transition-colors shadow-lg animate-pulse"
+            className="p-3 rounded-lg transition-colors shadow-lg"
             style={{
+              backgroundColor: '#F37261',
+              borderColor: '#F37261',
               animation: 'pulse-shadow 2s infinite',
-              boxShadow: '0 0 0 0 rgba(34, 197, 94, 0.7)'
+              boxShadow: '0 0 0 0 rgba(243, 114, 97, 0.7)'
             }}
+            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E65A47'}
+            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F37261'}
           >
             <Camera className="w-4 h-4 text-white" />
           </button>
@@ -582,6 +587,10 @@ export default function CollectionDetail() {
               <div 
                 key={playerKey}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden border-2 ${getCardBorderColor(currentVariant)}`}
+                style={currentVariant.isOwned ? {
+                  animation: 'pulse-shadow-card 3s infinite',
+                  boxShadow: '0 0 0 0 rgba(243, 114, 97, 0.4)'
+                } : {}}
               >
                 {/* Checkbox */}
                 <div className="absolute top-2 left-2 z-20">
