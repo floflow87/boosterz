@@ -533,7 +533,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("bases_numbered")}
-            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "bases_numbered" 
                 ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -543,7 +543,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("hits")}
-            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "hits" 
                 ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -553,7 +553,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("autographs")}
-            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "autographs" 
                 ? "bg-yellow-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -563,7 +563,7 @@ export default function CollectionDetail() {
           </button>
           <button
             onClick={() => setFilter("special_1_1")}
-            className={`px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "special_1_1" 
                 ? "bg-black text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -845,9 +845,11 @@ export default function CollectionDetail() {
                         }}
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <HelpCircle className="w-12 h-12 text-gray-400 opacity-50" />
-                      </div>
+                      <img 
+                        src={cardDefaultImage} 
+                        alt="Carte par défaut" 
+                        className="w-full h-full object-contain p-4"
+                      />
                     )}
                     
                     {/* Player Info Overlay */}
