@@ -182,26 +182,43 @@ export default function CollectionDetail() {
   // Bulk actions functions
   const handleCardSelection = (cardId: number, checked: boolean) => {
     const newSelection = new Set(selectedCards);
+    
+    // Find the card being selected/deselected
+    const targetCard = cards?.find(c => c.id === cardId);
+    if (!targetCard) return;
+    
+    // Get all variants for this player
+    const variants = getCardVariants(targetCard);
+    
     if (checked) {
-      newSelection.add(cardId);
+      // Add ALL variants for this player
+      variants.forEach(variant => {
+        newSelection.add(variant.id);
+      });
     } else {
-      newSelection.delete(cardId);
+      // Remove ALL variants for this player
+      variants.forEach(variant => {
+        newSelection.delete(variant.id);
+      });
     }
+    
     setSelectedCards(newSelection);
     setShowBulkActions(newSelection.size > 0);
   };
 
   const handleSelectAll = () => {
     if (!filteredCards) return;
-    // Only select the currently visible variant for each player
-    const visibleCardIds = new Set(filteredCards.map(card => {
+    // Select ALL variants for each player, not just the visible one
+    const allVariantIds = new Set<number>();
+    
+    filteredCards.forEach(card => {
       const variants = getCardVariants(card);
-      const playerKey = `${card.playerName}-${card.teamName}`;
-      const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
-      const currentVariant = variants[currentVariantIdx] || card;
-      return currentVariant.id;
-    }));
-    setSelectedCards(visibleCardIds);
+      variants.forEach(variant => {
+        allVariantIds.add(variant.id);
+      });
+    });
+    
+    setSelectedCards(allVariantIds);
     setShowBulkActions(true);
   };
 
@@ -696,11 +713,14 @@ export default function CollectionDetail() {
             const allVariantsOwned = variants.every(variant => variant.isOwned);
             const animationName = getCardAnimationName(currentVariant);
             
+            // Check if ANY variant for this player is selected
+            const isAnyVariantSelected = variants.some(variant => selectedCards.has(variant.id));
+            
             return (
               <div 
                 key={playerKey}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden transition-all duration-200 ${
-                  selectedCards.has(currentVariant.id) 
+                  isAnyVariantSelected 
                     ? `border-4 ${getCardBorderColor(currentVariant)} shadow-lg ring-2 ring-opacity-50 ${
                         getCardBorderColor(currentVariant) === 'border-green-500' ? 'ring-green-400' :
                         getCardBorderColor(currentVariant) === 'border-blue-500' ? 'ring-blue-400' :
@@ -718,7 +738,7 @@ export default function CollectionDetail() {
                 <div className="absolute top-2 left-2 z-20">
                   <input
                     type="checkbox"
-                    checked={selectedCards.has(currentVariant.id)}
+                    checked={isAnyVariantSelected}
                     onChange={(e) => {
                       e.stopPropagation();
                       handleCardSelection(currentVariant.id, e.target.checked);
@@ -776,7 +796,36 @@ export default function CollectionDetail() {
                 {/* Card Content */}
                 <div 
                   onClick={() => handleCardSelect(currentVariant)}
-                  className="cursor-pointer hover:bg-gray-700 transition-colors"
+                  className="cursor-pointer hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 active:scale-95"
+                  style={{
+                    transformStyle: 'preserve-3d',
+                    perspective: '1000px'
+                  }}
+                  onTouchStart={(e) => {
+                    const element = e.currentTarget;
+                    element.style.transform = 'scale(0.95) rotateX(5deg) rotateY(5deg)';
+                    element.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
+                  }}
+                  onTouchEnd={(e) => {
+                    const element = e.currentTarget;
+                    element.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+                    element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                  }}
+                  onMouseDown={(e) => {
+                    const element = e.currentTarget;
+                    element.style.transform = 'scale(0.95) rotateX(5deg) rotateY(5deg)';
+                    element.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
+                  }}
+                  onMouseUp={(e) => {
+                    const element = e.currentTarget;
+                    element.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+                    element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    const element = e.currentTarget;
+                    element.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
+                    element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+                  }}
                 >
                   {/* Card Image */}
                   <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400">
@@ -865,15 +914,7 @@ export default function CollectionDetail() {
                       </div>
                     )}
                     
-                    {/* Player Info Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-3">
-                      <div className="text-white font-bold text-sm">
-                        {currentVariant.playerName?.toUpperCase() || 'JOUEUR INCONNU'}
-                      </div>
-                      <div className="text-gray-300 text-xs">
-                        {currentVariant.teamName}
-                      </div>
-                    </div>
+                    
                   </div>
                   
                   {/* Card Info */}
