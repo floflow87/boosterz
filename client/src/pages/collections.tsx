@@ -108,9 +108,7 @@ export default function Collections() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
       <HaloBlur />
-      
       <Header title="Collections" />
-
       <main className="relative z-10 px-4 pb-24">
         {/* User Profile Section */}
         {user && (
@@ -575,7 +573,7 @@ export default function Collections() {
                       <button className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm">
                         Retirer
                       </button>
-                      <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm">
+                      <button className="hover:bg-blue-700 text-white px-3 py-1 rounded text-sm bg-[F37261]">
                         {card.tradeOnly ? "Mettre en vente" : "Échange seul"}
                       </button>
                     </div>
@@ -593,14 +591,12 @@ export default function Collections() {
           </div>
         )}
       </main>
-
       <CardAddModal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         collections={collections || []}
         selectedCollection={selectedCollection || undefined}
       />
-
       {/* Delete Confirmation Modal */}
       {showDeleteModal && collectionToDelete && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -641,7 +637,6 @@ export default function Collections() {
           </div>
         </div>
       )}
-
       <Navigation />
     </div>
   );

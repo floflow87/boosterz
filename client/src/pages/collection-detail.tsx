@@ -896,21 +896,9 @@ export default function CollectionDetail() {
                           />
                         </div>
                         
-                        {/* Card reference */}
-                        <div className="text-center">
-                          <div className="text-lg font-bold mb-1">#{currentVariant.reference}</div>
-                          <div className="text-xs opacity-70 text-center leading-tight">
-                            {currentVariant.playerName?.toUpperCase() || 'JOUEUR'}
-                          </div>
-                          <div className="text-xs opacity-50 mt-1">
-                            {currentVariant.teamName}
-                          </div>
-                        </div>
                         
-                        {/* Camera icon for adding photo */}
-                        <div className="absolute bottom-2 right-2 p-1 bg-black bg-opacity-50 rounded-lg">
-                          <Camera className="w-4 h-4 text-white opacity-70" />
-                        </div>
+                        
+                        
                       </div>
                     )}
                     
