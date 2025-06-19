@@ -156,11 +156,11 @@ export default function Collections() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="sticky top-0 z-50 pb-2 mb-2 bg-[hsl(216,46%,13%)] pt-1 -mx-4 px-4" style={{ height: '50px' }}>
-          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[36px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="sticky top-0 z-50 pb-3 mb-3 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '58px' }}>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button 
               onClick={() => setActiveTab("cards")}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "cards" 
                   ? "text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -172,7 +172,7 @@ export default function Collections() {
             </button>
             <button 
               onClick={() => setActiveTab("collections")}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "collections" 
                   ? "bg-blue-600 text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -183,7 +183,7 @@ export default function Collections() {
             </button>
             <button 
               onClick={() => setActiveTab("marketplace")}
-              className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "marketplace" 
                   ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
@@ -192,7 +192,7 @@ export default function Collections() {
               <TrendingUp className="w-3 h-3 mr-1 inline" />
               A la vente
             </button>
-            <button className="px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
+            <button className="px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
               <Package className="w-3 h-3 mr-1 inline" />
               Decks
             </button>
@@ -232,31 +232,31 @@ export default function Collections() {
                     </div>
 
                     {/* Card carousel area with golden cards image */}
-                    <div className="h-48 relative flex items-center justify-center overflow-hidden px-6 pb-4">
+                    <div className="h-40 relative flex items-center justify-center overflow-hidden px-6 pb-3">
                       {/* Carousel container with background color matching the page */}
-                      <div className="relative w-full max-w-md h-32 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-4 shadow-2xl flex items-center justify-center">
+                      <div className="relative w-full max-w-md h-28 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-4 shadow-2xl flex items-center justify-center">
                         {/* Golden cards image - direct placement without white background */}
                         <img 
                           src={goldenCardsIcon}
                           alt="Golden trading cards"
-                          className="w-40 h-40 object-contain rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.3)]"
+                          className="w-36 h-36 object-contain rounded-[30px] shadow-[0_0_30px_rgba(0,0,0,0.3)]"
                         />
                         
                         {/* Background decorative cards */}
-                        <div className="absolute -right-4 -top-4 w-24 h-32 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
-                        <div className="absolute -left-4 -bottom-4 w-24 h-32 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
+                        <div className="absolute -right-4 -top-4 w-20 h-28 bg-white/20 rounded-xl transform rotate-12 opacity-30"></div>
+                        <div className="absolute -left-4 -bottom-4 w-20 h-28 bg-white/10 rounded-xl transform -rotate-12 opacity-40"></div>
                       </div>
                     </div>
                     
                     {/* Progress bar */}
-                    <div className="px-6 pb-6">
-                      <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-3">
+                    <div className="px-6 pb-4">
+                      <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                         <div 
-                          className="bg-[hsl(9,85%,67%)] h-3 rounded-full transition-all duration-300"
+                          className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
                           style={{ width: `${collection.completionPercentage}%` }}
                         ></div>
                       </div>
-                      <div className="flex justify-between text-sm text-white/60 mt-2">
+                      <div className="flex justify-between text-xs text-white/60 mt-1">
                         <span>{collection.completionPercentage}% complété</span>
                         <span>{collection.totalCards - collection.ownedCards} cartes manquantes</span>
                       </div>

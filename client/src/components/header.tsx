@@ -14,7 +14,7 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
   };
 
   return (
-    <header className="relative z-10 flex items-center justify-between p-4 pt-6">
+    <header className="relative z-10 flex items-center justify-between p-4 pt-4">
       <div className="flex items-center space-x-3">
         {showBackButton ? (
           <button 
