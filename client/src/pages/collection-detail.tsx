@@ -799,9 +799,6 @@ export default function CollectionDetail() {
                         })()}
                       </div>
                     )}
-                    <div className="text-gray-400 text-xs mt-1">
-                      {currentVariant.rarity || 'Base'}
-                    </div>
                     <div className="text-gray-400 text-xs">
                       Référence: {currentVariant.reference}
                     </div>
@@ -947,7 +944,13 @@ export default function CollectionDetail() {
                             if (cardType.includes("Keepers")) return "Keepers";
                             if (cardType.includes("Club Legend")) return "Club Legend";
                             if (cardType.includes("Spotlight")) return "Spotlight";
-                            return "Hit Card";
+                            if (cardType.includes("Pennants")) return "Pennants";
+                            if (cardType.includes("Next Up")) return "Next Up";
+                            if (cardType.includes("Intergalactic")) return "Intergalactic";
+                            if (cardType.includes("Score Team")) return "Score Team";
+                            if (cardType.includes("Breakthrough")) return "Breakthrough";
+                            if (cardType.includes("Pure Class")) return "Pure Class";
+                            return "Insert";
                           })()}
                         </span>
                       </div>

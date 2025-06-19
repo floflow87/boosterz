@@ -122,43 +122,62 @@ export default function Collections() {
               <div 
                 key={collection.id}
                 onClick={() => handleCollectionClick(collection.id)}
-                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group"
+                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group relative"
               >
+                {/* Header with title and card count */}
+                <div className="p-4 pb-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
+                      <p className="text-white/60 text-sm italic">{collection.season}</p>
+                    </div>
+                    <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-1 rounded-full font-medium">
+                      x{collection.ownedCards}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Card carousel area */}
                 <div 
-                  className="h-24 relative bg-gradient-to-br flex items-center justify-center"
+                  className="h-48 relative bg-gradient-to-br flex items-center justify-center overflow-hidden"
                   style={{ 
                     background: `linear-gradient(135deg, ${collection.backgroundColor || '#F37261'}, ${collection.backgroundColor || '#F37261'}dd)` 
                   }}
                 >
-                  {/* Collection Logo */}
-                  <div className="flex flex-col items-center justify-center text-center">
-                    {collection.name === 'SCORE LIGUE 1' ? (
-                      <img 
-                        src="/attached_assets/image%2029_1750232088999.png" 
-                        alt="Score Ligue 1 logo"
-                        className="w-12 h-12 object-contain mb-1"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-1">
-                        <Layers className="w-6 h-6 text-white" />
-                      </div>
-                    )}
-                    <h3 className="font-bold text-white font-poppins text-sm">{collection.name}</h3>
-                    <p className="text-white/80 text-xs">{collection.season}</p>
-                  </div>
-                  
-                  <div className="absolute top-2 right-2 bg-black/20 text-white text-xs px-2 py-1 rounded-full">
-                    {collection.completionPercentage}%
+                  {/* Simulated card carousel - multiple overlapping cards */}
+                  <div className="relative flex items-center justify-center">
+                    {/* Back cards */}
+                    <div className="absolute -left-8 -top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform rotate-12 opacity-40">
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg"></div>
+                    </div>
+                    <div className="absolute -right-8 -top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform -rotate-12 opacity-40">
+                      <div className="w-full h-full bg-gradient-to-br from-green-500 to-blue-500 rounded-lg"></div>
+                    </div>
+                    <div className="absolute -left-6 top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform rotate-6 opacity-60">
+                      <div className="w-full h-full bg-gradient-to-br from-red-500 to-orange-500 rounded-lg"></div>
+                    </div>
+                    <div className="absolute -right-6 top-2 w-20 h-28 bg-white rounded-lg shadow-lg transform -rotate-6 opacity-60">
+                      <div className="w-full h-full bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg"></div>
+                    </div>
+                    
+                    {/* Front card */}
+                    <div className="w-24 h-32 bg-white rounded-lg shadow-xl relative z-10">
+                      {collection.name === 'SCORE LIGUE 1' ? (
+                        <img 
+                          src="/attached_assets/image%2029_1750232088999.png" 
+                          alt="Score Ligue 1 card"
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
+                          <Layers className="w-8 h-8 text-white" />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
-                <div className="p-3">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-[hsl(212,23%,69%)]">
-                      {collection.ownedCards} / {collection.totalCards} cartes
-                    </span>
-                  </div>
-                  
+                <div className="p-4 pt-2">
                   <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                     <div 
                       className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
