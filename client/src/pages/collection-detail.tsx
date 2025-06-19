@@ -509,19 +509,20 @@ export default function CollectionDetail() {
     <div className="min-h-screen bg-black text-white overflow-x-hidden">
       <main className="px-3 pt-3 pb-20" id="collection-top">
         {/* Collection Header */}
-        <div className="flex items-center mb-6">
+        <div className="flex items-start mb-6">
           <button
             onClick={() => setLocation('/collections')}
             className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
           >
             <ChevronLeft className="w-6 h-6 text-white" />
           </button>
-          <div className="flex flex-col flex-1 ml-2">
-            <h1 className="text-xl font-bold text-white mb-1">
+          <div className="flex flex-col items-center flex-1">
+            <h1 className="text-xl font-bold text-white text-center mb-1">
               {collection?.name || "Collection"}
             </h1>
-            <p className="text-gray-400 text-sm italic">2023/24</p>
+            <p className="text-gray-400 text-sm italic text-center">2023/24</p>
           </div>
+          <div className="w-10"></div>
         </div>
 
         {/* Category Tabs - Badge Style - Sticky */}
