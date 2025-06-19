@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import HaloBlur from "@/components/halo-blur";
 
 export default function Auth() {
   const [, setLocation] = useLocation();
@@ -87,7 +88,7 @@ export default function Auth() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-[#111827]">
       <div className="w-full max-w-md">
-        <div className="bg-gray-900 rounded-xl p-8 shadow-2xl border border-gray-800">
+        <div className="rounded-xl p-8 shadow-2xl border border-gray-800 bg-[24354C] font-light">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-white mb-2">
               {mode === "login" ? "Connexion" : "Inscription"}
