@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 import CardAddModal from "@/components/card-add-modal";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import avatarImage from "@assets/image_1750196240581.png";
 import type { User, Collection, Card } from "@shared/schema";
 
@@ -15,6 +17,10 @@ export default function Collections() {
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel">("grid");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ["/api/users/1"],
@@ -37,11 +43,57 @@ export default function Collections() {
     staleTime: 1 * 60 * 1000, // 1 minute
   });
 
+  const deleteCollectionMutation = useMutation({
+    mutationFn: async (collectionId: number) => {
+      return apiRequest("DELETE", `/api/collections/${collectionId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      toast({
+        title: "Collection supprimée",
+        description: "La collection a été supprimée avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      setShowDeleteModal(false);
+      setCollectionToDelete(null);
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la collection.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleCollectionClick = (collectionId: number) => {
     if (activeTab === "collections") {
       setLocation(`/collection/${collectionId}`);
     } else {
       setSelectedCollection(collectionId);
+    }
+  };
+
+  const handleDeleteCollection = (collection: Collection, e: React.MouseEvent) => {
+    e.stopPropagation();
+    
+    // Protéger la collection Score Ligue 1 2023/24
+    if (collection.id === 1 || collection.name?.includes("SCORE LIGUE 1")) {
+      toast({
+        title: "Action non autorisée",
+        description: "La collection Score Ligue 1 2023/24 ne peut pas être supprimée.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setCollectionToDelete(collection);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteCollection = () => {
+    if (collectionToDelete) {
+      deleteCollectionMutation.mutate(collectionToDelete.id);
     }
   };
 
@@ -152,7 +204,7 @@ export default function Collections() {
               <div 
                 key={collection.id}
                 onClick={() => handleCollectionClick(collection.id)}
-                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl group relative"
+                className="collection-card bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer hover:scale-105 transform transition-all duration-200 hover:shadow-xl hover:shadow-[hsl(9,85%,67%)]/30 group relative"
               >
                 {/* Header with title and card count */}
                 <div className="p-4 pb-2">
@@ -161,8 +213,19 @@ export default function Collections() {
                       <h3 className="font-bold text-white font-poppins text-base">{collection.name}</h3>
                       <p className="text-white/60 text-sm italic">{collection.season}</p>
                     </div>
-                    <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-1 rounded-full font-medium">
-                      x{collection.ownedCards}
+                    <div className="flex items-center gap-2">
+                      <div className="bg-[hsl(9,85%,67%)] text-white text-sm px-3 py-1 rounded-full font-medium">
+                        x{collection.ownedCards}
+                      </div>
+                      {collection.id !== 1 && !collection.name?.includes("SCORE LIGUE 1") && (
+                        <button
+                          onClick={(e) => handleDeleteCollection(collection, e)}
+                          className="opacity-0 group-hover:opacity-100 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200 text-xs"
+                          title="Supprimer la collection"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -529,6 +592,47 @@ export default function Collections() {
         collections={collections || []}
         selectedCollection={selectedCollection || undefined}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && collectionToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 max-w-md w-full mx-4 border border-[hsl(214,35%,30%)]">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-white" />
+              </div>
+            </div>
+            
+            <h3 className="text-lg font-bold text-white text-center mb-2">
+              Supprimer la collection
+            </h3>
+            
+            <p className="text-[hsl(212,23%,69%)] text-center mb-6">
+              Êtes-vous sûr de vouloir supprimer la collection "{collectionToDelete.name}" ? 
+              Cette action est irréversible et supprimera toutes les cartes associées.
+            </p>
+            
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setCollectionToDelete(null);
+                }}
+                className="flex-1 px-4 py-2 text-sm bg-[hsl(214,35%,30%)] text-white rounded-lg hover:bg-[hsl(214,35%,35%)] transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={confirmDeleteCollection}
+                disabled={deleteCollectionMutation.isPending}
+                className="flex-1 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
+              >
+                {deleteCollectionMutation.isPending ? "Suppression..." : "Supprimer"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Navigation />
     </div>
