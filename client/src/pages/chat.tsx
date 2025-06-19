@@ -34,11 +34,18 @@ export default function Chat() {
     refetchInterval: 3000, // Auto-refresh every 3 seconds
   });
 
-  // Get other user info
+  // Get other user info (skip for Max la menace)
   const { data: otherUser, isLoading: userLoading } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
-    enabled: !!userId,
+    enabled: !!userId && userId !== 999,
   });
+
+  // Handle Max la menace as special case
+  const maxLaMenace = userId === 999 ? {
+    id: 999,
+    name: "Max la menace",
+    username: "maxlamenace"
+  } : null;
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageContent: string) => {
@@ -91,11 +98,14 @@ export default function Chat() {
     }
   }, [conversation?.id]);
 
-  if (conversationLoading || messagesLoading || userLoading) {
+  const isLoading = conversationLoading || messagesLoading || (userLoading && userId !== 999);
+  const displayUser = maxLaMenace || otherUser;
+
+  if (isLoading) {
     return <LoadingScreen />;
   }
 
-  if (!otherUser) {
+  if (!displayUser) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
