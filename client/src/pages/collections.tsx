@@ -9,6 +9,7 @@ import CardAddModal from "@/components/card-add-modal";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import avatarImage from "@assets/image_1750196240581.png";
+import cardStackIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750349734399.png";
 import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
@@ -218,8 +219,12 @@ export default function Collections() {
                 <div className="p-4 pb-2">
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
-                        <CreditCard className="w-4 h-4 text-white" />
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center">
+                        <img 
+                          src={cardStackIcon} 
+                          alt="Collection icon"
+                          className="w-8 h-8 object-contain"
+                        />
                       </div>
                       <div>
                         <h3 className="font-bold text-white font-poppins text-base">{collection.name}</h3>
