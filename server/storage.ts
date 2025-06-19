@@ -17,6 +17,7 @@ export interface IStorage {
   getCollection(id: number): Promise<Collection | undefined>;
   createCollection(collection: InsertCollection): Promise<Collection>;
   updateCollection(id: number, updates: Partial<Collection>): Promise<Collection | undefined>;
+  deleteCollection(id: number): Promise<boolean>;
   
   // Cards
   getCardsByCollectionId(collectionId: number): Promise<Card[]>;
@@ -96,6 +97,15 @@ export class DatabaseStorage implements IStorage {
       .where(eq(collections.id, id))
       .returning();
     return collection || undefined;
+  }
+
+  async deleteCollection(id: number): Promise<boolean> {
+    // First delete all cards in the collection
+    await db.delete(cards).where(eq(cards.collectionId, id));
+    
+    // Then delete the collection
+    const result = await db.delete(collections).where(eq(collections.id, id));
+    return result.rowCount ? result.rowCount > 0 : false;
   }
 
   async getCardsByCollectionId(collectionId: number): Promise<Card[]> {
@@ -566,6 +576,15 @@ export class MemStorage implements IStorage {
     const updatedCollection = { ...collection, ...updates };
     this.collections.set(id, updatedCollection);
     return updatedCollection;
+  }
+
+  async deleteCollection(id: number): Promise<boolean> {
+    // Delete all cards in the collection first
+    const cardsToDelete = Array.from(this.cards.values()).filter(card => card.collectionId === id);
+    cardsToDelete.forEach(card => this.cards.delete(card.id));
+    
+    // Delete the collection
+    return this.collections.delete(id);
   }
 
   async getCardsByCollectionId(collectionId: number): Promise<Card[]> {

@@ -98,6 +98,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete a collection
+  app.delete("/api/collections/:id", async (req, res) => {
+    try {
+      const collectionId = parseInt(req.params.id);
+      
+      // Prevent deletion of the default Score Ligue 1 collection
+      if (collectionId === 1) {
+        return res.status(403).json({ message: "Cannot delete the default collection" });
+      }
+      
+      const collection = await storage.getCollection(collectionId);
+      if (!collection) {
+        return res.status(404).json({ message: "Collection not found" });
+      }
+      
+      // Check if it's the Score Ligue 1 collection by name
+      if (collection.name?.includes("SCORE LIGUE 1")) {
+        return res.status(403).json({ message: "Cannot delete the Score Ligue 1 collection" });
+      }
+      
+      const success = await storage.deleteCollection(collectionId);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete collection" });
+      }
+      
+      res.json({ message: "Collection deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting collection:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Get cards in collection
   app.get("/api/collections/:id/cards", async (req, res) => {
     try {
