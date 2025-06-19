@@ -346,10 +346,10 @@ export default function CollectionDetail() {
     <div className="min-h-screen bg-black text-white">
       <main className="px-3 pt-3 pb-20">
         {/* Category Tabs - Badge Style */}
-        <div className="flex space-x-2 mb-4 overflow-x-auto">
+        <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[48px] items-center">
           <button
             onClick={() => setFilter("bases")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
+            className={`px-4 py-3 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 ${
               filter === "bases" 
                 ? "bg-green-600 text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"

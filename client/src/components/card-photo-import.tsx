@@ -259,6 +259,24 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     handleClose();
   }, [processImageWithAdjustments, selectedCardId, onSave]);
 
+  const handleRemovePhoto = useCallback(() => {
+    setSelectedImage(null);
+    setStep("import");
+    setShowRetouchOptions(false);
+    setAdjustments({
+      brightness: 100,
+      contrast: 100,
+      saturation: 100,
+      rotation: 0,
+      crop: {
+        x: 0,
+        y: 0,
+        width: 100,
+        height: 100
+      }
+    });
+  }, []);
+
   const handlePlayerNameChange = useCallback((name: string) => {
     setPlayerName(name);
     
@@ -605,9 +623,17 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
               {selectedImage && (
                 <div className="mb-4 text-center">
                   <div 
-                    className="w-48 h-64 mx-auto perspective-1000"
+                    className="w-56 h-72 mx-auto perspective-1000 relative"
                     style={{ perspective: '1000px' }}
                   >
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      onClick={handleRemovePhoto}
+                      className="absolute -top-2 -right-2 z-10 w-8 h-8 p-0 rounded-full shadow-lg"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                     <img
                       ref={imageRef}
                       src={selectedImage || ""}
