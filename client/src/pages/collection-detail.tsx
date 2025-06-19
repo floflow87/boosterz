@@ -403,7 +403,7 @@ export default function CollectionDetail() {
         </div>
 
         {/* Category Tabs - Badge Style */}
-        <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[40px] items-center">
+        <div className="flex space-x-2 mb-4 overflow-x-auto min-h-[40px] items-center pl-2">
           <button
             onClick={() => setFilter("bases")}
             className={`px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 mr-3 ${
@@ -472,7 +472,11 @@ export default function CollectionDetail() {
           {/* Photo upload button */}
           <button 
             onClick={() => setShowPhotoUpload(true)}
-            className="p-3 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-lg transition-colors animate-pulse"
+            className="p-3 bg-green-600 hover:bg-green-700 border border-green-500 rounded-lg transition-colors shadow-lg animate-pulse"
+            style={{
+              animation: 'pulse-shadow 2s infinite',
+              boxShadow: '0 0 0 0 rgba(34, 197, 94, 0.7)'
+            }}
           >
             <Camera className="w-4 h-4 text-white" />
           </button>
