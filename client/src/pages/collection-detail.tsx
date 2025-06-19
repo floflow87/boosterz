@@ -4,6 +4,7 @@ import { useParams, useLocation } from "wouter";
 import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake } from "lucide-react";
 import Navigation from "@/components/navigation";
 import CardPhotoImport from "@/components/card-photo-import";
+import CardTradePanel from "@/components/card-trade-panel";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
@@ -24,6 +25,8 @@ export default function CollectionDetail() {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [cardVariantIndexes, setCardVariantIndexes] = useState<Record<string, number>>({});
   const [panStates, setPanStates] = useState<Record<string, { x: number; y: number; scale: number }>>({});
+  const [showTradePanel, setShowTradePanel] = useState(false);
+  const [selectedTradeCard, setSelectedTradeCard] = useState<Card | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -994,6 +997,10 @@ export default function CollectionDetail() {
                         <Camera className="w-4 h-4" />
                       </button>
                       <button
+                        onClick={() => {
+                          setSelectedTradeCard(currentCard || selectedCard);
+                          setShowTradePanel(true);
+                        }}
                         className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-lg transition-colors flex items-center justify-center"
                       >
                         <Handshake className="w-4 h-4" />
