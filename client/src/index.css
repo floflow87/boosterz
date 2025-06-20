@@ -340,40 +340,44 @@
     }
   }
 
-  /* Animation 3D flottante pour les cartes en pop-up */
-  @keyframes card-3d-float {
-    0% {
-      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
-    }
-    12.5% {
-      transform: rotateX(-2deg) rotateY(5deg) rotateZ(1deg) scale(1.02);
-    }
-    25% {
-      transform: rotateX(2deg) rotateY(8deg) rotateZ(-1deg) scale(1.04);
-    }
-    37.5% {
-      transform: rotateX(-1deg) rotateY(5deg) rotateZ(2deg) scale(1.02);
+  /* Animation d'étoiles brillantes pour les cartes en pop-up */
+  @keyframes sparkle-stars {
+    0%, 100% {
+      opacity: 0;
+      transform: scale(0.5) rotate(0deg);
     }
     50% {
-      transform: rotateX(3deg) rotateY(-3deg) rotateZ(-1deg) scale(1.03);
-    }
-    62.5% {
-      transform: rotateX(-2deg) rotateY(-8deg) rotateZ(1deg) scale(1.01);
-    }
-    75% {
-      transform: rotateX(1deg) rotateY(-5deg) rotateZ(-2deg) scale(1.02);
-    }
-    87.5% {
-      transform: rotateX(-1deg) rotateY(2deg) rotateZ(1deg) scale(1.01);
-    }
-    100% {
-      transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1);
+      opacity: 1;
+      transform: scale(1) rotate(180deg);
     }
   }
 
-  .animate-card-3d-float {
-    animation: card-3d-float 8s ease-in-out infinite;
-    transform-style: preserve-3d;
+  .animate-sparkle-stars {
+    position: relative;
+  }
+
+  .animate-sparkle-stars::before,
+  .animate-sparkle-stars::after {
+    content: '✨';
+    position: absolute;
+    font-size: 16px;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    pointer-events: none;
+    z-index: 10;
+    animation: sparkle-stars 2.5s ease-in-out infinite;
+  }
+
+  .animate-sparkle-stars::before {
+    top: 10%;
+    right: 15%;
+    animation-delay: 0s;
+  }
+
+  .animate-sparkle-stars::after {
+    bottom: 15%;
+    left: 10%;
+    animation-delay: 1.2s;
   }
   
   .animation-delay-150 {

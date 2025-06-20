@@ -1177,7 +1177,7 @@ export default function CollectionDetail() {
                         <img 
                           src={currentCard.imageUrl} 
                           alt={`${currentCard.playerName} card`}
-                          className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 animate-card-3d-float"
+                          className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 animate-sparkle-stars"
                           onError={(e) => {
                             console.log("Modal image failed to load:", currentCard.imageUrl);
                             e.currentTarget.src = cardDefaultImage;

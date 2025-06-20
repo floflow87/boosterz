@@ -15,9 +15,10 @@ interface CardPhotoImportProps {
   availableCards: Card[];
   initialCard?: Card;
   currentFilter?: string;
+  preselectedPlayer?: string; // Nouveau: joueur présélectionné depuis le pop-up
 }
 
-export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded, availableCards, initialCard, currentFilter }: CardPhotoImportProps) {
+export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded, availableCards, initialCard, currentFilter, preselectedPlayer }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -72,6 +73,29 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
     setCurrentHistoryIndex(-1);
     onClose();
   }, [onClose]);
+
+  // Initialiser avec le joueur présélectionné
+  useEffect(() => {
+    if (isOpen && preselectedPlayer) {
+      setPlayerName(preselectedPlayer);
+      
+      // Filtrer les cartes pour ce joueur
+      const matchingCards = availableCards.filter(card => 
+        card.playerName === preselectedPlayer
+      );
+      const filteredCards = filterCardsByCategory(matchingCards);
+      setPlayerCards(filteredCards);
+      
+      if (filteredCards.length > 0) {
+        setSelectedCardId(filteredCards[0].id);
+      }
+    } else if (isOpen && !preselectedPlayer) {
+      // Reset si pas de joueur présélectionné
+      setPlayerName("");
+      setPlayerCards([]);
+      setSelectedCardId(undefined);
+    }
+  }, [isOpen, preselectedPlayer, availableCards, filterCardsByCategory]);
 
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
