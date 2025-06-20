@@ -1251,7 +1251,6 @@ export default function CollectionDetail() {
               return currentCard?.imageUrl ? (
                 <div 
                   className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out animate-card-3d-float"
-                  style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
                   onMouseMove={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const x = e.clientX - rect.left;
@@ -1273,6 +1272,7 @@ export default function CollectionDetail() {
                     e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
                   }}
                   style={{
+                    perspective: '1000px',
                     transformStyle: 'preserve-3d'
                   }}
                 >

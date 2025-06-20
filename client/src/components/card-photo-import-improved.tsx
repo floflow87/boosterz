@@ -688,9 +688,16 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Interface de retouche style Instagram */}
               {showRetouchOptions && (
-                <div className="space-y-4 -mx-6">
-                  {/* Bandeau de retouche inspiré d'Instagram */}
-                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4">
+                <>
+                  {/* Overlay pour fermer */}
+                  <div 
+                    className="fixed inset-0 bg-black/50 z-40"
+                    onClick={() => setShowRetouchOptions(false)}
+                  />
+                  
+                  <div className="fixed inset-x-0 bottom-0 z-50 bg-gray-900/95 backdrop-blur-sm border-t border-gray-700">
+                    {/* Bandeau de retouche inspiré d'Instagram */}
+                    <div className="py-4">
                     <div className="flex gap-6 overflow-x-auto px-6 pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
@@ -797,7 +804,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
                   {/* Panneau de réglage déroulant */}
                   {selectedRetouchTool && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-6">
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-6 mb-4">
                       {selectedRetouchTool === 'adjust' && (
                         <div>
                           <div className="flex justify-between items-center mb-3">
@@ -1069,11 +1076,9 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                       )}
                     </div>
                   )}
-                </div>
+                  </div>
+                </>
               )}
-            </div>
-          </div>
-        )}
 
         {/* Étape d'assignation */}
         {step === "assign" && (
