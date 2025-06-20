@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake } from "lucide-react";
 import Navigation from "@/components/navigation";
-import CardPhotoImport from "@/components/card-photo-import-fixed";
+import CardPhotoImportFixed from "@/components/card-photo-import-fixed";
 import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
 import HaloBlur from "@/components/halo-blur";
@@ -1300,17 +1300,44 @@ export default function CollectionDetail() {
       )}
 
       {/* Photo Upload Modal */}
-      <CardPhotoImport
+      <CardPhotoImportFixed
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
-        onSave={handlePhotoSave}
+        onImageUploaded={async (cardId, imageUrl) => {
+          try {
+            // Update local state immediately for visual feedback
+            if (selectedCard && selectedCard.id === cardId) {
+              setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
+            }
+            
+            // Update card image
+            await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            
+            // Automatically mark card as owned
+            await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            
+            // Trigger card pull effect
+            setPulledCardEffect(cardId);
+            setTimeout(() => setPulledCardEffect(null), 3000);
+            
+            toast({
+              title: "Photo sauvegardée",
+              description: "La photo a été ajoutée et la carte marquée comme acquise.",
+              className: "bg-green-900 border-green-700 text-green-100",
+            });
+            
+            setShowPhotoUpload(false);
+          } catch (error) {
+            console.error("Erreur lors de la sauvegarde:", error);
+            toast({
+              title: "Erreur",
+              description: "Impossible de sauvegarder la photo. Vérifiez votre connexion.",
+              variant: "destructive"
+            });
+          }
+        }}
         availableCards={cards || []}
-        preselectedCard={selectedCard ? {
-          id: selectedCard.id,
-          playerName: selectedCard.playerName || "Joueur Inconnu",
-          reference: selectedCard.reference,
-          teamName: selectedCard.teamName || "Équipe Inconnue"
-        } : undefined}
+        initialCard={selectedCard || undefined}
         currentFilter={filter}
       />
 

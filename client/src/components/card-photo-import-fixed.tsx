@@ -17,7 +17,7 @@ interface CardPhotoImportProps {
   currentFilter?: string;
 }
 
-export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, availableCards, initialCard, currentFilter }: CardPhotoImportProps) {
+export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded, availableCards, initialCard, currentFilter }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
