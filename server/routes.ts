@@ -631,6 +631,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Block user
+  app.post("/api/users/:userId/block", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      // Mock implementation - in real app, save to database
+      res.json({ success: true, message: "User blocked successfully" });
+    } catch (error) {
+      console.error("Error blocking user:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Unblock user
+  app.post("/api/users/:userId/unblock", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      // Mock implementation - in real app, save to database
+      res.json({ success: true, message: "User unblocked successfully" });
+    } catch (error) {
+      console.error("Error unblocking user:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

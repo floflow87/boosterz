@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Search, MessageCircle, Users, MoreVertical } from "lucide-react";
+import { ArrowLeft, Search, MessageCircle, MoreVertical, UserX, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import LoadingScreen from "@/components/LoadingScreen";
+import Navigation from "@/components/navigation";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { User } from "@shared/schema";
 
 interface ConversationItem {
@@ -21,16 +25,50 @@ interface ConversationItem {
     isRead: boolean;
   };
   unreadCount: number;
+  isBlocked?: boolean;
 }
 
 export default function Conversations() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [blockedUsers, setBlockedUsers] = useState<Set<number>>(new Set());
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   // Fetch conversations from API
   const { data: conversations = [], isLoading } = useQuery<ConversationItem[]>({
     queryKey: ['/api/chat/conversations'],
     refetchInterval: 5000, // Refresh every 5 seconds
+  });
+
+  // Block/Unblock user mutation
+  const blockUserMutation = useMutation({
+    mutationFn: async ({ userId, action }: { userId: number; action: 'block' | 'unblock' }) => {
+      return apiRequest("POST", `/api/users/${userId}/${action}`, {});
+    },
+    onSuccess: (_, { userId, action }) => {
+      const newBlockedUsers = new Set(blockedUsers);
+      if (action === 'block') {
+        newBlockedUsers.add(userId);
+      } else {
+        newBlockedUsers.delete(userId);
+      }
+      setBlockedUsers(newBlockedUsers);
+      
+      toast({
+        title: action === 'block' ? "Utilisateur bloqué" : "Utilisateur débloqué",
+        description: action === 'block' 
+          ? "Vous ne recevrez plus de messages de cet utilisateur"
+          : "Vous pouvez maintenant recevoir des messages de cet utilisateur",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le statut de blocage",
+        variant: "destructive",
+      });
+    },
   });
 
   const filteredConversations = conversations.filter(conv =>
@@ -150,15 +188,38 @@ export default function Conversations() {
 
                   {/* More Options */}
                   <div className="flex-shrink-0">
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // Handle options menu
-                      }}
-                      className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-                    >
-                      <MoreVertical className="w-4 h-4 text-gray-400" />
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button 
+                          onClick={(e) => e.stopPropagation()}
+                          className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+                        >
+                          <MoreVertical className="w-4 h-4 text-gray-400" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const action = blockedUsers.has(conversation.user.id) ? 'unblock' : 'block';
+                            blockUserMutation.mutate({ userId: conversation.user.id, action });
+                          }}
+                          className="hover:bg-gray-700"
+                        >
+                          {blockedUsers.has(conversation.user.id) ? (
+                            <>
+                              <UserCheck className="w-4 h-4 mr-2" />
+                              Débloquer
+                            </>
+                          ) : (
+                            <>
+                              <UserX className="w-4 h-4 mr-2" />
+                              Bloquer
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
               </div>
@@ -179,16 +240,8 @@ export default function Conversations() {
         )}
       </div>
 
-      {/* New Conversation Button */}
-      <div className="p-4 border-t border-gray-800">
-        <Button
-          onClick={() => setLocation("/social")}
-          className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
-        >
-          <Users className="w-4 h-4 mr-2" />
-          Nouvelle conversation
-        </Button>
-      </div>
+      
+      <Navigation />
     </div>
   );
 }
