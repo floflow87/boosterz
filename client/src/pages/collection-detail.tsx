@@ -271,6 +271,14 @@ export default function CollectionDetail() {
         });
       });
       
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          cardsToMark.includes(card.id) ? { ...card, isOwned: true } : card
+        );
+      });
+      
       const promises = cardsToMark.map(async (cardId) => {
         return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
       });
@@ -308,13 +316,21 @@ export default function CollectionDetail() {
 
   const handleBulkMarkAsNotOwned = async () => {
     try {
-      // For "mark as not owned", we need to toggle cards that are currently owned
-      const promises = Array.from(selectedCards).map(async (cardId) => {
+      const cardsToUnmark = Array.from(selectedCards).filter(cardId => {
         const card = cards?.find(c => c.id === cardId);
-        if (card && card.isOwned) {
-          return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
-        }
-        return Promise.resolve();
+        return card && card.isOwned;
+      });
+      
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          cardsToUnmark.includes(card.id) ? { ...card, isOwned: false } : card
+        );
+      });
+      
+      const promises = cardsToUnmark.map(async (cardId) => {
+        return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
       });
       await Promise.all(promises);
       
@@ -325,10 +341,12 @@ export default function CollectionDetail() {
       
       toast({
         title: "Cartes marquées comme manquantes",
-        description: `${selectedCards.size} carte(s) marquée(s) comme manquante(s).`
+        description: `${cardsToUnmark.length} carte(s) marquée(s) comme manquante(s).`
       });
     } catch (error) {
       console.error("Bulk mark as not owned error:", error);
+      // Revert cache on error
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour les cartes.",
@@ -415,6 +433,14 @@ export default function CollectionDetail() {
         setSelectedCard({ ...selectedCard, isOwned: false });
       }
       
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: false } : card
+        );
+      });
+      
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: false });
       toast({
         title: "Carte marquée comme manquante",
@@ -425,6 +451,13 @@ export default function CollectionDetail() {
       if (selectedCard && selectedCard.id === cardId) {
         setSelectedCard({ ...selectedCard, isOwned: true });
       }
+      // Revert cache on error
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: true } : card
+        );
+      });
       toast({
         title: "Erreur",
         description: "Impossible de marquer la carte comme manquante.",
