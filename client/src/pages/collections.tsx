@@ -227,8 +227,11 @@ export default function Collections() {
               }
               
               .collections-swiper .swiper-pagination {
-                position: static;
-                margin-top: 20px;
+                position: absolute;
+                bottom: -30px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: auto;
               }
               
               .collections-swiper .swiper-pagination-bullet {
@@ -298,6 +301,8 @@ export default function Collections() {
                 freeMode={true}
                 pagination={{
                   clickable: true,
+                  dynamicBullets: true,
+                  dynamicMainBullets: 3,
                 }}
                 modules={[FreeMode, Pagination]}
                 className="collections-swiper"

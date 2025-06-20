@@ -70,37 +70,16 @@ export default function Chat() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageContent: string) => {
-      // Optimistic update - add message immediately
-      const optimisticMessage = {
-        id: Date.now(),
-        conversationId: userId,
-        senderId: 1,
-        senderName: "Floflow87",
-        content: messageContent,
-        timestamp: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        isRead: true
-      };
-
-      // Update messages cache immediately
-      queryClient.setQueryData(
-        [`/api/chat/conversations/${conversation?.id}/messages`], 
-        (oldMessages: any[]) => [...(oldMessages || []), optimisticMessage]
-      );
-
-      // Clear input immediately
-      setNewMessage("");
-
-      // Send to server
-      const conversationId = conversation?.id || userId;
+      // Send to server with recipient ID
       return apiRequest("POST", `/api/messages/send`, {
         content: messageContent,
-        conversationId: conversationId,
+        recipientId: parseInt(userId),
       });
     },
     onSuccess: () => {
+      setNewMessage("");
       // Refresh data from server to get real IDs and ensure consistency
-      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${userId}/messages`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${conversation?.id}/messages`] });
       queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/user/${userId}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/chat/conversations'] });
     },

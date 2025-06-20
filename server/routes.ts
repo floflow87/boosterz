@@ -564,6 +564,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const otherUser = await storage.getUser(otherUserId);
         
         if (otherUser) {
+          const unreadCount = messages.filter(m => m.senderId !== currentUserId && !m.isRead).length;
+          
           const conversation = {
             id: conv.id,
             user: {
@@ -576,11 +578,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
               timestamp: lastMessage.createdAt,
               isRead: lastMessage.senderId === currentUserId || lastMessage.isRead
             } : {
-              content: 'Aucun message',
+              content: 'Nouvelle conversation',
               timestamp: conv.createdAt || new Date().toISOString(),
               isRead: true
             },
-            unreadCount: messages.filter(m => m.senderId !== currentUserId && !m.isRead).length
+            unreadCount: unreadCount
           };
           result.push(conversation);
         }
@@ -598,23 +600,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Send message - completely open route
+  // Send message to specific user
   app.post("/api/messages/send", async (req, res) => {
     try {
-      const { content, conversationId } = req.body;
+      const { content, recipientId } = req.body;
       
       if (!content?.trim()) {
         return res.status(400).json({ message: "Message content is required" });
       }
 
-      const convId = parseInt(conversationId) || 1;
-      const currentUserId = 1; // Current user ID
+      if (!recipientId) {
+        return res.status(400).json({ message: "Recipient ID is required" });
+      }
+
+      const currentUserId = 1; // Current user sending the message
       
-      // Create message in database
+      // Find or create conversation between current user and recipient
+      let conversation = await storage.getConversation(currentUserId, recipientId);
+      
+      if (!conversation) {
+        conversation = await storage.createConversation({
+          user1Id: Math.min(currentUserId, recipientId),
+          user2Id: Math.max(currentUserId, recipientId),
+        });
+      }
+
+      // Create the message
       const newMessage = await storage.createMessage({
-        conversationId: convId,
+        conversationId: conversation.id,
         senderId: currentUserId,
-        content: content.trim()
+        content: content.trim(),
+        isRead: false
       });
 
       // Format for frontend
@@ -626,7 +642,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: newMessage.content,
         timestamp: newMessage.createdAt,
         createdAt: newMessage.createdAt,
-        isRead: true
+        isRead: false
       };
 
       res.status(201).json(formattedMessage);
