@@ -556,10 +556,10 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
         {/* Étape d'édition */}
         {step === "edit" && selectedImage && (
-          <div className="space-y-4 px-6 pb-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex-1">
-                <div className="relative bg-gray-100 rounded-lg overflow-hidden transform-none" ref={imageContainerRef}>
+          <div className="space-y-4 px-6 pb-6 w-full">
+            <div className="flex flex-col gap-4 w-full">
+              <div className="flex-1 w-full">
+                <div className="relative bg-gray-100 rounded-lg overflow-hidden transform-none w-full" ref={imageContainerRef}>
                   <img
                     ref={imageRef}
                     src={selectedImage}
@@ -628,7 +628,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
               </div>
 
               {/* Boutons d'action améliorés */}
-              <div className="flex gap-2">
+              <div className="flex gap-2 w-full">
                 <Button variant="outline" onClick={() => setShowRetouchOptions(!showRetouchOptions)} className="flex-1 text-black bg-white border-gray-300 hover:bg-gray-100">
                   <Edit className="h-4 w-4 mr-2" />
                   {showRetouchOptions ? "Masquer" : "Retoucher"}
@@ -644,7 +644,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
               </div>
 
               {/* Contrôles d'historique */}
-              <div className="flex gap-2 justify-center">
+              <div className="flex gap-2 justify-center w-full">
                 <Button
                   size="sm"
                   variant="outline"
@@ -678,10 +678,10 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Interface de retouche style Instagram */}
               {showRetouchOptions && (
-                <div className="space-y-0">
+                <div className="space-y-4 w-full">
                   {/* Bandeau de retouche inspiré d'Instagram */}
-                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 mx-0 overflow-hidden">
-                    <div className="flex gap-6 overflow-x-auto px-4 scrollbar-hide min-w-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 w-full">
+                    <div className="flex gap-6 overflow-x-auto px-4 pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
                       <div className="flex flex-col items-center gap-2 min-w-[60px]">
@@ -787,7 +787,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
                   {/* Panneau de réglage déroulant */}
                   {selectedRetouchTool && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-0">
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 w-full">
                       {selectedRetouchTool === 'adjust' && (
                         <div>
                           <div className="flex justify-between items-center mb-3">
