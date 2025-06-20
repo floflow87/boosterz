@@ -42,8 +42,8 @@ export default function Chat() {
 
   // Get messages for this conversation
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
-    queryKey: [`/api/chat/conversations/${userId}/messages`],
-    enabled: !!userId,
+    queryKey: [`/api/chat/conversations/${conversation?.id}/messages`],
+    enabled: !!conversation?.id,
     refetchInterval: 3000, // Auto-refresh every 3 seconds
   });
 
@@ -76,7 +76,7 @@ export default function Chat() {
 
       // Update messages cache immediately
       queryClient.setQueryData(
-        [`/api/chat/conversations/${userId}/messages`], 
+        [`/api/chat/conversations/${conversation?.id}/messages`], 
         (oldMessages: any[]) => [...(oldMessages || []), optimisticMessage]
       );
 
