@@ -1081,15 +1081,17 @@ export default function CollectionDetail() {
       {/* Card Detail Modal - Fullscreen with slide animation */}
       {selectedCard && (
         <div 
-          className="fixed inset-0 bg-black z-50 flex"
+          className="fixed inset-0 bg-black z-50"
           style={{
             animation: 'slideInFromRight 0.4s ease-out'
           }}
         >
-          <div className="w-full h-full flex flex-col overflow-hidden">
+          <div className="w-full h-full flex flex-col">
             {/* Header */}
             <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700">
-              <h2 className="text-lg font-bold text-white">Détails de la carte</h2>
+              <h2 className="text-lg font-bold text-white">
+                {selectedCard.playerName || 'Joueur Inconnu'}
+              </h2>
               <button
                 onClick={() => setSelectedCard(null)}
                 className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
@@ -1098,142 +1100,217 @@ export default function CollectionDetail() {
               </button>
             </div>
             
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-6">
-              {(() => {
-              const currentCard = getCurrentCard();
-              const variants = getCardVariants(selectedCard);
+            {/* Content - Single screen view */}
+            <div className="flex-1 bg-[hsl(216,46%,13%)] flex flex-col md:flex-row">
+              {/* Card Image Section */}
+              <div className="flex-1 flex items-center justify-center p-6">
+                {(() => {
+                  const currentCard = getCurrentCard();
+                  const variants = getCardVariants(selectedCard);
+                  
+                  return (
+                    <div className="w-full max-w-md">
+                      {/* Card Image */}
+                      <div className="relative mb-6">
+                        {currentCard?.imageUrl ? (
+                          <div 
+                            className="relative w-full h-80 perspective-1000"
+                            style={{ perspective: '1000px' }}
+                          >
+                            <img 
+                              src={currentCard.imageUrl} 
+                              alt={`${currentCard.playerName} card`}
+                              className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                              style={{
+                                transformStyle: 'preserve-3d',
+                                willChange: 'transform',
+                                animation: 'card-auto-float 6s ease-in-out infinite'
+                              }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-full h-80 bg-gray-600 rounded-lg flex items-center justify-center">
+                            <HelpCircle className="w-16 h-16 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
               
-              return (
-                <>
-                  <div className="mb-4">
-                    <h2 className="text-xl font-bold text-white">
-                      {selectedCard.playerName || 'Joueur Inconnu'}
-                    </h2>
-                    <p className="text-gray-400 text-sm">
-                      {selectedCard.teamName || 'Équipe Inconnue'}
-                    </p>
+              {/* Card Info Section */}
+              <div className="flex-1 p-6 overflow-y-auto">
+                <div className="mb-6">
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {selectedCard.playerName || 'Joueur Inconnu'}
+                  </h3>
+                  <p className="text-gray-400 text-lg">
+                    {selectedCard.teamName || 'Équipe Inconnue'}
+                  </p>
+                </div>
+
+                {/* Card Details */}
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Type:</span>
+                    <span className="text-white">{selectedCard.cardType || 'N/A'}</span>
                   </div>
-
-
-
-                  {/* Card Image */}
-                  <div className="mb-4 relative">
-                    {currentCard?.imageUrl ? (
-                      <div 
-                        className="relative w-full h-80 perspective-1000"
-                        style={{ perspective: '1000px' }}
-                      >
-                        <img 
-                          src={currentCard.imageUrl} 
-                          alt={`${currentCard.playerName} card`}
-                          className={`w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
-                          onError={(e) => {
-                            console.log("Modal image failed to load:", currentCard.imageUrl);
-                            e.currentTarget.src = cardDefaultImage;
-                          }}
-                          onLoad={() => {
-                            console.log("Modal image loaded successfully:", currentCard.imageUrl);
-                          }}
-                          style={{
-                            transformStyle: 'preserve-3d',
-                            willChange: 'transform'
-                          }}
-                          onClick={() => setShowFullscreenCard(true)}
-                          onTouchStart={(e) => {
-                            e.preventDefault();
-                            const target = e.currentTarget;
-                            if (!target || !e.touches[0]) return;
-                            
-                            const touch = e.touches[0];
-                            const rect = target.getBoundingClientRect();
-                            const startX = touch.clientX - rect.left;
-                            const startY = touch.clientY - rect.top;
-                            let rotateX = 0;
-                            let rotateY = 0;
-                            
-                            const handleTouchMove = (moveEvent: TouchEvent) => {
-                              if (!moveEvent.touches[0]) return;
-                              const moveTouch = moveEvent.touches[0];
-                              const moveX = moveTouch.clientX - rect.left;
-                              const moveY = moveTouch.clientY - rect.top;
-                              const deltaX = moveX - startX;
-                              const deltaY = moveY - startY;
-                              rotateY = deltaX * 0.3;
-                              rotateX = -deltaY * 0.3;
-                              target.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-                            };
-                            
-                            const handleTouchEnd = () => {
-                              target.style.transform = 'rotateX(0deg) rotateY(0deg)';
-                              document.removeEventListener('touchmove', handleTouchMove);
-                              document.removeEventListener('touchend', handleTouchEnd);
-                            };
-                            
-                            document.addEventListener('touchmove', handleTouchMove);
-                            document.addEventListener('touchend', handleTouchEnd);
-                          }}
-                        />
-                        <button
-                          onClick={() => setShowFullscreenCard(true)}
-                          className="absolute top-2 right-2 bg-black bg-opacity-50 text-white p-2 rounded-lg hover:bg-opacity-75 transition-all z-10"
-                        >
-                          <Search className="w-4 h-4" />
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="w-full h-80 bg-gray-600 rounded-lg flex items-center justify-center">
-                        <HelpCircle className="w-16 h-16 text-gray-400" />
-                      </div>
-                    )}
-                    
-                    {/* Carousel arrows aligned with card */}
-                    {variants.length > 1 && (
-                      <>
-                        <button
-                          onClick={() => setCurrentVariantIndex(Math.max(0, currentVariantIndex - 1))}
-                          disabled={currentVariantIndex === 0}
-                          className="absolute left-2 top-1/2 transform -translate-y-1/2 p-3 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed z-10"
-                        >
-                          <ChevronLeft className="w-5 h-5 text-white" />
-                        </button>
-                        <button
-                          onClick={() => setCurrentVariantIndex(Math.min(variants.length - 1, currentVariantIndex + 1))}
-                          disabled={currentVariantIndex === variants.length - 1}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-3 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full transition-all disabled:opacity-30 disabled:cursor-not-allowed z-10"
-                        >
-                          <ChevronRight className="w-5 h-5 text-white" />
-                        </button>
-                      </>
-                    )}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Numérotation:</span>
+                    <span className="text-white">{selectedCard.numbering || 'N/A'}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Statut:</span>
+                    <span className={selectedCard.isOwned ? "text-green-400" : "text-red-400"}>
+                      {selectedCard.isOwned ? "Possédée" : "Manquante"}
+                    </span>
+                  </div>
+                </div>
 
-                  {/* Card Info */}
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)] text-xs">Référence:</span>
-                      <span className="text-white text-xs">{currentCard?.reference || selectedCard.reference}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-[hsl(212,23%,69%)] text-xs">Type:</span>
-                      <span className="text-white text-xs">{currentCard?.cardSubType || "Base"}</span>
-                    </div>
-                    {currentCard?.cardType?.includes("Insert") && (
-                      <div className="flex justify-between">
-                        <span className="text-[hsl(212,23%,69%)] text-xs">Description:</span>
-                        <span className="text-white text-xs">
-                          {(() => {
-                            const cardType = currentCard?.cardType || "";
-                            if (cardType.includes("Hot Rookies")) return "Hot Rookies";
-                            if (cardType.includes("Keepers")) return "Keepers";
-                            if (cardType.includes("Club Legend")) return "Club Legend";
-                            if (cardType.includes("Spotlight")) return "Spotlight";
-                            if (cardType.includes("Pennants")) return "Pennants";
-                            if (cardType.includes("Next Up")) return "Next Up";
-                            if (cardType.includes("Intergalactic")) return "Intergalactic";
-                            if (cardType.includes("Score Team")) return "Score Team";
-                            if (cardType.includes("Breakthrough")) return "Breakthrough";
-                            if (cardType.includes("Pure Class")) return "Pure Class";
+                {/* Action Buttons */}
+                <div className="mt-8 space-y-3">
+                  <button
+                    onClick={() => {
+                      setShowPhotoUpload(true);
+                    }}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
+                  >
+                    <Camera className="w-5 h-5" />
+                    Ajouter une photo
+                  </button>
+                  
+                  {selectedCard.isOwned && (
+                    <button
+                      onClick={() => {
+                        setSelectedTradeCard(selectedCard);
+                        setShowTradePanel(true);
+                      }}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
+                    >
+                      <Handshake className="w-5 h-5" />
+                      Proposer un échange
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Card Modal */}
+      {showFullscreenCard && selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+          <button
+            onClick={() => setShowFullscreenCard(false)}
+            className="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-lg hover:bg-opacity-75 transition-all z-60"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div className="relative max-w-2xl max-h-full">
+            {(() => {
+              const currentCard = getCurrentCard();
+              return currentCard?.imageUrl ? (
+                <div 
+                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out"
+                  style={{
+                    perspective: '1000px',
+                    transformStyle: 'preserve-3d',
+                    animation: 'card-auto-float 6s ease-in-out infinite'
+                  }}
+                >
+                  <img 
+                    src={currentCard.imageUrl} 
+                    alt={currentCard.playerName || "Card"} 
+                    className="w-full h-full object-contain rounded-xl shadow-2xl"
+                    style={{
+                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5))'
+                    }}
+                  />
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gray-700 rounded-xl flex items-center justify-center">
+                  <HelpCircle className="w-24 h-24 text-gray-400" />
+                </div>
+              );
+            })()}
+          </div>
+          
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
+            <p className="text-sm opacity-75">Bougez votre souris ou doigt pour faire pivoter la carte</p>
+          </div>
+        </div>
+      )}
+
+      {/* Photo Upload Modal */}
+      <CardPhotoImportFixed
+        isOpen={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        preselectedPlayer={selectedCard?.playerName || undefined}
+        onImageUploaded={async (cardId, imageUrl) => {
+          try {
+            console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
+            
+            // Update card image first
+            const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            console.log("Image update result:", imageResult);
+            
+            // Automatically mark card as owned
+            const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            console.log("Ownership update result:", ownershipResult);
+            
+            // Force refresh of cards data to ensure images are displayed
+            await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+            console.log("Query cache invalidated for cards");
+            
+            // Update local state after successful API calls
+            if (selectedCard && selectedCard.id === cardId) {
+              const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
+              setSelectedCard(updatedCard);
+              console.log("Local selected card state updated:", updatedCard);
+            }
+            
+            // Trigger card pull effect
+            setPulledCardEffect(cardId);
+            setTimeout(() => setPulledCardEffect(null), 3000);
+            
+            toast({
+              title: "Photo sauvegardée",
+              description: "La photo a été ajoutée et la carte marquée comme acquise.",
+              className: "bg-green-900 border-green-700 text-green-100",
+            });
+            
+            setShowPhotoUpload(false);
+          } catch (error) {
+            console.error("Erreur lors de la sauvegarde:", error);
+            toast({
+              title: "Erreur",
+              description: "Impossible de sauvegarder la photo. Vérifiez votre connexion.",
+              variant: "destructive"
+            });
+          }
+        }}
+        availableCards={cards || []}
+        initialCard={selectedCard || undefined}
+        currentFilter={filter}
+      />
+
+      {/* Trade Panel Modal */}
+      {selectedTradeCard && (
+        <CardTradePanel
+          card={selectedTradeCard}
+          isOpen={showTradePanel}
+          onClose={() => {
+            setShowTradePanel(false);
+            setSelectedTradeCard(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
                             return "Insert";
                           })()}
                         </span>

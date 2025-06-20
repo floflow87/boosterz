@@ -247,20 +247,26 @@ export default function Collections() {
               }
               
               .collections-swiper .swiper-pagination {
-                position: absolute;
-                bottom: -30px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: auto;
+                position: static !important;
+                bottom: auto !important;
+                left: auto !important;
+                transform: none !important;
+                width: auto !important;
+                margin-top: 20px;
+                text-align: center;
               }
               
               .collections-swiper .swiper-pagination-bullet {
-                background: rgba(255, 255, 255, 0.3);
-                opacity: 1;
+                background: rgba(255, 255, 255, 0.3) !important;
+                opacity: 1 !important;
+                width: 8px !important;
+                height: 8px !important;
+                margin: 0 4px !important;
               }
               
               .collections-swiper .swiper-pagination-bullet-active {
-                background: hsl(9, 85%, 67%);
+                background: hsl(9, 85%, 67%) !important;
+                transform: scale(1.2) !important;
               }
               
               .collection-wallet-item {
@@ -375,7 +381,8 @@ export default function Collections() {
                 speed={400}
                 pagination={{
                   clickable: true,
-                  dynamicBullets: false
+                  dynamicBullets: true,
+                  dynamicMainBullets: 3
                 }}
                 modules={[FreeMode, Pagination]}
                 className="collections-swiper"
