@@ -436,7 +436,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto bg-[hsl(240,3.7%,15.9%)] text-white p-0 border-gray-700">
+      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto overflow-x-hidden bg-[hsl(240,3.7%,15.9%)] text-white p-0 border-gray-700">
         <div className="p-6">
           <DialogHeader>
             <DialogTitle className="text-white text-xl">
@@ -667,8 +667,8 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
               {showRetouchOptions && (
                 <div className="space-y-4">
                   {/* Bandeau de retouche inspiré d'Instagram */}
-                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 px-4 py-6 mx-0 -mb-6">
-                    <div className="flex gap-8 overflow-x-auto pb-2 justify-center" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 px-4 py-6 mx-0 -mb-6 overflow-hidden">
+                    <div className="flex gap-8 overflow-x-auto pb-2 justify-start scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
                       <div className="flex flex-col items-center gap-2 min-w-[60px]">
