@@ -398,13 +398,6 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
     handlePlayerNameChange(suggestion);
   }, [handlePlayerNameChange]);
 
-  const handleSave = useCallback(async () => {
-    if (selectedImage) {
-      const processedImage = await processImageWithAdjustments();
-      onSave(processedImage, selectedCardId);
-    }
-  }, [processImageWithAdjustments, selectedCardId, onSave]);
-
   const handleClose = useCallback(() => {
     setStep("import");
     setSelectedImage(null);
@@ -430,6 +423,14 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
     setPlayerSuggestions([]);
     onClose();
   }, [onClose]);
+
+  const handleSave = useCallback(async () => {
+    if (selectedImage) {
+      const processedImage = await processImageWithAdjustments();
+      onSave(processedImage, selectedCardId);
+      handleClose();
+    }
+  }, [processImageWithAdjustments, selectedCardId, onSave, handleClose]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
@@ -495,12 +496,12 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
               </Button>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <CircleDot className="h-5 w-5 text-blue-600 mt-0.5" />
+                <CircleDot className="h-5 w-5 text-blue-400 mt-0.5" />
                 <div>
-                  <h4 className="font-medium text-blue-900 mb-1">Conseils pour de meilleures photos</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
+                  <h4 className="font-medium text-white mb-1">Conseils pour de meilleures photos</h4>
+                  <ul className="text-sm text-gray-300 space-y-1">
                     <li>• Utilisez un bon éclairage naturel</li>
                     <li>• Placez la carte sur une surface plane</li>
                     <li>• Évitez les reflets et les ombres</li>
@@ -627,230 +628,310 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                 </Button>
               </div>
 
-              {/* Outils de retouche avancés */}
+              {/* Interface de retouche style Instagram */}
               {showRetouchOptions && (
-                <div className="space-y-6 p-4 bg-gray-50 rounded-lg border">
-                  <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-medium text-black">Outils de retouche</h3>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={resetAdjustments}
-                      className="flex items-center gap-1"
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                      Réinitialiser
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                          <Sun className="h-4 w-4" />
-                          Luminosité: {adjustments.brightness}%
-                        </label>
-                        <Slider
-                          value={[adjustments.brightness]}
-                          onValueChange={([value]) => setAdjustments(prev => ({ ...prev, brightness: value }))}
-                          min={25}
-                          max={200}
-                          step={1}
-                          className="w-full"
-                        />
-                        <div className="flex gap-1 mt-2">
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, brightness: 75 }))}>
-                            Sombre
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, brightness: 100 }))}>
-                            Normal
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, brightness: 125 }))}>
-                            Clair
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                          <Contrast className="h-4 w-4" />
-                          Contraste: {adjustments.contrast}%
-                        </label>
-                        <Slider
-                          value={[adjustments.contrast]}
-                          onValueChange={([value]) => setAdjustments(prev => ({ ...prev, contrast: value }))}
-                          min={25}
-                          max={200}
-                          step={1}
-                          className="w-full"
-                        />
-                        <div className="flex gap-1 mt-2">
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 75 }))}>
-                            Doux
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 100 }))}>
-                            Normal
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 125 }))}>
-                            Intense
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                          <Droplets className="h-4 w-4" />
-                          Saturation: {adjustments.saturation}%
-                        </label>
-                        <Slider
-                          value={[adjustments.saturation]}
-                          onValueChange={([value]) => setAdjustments(prev => ({ ...prev, saturation: value }))}
-                          min={0}
-                          max={200}
-                          step={1}
-                          className="w-full"
-                        />
-                        <div className="flex gap-1 mt-2">
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, saturation: 0 }))}>
-                            N&B
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, saturation: 100 }))}>
-                            Normal
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, saturation: 150 }))}>
-                            Vibrant
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                          <Maximize className="h-4 w-4" />
-                          Zoom: {adjustments.zoom}%
-                        </label>
-                        <Slider
-                          value={[adjustments.zoom]}
-                          onValueChange={([value]) => setAdjustments(prev => ({ ...prev, zoom: value }))}
-                          min={50}
-                          max={200}
-                          step={5}
-                          className="w-full"
-                        />
-                        <div className="flex gap-1 mt-2">
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, zoom: 75 }))}>
-                            75%
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, zoom: 100 }))}>
-                            100%
-                          </Button>
-                          <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, zoom: 150 }))}>
-                            150%
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium mb-2 text-black">
-                      <RotateCw className="h-4 w-4" />
-                      Rotation: {adjustments.rotation}°
-                    </label>
-                    <div className="flex gap-2 justify-center">
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 0 }))}
+                <div className="space-y-4">
+                  {/* Barre d'outils horizontale avec scroll */}
+                  <div className="px-2">
+                    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                      
+                      {/* Outil Luminosité */}
+                      <Button
+                        variant={selectedRetouchTool === 'brightness' ? 'default' : 'outline'}
+                        className={`flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs ${
+                          selectedRetouchTool === 'brightness' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'brightness' ? null : 'brightness')}
                       >
-                        0°
+                        <Sun className="h-5 w-5" />
+                        <span>Luminosité</span>
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 90 }))}
+
+                      {/* Outil Contraste */}
+                      <Button
+                        variant={selectedRetouchTool === 'contrast' ? 'default' : 'outline'}
+                        className={`flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs ${
+                          selectedRetouchTool === 'contrast' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'contrast' ? null : 'contrast')}
                       >
-                        90°
+                        <Contrast className="h-5 w-5" />
+                        <span>Contraste</span>
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 180 }))}
+
+                      {/* Outil Saturation */}
+                      <Button
+                        variant={selectedRetouchTool === 'saturation' ? 'default' : 'outline'}
+                        className={`flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs ${
+                          selectedRetouchTool === 'saturation' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'saturation' ? null : 'saturation')}
                       >
-                        180°
+                        <Droplets className="h-5 w-5" />
+                        <span>Saturation</span>
                       </Button>
-                      <Button 
-                        size="sm" 
-                        variant="outline" 
-                        onClick={() => setAdjustments(prev => ({ ...prev, rotation: 270 }))}
+
+                      {/* Outil Rotation */}
+                      <Button
+                        variant={selectedRetouchTool === 'rotation' ? 'default' : 'outline'}
+                        className={`flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs ${
+                          selectedRetouchTool === 'rotation' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'rotation' ? null : 'rotation')}
                       >
-                        270°
+                        <RotateCw className="h-5 w-5" />
+                        <span>Rotation</span>
+                      </Button>
+
+                      {/* Outil Zoom */}
+                      <Button
+                        variant={selectedRetouchTool === 'zoom' ? 'default' : 'outline'}
+                        className={`flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs ${
+                          selectedRetouchTool === 'zoom' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'zoom' ? null : 'zoom')}
+                      >
+                        <Maximize className="h-5 w-5" />
+                        <span>Zoom</span>
+                      </Button>
+
+                      {/* Filtres */}
+                      <Button
+                        variant={selectedRetouchTool === 'filters' ? 'default' : 'outline'}
+                        className={`flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs ${
+                          selectedRetouchTool === 'filters' 
+                            ? 'bg-blue-600 text-white' 
+                            : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                        }`}
+                        onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'filters' ? null : 'filters')}
+                      >
+                        <CircleDot className="h-5 w-5" />
+                        <span>Filtres</span>
+                      </Button>
+
+                      {/* Reset */}
+                      <Button
+                        variant="outline"
+                        className="flex-shrink-0 h-16 w-16 flex flex-col items-center justify-center gap-1 text-xs bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600"
+                        onClick={resetAdjustments}
+                      >
+                        <RefreshCw className="h-5 w-5" />
+                        <span>Reset</span>
                       </Button>
                     </div>
                   </div>
 
-                  {/* Filtres prédéfinis */}
-                  <div className="pt-4 border-t">
-                    <label className="flex items-center gap-2 text-sm font-medium mb-3 text-black">
-                      <CircleDot className="h-4 w-4" />
-                      Filtres prédéfinis
-                    </label>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setAdjustments(prev => ({ 
-                          ...prev, 
-                          brightness: 110, 
-                          contrast: 115, 
-                          saturation: 105 
-                        }))}
-                        className="text-xs"
-                      >
-                        Carte sportive
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setAdjustments(prev => ({ 
-                          ...prev, 
-                          brightness: 105, 
-                          contrast: 125, 
-                          saturation: 85 
-                        }))}
-                        className="text-xs"
-                      >
-                        Vintage
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setAdjustments(prev => ({ 
-                          ...prev, 
-                          brightness: 115, 
-                          contrast: 110, 
-                          saturation: 120 
-                        }))}
-                        className="text-xs"
-                      >
-                        Éclatant
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setAdjustments(prev => ({ 
-                          ...prev, 
-                          brightness: 95, 
-                          contrast: 130, 
-                          saturation: 90 
-                        }))}
-                        className="text-xs"
-                      >
-                        Dramatique
-                      </Button>
+                  {/* Panneau de réglage déroulant */}
+                  {selectedRetouchTool && (
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-2">
+                      {selectedRetouchTool === 'brightness' && (
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-white font-medium">Luminosité</span>
+                            <span className="text-gray-400 text-sm">{adjustments.brightness}%</span>
+                          </div>
+                          <Slider
+                            value={[adjustments.brightness]}
+                            onValueChange={([value]) => setAdjustments(prev => ({ ...prev, brightness: value }))}
+                            min={25}
+                            max={200}
+                            step={1}
+                            className="w-full mb-3"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, brightness: 75 }))}>
+                              Sombre
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, brightness: 100 }))}>
+                              Normal
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, brightness: 125 }))}>
+                              Clair
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedRetouchTool === 'contrast' && (
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-white font-medium">Contraste</span>
+                            <span className="text-gray-400 text-sm">{adjustments.contrast}%</span>
+                          </div>
+                          <Slider
+                            value={[adjustments.contrast]}
+                            onValueChange={([value]) => setAdjustments(prev => ({ ...prev, contrast: value }))}
+                            min={25}
+                            max={200}
+                            step={1}
+                            className="w-full mb-3"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 75 }))}>
+                              Doux
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 100 }))}>
+                              Normal
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 125 }))}>
+                              Intense
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedRetouchTool === 'saturation' && (
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-white font-medium">Saturation</span>
+                            <span className="text-gray-400 text-sm">{adjustments.saturation}%</span>
+                          </div>
+                          <Slider
+                            value={[adjustments.saturation]}
+                            onValueChange={([value]) => setAdjustments(prev => ({ ...prev, saturation: value }))}
+                            min={0}
+                            max={200}
+                            step={1}
+                            className="w-full mb-3"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, saturation: 0 }))}>
+                              N&B
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, saturation: 100 }))}>
+                              Normal
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, saturation: 150 }))}>
+                              Vibrant
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedRetouchTool === 'rotation' && (
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-white font-medium">Rotation</span>
+                            <span className="text-gray-400 text-sm">{adjustments.rotation}°</span>
+                          </div>
+                          <div className="flex gap-2 justify-center">
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 0 }))}>
+                              0°
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 90 }))}>
+                              90°
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 180 }))}>
+                              180°
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 270 }))}>
+                              270°
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedRetouchTool === 'zoom' && (
+                        <div>
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-white font-medium">Zoom</span>
+                            <span className="text-gray-400 text-sm">{adjustments.zoom}%</span>
+                          </div>
+                          <Slider
+                            value={[adjustments.zoom]}
+                            onValueChange={([value]) => setAdjustments(prev => ({ ...prev, zoom: value }))}
+                            min={50}
+                            max={200}
+                            step={5}
+                            className="w-full mb-3"
+                          />
+                          <div className="flex gap-2">
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, zoom: 75 }))}>
+                              75%
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, zoom: 100 }))}>
+                              100%
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, zoom: 150 }))}>
+                              150%
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedRetouchTool === 'filters' && (
+                        <div>
+                          <div className="mb-3">
+                            <span className="text-white font-medium">Filtres prédéfinis</span>
+                          </div>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setAdjustments(prev => ({ 
+                                ...prev, 
+                                brightness: 110, 
+                                contrast: 115, 
+                                saturation: 105 
+                              }))}
+                              className="text-xs"
+                            >
+                              Carte sportive
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setAdjustments(prev => ({ 
+                                ...prev, 
+                                brightness: 105, 
+                                contrast: 125, 
+                                saturation: 85 
+                              }))}
+                              className="text-xs"
+                            >
+                              Vintage
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setAdjustments(prev => ({ 
+                                ...prev, 
+                                brightness: 115, 
+                                contrast: 110, 
+                                saturation: 120 
+                              }))}
+                              className="text-xs"
+                            >
+                              Éclatant
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setAdjustments(prev => ({ 
+                                ...prev, 
+                                brightness: 95, 
+                                contrast: 130, 
+                                saturation: 90 
+                              }))}
+                              className="text-xs"
+                            >
+                              Dramatique
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  )}
                 </div>
               )}
             </div>
@@ -867,21 +948,21 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                     <img
                       src={selectedImage}
                       alt="Photo importée"
-                      className="w-full h-full object-cover rounded-lg border-2 border-gray-200 transition-transform duration-500 hover:scale-105"
+                      className="w-full h-full object-cover rounded-lg border-2 border-gray-600 transition-transform duration-500 hover:scale-105"
                     />
                   </div>
                 </div>
               )}
 
               {recognizedCard && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                  <p className="text-green-800 text-sm">{recognizedCard}</p>
+                <div className="bg-green-900/30 border border-green-700 rounded-lg p-3">
+                  <p className="text-green-300 text-sm">{recognizedCard}</p>
                 </div>
               )}
 
               <div className="space-y-3">
                 <div className="relative">
-                  <label className="block text-sm font-medium text-black mb-1">
+                  <label className="block text-sm font-medium text-white mb-1">
                     Nom du joueur
                   </label>
                   <Input
@@ -889,16 +970,16 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                     onChange={(e) => handlePlayerNameChange(e.target.value)}
                     onFocus={() => setShowSuggestions(playerSuggestions.length > 0)}
                     placeholder="Commencez à taper le nom du joueur..."
-                    className="w-full"
+                    className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   />
                   
                   {showSuggestions && playerSuggestions.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg">
+                    <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg">
                       {playerSuggestions.map((suggestion, index) => (
                         <button
                           key={index}
                           type="button"
-                          className="w-full text-left px-3 py-2 hover:bg-gray-100 first:rounded-t-lg last:rounded-b-lg"
+                          className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg"
                           onClick={() => handleSuggestionClick(suggestion)}
                         >
                           {suggestion}
@@ -910,16 +991,16 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
                 {playerCards.length > 0 && (
                   <div>
-                    <label className="block text-sm font-medium text-black mb-1">
+                    <label className="block text-sm font-medium text-white mb-1">
                       Carte ({playerName ? `${playerCards.length} carte(s) trouvée(s)` : "Aucune carte trouvée"})
                     </label>
                     <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
                         <SelectValue placeholder="Sélectionner une carte" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-gray-800 border-gray-600">
                         {playerCards.map((card) => (
-                          <SelectItem key={card.id} value={card.id.toString()}>
+                          <SelectItem key={card.id} value={card.id.toString()} className="text-white hover:bg-gray-700">
                             {card.cardNumber} - {card.playerName} ({card.teamName}) - {card.cardType}
                           </SelectItem>
                         ))}
@@ -929,8 +1010,8 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                 )}
 
                 {playerCards.length === 0 && playerName && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-yellow-800 text-sm">
+                  <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-3">
+                    <p className="text-yellow-300 text-sm">
                       Aucune carte trouvée pour "{playerName}". Vérifiez l'orthographe ou ajoutez d'abord la carte à votre collection.
                     </p>
                   </div>
@@ -939,12 +1020,12 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
             </div>
 
             <div className="flex gap-2 pt-4">
-              <Button variant="outline" onClick={() => setStep("edit")} className="flex-1">
+              <Button variant="outline" onClick={() => setStep("edit")} className="flex-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
                 Retour
               </Button>
-              <Button onClick={handleSave} disabled={!selectedCardId} className="flex-1">
+              <Button onClick={handleSave} disabled={!selectedCardId} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
                 <Check className="h-4 w-4 mr-2" />
-                Enregistrer
+                Enregistrer et remplacer le "?"
               </Button>
             </div>
           </div>
