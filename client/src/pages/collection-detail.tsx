@@ -31,6 +31,7 @@ export default function CollectionDetail() {
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [selectedTradeCard, setSelectedTradeCard] = useState<Card | null>(null);
   const [pulledCardEffect, setPulledCardEffect] = useState<number | null>(null);
+  const [starEffectCards, setStarEffectCards] = useState<Set<number>>(new Set());
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -253,15 +254,36 @@ export default function CollectionDetail() {
 
   const handleBulkMarkAsOwned = async () => {
     try {
-      // For "mark as owned", we need to toggle cards that are currently not owned
-      const promises = Array.from(selectedCards).map(async (cardId) => {
+      // Déclencher l'effet d'étoiles pour toutes les cartes sélectionnées non possédées
+      const cardsToMark = Array.from(selectedCards).filter(cardId => {
         const card = cards?.find(c => c.id === cardId);
-        if (card && !card.isOwned) {
-          return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
-        }
-        return Promise.resolve();
+        return card && !card.isOwned;
+      });
+      
+      // Ajouter l'effet d'étoiles pour toutes les cartes à marquer
+      cardsToMark.forEach(cardId => {
+        setStarEffectCards(prev => {
+          const newSet = new Set(prev);
+          newSet.add(cardId);
+          return newSet;
+        });
+      });
+      
+      const promises = cardsToMark.map(async (cardId) => {
+        return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
       });
       await Promise.all(promises);
+      
+      // Retirer l'effet d'étoiles après l'animation
+      setTimeout(() => {
+        cardsToMark.forEach(cardId => {
+          setStarEffectCards(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(cardId);
+            return newSet;
+          });
+        });
+      }, 2000);
       
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
       queryClient.invalidateQueries({ queryKey: ['/api/users/1/collections'] });
@@ -270,7 +292,7 @@ export default function CollectionDetail() {
       
       toast({
         title: "Cartes marquées comme acquises",
-        description: `${selectedCards.size} carte(s) marquée(s) comme acquise(s).`
+        description: `${cardsToMark.length} carte(s) marquée(s) comme acquise(s).`
       });
     } catch (error) {
       console.error("Bulk mark as owned error:", error);
@@ -320,9 +342,12 @@ export default function CollectionDetail() {
 
   const handleMarkAsOwned = async (cardId: number, withPhoto: boolean) => {
     try {
-      // Déclencher l'effet de tirage avant la mutation
-      setPulledCardEffect(cardId);
-      setTimeout(() => setPulledCardEffect(null), 2000);
+      // Déclencher l'effet d'étoiles une seule fois
+      setStarEffectCards(prev => {
+        const newSet = new Set(prev);
+        newSet.add(cardId);
+        return newSet;
+      });
       
       // Update local state immediately for visual feedback
       if (selectedCard && selectedCard.id === cardId) {
@@ -330,6 +355,16 @@ export default function CollectionDetail() {
       }
       
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+      
+      // Retirer l'effet d'étoiles après l'animation
+      setTimeout(() => {
+        setStarEffectCards(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(cardId);
+          return newSet;
+        });
+      }, 2000);
+      
       if (withPhoto) {
         setShowPhotoUpload(true);
       }
@@ -342,6 +377,12 @@ export default function CollectionDetail() {
       if (selectedCard && selectedCard.id === cardId) {
         setSelectedCard({ ...selectedCard, isOwned: false });
       }
+      // Retirer l'effet d'étoiles en cas d'erreur
+      setStarEffectCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(cardId);
+        return newSet;
+      });
       toast({
         title: "Erreur",
         description: "Impossible de marquer la carte comme acquise.",
@@ -772,13 +813,10 @@ export default function CollectionDetail() {
                         'ring-gray-400'
                       }`
                     : `border-2 ${getCardBorderColor(currentVariant)}`
-                } ${pulledCardEffect === currentVariant.id ? 'animate-card-pull' : ''}`}
-                style={allVariantsOwned && animationName ? {
-                  animation: `${animationName} 3s infinite`
-                } : {}}
+                }`}
               >
-                {/* Étoiles gravitantes pour l'effet de tirage */}
-                {pulledCardEffect === currentVariant.id && (
+                {/* Étoiles gravitantes pour l'effet d'acquisition */}
+                {starEffectCards.has(currentVariant.id) && (
                   <div className="card-stars"></div>
                 )}
                 {/* Checkbox */}

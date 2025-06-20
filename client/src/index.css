@@ -270,31 +270,74 @@
 
   .card-stars {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     pointer-events: none;
     z-index: 10;
+    overflow: hidden;
   }
 
   .card-stars::before,
   .card-stars::after {
-    content: '★';
+    content: '✨';
     position: absolute;
-    font-size: 16px;
-    color: #fbbf24;
-    top: -10px;
-    left: -10px;
+    font-size: 18px;
+    color: #ffd700;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+    will-change: transform, opacity;
   }
 
   .card-stars::before {
-    animation: star-orbit 2s ease-out;
+    top: 20%;
+    left: 15%;
+    animation: star-float 1.8s ease-out forwards;
   }
 
   .card-stars::after {
-    animation: star-orbit-reverse 2s ease-out;
-    animation-delay: 0.5s;
+    bottom: 25%;
+    right: 20%;
+    animation: star-float-reverse 2.2s ease-out forwards;
+    animation-delay: 0.3s;
+  }
+
+  @keyframes star-float {
+    0% {
+      transform: translateY(0px) scale(0.5) rotate(0deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 1;
+      transform: translateY(-10px) scale(1) rotate(45deg);
+    }
+    80% {
+      opacity: 1;
+      transform: translateY(-30px) scale(1.2) rotate(180deg);
+    }
+    100% {
+      transform: translateY(-50px) scale(0.8) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  @keyframes star-float-reverse {
+    0% {
+      transform: translateX(0px) scale(0.3) rotate(0deg);
+      opacity: 0;
+    }
+    25% {
+      opacity: 1;
+      transform: translateX(-15px) scale(1) rotate(-45deg);
+    }
+    75% {
+      opacity: 1;
+      transform: translateX(-25px) scale(1.1) rotate(-180deg);
+    }
+    100% {
+      transform: translateX(-40px) scale(0.6) rotate(-360deg);
+      opacity: 0;
+    }
   }
 
   /* Animation 3D flottante pour les cartes en pop-up */
