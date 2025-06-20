@@ -10,6 +10,7 @@ import AllCards from "@/pages/all-cards";
 import Social from "@/pages/social";
 import Chat from "@/pages/chat";
 import UserChat from "@/pages/user-chat";
+import Conversations from "@/pages/conversations";
 import Auth from "@/pages/auth";
 import Community from "@/pages/community";
 import Shop from "@/pages/shop";
@@ -40,6 +41,7 @@ function Router() {
       <Route path="/collection/:id" component={CollectionDetail} />
       <Route path="/all-cards" component={AllCards} />
       <Route path="/social" component={Social} />
+      <Route path="/conversations" component={Conversations} />
       <Route path="/chat/:userId" component={Chat} />
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />

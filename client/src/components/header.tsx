@@ -29,7 +29,7 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
       
       <div className="flex items-center space-x-3">
         <button 
-          onClick={() => setLocation('/chat/999')}
+          onClick={() => setLocation('/conversations')}
           className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
         >
           <MessageCircle className="w-5 h-5 text-[hsl(212,23%,69%)]" />
