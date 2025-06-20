@@ -1250,7 +1250,8 @@ export default function CollectionDetail() {
               const currentCard = getCurrentCard();
               return currentCard?.imageUrl ? (
                 <div 
-                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out"
+                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out animate-card-3d-float"
+                  style={{ perspective: '1000px', transformStyle: 'preserve-3d' }}
                   onMouseMove={(e) => {
                     const rect = e.currentTarget.getBoundingClientRect();
                     const x = e.clientX - rect.left;
