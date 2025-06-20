@@ -212,11 +212,9 @@ export default function Chat() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {console.log("Messages data:", messages)}
         {messages && messages.length > 0 ? (
           messages.map((message) => {
             const isOwn = message.senderId === currentUserId;
-            console.log("Rendering message:", message, "isOwn:", isOwn);
             return (
               <div
                 key={message.id}
@@ -231,7 +229,7 @@ export default function Chat() {
                 >
                   <p className="text-sm">{message.content}</p>
                   <p className={`text-xs mt-1 ${isOwn ? "text-white/70" : "text-gray-400"}`}>
-                    {new Date(message.createdAt || (message as any).timestamp).toLocaleTimeString("fr-FR", {
+                    {new Date(message.createdAt).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
