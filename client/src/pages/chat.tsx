@@ -30,6 +30,13 @@ export default function Chat() {
     const blockedUsers = JSON.parse(localStorage.getItem('blockedUsers') || '[]');
     setIsBlocked(blockedUsers.includes(userId));
   }, [userId]);
+
+  // Mark messages as read when entering conversation
+  useEffect(() => {
+    if (conversation?.id) {
+      markAsReadMutation.mutate(conversation.id);
+    }
+  }, [conversation?.id]);
   const currentUserId = 1; // Current logged-in user
 
   // Get or create conversation

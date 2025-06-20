@@ -119,18 +119,15 @@ export default function Collections() {
                 <img 
                   src={user.avatar} 
                   alt="Avatar utilisateur"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
                 />
               ) : (
                 <img 
                   src={avatarImage} 
                   alt="Avatar par défaut"
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
                 />
               )}
-              <div className="absolute -top-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                <Trophy className="w-3 h-3 text-white" />
-              </div>
             </div>
             <h2 className="text-xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
             <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
@@ -333,8 +330,8 @@ export default function Collections() {
                         ></div>
                       </div>
                       <div className="flex justify-between text-xs text-white/60 mt-1">
-                        <span>{collection.completionPercentage}% complété</span>
-                        <span>{collection.totalCards - collection.ownedCards} cartes manquantes</span>
+                        <span>{Math.round((collection.ownedCards / collection.totalCards) * 100)}% complété</span>
+                        <span>{collection.ownedCards} cartes acquises</span>
                       </div>
                     </div>
                   </div>
