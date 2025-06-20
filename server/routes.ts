@@ -533,6 +533,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all conversations with last message
+  app.get("/api/chat/conversations", async (req, res) => {
+    try {
+      const conversations = [];
+      
+      // Get all conversation IDs from messageStore
+      const conversationIds = Object.keys(messageStore).map(id => parseInt(id));
+      
+      for (const convId of conversationIds) {
+        const messages = messageStore[convId] || [];
+        const lastMessage = messages[messages.length - 1];
+        
+        if (lastMessage) {
+          const conversation = {
+            id: convId,
+            user: {
+              id: convId,
+              name: convId === 999 ? "Max la menace" : `Utilisateur ${convId}`,
+              username: convId === 999 ? "maxlamenace" : `user${convId}`,
+            },
+            lastMessage: {
+              content: lastMessage.content,
+              timestamp: lastMessage.timestamp,
+              isRead: lastMessage.senderId === 1 // Messages from current user are read
+            },
+            unreadCount: messages.filter(m => m.senderId !== 1 && !m.isRead).length
+          };
+          conversations.push(conversation);
+        }
+      }
+      
+      // Sort by last message timestamp (most recent first)
+      conversations.sort((a, b) => 
+        new Date(b.lastMessage.timestamp).getTime() - new Date(a.lastMessage.timestamp).getTime()
+      );
+      
+      res.json(conversations);
+    } catch (error) {
+      console.error("Error fetching conversations:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Send message - completely open route
   app.post("/api/messages/send", (req, res) => {
     const { content, conversationId } = req.body;

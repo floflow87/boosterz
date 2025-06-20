@@ -27,53 +27,13 @@ export default function Conversations() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Mock conversations data - in real app this would come from API
-  const mockConversations: ConversationItem[] = [
-    {
-      id: 999,
-      user: {
-        id: 999,
-        name: "Max la menace",
-        username: "maxlamenace",
-      },
-      lastMessage: {
-        content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
-        timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-        isRead: false
-      },
-      unreadCount: 2
-    },
-    {
-      id: 2,
-      user: {
-        id: 2,
-        name: "CardCollector",
-        username: "cardcollector",
-      },
-      lastMessage: {
-        content: "Salut ! J'ai vu ta collection Score Ligue 1",
-        timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-        isRead: true
-      },
-      unreadCount: 0
-    },
-    {
-      id: 3,
-      user: {
-        id: 3,
-        name: "TradingMaster",
-        username: "tradingmaster",
-      },
-      lastMessage: {
-        content: "Parfait ! On peut faire l'échange demain",
-        timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-        isRead: true
-      },
-      unreadCount: 0
-    }
-  ];
+  // Fetch conversations from API
+  const { data: conversations = [], isLoading } = useQuery<ConversationItem[]>({
+    queryKey: ['/api/chat/conversations'],
+    refetchInterval: 5000, // Refresh every 5 seconds
+  });
 
-  const filteredConversations = mockConversations.filter(conv =>
+  const filteredConversations = conversations.filter(conv =>
     conv.user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     conv.user.username.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -135,7 +95,9 @@ export default function Conversations() {
 
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
-        {filteredConversations.length > 0 ? (
+        {isLoading ? (
+          <LoadingScreen />
+        ) : filteredConversations.length > 0 ? (
           <div className="divide-y divide-gray-800">
             {filteredConversations.map((conversation) => (
               <div
