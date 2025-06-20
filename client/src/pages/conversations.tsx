@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Search, MessageCircle, MoreVertical, UserX, UserCheck } from "lucide-react";
+import { ArrowLeft, Search, MessageCircle, MoreVertical, UserX, UserCheck, Ban } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -94,6 +94,8 @@ export default function Conversations() {
   };
 
   const handleConversationClick = (userId: number) => {
+    // Save blocked status to localStorage for chat page
+    localStorage.setItem('blockedUsers', JSON.stringify(Array.from(blockedUsers)));
     setLocation(`/chat/${userId}`);
   };
 
@@ -171,9 +173,14 @@ export default function Conversations() {
                   {/* Conversation Details */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h3 className={`font-semibold truncate ${!conversation.lastMessage.isRead ? 'text-white' : 'text-gray-300'}`}>
-                        {conversation.user.name}
-                      </h3>
+                      <div className="flex items-center space-x-2">
+                        <h3 className={`font-semibold truncate ${!conversation.lastMessage.isRead ? 'text-white' : 'text-gray-300'}`}>
+                          {conversation.user.name}
+                        </h3>
+                        {blockedUsers.has(conversation.user.id) && (
+                          <Ban className="w-4 h-4 text-red-500 flex-shrink-0" />
+                        )}
+                      </div>
                       <span className={`text-xs ${!conversation.lastMessage.isRead ? 'text-[hsl(9,85%,67%)]' : 'text-gray-400'}`}>
                         {formatTime(conversation.lastMessage.timestamp)}
                       </span>
@@ -204,17 +211,17 @@ export default function Conversations() {
                             const action = blockedUsers.has(conversation.user.id) ? 'unblock' : 'block';
                             blockUserMutation.mutate({ userId: conversation.user.id, action });
                           }}
-                          className="hover:bg-gray-700"
+                          className="hover:bg-gray-700 text-white"
                         >
                           {blockedUsers.has(conversation.user.id) ? (
                             <>
-                              <UserCheck className="w-4 h-4 mr-2" />
-                              Débloquer
+                              <UserCheck className="w-4 h-4 mr-2 text-green-400" />
+                              <span className="text-white">Débloquer</span>
                             </>
                           ) : (
                             <>
-                              <UserX className="w-4 h-4 mr-2" />
-                              Bloquer
+                              <UserX className="w-4 h-4 mr-2 text-red-400" />
+                              <span className="text-white">Bloquer</span>
                             </>
                           )}
                         </DropdownMenuItem>

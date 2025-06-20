@@ -23,6 +23,12 @@ export default function Chat() {
   const { toast } = useToast();
   
   const userId = parseInt(params.userId || "0");
+
+  // Load blocked status from localStorage
+  useEffect(() => {
+    const blockedUsers = JSON.parse(localStorage.getItem('blockedUsers') || '[]');
+    setIsBlocked(blockedUsers.includes(userId));
+  }, [userId]);
   const currentUserId = 1; // Current logged-in user
 
   // Get or create conversation
@@ -117,12 +123,24 @@ export default function Chat() {
   };
 
   const handleBlockUser = () => {
-    setIsBlocked(!isBlocked);
+    const blockedUsers = JSON.parse(localStorage.getItem('blockedUsers') || '[]');
+    const newBlockedState = !isBlocked;
+    
+    let updatedBlockedUsers;
+    if (newBlockedState) {
+      updatedBlockedUsers = [...blockedUsers, userId];
+    } else {
+      updatedBlockedUsers = blockedUsers.filter((id: number) => id !== userId);
+    }
+    
+    localStorage.setItem('blockedUsers', JSON.stringify(updatedBlockedUsers));
+    setIsBlocked(newBlockedState);
+    
     toast({
-      title: isBlocked ? "Utilisateur débloqué" : "Utilisateur bloqué",
-      description: isBlocked 
-        ? `${displayUser?.name} peut maintenant vous envoyer des messages.`
-        : `${displayUser?.name} ne peut plus vous envoyer de messages.`,
+      title: newBlockedState ? "Utilisateur bloqué" : "Utilisateur débloqué",
+      description: newBlockedState 
+        ? `${displayUser?.name} ne peut plus vous envoyer de messages.`
+        : `${displayUser?.name} peut maintenant vous envoyer des messages.`,
       className: "bg-green-600 text-white border-green-700"
     });
   };
