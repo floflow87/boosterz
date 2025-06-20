@@ -17,6 +17,10 @@ export default function AllCards() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<"all" | "owned" | "missing">("all");
+  const [showFilters, setShowFilters] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -31,6 +35,25 @@ export default function AllCards() {
   const { data: cards } = useQuery<Card[]>({
     queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
     enabled: !!selectedCollection,
+  });
+
+  // Filter and search cards
+  const filteredCards = cards?.filter(card => {
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesSearch = 
+        (card.playerName?.toLowerCase() || "").includes(query) ||
+        (card.teamName?.toLowerCase() || "").includes(query) ||
+        card.reference.toLowerCase().includes(query);
+      if (!matchesSearch) return false;
+    }
+
+    // Status filter
+    if (filterStatus === "owned" && !card.isOwned) return false;
+    if (filterStatus === "missing" && card.isOwned) return false;
+
+    return true;
   });
 
   if (userLoading || collectionsLoading) {
@@ -127,11 +150,21 @@ export default function AllCards() {
           </div>
           
           <div className="flex items-center space-x-2">
-            <button className="p-2 bg-[hsl(214,35%,22%)] rounded-lg">
-              <Search className="w-4 h-4 text-[hsl(212,23%,69%)]" />
+            <button
+              onClick={() => setShowSearch(!showSearch)}
+              className={`p-2 rounded-lg ${
+                showSearch ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+              }`}
+            >
+              <Search className="w-4 h-4" />
             </button>
-            <button className="p-2 bg-[hsl(214,35%,22%)] rounded-lg">
-              <Filter className="w-4 h-4 text-[hsl(212,23%,69%)]" />
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`p-2 rounded-lg ${
+                showFilters ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+              }`}
+            >
+              <Filter className="w-4 h-4" />
             </button>
           </div>
         </div>

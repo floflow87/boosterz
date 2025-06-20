@@ -250,9 +250,14 @@ export default function CollectionDetail() {
 
   const handleBulkMarkAsOwned = async () => {
     try {
-      const promises = Array.from(selectedCards).map(cardId => 
-        apiRequest("POST", `/api/cards/${cardId}/ownership`)
-      );
+      // For "mark as owned", we need to toggle cards that are currently not owned
+      const promises = Array.from(selectedCards).map(async (cardId) => {
+        const card = cards?.find(c => c.id === cardId);
+        if (card && !card.isOwned) {
+          return apiRequest("POST", `/api/cards/${cardId}/ownership`);
+        }
+        return Promise.resolve();
+      });
       await Promise.all(promises);
       
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
@@ -276,9 +281,14 @@ export default function CollectionDetail() {
 
   const handleBulkMarkAsNotOwned = async () => {
     try {
-      const promises = Array.from(selectedCards).map(cardId => 
-        apiRequest("POST", `/api/cards/${cardId}/ownership`)
-      );
+      // For "mark as not owned", we need to toggle cards that are currently owned
+      const promises = Array.from(selectedCards).map(async (cardId) => {
+        const card = cards?.find(c => c.id === cardId);
+        if (card && card.isOwned) {
+          return apiRequest("POST", `/api/cards/${cardId}/ownership`);
+        }
+        return Promise.resolve();
+      });
       await Promise.all(promises);
       
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
