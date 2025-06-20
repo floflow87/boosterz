@@ -35,7 +35,7 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
     refetchInterval: 5000,
   });
 
-  const hasUnreadMessages = conversations.some(conv => conv.unreadCount > 0);
+  const totalUnreadCount = conversations.reduce((total, conv) => total + conv.unreadCount, 0);
 
   return (
     <header className="relative z-10 flex items-center justify-between p-4 pt-4">
@@ -57,8 +57,10 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
           className="relative w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
         >
           <MessageCircle className="w-5 h-5 text-[hsl(212,23%,69%)]" />
-          {hasUnreadMessages && (
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-[hsl(9,85%,67%)] rounded-full"></div>
+          {totalUnreadCount > 0 && (
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
+              <span className="text-white text-xs font-bold">{totalUnreadCount}</span>
+            </div>
           )}
         </button>
         <button className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center">

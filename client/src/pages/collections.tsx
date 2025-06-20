@@ -326,7 +326,7 @@ export default function Collections() {
                       <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                         <div 
                           className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${collection.completionPercentage}%` }}
+                          style={{ width: `${Math.round((collection.ownedCards / collection.totalCards) * 100)}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between text-xs text-white/60 mt-1">

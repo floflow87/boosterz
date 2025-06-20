@@ -251,11 +251,12 @@ export default function CollectionDetail() {
   const handleBulkMarkAsOwned = async () => {
     try {
       const promises = Array.from(selectedCards).map(cardId => 
-        apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned: true })
+        apiRequest("POST", `/api/cards/${cardId}/ownership`)
       );
       await Promise.all(promises);
       
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users/1/collections'] });
       setSelectedCards(new Set());
       setShowBulkActions(false);
       
@@ -264,6 +265,7 @@ export default function CollectionDetail() {
         description: `${selectedCards.size} carte(s) marquée(s) comme acquise(s).`
       });
     } catch (error) {
+      console.error("Bulk mark as owned error:", error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour les cartes.",
@@ -275,11 +277,12 @@ export default function CollectionDetail() {
   const handleBulkMarkAsNotOwned = async () => {
     try {
       const promises = Array.from(selectedCards).map(cardId => 
-        apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned: false })
+        apiRequest("POST", `/api/cards/${cardId}/ownership`)
       );
       await Promise.all(promises);
       
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users/1/collections'] });
       setSelectedCards(new Set());
       setShowBulkActions(false);
       
@@ -288,6 +291,7 @@ export default function CollectionDetail() {
         description: `${selectedCards.size} carte(s) marquée(s) comme manquante(s).`
       });
     } catch (error) {
+      console.error("Bulk mark as not owned error:", error);
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour les cartes.",
