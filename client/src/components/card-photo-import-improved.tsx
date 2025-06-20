@@ -39,6 +39,7 @@ interface ImageHistory {
 export default function CardPhotoImportImproved({ isOpen, onClose, onSave, availableCards, preselectedCard, currentFilter }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
+  const [selectedRetouchTool, setSelectedRetouchTool] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [imageHistory, setImageHistory] = useState<ImageHistory[]>([]);
@@ -402,7 +403,6 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
       const processedImage = await processImageWithAdjustments();
       onSave(processedImage, selectedCardId);
     }
-    handleClose();
   }, [processImageWithAdjustments, selectedCardId, onSave]);
 
   const handleClose = useCallback(() => {
@@ -433,15 +433,15 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto bg-white text-black p-0">
+      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto bg-[hsl(240,3.7%,15.9%)] text-white p-0 border-gray-700">
         <div className="p-6">
           <DialogHeader>
-            <DialogTitle className="text-black text-xl">
+            <DialogTitle className="text-white text-xl">
               {step === "import" && "Importer une photo"}
               {step === "edit" && "Retoucher la photo"}
               {step === "assign" && "Assigner à une carte"}
             </DialogTitle>
-            <DialogDescription className="text-gray-600">
+            <DialogDescription className="text-gray-300">
               {step === "import" && "Choisissez comment importer votre photo de carte"}
               {step === "edit" && "Ajustez votre photo avant l'assignation"}
               {step === "assign" && "Confirmez l'assignation de la photo"}
@@ -453,44 +453,44 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
         {step === "import" && (
           <div className="space-y-6 px-6 pb-6">
             <div className="text-center mb-6">
-              <p className="text-gray-600 text-lg">Choisissez votre méthode d'import</p>
-              <p className="text-sm text-gray-500 mt-1">Formats supportés: JPG, PNG, WEBP (max 10MB)</p>
+              <p className="text-gray-300 text-lg">Choisissez votre méthode d'import</p>
+              <p className="text-sm text-gray-400 mt-1">Formats supportés: JPG, PNG, WEBP (max 10MB)</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Button
                 variant="outline"
-                className="h-32 flex flex-col items-center gap-3 text-black border-2 border-gray-300 hover:bg-blue-50 hover:border-blue-400 transition-all duration-200"
+                className="h-32 flex flex-col items-center gap-3 text-white border-2 border-gray-600 bg-gray-800 hover:bg-gray-700 hover:border-blue-400 transition-all duration-200"
                 onClick={() => handleImportOption("gallery")}
               >
-                <Image className="h-8 w-8 text-blue-600" />
+                <Image className="h-8 w-8 text-blue-400" />
                 <div className="text-center">
                   <span className="font-medium">Photothèque</span>
-                  <p className="text-xs text-gray-500 mt-1">Depuis vos photos</p>
+                  <p className="text-xs text-gray-400 mt-1">Depuis vos photos</p>
                 </div>
               </Button>
 
               <Button
                 variant="outline"
-                className="h-32 flex flex-col items-center gap-3 text-black border-2 border-gray-300 hover:bg-green-50 hover:border-green-400 transition-all duration-200"
+                className="h-32 flex flex-col items-center gap-3 text-white border-2 border-gray-600 bg-gray-800 hover:bg-gray-700 hover:border-green-400 transition-all duration-200"
                 onClick={() => handleImportOption("file")}
               >
-                <Upload className="h-8 w-8 text-green-600" />
+                <Upload className="h-8 w-8 text-green-400" />
                 <div className="text-center">
                   <span className="font-medium">Fichier</span>
-                  <p className="text-xs text-gray-500 mt-1">Parcourir les dossiers</p>
+                  <p className="text-xs text-gray-400 mt-1">Parcourir les dossiers</p>
                 </div>
               </Button>
               
               <Button
                 variant="outline"
-                className="h-32 flex flex-col items-center gap-3 text-black border-2 border-gray-300 hover:bg-orange-50 hover:border-orange-400 transition-all duration-200"
+                className="h-32 flex flex-col items-center gap-3 text-white border-2 border-gray-600 bg-gray-800 hover:bg-gray-700 hover:border-orange-400 transition-all duration-200"
                 onClick={() => handleImportOption("camera")}
               >
-                <Camera className="h-8 w-8 text-orange-600" />
+                <Camera className="h-8 w-8 text-orange-400" />
                 <div className="text-center">
                   <span className="font-medium">Appareil photo</span>
-                  <p className="text-xs text-gray-500 mt-1">Prendre une photo</p>
+                  <p className="text-xs text-gray-400 mt-1">Prendre une photo</p>
                 </div>
               </Button>
             </div>
@@ -580,11 +580,11 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Boutons d'action améliorés */}
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowRetouchOptions(!showRetouchOptions)} className="flex-1">
+                <Button variant="outline" onClick={() => setShowRetouchOptions(!showRetouchOptions)} className="flex-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
                   <Edit className="h-4 w-4 mr-2" />
                   {showRetouchOptions ? "Masquer" : "Retoucher"}
                 </Button>
-                <Button onClick={handleNextFromEdit} className="flex-1" disabled={isProcessing}>
+                <Button onClick={handleNextFromEdit} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white" disabled={isProcessing}>
                   {isProcessing ? (
                     <Search className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
