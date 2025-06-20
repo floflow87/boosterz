@@ -1304,14 +1304,7 @@ export default function CollectionDetail() {
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
         onSave={handlePhotoSave}
-        availableCards={(cards || []).map(card => ({
-          id: card.id,
-          cardNumber: card.reference,
-          playerName: card.playerName || "Joueur Inconnu",
-          teamName: card.teamName || "Équipe Inconnue",
-          cardType: card.cardType,
-          collectionId: card.collectionId
-        }))}
+        availableCards={cards || []}
         preselectedCard={selectedCard ? {
           id: selectedCard.id,
           playerName: selectedCard.playerName || "Joueur Inconnu",

@@ -90,10 +90,20 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (!selectedImage || !selectedCardId) return;
+    if (!selectedImage || !selectedCardId) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez sélectionner une image et une carte.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
-      await onImageUploaded(selectedCardId, selectedImage);
+      // Convertir l'image en base64 si ce n'est pas déjà fait
+      const imageToSave = selectedImage.startsWith('data:') ? selectedImage : `data:image/jpeg;base64,${selectedImage}`;
+      
+      await onImageUploaded(selectedCardId, imageToSave);
       toast({
         title: "Photo sauvegardée",
         description: "La photo a été associée à la carte avec succès.",
@@ -101,9 +111,10 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
       });
       handleClose();
     } catch (error) {
+      console.error("Erreur lors de la sauvegarde:", error);
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder la photo.",
+        description: "Impossible de sauvegarder la photo. Vérifiez votre connexion.",
         variant: "destructive"
       });
     }
@@ -123,17 +134,20 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
       const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName).filter(Boolean))) as string[];
       const suggestions = uniquePlayers.filter(player => 
         player.toLowerCase().includes(searchTerm)
-      ).slice(0, 3);
-      setPlayerSuggestions(suggestions);
-      setShowSuggestions(suggestions.length > 0);
+      ).slice(0, 5);
       
       const matchingCards = availableCards.filter(card => 
         card.playerName && card.playerName.toLowerCase().includes(searchTerm)
       );
+      
+      setPlayerSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0);
       setPlayerCards(matchingCards);
       
       if (matchingCards.length > 0) {
         setSelectedCardId(matchingCards[0].id);
+      } else {
+        setSelectedCardId(undefined);
       }
     } else {
       setShowSuggestions(false);
@@ -146,15 +160,25 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setPlayerName(suggestion);
     setShowSuggestions(false);
+    setPlayerSuggestions([]);
     
     const searchTerm = suggestion.toLowerCase();
     const matchingCards = availableCards.filter(card => 
-      card.playerName && card.playerName.toLowerCase().includes(searchTerm)
+      card.playerName && card.playerName.toLowerCase() === searchTerm
     );
     setPlayerCards(matchingCards);
     
     if (matchingCards.length > 0) {
       setSelectedCardId(matchingCards[0].id);
+    } else {
+      // Recherche plus large si aucune correspondance exacte
+      const partialMatchCards = availableCards.filter(card => 
+        card.playerName && card.playerName.toLowerCase().includes(searchTerm)
+      );
+      setPlayerCards(partialMatchCards);
+      if (partialMatchCards.length > 0) {
+        setSelectedCardId(partialMatchCards[0].id);
+      }
     }
   }, [availableCards]);
 
@@ -280,6 +304,46 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
                             Contraste
                           </span>
                         </div>
+
+                        {/* Outil Rotation */}
+                        <div className="flex flex-col items-center gap-2 min-w-[60px]">
+                          <Button
+                            variant="ghost"
+                            className={`w-12 h-12 rounded-full p-2 ${
+                              selectedRetouchTool === 'rotation' 
+                                ? 'bg-white text-black' 
+                                : 'bg-transparent text-white hover:bg-white/20'
+                            }`}
+                            onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'rotation' ? null : 'rotation')}
+                          >
+                            <RotateCw className="h-6 w-6" />
+                          </Button>
+                          <span className={`text-sm font-medium ${
+                            selectedRetouchTool === 'rotation' ? 'text-white' : 'text-gray-300'
+                          }`}>
+                            Rotation
+                          </span>
+                        </div>
+
+                        {/* Outil Recadrer */}
+                        <div className="flex flex-col items-center gap-2 min-w-[60px]">
+                          <Button
+                            variant="ghost"
+                            className={`w-12 h-12 rounded-full p-2 ${
+                              selectedRetouchTool === 'crop' 
+                                ? 'bg-white text-black' 
+                                : 'bg-transparent text-white hover:bg-white/20'
+                            }`}
+                            onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'crop' ? null : 'crop')}
+                          >
+                            <Crop className="h-6 w-6" />
+                          </Button>
+                          <span className={`text-sm font-medium ${
+                            selectedRetouchTool === 'crop' ? 'text-white' : 'text-gray-300'
+                          }`}>
+                            Recadrer
+                          </span>
+                        </div>
                       </div>
                     </div>
 
@@ -316,6 +380,91 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
                               max={150}
                               step={5}
                               className="w-full mb-3"
+                            />
+                          </div>
+                        )}
+
+                        {selectedRetouchTool === 'rotation' && (
+                          <div>
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="text-white font-medium">Rotation</span>
+                              <span className="text-gray-400 text-sm">{adjustments.rotation}°</span>
+                            </div>
+                            <div className="flex gap-2 justify-center mb-3">
+                              <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 0 }))} className="text-black bg-white">
+                                0°
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 90 }))} className="text-black bg-white">
+                                90°
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 180 }))} className="text-black bg-white">
+                                180°
+                              </Button>
+                              <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, rotation: 270 }))} className="text-black bg-white">
+                                270°
+                              </Button>
+                            </div>
+                            <Slider
+                              value={[adjustments.rotation]}
+                              onValueChange={([value]) => setAdjustments(prev => ({ ...prev, rotation: value }))}
+                              min={0}
+                              max={360}
+                              step={1}
+                              className="w-full"
+                            />
+                          </div>
+                        )}
+
+                        {selectedRetouchTool === 'crop' && (
+                          <div>
+                            <div className="mb-3">
+                              <span className="text-white font-medium">Recadrage</span>
+                            </div>
+                            <div className="grid grid-cols-2 gap-2 mb-3">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setAdjustments(prev => ({ ...prev, zoom: 120 }))}
+                                className="text-black bg-white"
+                              >
+                                Carré
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setAdjustments(prev => ({ ...prev, zoom: 110 }))}
+                                className="text-black bg-white"
+                              >
+                                Portrait
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setAdjustments(prev => ({ ...prev, zoom: 100 }))}
+                                className="text-black bg-white"
+                              >
+                                Original
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => setAdjustments(prev => ({ ...prev, zoom: 130 }))}
+                                className="text-black bg-white"
+                              >
+                                Zoom
+                              </Button>
+                            </div>
+                            <div className="flex justify-between items-center mb-3">
+                              <span className="text-white font-medium">Zoom</span>
+                              <span className="text-gray-400 text-sm">{adjustments.zoom}%</span>
+                            </div>
+                            <Slider
+                              value={[adjustments.zoom]}
+                              onValueChange={([value]) => setAdjustments(prev => ({ ...prev, zoom: value }))}
+                              min={50}
+                              max={200}
+                              step={5}
+                              className="w-full"
                             />
                           </div>
                         )}
@@ -391,7 +540,7 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
                   {playerCards.length > 0 && (
                     <div>
                       <label className="block text-sm font-medium text-white mb-1">
-                        Carte ({playerName ? `${playerCards.length} carte(s) trouvée(s)` : "Aucune carte trouvée"})
+                        Carte ({playerCards.length} carte(s) trouvée(s))
                       </label>
                       <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
                         <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
@@ -400,7 +549,7 @@ export default function CardPhotoImport({ isOpen, onClose, onImageUploaded, avai
                         <SelectContent className="bg-gray-800 border-gray-600">
                           {playerCards.map((card) => (
                             <SelectItem key={card.id} value={card.id.toString()} className="text-white hover:bg-gray-700">
-                              {card.reference} - {card.playerName} ({card.teamName}) - {card.cardType}
+                              #{card.reference} - {card.playerName || 'Nom inconnu'} ({card.teamName || 'Équipe inconnue'}) - {card.cardType}
                             </SelectItem>
                           ))}
                         </SelectContent>
