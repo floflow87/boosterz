@@ -1,5 +1,5 @@
-import { useState, useRef, useCallback } from "react";
-import { Camera, Upload, Image, X, RotateCw, Sun, Contrast, Droplets, CircleDot, Check, Search, Edit } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Camera, Upload, Image, X, RotateCw, Sun, Contrast, Droplets, CircleDot, Check, Search, Edit, Crop, RefreshCw, Download, Maximize, ZoomIn, ZoomOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
@@ -21,6 +21,7 @@ interface ImageAdjustments {
   contrast: number;
   saturation: number;
   rotation: number;
+  zoom: number;
   crop: {
     x: number;
     y: number;
@@ -29,15 +30,36 @@ interface ImageAdjustments {
   };
 }
 
+interface CropArea {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface ImageHistory {
+  image: string;
+  adjustments: ImageAdjustments;
+  timestamp: number;
+}
+
 export default function CardPhotoImport({ isOpen, onClose, onSave, availableCards, preselectedCard, currentFilter }: CardPhotoImportProps) {
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [originalImage, setOriginalImage] = useState<string | null>(null);
+  const [imageHistory, setImageHistory] = useState<ImageHistory[]>([]);
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(-1);
+  const [showCropTool, setShowCropTool] = useState(false);
+  const [cropArea, setCropArea] = useState<CropArea>({ x: 0, y: 0, width: 100, height: 100 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [adjustments, setAdjustments] = useState<ImageAdjustments>({
     brightness: 100,
     contrast: 100,
     saturation: 100,
     rotation: 0,
+    zoom: 100,
     crop: {
       x: 0,
       y: 0,
@@ -62,6 +84,8 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const cropCanvasRef = useRef<HTMLCanvasElement>(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
 
   const handleFileSelect = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -71,6 +95,22 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         const result = e.target?.result;
         if (typeof result === 'string') {
           setSelectedImage(result);
+          setOriginalImage(result);
+          // Add to history
+          const historyEntry: ImageHistory = {
+            image: result,
+            adjustments: {
+              brightness: 100,
+              contrast: 100,
+              saturation: 100,
+              rotation: 0,
+              zoom: 100,
+              crop: { x: 0, y: 0, width: 100, height: 100 }
+            },
+            timestamp: Date.now()
+          };
+          setImageHistory([historyEntry]);
+          setCurrentHistoryIndex(0);
         }
         setStep("edit");
       };
@@ -92,6 +132,56 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     }
   }, []);
 
+  // New advanced image processing functions
+  const addToHistory = useCallback((image: string, adjustments: ImageAdjustments) => {
+    const historyEntry: ImageHistory = {
+      image,
+      adjustments,
+      timestamp: Date.now()
+    };
+    
+    setImageHistory(prev => {
+      const newHistory = [...prev.slice(0, currentHistoryIndex + 1), historyEntry];
+      // Keep only last 10 entries to prevent memory issues
+      return newHistory.slice(-10);
+    });
+    setCurrentHistoryIndex(prev => Math.min(prev + 1, 9));
+  }, [currentHistoryIndex]);
+
+  const undoLastChange = useCallback(() => {
+    if (currentHistoryIndex > 0) {
+      const prevIndex = currentHistoryIndex - 1;
+      const prevEntry = imageHistory[prevIndex];
+      setSelectedImage(prevEntry.image);
+      setAdjustments(prevEntry.adjustments);
+      setCurrentHistoryIndex(prevIndex);
+    }
+  }, [currentHistoryIndex, imageHistory]);
+
+  const redoLastChange = useCallback(() => {
+    if (currentHistoryIndex < imageHistory.length - 1) {
+      const nextIndex = currentHistoryIndex + 1;
+      const nextEntry = imageHistory[nextIndex];
+      setSelectedImage(nextEntry.image);
+      setAdjustments(nextEntry.adjustments);
+      setCurrentHistoryIndex(nextIndex);
+    }
+  }, [currentHistoryIndex, imageHistory]);
+
+  const resetToOriginal = useCallback(() => {
+    if (originalImage) {
+      setSelectedImage(originalImage);
+      setAdjustments({
+        brightness: 100,
+        contrast: 100,
+        saturation: 100,
+        rotation: 0,
+        zoom: 100,
+        crop: { x: 0, y: 0, width: 100, height: 100 }
+      });
+    }
+  }, [originalImage]);
+
   const processImageWithAdjustments = useCallback(() => {
     if (!selectedImage || !canvasRef.current) return selectedImage;
 
@@ -102,8 +192,10 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
     return new Promise<string>((resolve) => {
       const img = document.createElement('img');
       img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
+        // Calculate dimensions with zoom
+        const scaleFactor = adjustments.zoom / 100;
+        canvas.width = img.width * scaleFactor;
+        canvas.height = img.height * scaleFactor;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -112,13 +204,15 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         ctx.rotate((adjustments.rotation * Math.PI) / 180);
         ctx.translate(-canvas.width / 2, -canvas.height / 2);
 
+        // Enhanced filters
         ctx.filter = `
           brightness(${adjustments.brightness}%)
           contrast(${adjustments.contrast}%)
           saturate(${adjustments.saturation}%)
         `;
 
-        ctx.drawImage(img, 0, 0);
+        // Apply zoom by scaling the image
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         // Apply crop if needed
         if (adjustments.crop.width < 100 || adjustments.crop.height < 100) {
@@ -134,7 +228,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
         }
 
         ctx.restore();
-        resolve(canvas.toDataURL('image/jpeg', 0.9));
+        resolve(canvas.toDataURL('image/jpeg', 0.95));
       };
       img.src = selectedImage || "";
     });
@@ -329,6 +423,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       contrast: 100,
       saturation: 100,
       rotation: 0,
+      zoom: 100,
       crop: {
         x: 0,
         y: 0,
@@ -409,6 +504,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       contrast: 100,
       saturation: 100,
       rotation: 0,
+      zoom: 100,
       crop: {
         x: 0,
         y: 0,
@@ -436,6 +532,7 @@ export default function CardPhotoImport({ isOpen, onClose, onSave, availableCard
       contrast: 100,
       saturation: 100,
       rotation: 0,
+      zoom: 100,
       crop: {
         x: 0,
         y: 0,
