@@ -137,7 +137,7 @@ export default function Collections() {
             <h2 className="text-xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
             <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
             
-            <div className="flex space-x-4 text-center justify-center">
+            <div className="flex space-x-4 text-center justify-center max-w-80 mx-auto">
               <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1">
                 <CreditCard className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
                 <div className="text-lg font-bold text-white">{collections?.reduce((total, collection) => total + (collection.ownedCards || 0), 0) || 0}</div>
@@ -217,13 +217,27 @@ export default function Collections() {
                 display: none;
               }
               
-              .collections-container {
-                display: flex;
-                gap: 1.5rem;
-                padding-left: 1rem;
-                padding-right: 20px;
-                width: max-content;
-                scroll-snap-type: x mandatory;
+              .collections-swiper {
+                overflow: visible;
+                padding: 0 16px;
+              }
+              
+              .collections-swiper .swiper-slide {
+                height: auto;
+              }
+              
+              .collections-swiper .swiper-pagination {
+                position: static;
+                margin-top: 20px;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet {
+                background: rgba(255, 255, 255, 0.3);
+                opacity: 1;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active {
+                background: hsl(9, 85%, 67%);
               }
               
               .collection-wallet-item {
