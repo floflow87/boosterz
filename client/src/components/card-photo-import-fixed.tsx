@@ -626,7 +626,7 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
                   {playerCards.length > 0 && (
                     <div>
                       <label className="block text-sm font-medium text-white mb-1">
-                        Carte ({playerCards.length} carte(s) trouvée(s))
+                        Types de cartes possibles : ({playerCards.length} trouvée(s))
                       </label>
                       <Select value={selectedCardId?.toString()} onValueChange={(value) => setSelectedCardId(parseInt(value))}>
                         <SelectTrigger className="bg-gray-800 border-gray-600 text-white">

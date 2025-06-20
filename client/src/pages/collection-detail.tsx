@@ -23,6 +23,8 @@ export default function CollectionDetail() {
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
   const [showFullscreenCard, setShowFullscreenCard] = useState(false);
   const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
   const [showBulkActions, setShowBulkActions] = useState(false);
@@ -354,6 +356,14 @@ export default function CollectionDetail() {
         setSelectedCard({ ...selectedCard, isOwned: true });
       }
       
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: true } : card
+        );
+      });
+      
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
       
       // Retirer l'effet d'étoiles après l'animation
@@ -377,6 +387,13 @@ export default function CollectionDetail() {
       if (selectedCard && selectedCard.id === cardId) {
         setSelectedCard({ ...selectedCard, isOwned: false });
       }
+      // Revert cache on error
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: false } : card
+        );
+      });
       // Retirer l'effet d'étoiles en cas d'erreur
       setStarEffectCards(prev => {
         const newSet = new Set(prev);
@@ -674,9 +691,63 @@ export default function CollectionDetail() {
               type="text"
               placeholder="Rechercher par joueur ou équipe"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 placeholder:text-sm focus:outline-none focus:border-blue-500"
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchTerm(value);
+                
+                if (value.length >= 2) {
+                  const uniquePlayers = Array.from(new Set(cards?.map(card => card.playerName).filter(Boolean))) as string[];
+                  const uniqueTeams = Array.from(new Set(cards?.map(card => card.teamName).filter(Boolean))) as string[];
+                  const allSuggestions = [...uniquePlayers, ...uniqueTeams];
+                  
+                  const filtered = allSuggestions.filter(item => 
+                    item.toLowerCase().includes(value.toLowerCase())
+                  ).slice(0, 5);
+                  
+                  setSearchSuggestions(filtered);
+                  setShowSearchSuggestions(filtered.length > 0);
+                } else {
+                  setShowSearchSuggestions(false);
+                  setSearchSuggestions([]);
+                }
+              }}
+              onFocus={() => {
+                if (searchSuggestions.length > 0) {
+                  setShowSearchSuggestions(true);
+                }
+              }}
+              className="w-full pl-10 pr-10 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 placeholder:text-sm focus:outline-none focus:border-blue-500"
             />
+            {searchTerm && (
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setShowSearchSuggestions(false);
+                  setSearchSuggestions([]);
+                }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+            
+            {showSearchSuggestions && searchSuggestions.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                {searchSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    onClick={() => {
+                      setSearchTerm(suggestion);
+                      setShowSearchSuggestions(false);
+                    }}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           
           {/* Photo upload button */}
