@@ -30,6 +30,7 @@ export default function CollectionDetail() {
   const [panStates, setPanStates] = useState<Record<string, { x: number; y: number; scale: number }>>({});
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [selectedTradeCard, setSelectedTradeCard] = useState<Card | null>(null);
+  const [pulledCardEffect, setPulledCardEffect] = useState<number | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -71,7 +72,12 @@ export default function CollectionDetail() {
     mutationFn: async ({ cardId, isOwned }: { cardId: number; isOwned: boolean }) => {
       return apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned });
     },
-    onSuccess: () => {
+    onSuccess: (_, { cardId, isOwned }) => {
+      if (isOwned) {
+        // Déclencher l'effet de tirage
+        setPulledCardEffect(cardId);
+        setTimeout(() => setPulledCardEffect(null), 2000);
+      }
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
     }
@@ -765,7 +771,7 @@ export default function CollectionDetail() {
                         'ring-gray-400'
                       }`
                     : `border-2 ${getCardBorderColor(currentVariant)}`
-                }`}
+                } ${pulledCardEffect === currentVariant.id ? 'animate-card-pull' : ''}`}
                 style={allVariantsOwned && animationName ? {
                   animation: `${animationName} 3s infinite`
                 } : {}}

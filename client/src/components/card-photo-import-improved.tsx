@@ -678,10 +678,10 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Interface de retouche style Instagram */}
               {showRetouchOptions && (
-                <div className="space-y-4 w-full">
+                <div className="space-y-4">
                   {/* Bandeau de retouche inspiré d'Instagram */}
-                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 w-full">
-                    <div className="flex gap-6 overflow-x-auto px-4 pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 -mx-6">
+                    <div className="flex gap-6 overflow-x-auto px-6 pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
                       <div className="flex flex-col items-center gap-2 min-w-[60px]">
@@ -787,7 +787,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
                   {/* Panneau de réglage déroulant */}
                   {selectedRetouchTool && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 w-full">
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
                       {selectedRetouchTool === 'adjust' && (
                         <div>
                           <div className="flex justify-between items-center mb-3">
