@@ -57,9 +57,9 @@ export default function Chat() {
     mutationFn: async (messageContent: string) => {
       // Use the userId as conversation ID since our backend is set up this way
       const conversationId = conversation?.id || userId;
-      return apiRequest("POST", `/api/chat/conversations/${conversationId}/messages`, {
+      return apiRequest("POST", `/api/messages/send`, {
         content: messageContent,
-        senderId: currentUserId,
+        conversationId: conversationId,
       });
     },
     onSuccess: () => {

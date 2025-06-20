@@ -223,8 +223,10 @@ export default function Collections() {
               .collections-container {
                 display: flex;
                 gap: 1.5rem;
-                padding: 0 1rem 0 1rem;
+                padding-left: 1rem;
+                padding-right: 20px;
                 width: max-content;
+                scroll-snap-type: x mandatory;
               }
               
               .collection-wallet-item {
@@ -345,7 +347,7 @@ export default function Collections() {
                 {/* Add Collection Button */}
                 <div 
                   onClick={() => setShowAddModal(true)}
-                  className="collection-item flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center"
+                  className="collection-wallet-item bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center"
                 >
                   <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <Plus className="w-8 h-8 text-white" />

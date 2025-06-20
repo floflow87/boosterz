@@ -10,8 +10,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.use('/api/auth', authRoutes);
   
-  // Chat routes
-  app.use('/api/chat', chatRoutes);
+  // Chat routes (commented out to avoid conflicts)
+  // app.use('/api/chat', chatRoutes);
 
   // Get conversation between two users
   app.get("/api/chat/conversations/user/:userId", optionalAuth, async (req: AuthRequest, res) => {
@@ -541,33 +541,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Send message to any conversation (no auth required)
-  app.post("/api/chat/conversations/:conversationId/messages", (req, res) => {
-    try {
-      const conversationId = parseInt(req.params.conversationId);
-      const { content } = req.body;
-      
-      if (!content?.trim()) {
-        return res.status(400).json({ message: "Message content is required" });
-      }
-
-      // Create and return message response
-      const newMessage = {
-        id: Date.now(),
-        conversationId: conversationId,
-        senderId: 1,
-        senderName: "Floflow87",
-        content: content.trim(),
-        timestamp: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        isRead: true
-      };
-
-      res.status(201).json(newMessage);
-    } catch (error) {
-      console.error("Error sending message:", error);
-      res.status(500).json({ message: "Internal server error" });
+  // Send message - completely open route
+  app.post("/api/messages/send", (req, res) => {
+    const { content, conversationId } = req.body;
+    
+    if (!content?.trim()) {
+      return res.status(400).json({ message: "Message content is required" });
     }
+
+    const newMessage = {
+      id: Date.now(),
+      conversationId: parseInt(conversationId) || 999,
+      senderId: 1,
+      senderName: "Floflow87",
+      content: content.trim(),
+      timestamp: new Date().toISOString(),
+      createdAt: new Date().toISOString(),
+      isRead: true
+    };
+
+    res.status(201).json(newMessage);
   });
 
   const httpServer = createServer(app);
