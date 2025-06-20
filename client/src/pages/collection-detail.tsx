@@ -1461,6 +1461,7 @@ export default function CollectionDetail() {
       <CardPhotoImportFixed
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
+        preselectedPlayer={selectedCard?.playerName || undefined}
         onImageUploaded={async (cardId, imageUrl) => {
           try {
             console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
