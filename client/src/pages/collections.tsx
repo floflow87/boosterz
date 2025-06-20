@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -135,21 +135,16 @@ export default function Collections() {
             <h2 className="text-xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
             <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
             
-            <div className="flex space-x-4 text-center">
-              <div className="bg-[hsl(214,35%,22%)] p-2 rounded-lg border border-[hsl(9,85%,67%)]/30">
-                <Star className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString()}</div>
+            <div className="flex space-x-4 text-center justify-center">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 min-w-[80px]">
+                <FileText className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-white">{collections?.reduce((total, collection) => total + (collection.ownedCards || 0), 0) || 0}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
               </div>
-              <div className="bg-[hsl(214,35%,22%)] p-2 rounded-lg border border-[hsl(9,85%,67%)]/30">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 min-w-[80px]">
                 <Trophy className="w-4 h-4 text-green-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-[hsl(9,85%,67%)]">{user.collectionsCount}</div>
+                <div className="text-lg font-bold text-white">{collections?.length || 0}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Collections</div>
-              </div>
-              <div className="bg-[hsl(214,35%,22%)] p-2 rounded-lg border border-[hsl(9,85%,67%)]/30">
-                <Award className="w-4 h-4 text-purple-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-[hsl(9,85%,67%)]">{user.completionPercentage}%</div>
-                <div className="text-xs text-[hsl(212,23%,69%)]">Complété</div>
               </div>
             </div>
           </div>
