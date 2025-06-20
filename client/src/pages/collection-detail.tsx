@@ -37,10 +37,11 @@ export default function CollectionDetail() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Add scroll listener for background effect
+  // Add scroll listener for background effect and sticky actions bar
   useEffect(() => {
     const handleScroll = () => {
       const categoryTabs = document.getElementById('category-tabs');
+      const stickyActions = document.getElementById('sticky-actions');
       if (categoryTabs) {
         const scrollY = window.scrollY;
         if (scrollY > 50) {
@@ -51,11 +52,16 @@ export default function CollectionDetail() {
           categoryTabs.style.backdropFilter = 'none';
         }
       }
+      
+      // Show sticky actions bar when cards are selected and user scrolls
+      if (stickyActions && selectedCards.size > 0) {
+        stickyActions.style.display = 'flex';
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [selectedCards.size]);
 
   useEffect(() => {
     queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
@@ -645,7 +651,48 @@ export default function CollectionDetail() {
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white overflow-x-hidden relative">
       <HaloBlur />
-      <main className="px-3 pt-3 pb-20 relative z-10" id="collection-top">
+      
+      {/* Sticky Actions Bar */}
+      {selectedCards.size > 0 && (
+        <div 
+          id="sticky-actions"
+          className="fixed top-0 left-0 right-0 z-[100] bg-gray-900/95 backdrop-blur-md border-b border-gray-700 px-4 py-3 shadow-lg"
+        >
+          <div className="flex items-center justify-between max-w-sm mx-auto">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-400" />
+              <span className="text-white text-sm font-medium">
+                {selectedCards.size} sélectionnée(s)
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleBulkMarkAsOwned}
+                className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                title="Marquer comme acquises"
+              >
+                <Check className="w-4 h-4 text-white" />
+              </button>
+              <button
+                onClick={handleBulkMarkAsNotOwned}
+                className="p-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                title="Marquer comme manquantes"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+              <button
+                onClick={handleDeselectAll}
+                className="p-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
+                title="Désélectionner tout"
+              >
+                <Square className="w-4 h-4 text-white" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      <main className={`px-3 pb-20 relative z-10 transition-all duration-300 ${selectedCards.size > 0 ? 'pt-20' : 'pt-3'}`} id="collection-top">
         {/* Collection Header */}
         <div className="flex items-start mb-6">
           <button
