@@ -237,6 +237,7 @@ export default function Collections() {
                 max-width: 320px;
                 flex-shrink: 0;
                 width: 320px;
+                scroll-snap-align: start;
               }
               
               .collection-wallet-item:hover {
