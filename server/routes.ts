@@ -629,8 +629,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const newMessage = await storage.createMessage({
         conversationId: conversation.id,
         senderId: currentUserId,
-        content: content.trim(),
-        isRead: false
+        content: content.trim()
       });
 
       // Format for frontend

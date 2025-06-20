@@ -73,7 +73,7 @@ export default function Chat() {
       // Send to server with recipient ID
       return apiRequest("POST", `/api/messages/send`, {
         content: messageContent,
-        recipientId: parseInt(userId),
+        recipientId: Number(userId),
       });
     },
     onSuccess: () => {

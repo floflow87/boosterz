@@ -309,6 +309,21 @@ export class DatabaseStorage implements IStorage {
         )
       );
   }
+
+  async searchUsers(query: string): Promise<User[]> {
+    return await db.select().from(users)
+      .where(
+        or(
+          ilike(users.name, `%${query}%`),
+          ilike(users.username, `%${query}%`),
+          ilike(users.email, `%${query}%`)
+        )
+      );
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
 }
 
 export class MemStorage implements IStorage {
