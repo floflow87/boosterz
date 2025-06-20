@@ -204,7 +204,7 @@ export default function Chat() {
   return (
     <div className="h-screen bg-black text-white flex flex-col">
       {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900">
+      <div className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900/95 backdrop-blur-sm">
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setLocation("/conversations")}
@@ -259,8 +259,8 @@ export default function Chat() {
       </div>
 
       {/* Scrollable Messages */}
-      <div className="flex-1 overflow-y-auto pt-20 pb-24 px-4">
-        <div className="space-y-4">
+      <div className="flex-1 overflow-y-auto pt-4 pb-24 px-4" style={{ paddingTop: '80px' }}>
+        <div className="space-y-4 min-h-full">
           {messages && messages.length > 0 ? (
             messages.map((message) => {
               const isOwn = message.senderId === currentUserId;

@@ -292,13 +292,67 @@ export default function Collections() {
               .collection-wallet-item:hover .wallet-card-layer:nth-child(3) {
                 transform: translateX(8px) translateY(-6px) rotateZ(3deg);
               }
+              
+              .collections-swiper {
+                padding-bottom: 40px !important;
+                overflow: visible !important;
+              }
+              
+              .collections-swiper .swiper-wrapper {
+                transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+              }
+              
+              .collections-swiper .swiper-slide {
+                transition: transform 0.3s ease, opacity 0.3s ease !important;
+              }
+              
+              .collections-swiper .swiper-pagination {
+                bottom: 10px !important;
+                position: absolute !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: auto !important;
+                display: flex !important;
+                justify-content: center !important;
+                gap: 8px !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet {
+                width: 8px !important;
+                height: 8px !important;
+                border-radius: 50% !important;
+                background: rgba(255, 255, 255, 0.3) !important;
+                opacity: 1 !important;
+                margin: 0 !important;
+                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active {
+                background: #F37261 !important;
+                transform: scale(1.2) !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active-main {
+                background: #F37261 !important;
+                transform: scale(1.4) !important;
+              }
             `}</style>
             
             <div className="collections-scroll">
               <Swiper
                 slidesPerView="auto"
                 spaceBetween={20}
-                freeMode={true}
+                freeMode={{
+                  enabled: true,
+                  momentum: true,
+                  momentumRatio: 0.7,
+                  momentumBounce: false,
+                  momentumVelocityRatio: 0.8,
+                  sticky: false,
+                }}
+                resistance={true}
+                resistanceRatio={0.3}
+                speed={400}
                 pagination={{
                   clickable: true,
                   dynamicBullets: true,
