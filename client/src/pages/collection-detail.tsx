@@ -591,12 +591,12 @@ export default function CollectionDetail() {
     
     // Violet brillant pour les hits (Insert)
     if (card.cardType?.includes("Insert")) {
-      return "border-purple-500 animate-spin-slow shadow-lg shadow-purple-500/50";
+      return "border-purple-500 shadow-lg shadow-purple-500/50";
     }
     
     // Gold brillant pour les autographes
     if (card.cardType === "Autograph") {
-      return "border-yellow-500 animate-spin-slow shadow-lg shadow-yellow-500/50";
+      return "border-yellow-500 shadow-lg shadow-yellow-500/50";
     }
     
     // Noir pour les spéciales
@@ -851,51 +851,17 @@ export default function CollectionDetail() {
           </button>
         </div>
 
-        {/* Selection Controls */}
-        {selectedCards.size > 0 ? (
-          <div className="bg-gray-900 rounded-lg p-3 mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Users className="w-4 h-4 text-blue-400" />
-              <span className="text-white text-sm">
-                {selectedCards.size} sélectionnée(s)
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleBulkMarkAsOwned}
-                className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
-                title="Marquer comme acquises"
-              >
-                <Check className="w-4 h-4 text-white" />
-              </button>
-              <button
-                onClick={handleBulkMarkAsNotOwned}
-                className="p-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-                title="Marquer comme manquantes"
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
-              <button
-                onClick={handleDeselectAll}
-                className="p-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
-                title="Désélectionner tout"
-              >
-                <Square className="w-4 h-4 text-white" />
-              </button>
-            </div>
+        {/* Selection Controls - Only show "Select All" when no cards selected */}
+        {selectedCards.size === 0 && filteredCards && filteredCards.length > 0 && (
+          <div className="mb-4">
+            <button
+              onClick={handleSelectAll}
+              className="text-sm hover:opacity-80"
+              style={{ color: '#F37261' }}
+            >
+              Tout sélectionner
+            </button>
           </div>
-        ) : (
-          filteredCards && filteredCards.length > 0 && (
-            <div className="mb-4">
-              <button
-                onClick={handleSelectAll}
-                className="text-sm hover:opacity-80"
-                style={{ color: '#F37261' }}
-              >
-                Tout sélectionner
-              </button>
-            </div>
-          )
         )}
 
         {/* Cards Grid */}
@@ -1459,30 +1425,11 @@ export default function CollectionDetail() {
               const currentCard = getCurrentCard();
               return currentCard?.imageUrl ? (
                 <div 
-                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out animate-card-3d-float"
-                  onMouseMove={(e) => {
-                    const rect = e.currentTarget.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const rotateY = ((x - centerX) / centerX) * 25;
-                    const rotateX = ((centerY - y) / centerY) * 25;
-                    
-                    e.currentTarget.style.transform = `
-                      perspective(1000px) 
-                      rotateX(${rotateX}deg) 
-                      rotateY(${rotateY}deg)
-                      scale(1.05)
-                    `;
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)';
-                  }}
+                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out"
                   style={{
                     perspective: '1000px',
-                    transformStyle: 'preserve-3d'
+                    transformStyle: 'preserve-3d',
+                    animation: 'card-auto-float 6s ease-in-out infinite'
                   }}
                 >
                   <img 

@@ -42,6 +42,44 @@ export default function Collections() {
     refetchOnWindowFocus: false,
   });
 
+  // Récupérer les cartes pour chaque collection pour calculer le vrai pourcentage
+  const { data: allCollectionCards } = useQuery<{[key: number]: Card[]}>({
+    queryKey: ["/api/collections/cards/all"],
+    queryFn: async () => {
+      if (!collections) return {};
+      
+      const cardsData: {[key: number]: Card[]} = {};
+      
+      for (const collection of collections) {
+        try {
+          const response = await fetch(`/api/collections/${collection.id}/cards`);
+          if (response.ok) {
+            const cards = await response.json();
+            cardsData[collection.id] = cards;
+          }
+        } catch (error) {
+          console.error(`Erreur lors de la récupération des cartes pour la collection ${collection.id}:`, error);
+        }
+      }
+      
+      return cardsData;
+    },
+    enabled: !!collections && collections.length > 0,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Fonction pour calculer le vrai pourcentage de completion
+  const getCollectionCompletion = (collectionId: number) => {
+    const cards = allCollectionCards?.[collectionId] || [];
+    if (cards.length === 0) return { totalCards: 0, ownedCards: 0, percentage: 0 };
+    
+    const totalCards = cards.length;
+    const ownedCards = cards.filter(card => card.isOwned).length;
+    const percentage = Math.round((ownedCards / totalCards) * 100);
+    
+    return { totalCards, ownedCards, percentage };
+  };
+
   const { data: cards } = useQuery<Card[]>({
     queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
     enabled: !!selectedCollection && activeTab === "cards",
@@ -165,7 +203,7 @@ export default function Collections() {
               style={activeTab === "cards" ? { backgroundColor: '#F37261' } : {}}
             >
               <Star className="w-3 h-3 mr-1 inline" />
-              Toutes les cartes
+              Cartes ajoutées
             </button>
             <button 
               onClick={() => setActiveTab("collections")}
