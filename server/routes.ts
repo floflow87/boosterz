@@ -5,6 +5,7 @@ import authRoutes from "./authRoutes";
 import chatRoutes from "./chatRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
+import type { Card } from "@shared/schema";
 
 // Initialize sample data in database
 const initializeSampleData = async () => {
@@ -32,7 +33,7 @@ const initializeSampleData = async () => {
       });
     }
   } catch (error) {
-    console.log("Sample data initialization skipped:", error.message);
+    console.log("Sample data initialization skipped:", (error as Error).message);
   }
 };
 
@@ -193,12 +194,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       // Get all collections first
       const collections = await storage.getCollectionsByUserId(1); // Assuming user ID 1
-      let allCards: Card[] = [];
+      let allCards: any[] = [];
       
       // Get cards from each collection
       for (const collection of collections) {
         const cards = await storage.getCardsByCollectionId(collection.id);
-        allCards = allCards.concat(cards);
+        allCards.push(...cards);
       }
       
       res.json(allCards);
