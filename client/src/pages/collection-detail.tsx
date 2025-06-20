@@ -1078,18 +1078,29 @@ export default function CollectionDetail() {
 
       <Navigation />
 
-      {/* Card Detail Modal */}
+      {/* Card Detail Modal - Fullscreen with slide animation */}
       {selectedCard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[hsl(214,35%,22%)] rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
-            <button
-              onClick={() => setSelectedCard(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            {(() => {
+        <div 
+          className="fixed inset-0 bg-black z-50 flex"
+          style={{
+            animation: 'slideInFromRight 0.4s ease-out'
+          }}
+        >
+          <div className="w-full h-full flex flex-col overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700">
+              <h2 className="text-lg font-bold text-white">Détails de la carte</h2>
+              <button
+                onClick={() => setSelectedCard(null)}
+                className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-6">
+              {(() => {
               const currentCard = getCurrentCard();
               const variants = getCardVariants(selectedCard);
               
@@ -1328,6 +1339,7 @@ export default function CollectionDetail() {
                 </>
               );
             })()}
+            </div>
           </div>
         </div>
       )}
