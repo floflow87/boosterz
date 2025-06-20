@@ -74,6 +74,30 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
     onClose();
   }, [onClose]);
 
+  // Fonction de filtrage des cartes par catégorie
+  const filterCardsByCategory = useCallback((cards: Card[]) => {
+    if (!currentFilter) return cards;
+    
+    switch (currentFilter) {
+      case "bases":
+        return cards.filter(card => 
+          card.cardType === "Base" || 
+          card.cardType === "Parallel Laser" || 
+          card.cardType === "Parallel Swirl"
+        );
+      case "bases_numbered":
+        return cards.filter(card => card.cardType === "Parallel Numbered");
+      case "hits":
+        return cards.filter(card => card.cardType?.includes("Insert"));
+      case "autographs":
+        return cards.filter(card => card.cardType === "Autograph");
+      case "special_1_1":
+        return cards.filter(card => card.numbering === "1/1");
+      default:
+        return cards;
+    }
+  }, [currentFilter]);
+
   // Initialiser avec le joueur présélectionné
   useEffect(() => {
     if (isOpen && preselectedPlayer) {
@@ -141,29 +165,6 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
       setIsProcessing(false);
     }
   }, [selectedImage, selectedCardId, onImageUploaded, toast, handleClose]);
-
-  // Fonction utilitaire pour filtrer les cartes par catégorie
-  const filterCardsByCategory = useCallback((cards: Card[]) => {
-    if (!currentFilter) return cards;
-    
-    return cards.filter(card => {
-      switch (currentFilter) {
-        case "bases": 
-          return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-        case "bases_numbered": 
-          return card.cardType === "Parallel Numbered" && card.numbering !== "1/1";
-        case "autographs": 
-          return card.cardType === "Insert Autograph";
-        case "hits": 
-          return card.cardType === "Insert Autograph" || 
-                 (card.cardType === "Parallel Numbered" && card.numbering === "1/1");
-        case "special_1_1": 
-          return card.cardType === "Parallel Numbered" && card.numbering === "1/1";
-        default: 
-          return true;
-      }
-    });
-  }, [currentFilter]);
 
   const handlePlayerNameChange = useCallback((name: string) => {
     setPlayerName(name);
@@ -603,49 +604,59 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
                 )}
 
                 <div className="space-y-3">
-                  <div className="relative">
-                    <label className="block text-sm font-medium text-white mb-1">
-                      Nom du joueur
-                    </label>
+                  {!preselectedPlayer && (
                     <div className="relative">
-                      <Input
-                        value={playerName}
-                        onChange={(e) => handlePlayerNameChange(e.target.value)}
-                        onFocus={() => setShowSuggestions(playerSuggestions.length > 0)}
-                        placeholder="Commencez à taper le nom du joueur..."
-                        className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400 pr-10"
-                      />
-                      {playerName && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPlayerName("");
-                            setPlayerCards([]);
-                            setSelectedCardId(undefined);
-                            setShowSuggestions(false);
-                          }}
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
+                      <label className="block text-sm font-medium text-white mb-1">
+                        Nom du joueur
+                      </label>
+                      <div className="relative">
+                        <Input
+                          value={playerName}
+                          onChange={(e) => handlePlayerNameChange(e.target.value)}
+                          onFocus={() => setShowSuggestions(playerSuggestions.length > 0)}
+                          placeholder="Commencez à taper le nom du joueur..."
+                          className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400 pr-10"
+                        />
+                        {playerName && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPlayerName("");
+                              setPlayerCards([]);
+                              setSelectedCardId(undefined);
+                              setShowSuggestions(false);
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
+                      
+                      {showSuggestions && playerSuggestions.length > 0 && (
+                        <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                          {playerSuggestions.map((suggestion, index) => (
+                            <button
+                              key={index}
+                              type="button"
+                              className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                              onClick={() => handleSuggestionClick(suggestion)}
+                            >
+                              {suggestion}
+                            </button>
+                          ))}
+                        </div>
                       )}
                     </div>
-                    
-                    {showSuggestions && playerSuggestions.length > 0 && (
-                      <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-32 overflow-y-auto">
-                        {playerSuggestions.map((suggestion, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
-                            onClick={() => handleSuggestionClick(suggestion)}
-                          >
-                            {suggestion}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  )}
+
+                  {preselectedPlayer && (
+                    <div className="bg-blue-900/30 border border-blue-700 rounded-lg p-3">
+                      <p className="text-blue-300 text-sm font-medium">
+                        Joueur sélectionné : {preselectedPlayer}
+                      </p>
+                    </div>
+                  )}
 
                   {playerCards.length > 0 && (
                     <div>
