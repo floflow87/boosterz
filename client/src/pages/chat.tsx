@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import LoadingScreen from "@/components/LoadingScreen";
+import ImagePreview from "@/components/ImagePreview";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Message, Conversation, User } from "@shared/schema";
@@ -61,7 +62,28 @@ export default function Chat() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async (messageContent: string) => {
-      // Use the userId as conversation ID since our backend is set up this way
+      // Optimistic update - add message immediately
+      const optimisticMessage = {
+        id: Date.now(),
+        conversationId: userId,
+        senderId: 1,
+        senderName: "Floflow87",
+        content: messageContent,
+        timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
+        isRead: true
+      };
+
+      // Update messages cache immediately
+      queryClient.setQueryData(
+        [`/api/chat/conversations/${userId}/messages`], 
+        (oldMessages: any[]) => [...(oldMessages || []), optimisticMessage]
+      );
+
+      // Clear input immediately
+      setNewMessage("");
+
+      // Send to server
       const conversationId = conversation?.id || userId;
       return apiRequest("POST", `/api/messages/send`, {
         content: messageContent,
@@ -69,12 +91,14 @@ export default function Chat() {
       });
     },
     onSuccess: () => {
-      setNewMessage("");
+      // Refresh data from server to get real IDs and ensure consistency
       queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${userId}/messages`] });
       queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/user/${userId}`] });
       queryClient.invalidateQueries({ queryKey: ['/api/chat/conversations'] });
     },
     onError: (error: any) => {
+      // Revert optimistic update on error
+      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${userId}/messages`] });
       toast({
         title: "Erreur",
         description: error.message || "Impossible d'envoyer le message",
@@ -102,8 +126,13 @@ export default function Chat() {
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file && !isBlocked) {
-      const photoMessage = `📷 Photo partagée: ${file.name}`;
-      sendMessageMutation.mutate(photoMessage);
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const imageData = e.target?.result as string;
+        const photoMessage = `[IMAGE:${imageData}]${file.name}`;
+        sendMessageMutation.mutate(photoMessage);
+      };
+      reader.readAsDataURL(file);
     }
     event.target.value = '';
   };
@@ -259,7 +288,20 @@ export default function Chat() {
                         : "bg-gray-800 text-white"
                     }`}
                   >
-                    <p className="text-sm">{message.content}</p>
+                    {message.content.startsWith('[IMAGE:') ? (
+                      <div>
+                        <ImagePreview
+                          src={message.content.match(/\[IMAGE:(.*?)\]/)?.[1] || ''}
+                          alt="Image partagée"
+                          className="max-w-full h-auto rounded-lg mb-2"
+                        />
+                        <p className="text-xs text-gray-300">
+                          {message.content.replace(/\[IMAGE:.*?\]/, '')}
+                        </p>
+                      </div>
+                    ) : (
+                      <p className="text-sm">{message.content}</p>
+                    )}
                     <p className={`text-xs mt-1 ${isOwn ? "text-white/70" : "text-gray-400"}`}>
                       {new Date(message.createdAt).toLocaleTimeString("fr-FR", {
                         hour: "2-digit",
