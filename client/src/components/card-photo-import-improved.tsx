@@ -581,7 +581,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Boutons d'action améliorés */}
               <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setShowRetouchOptions(!showRetouchOptions)} className="flex-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
+                <Button variant="outline" onClick={() => setShowRetouchOptions(!showRetouchOptions)} className="flex-1 text-black bg-white border-gray-300 hover:bg-gray-100">
                   <Edit className="h-4 w-4 mr-2" />
                   {showRetouchOptions ? "Masquer" : "Retoucher"}
                 </Button>
@@ -602,7 +602,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   variant="outline"
                   onClick={undoLastChange}
                   disabled={currentHistoryIndex <= 0}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-black bg-white border-gray-300 hover:bg-gray-100"
                 >
                   <RotateCw className="h-4 w-4 rotate-180" />
                   Annuler
@@ -612,7 +612,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   variant="outline"
                   onClick={redoLastChange}
                   disabled={currentHistoryIndex >= imageHistory.length - 1}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-black bg-white border-gray-300 hover:bg-gray-100"
                 >
                   <RotateCw className="h-4 w-4" />
                   Refaire
@@ -621,7 +621,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   size="sm"
                   variant="outline"
                   onClick={resetToOriginal}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 text-black bg-white border-gray-300 hover:bg-gray-100"
                 >
                   <RefreshCw className="h-4 w-4" />
                   Original
