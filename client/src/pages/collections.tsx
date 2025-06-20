@@ -551,7 +551,7 @@ export default function Collections() {
 
         {/* Cards Tab Content */}
         {activeTab === "cards" && (
-          <>
+          <div>
             {/* Controls */}
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center space-x-2">
@@ -826,6 +826,7 @@ export default function Collections() {
           </div>
         )}
       </main>
+      
       <CardAddModal
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
