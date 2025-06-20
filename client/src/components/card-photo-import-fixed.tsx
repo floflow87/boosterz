@@ -118,6 +118,29 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
     }
   }, [selectedImage, selectedCardId, onImageUploaded, toast, handleClose]);
 
+  // Fonction utilitaire pour filtrer les cartes par catégorie
+  const filterCardsByCategory = useCallback((cards: Card[]) => {
+    if (!currentFilter) return cards;
+    
+    return cards.filter(card => {
+      switch (currentFilter) {
+        case "bases": 
+          return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+        case "bases_numbered": 
+          return card.cardType === "Parallel Numbered" && card.numbering !== "1/1";
+        case "autographs": 
+          return card.cardType === "Insert Autograph";
+        case "hits": 
+          return card.cardType === "Insert Autograph" || 
+                 (card.cardType === "Parallel Numbered" && card.numbering === "1/1");
+        case "special_1_1": 
+          return card.cardType === "Parallel Numbered" && card.numbering === "1/1";
+        default: 
+          return true;
+      }
+    });
+  }, [currentFilter]);
+
   const performImageRecognition = useCallback(async (imageData: string) => {
     if (!imageData) return null;
     
@@ -157,66 +180,13 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
       const recognition = await performImageRecognition(selectedImage);
       if (recognition && recognition.playerName) {
         setPlayerName(recognition.playerName);
-        
-        // Filtrer directement les cartes pour éviter la dépendance circulaire
-        const searchTerm = recognition.playerName.toLowerCase();
-        let filteredCards = availableCards.filter(card => 
-          card.playerName && card.playerName.toLowerCase().includes(searchTerm)
-        );
-
-        if (currentFilter) {
-          filteredCards = filteredCards.filter(card => {
-            switch (currentFilter) {
-              case "bases": 
-                return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-              case "bases_numbered": 
-                return card.cardType === "Parallel Numbered" && card.numbering !== "1/1";
-              case "autographs": 
-                return card.cardType === "Insert Autograph";
-              case "hits": 
-                return card.cardType === "Insert Autograph" || 
-                       (card.cardType === "Parallel Numbered" && card.numbering === "1/1");
-              case "special_1_1": 
-                return card.cardType === "Parallel Numbered" && card.numbering === "1/1";
-              default: 
-                return true;
-            }
-          });
-        }
-        
-        setPlayerCards(filteredCards);
-        if (filteredCards.length > 0) {
-          setSelectedCardId(filteredCards[0].id);
-        }
+        handlePlayerNameChange(recognition.playerName);
       }
     }
     
     setStep("assign");
     setIsProcessing(false);
-  }, [selectedImage, performImageRecognition, availableCards, currentFilter]);
-
-  // Fonction utilitaire pour filtrer les cartes par catégorie
-  const filterCardsByCategory = useCallback((cards: Card[]) => {
-    if (!currentFilter) return cards;
-    
-    return cards.filter(card => {
-      switch (currentFilter) {
-        case "bases": 
-          return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-        case "bases_numbered": 
-          return card.cardType === "Parallel Numbered" && card.numbering !== "1/1";
-        case "autographs": 
-          return card.cardType === "Insert Autograph";
-        case "hits": 
-          return card.cardType === "Insert Autograph" || 
-                 (card.cardType === "Parallel Numbered" && card.numbering === "1/1");
-        case "special_1_1": 
-          return card.cardType === "Parallel Numbered" && card.numbering === "1/1";
-        default: 
-          return true;
-      }
-    });
-  }, [currentFilter]);
+  }, [selectedImage, performImageRecognition, handlePlayerNameChange]);
 
   const handlePlayerNameChange = useCallback((name: string) => {
     setPlayerName(name);
@@ -667,9 +637,18 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
                 <Button variant="outline" onClick={() => setStep("edit")} className="flex-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
                   Retour
                 </Button>
-                <Button onClick={handleSave} disabled={!selectedCardId} className="flex-1 bg-primary hover:bg-primary/90 text-white">
-                  <Check className="h-4 w-4 mr-2" />
-                  Confirmer
+                <Button onClick={handleSave} disabled={!selectedCardId || isProcessing} className="flex-1 bg-primary hover:bg-primary/90 text-white">
+                  {isProcessing ? (
+                    <>
+                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                      Sauvegarde...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="h-4 w-4 mr-2" />
+                      Confirmer
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
