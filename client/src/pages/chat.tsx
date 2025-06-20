@@ -35,8 +35,8 @@ export default function Chat() {
 
   // Get messages for this conversation
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
-    queryKey: [`/api/chat/conversations/${conversation?.id}/messages`],
-    enabled: !!conversation?.id,
+    queryKey: [`/api/chat/conversations/${userId}/messages`],
+    enabled: !!userId,
     refetchInterval: 3000, // Auto-refresh every 3 seconds
   });
 
@@ -64,7 +64,7 @@ export default function Chat() {
     },
     onSuccess: () => {
       setNewMessage("");
-      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${conversation?.id}/messages`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${userId}/messages`] });
       queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/user/${userId}`] });
     },
     onError: (error: any) => {
@@ -212,9 +212,11 @@ export default function Chat() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {console.log("Messages data:", messages)}
         {messages && messages.length > 0 ? (
           messages.map((message) => {
             const isOwn = message.senderId === currentUserId;
+            console.log("Rendering message:", message, "isOwn:", isOwn);
             return (
               <div
                 key={message.id}
@@ -229,7 +231,7 @@ export default function Chat() {
                 >
                   <p className="text-sm">{message.content}</p>
                   <p className={`text-xs mt-1 ${isOwn ? "text-white/70" : "text-gray-400"}`}>
-                    {new Date(message.createdAt).toLocaleTimeString("fr-FR", {
+                    {new Date(message.createdAt || (message as any).timestamp).toLocaleTimeString("fr-FR", {
                       hour: "2-digit",
                       minute: "2-digit",
                     })}
