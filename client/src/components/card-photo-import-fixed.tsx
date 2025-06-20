@@ -99,16 +99,12 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
       return;
     }
 
+    setIsProcessing(true);
     try {
       // Convertir l'image en base64 si ce n'est pas déjà fait
       const imageToSave = selectedImage.startsWith('data:') ? selectedImage : `data:image/jpeg;base64,${selectedImage}`;
       
       await onImageUploaded(selectedCardId, imageToSave);
-      toast({
-        title: "Photo sauvegardée",
-        description: "La photo a été associée à la carte avec succès.",
-        className: "bg-green-900 border-green-700 text-green-100",
-      });
       handleClose();
     } catch (error) {
       console.error("Erreur lors de la sauvegarde:", error);
@@ -117,14 +113,110 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
         description: "Impossible de sauvegarder la photo. Vérifiez votre connexion.",
         variant: "destructive"
       });
+    } finally {
+      setIsProcessing(false);
     }
   }, [selectedImage, selectedCardId, onImageUploaded, toast, handleClose]);
 
+  const performImageRecognition = useCallback(async (imageData: string) => {
+    if (!imageData) return null;
+    
+    try {
+      // Extraire le texte visible de l'image pour reconnaissance
+      const response = await fetch('/api/recognize-card', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          imageData: imageData,
+          availableCards: availableCards.map(card => ({
+            id: card.id,
+            playerName: card.playerName,
+            teamName: card.teamName,
+            cardType: card.cardType
+          }))
+        }),
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        return result;
+      }
+    } catch (error) {
+      console.log("Reconnaissance d'image non disponible, utilisation manuelle requise");
+    }
+    return null;
+  }, [availableCards]);
+
   const handleNextFromEdit = useCallback(async () => {
     setIsProcessing(true);
+    
+    // Tenter la reconnaissance d'image
+    if (selectedImage) {
+      const recognition = await performImageRecognition(selectedImage);
+      if (recognition && recognition.playerName) {
+        setPlayerName(recognition.playerName);
+        
+        // Filtrer directement les cartes pour éviter la dépendance circulaire
+        const searchTerm = recognition.playerName.toLowerCase();
+        let filteredCards = availableCards.filter(card => 
+          card.playerName && card.playerName.toLowerCase().includes(searchTerm)
+        );
+
+        if (currentFilter) {
+          filteredCards = filteredCards.filter(card => {
+            switch (currentFilter) {
+              case "bases": 
+                return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+              case "bases_numbered": 
+                return card.cardType === "Parallel Numbered" && card.numbering !== "1/1";
+              case "autographs": 
+                return card.cardType === "Insert Autograph";
+              case "hits": 
+                return card.cardType === "Insert Autograph" || 
+                       (card.cardType === "Parallel Numbered" && card.numbering === "1/1");
+              case "special_1_1": 
+                return card.cardType === "Parallel Numbered" && card.numbering === "1/1";
+              default: 
+                return true;
+            }
+          });
+        }
+        
+        setPlayerCards(filteredCards);
+        if (filteredCards.length > 0) {
+          setSelectedCardId(filteredCards[0].id);
+        }
+      }
+    }
+    
     setStep("assign");
     setIsProcessing(false);
-  }, []);
+  }, [selectedImage, performImageRecognition, availableCards, currentFilter]);
+
+  // Fonction utilitaire pour filtrer les cartes par catégorie
+  const filterCardsByCategory = useCallback((cards: Card[]) => {
+    if (!currentFilter) return cards;
+    
+    return cards.filter(card => {
+      switch (currentFilter) {
+        case "bases": 
+          return card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+        case "bases_numbered": 
+          return card.cardType === "Parallel Numbered" && card.numbering !== "1/1";
+        case "autographs": 
+          return card.cardType === "Insert Autograph";
+        case "hits": 
+          return card.cardType === "Insert Autograph" || 
+                 (card.cardType === "Parallel Numbered" && card.numbering === "1/1");
+        case "special_1_1": 
+          return card.cardType === "Parallel Numbered" && card.numbering === "1/1";
+        default: 
+          return true;
+      }
+    });
+  }, [currentFilter]);
 
   const handlePlayerNameChange = useCallback((name: string) => {
     setPlayerName(name);
@@ -136,16 +228,20 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
         player.toLowerCase().includes(searchTerm)
       ).slice(0, 5);
       
+      // Filtrer les cartes par nom de joueur
       const matchingCards = availableCards.filter(card => 
         card.playerName && card.playerName.toLowerCase().includes(searchTerm)
       );
+
+      // Appliquer le filtre de catégorie
+      const filteredCards = filterCardsByCategory(matchingCards);
       
       setPlayerSuggestions(suggestions);
       setShowSuggestions(suggestions.length > 0);
-      setPlayerCards(matchingCards);
+      setPlayerCards(filteredCards);
       
-      if (matchingCards.length > 0) {
-        setSelectedCardId(matchingCards[0].id);
+      if (filteredCards.length > 0) {
+        setSelectedCardId(filteredCards[0].id);
       } else {
         setSelectedCardId(undefined);
       }
@@ -155,7 +251,7 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
       setPlayerCards([]);
       setSelectedCardId(undefined);
     }
-  }, [availableCards]);
+  }, [availableCards, filterCardsByCategory]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setPlayerName(suggestion);

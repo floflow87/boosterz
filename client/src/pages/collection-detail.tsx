@@ -74,7 +74,7 @@ export default function CollectionDetail() {
     },
     onSuccess: (_, { cardId, isOwned }) => {
       if (isOwned) {
-        // Déclencher l'effet de tirage
+        // Déclencher l'effet de tirage (sans tremblement)
         setPulledCardEffect(cardId);
         setTimeout(() => setPulledCardEffect(null), 2000);
       }

@@ -62,6 +62,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Search all users
+  // Card recognition endpoint
+  app.post("/api/recognize-card", async (req, res) => {
+    try {
+      const { imageData, availableCards } = req.body;
+      
+      if (!imageData || !availableCards) {
+        return res.status(400).json({ error: "Image data and available cards required" });
+      }
+
+      // Import the recognition engine
+      const { CardRecognitionEngine } = await import('./cardRecognition');
+      const recognitionEngine = new CardRecognitionEngine(availableCards);
+      
+      // Perform recognition
+      const result = recognitionEngine.recognizeCard(imageData);
+      
+      res.json({
+        playerName: result.playerName,
+        teamName: result.teamName,
+        confidence: result.confidence,
+        matchedCard: result.matchedCard
+      });
+    } catch (error) {
+      console.error("Card recognition error:", error);
+      res.status(500).json({ error: "Recognition failed" });
+    }
+  });
+
   app.get("/api/users/search", optionalAuth, async (req: AuthRequest, res) => {
     try {
       const users = await storage.getAllUsers();
