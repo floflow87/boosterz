@@ -32,7 +32,8 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
   // Get conversations to check for unread messages
   const { data: conversations = [] } = useQuery<ConversationItem[]>({
     queryKey: ['/api/chat/conversations'],
-    refetchInterval: 5000,
+    refetchInterval: 3000,
+    staleTime: 0,
   });
 
   const totalUnreadCount = conversations.reduce((total, conv) => total + conv.unreadCount, 0);

@@ -39,19 +39,19 @@ export default function Chat() {
     enabled: !!userId,
   });
 
-  // Mark messages as read when entering conversation
-  useEffect(() => {
-    if (conversation?.id) {
-      markAsReadMutation.mutate(conversation.id);
-    }
-  }, [conversation?.id]);
-
   // Get messages for this conversation
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
     queryKey: [`/api/chat/conversations/${conversation?.id}/messages`],
     enabled: !!conversation?.id,
     refetchInterval: 2000, // Auto-refresh every 2 seconds
   });
+
+  // Mark messages as read when entering conversation
+  useEffect(() => {
+    if (conversation?.id && messages?.length) {
+      markAsReadMutation.mutate(conversation.id);
+    }
+  }, [conversation?.id, messages?.length]);
 
   // Get other user info with fallback for non-existent users
   const { data: otherUser, isLoading: userLoading, isError: userError } = useQuery<User>({
@@ -74,11 +74,14 @@ export default function Chat() {
         recipientId: Number(userId),
       });
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setNewMessage("");
-      // Refresh data from server to get real IDs and ensure consistency
-      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${conversation?.id}/messages`] });
-      queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/user/${userId}`] });
+      // Immediately update the messages cache with the new message
+      queryClient.setQueryData(
+        [`/api/chat/conversations/${conversation?.id}/messages`],
+        (oldMessages: any[]) => [...(oldMessages || []), data]
+      );
+      // Refresh conversations list to update notifications
       queryClient.invalidateQueries({ queryKey: ['/api/chat/conversations'] });
     },
     onError: (error: any) => {
