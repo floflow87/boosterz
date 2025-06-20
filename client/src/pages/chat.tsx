@@ -66,6 +66,7 @@ export default function Chat() {
       setNewMessage("");
       queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/${userId}/messages`] });
       queryClient.invalidateQueries({ queryKey: [`/api/chat/conversations/user/${userId}`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/conversations'] });
     },
     onError: (error: any) => {
       toast({
@@ -73,6 +74,15 @@ export default function Chat() {
         description: error.message || "Impossible d'envoyer le message",
         variant: "destructive",
       });
+    },
+  });
+
+  const markAsReadMutation = useMutation({
+    mutationFn: async (conversationId: number) => {
+      return apiRequest("POST", `/api/chat/conversations/${conversationId}/read`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/chat/conversations'] });
     },
   });
 
@@ -128,10 +138,13 @@ export default function Chat() {
 
   // Mark messages as read when opening conversation
   useEffect(() => {
-    if (conversation?.id) {
-      apiRequest("PUT", `/api/chat/conversations/${conversation.id}/read`, {});
+    if (userId && messages && messages.length > 0) {
+      const hasUnreadMessages = messages.some(msg => msg.senderId !== 1 && !msg.isRead);
+      if (hasUnreadMessages) {
+        markAsReadMutation.mutate(userId);
+      }
     }
-  }, [conversation?.id]);
+  }, [userId, messages]);
 
   const isLoading = conversationLoading || messagesLoading || (userLoading && !userError);
   const displayUser = fallbackUser || otherUser;
