@@ -141,6 +141,41 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
     });
   }, [currentFilter]);
 
+  const handlePlayerNameChange = useCallback((name: string) => {
+    setPlayerName(name);
+    
+    if (name.trim().length >= 2) {
+      const searchTerm = name.toLowerCase();
+      const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName).filter(Boolean))) as string[];
+      const suggestions = uniquePlayers.filter(player => 
+        player.toLowerCase().includes(searchTerm)
+      ).slice(0, 5);
+      
+      // Filtrer les cartes par nom de joueur
+      const matchingCards = availableCards.filter(card => 
+        card.playerName && card.playerName.toLowerCase().includes(searchTerm)
+      );
+
+      // Appliquer le filtre de catégorie
+      const filteredCards = filterCardsByCategory(matchingCards);
+      
+      setPlayerSuggestions(suggestions);
+      setShowSuggestions(suggestions.length > 0);
+      setPlayerCards(filteredCards);
+      
+      if (filteredCards.length > 0) {
+        setSelectedCardId(filteredCards[0].id);
+      } else {
+        setSelectedCardId(undefined);
+      }
+    } else {
+      setShowSuggestions(false);
+      setPlayerSuggestions([]);
+      setPlayerCards([]);
+      setSelectedCardId(undefined);
+    }
+  }, [availableCards, filterCardsByCategory]);
+
   const performImageRecognition = useCallback(async (imageData: string) => {
     if (!imageData) return null;
     
@@ -180,48 +215,32 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
       const recognition = await performImageRecognition(selectedImage);
       if (recognition && recognition.playerName) {
         setPlayerName(recognition.playerName);
-        handlePlayerNameChange(recognition.playerName);
+        
+        // Effectuer la recherche directement sans dépendance circulaire
+        const searchTerm = recognition.playerName.toLowerCase();
+        const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName).filter(Boolean))) as string[];
+        const suggestions = uniquePlayers.filter(player => 
+          player.toLowerCase().includes(searchTerm)
+        ).slice(0, 5);
+        
+        const matchingCards = availableCards.filter(card => 
+          card.playerName && card.playerName.toLowerCase().includes(searchTerm)
+        );
+        const filteredCards = filterCardsByCategory(matchingCards);
+        
+        setPlayerSuggestions(suggestions);
+        setShowSuggestions(suggestions.length > 0);
+        setPlayerCards(filteredCards);
+        
+        if (filteredCards.length > 0) {
+          setSelectedCardId(filteredCards[0].id);
+        }
       }
     }
     
     setStep("assign");
     setIsProcessing(false);
-  }, [selectedImage, performImageRecognition, handlePlayerNameChange]);
-
-  const handlePlayerNameChange = useCallback((name: string) => {
-    setPlayerName(name);
-    
-    if (name.trim().length >= 2) {
-      const searchTerm = name.toLowerCase();
-      const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName).filter(Boolean))) as string[];
-      const suggestions = uniquePlayers.filter(player => 
-        player.toLowerCase().includes(searchTerm)
-      ).slice(0, 5);
-      
-      // Filtrer les cartes par nom de joueur
-      const matchingCards = availableCards.filter(card => 
-        card.playerName && card.playerName.toLowerCase().includes(searchTerm)
-      );
-
-      // Appliquer le filtre de catégorie
-      const filteredCards = filterCardsByCategory(matchingCards);
-      
-      setPlayerSuggestions(suggestions);
-      setShowSuggestions(suggestions.length > 0);
-      setPlayerCards(filteredCards);
-      
-      if (filteredCards.length > 0) {
-        setSelectedCardId(filteredCards[0].id);
-      } else {
-        setSelectedCardId(undefined);
-      }
-    } else {
-      setShowSuggestions(false);
-      setPlayerSuggestions([]);
-      setPlayerCards([]);
-      setSelectedCardId(undefined);
-    }
-  }, [availableCards, filterCardsByCategory]);
+  }, [selectedImage, performImageRecognition, availableCards, filterCardsByCategory]);
 
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setPlayerName(suggestion);
