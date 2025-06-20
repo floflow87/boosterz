@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Camera, Upload, Image, X, RotateCw, Sun, Contrast, Droplets, CircleDot, Check, Search, Edit, Crop, RefreshCw, Download, Maximize, ZoomIn, ZoomOut } from "lucide-react";
+import { Camera, Upload, Image, X, RotateCw, Sun, Contrast, Droplets, CircleDot, Check, Search, Edit, Crop, RefreshCw, Download, Maximize, ZoomIn, ZoomOut, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
@@ -40,6 +40,8 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedRetouchTool, setSelectedRetouchTool] = useState<string | null>(null);
+  const [cropMode, setCropMode] = useState(false);
+  const [cropArea, setCropArea] = useState({ x: 0, y: 0, width: 100, height: 100 });
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [imageHistory, setImageHistory] = useState<ImageHistory[]>([]);
@@ -555,6 +557,39 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                       transform: `rotate(${adjustments.rotation}deg) scale(${adjustments.zoom / 100})`
                     }}
                   />
+                  
+                  {/* Zone de recadrage interactive */}
+                  {selectedRetouchTool === 'crop' && (
+                    <div className="absolute inset-0 pointer-events-none">
+                      {/* Overlay sombre */}
+                      <div className="absolute inset-0 bg-black/50"></div>
+                      
+                      {/* Zone de recadrage */}
+                      <div 
+                        className="absolute border-2 border-white bg-transparent pointer-events-auto cursor-move"
+                        style={{
+                          left: `${cropArea.x}%`,
+                          top: `${cropArea.y}%`,
+                          width: `${cropArea.width}%`,
+                          height: `${cropArea.height}%`,
+                        }}
+                      >
+                        {/* Coins de redimensionnement */}
+                        <div className="absolute -top-1 -left-1 w-3 h-3 bg-white border border-gray-400 cursor-nw-resize"></div>
+                        <div className="absolute -top-1 -right-1 w-3 h-3 bg-white border border-gray-400 cursor-ne-resize"></div>
+                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-white border border-gray-400 cursor-sw-resize"></div>
+                        <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-white border border-gray-400 cursor-se-resize"></div>
+                        
+                        {/* Grille de règle des tiers */}
+                        <div className="absolute inset-0 pointer-events-none">
+                          <div className="absolute left-1/3 top-0 bottom-0 w-px bg-white/50"></div>
+                          <div className="absolute left-2/3 top-0 bottom-0 w-px bg-white/50"></div>
+                          <div className="absolute top-1/3 left-0 right-0 h-px bg-white/50"></div>
+                          <div className="absolute top-2/3 left-0 right-0 h-px bg-white/50"></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <canvas ref={canvasRef} className="hidden" />
                   
                   {/* Contrôles de zoom en overlay */}
@@ -714,6 +749,26 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                           Contraste
                         </span>
                       </div>
+
+                      {/* Outil Recadrer */}
+                      <div className="flex flex-col items-center gap-2 min-w-[60px]">
+                        <Button
+                          variant="ghost"
+                          className={`w-12 h-12 rounded-full p-2 ${
+                            selectedRetouchTool === 'crop' 
+                              ? 'bg-white text-black' 
+                              : 'bg-transparent text-white hover:bg-white/20'
+                          }`}
+                          onClick={() => setSelectedRetouchTool(selectedRetouchTool === 'crop' ? null : 'crop')}
+                        >
+                          <Crop className="h-6 w-6" />
+                        </Button>
+                        <span className={`text-sm font-medium ${
+                          selectedRetouchTool === 'crop' ? 'text-white' : 'text-gray-300'
+                        }`}>
+                          Recadrer
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -822,6 +877,28 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                             </Button>
                             <Button size="sm" variant="outline" onClick={() => setAdjustments(prev => ({ ...prev, contrast: 125 }))} className="text-black">
                               Intense
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {selectedRetouchTool === 'crop' && (
+                        <div>
+                          <div className="mb-3">
+                            <span className="text-white font-medium">Recadrer l'image</span>
+                          </div>
+                          <div className="text-center text-gray-400 text-sm mb-3">
+                            Faites glisser les coins pour ajuster la zone de recadrage
+                          </div>
+                          <div className="flex gap-2 justify-center">
+                            <Button size="sm" variant="outline" onClick={() => setCropArea({ x: 10, y: 10, width: 80, height: 80 })} className="text-black">
+                              Carré
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setCropArea({ x: 10, y: 15, width: 80, height: 70 })} className="text-black">
+                              16:9
+                            </Button>
+                            <Button size="sm" variant="outline" onClick={() => setCropArea({ x: 10, y: 20, width: 80, height: 60 })} className="text-black">
+                              4:3
                             </Button>
                           </div>
                         </div>
