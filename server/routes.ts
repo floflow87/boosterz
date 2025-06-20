@@ -541,8 +541,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Send message to any conversation
-  app.post("/api/chat/conversations/:conversationId/messages", optionalAuth, async (req: AuthRequest, res) => {
+  // Send message to any conversation (no auth required)
+  app.post("/api/chat/conversations/:conversationId/messages", (req, res) => {
     try {
       const conversationId = parseInt(req.params.conversationId);
       const { content } = req.body;
@@ -559,6 +559,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         senderName: "Floflow87",
         content: content.trim(),
         timestamp: new Date().toISOString(),
+        createdAt: new Date().toISOString(),
         isRead: true
       };
 

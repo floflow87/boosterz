@@ -223,15 +223,18 @@ export default function Collections() {
               .collections-container {
                 display: flex;
                 gap: 1.5rem;
-                padding: 0 1rem;
+                padding: 0 1rem 0 1rem;
                 width: max-content;
-                min-width: calc(100vw - 2rem);
               }
               
               .collection-wallet-item {
                 transform-style: preserve-3d;
                 transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
                 box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                min-width: 320px;
+                max-width: 320px;
+                flex-shrink: 0;
+                width: 320px;
               }
               
               .collection-wallet-item:hover {
