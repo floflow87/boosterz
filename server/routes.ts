@@ -6,31 +6,38 @@ import chatRoutes from "./chatRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 
-// In-memory storage for messages
-const messageStore: Record<number, any[]> = {
-  999: [
-    {
-      id: 1,
-      conversationId: 999,
-      senderId: 999,
-      senderName: "Max la menace",
-      content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
-      timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-      createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-      isRead: false
-    },
-    {
-      id: 2,
-      conversationId: 999,
-      senderId: 999,
-      senderName: "Max la menace",
-      content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
-      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-      createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-      isRead: false
+// Initialize sample data in database
+const initializeSampleData = async () => {
+  try {
+    // Check if conversation already exists
+    const existingConv = await storage.getConversation(1, 999);
+    if (!existingConv) {
+      // Create sample conversation
+      const conversation = await storage.createConversation({
+        user1Id: 1,
+        user2Id: 999
+      });
+      
+      // Create sample messages
+      await storage.createMessage({
+        conversationId: conversation.id,
+        senderId: 999,
+        content: "Salut ! J'ai vu ta collection, elle est impressionnante !"
+      });
+      
+      await storage.createMessage({
+        conversationId: conversation.id,
+        senderId: 999,
+        content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection"
+      });
     }
-  ]
+  } catch (error) {
+    console.log("Sample data initialization skipped:", error.message);
+  }
 };
+
+// Initialize on startup
+initializeSampleData();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
