@@ -254,7 +254,7 @@ export default function CollectionDetail() {
       const promises = Array.from(selectedCards).map(async (cardId) => {
         const card = cards?.find(c => c.id === cardId);
         if (card && !card.isOwned) {
-          return apiRequest("POST", `/api/cards/${cardId}/ownership`);
+          return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
         }
         return Promise.resolve();
       });
@@ -285,7 +285,7 @@ export default function CollectionDetail() {
       const promises = Array.from(selectedCards).map(async (cardId) => {
         const card = cards?.find(c => c.id === cardId);
         if (card && card.isOwned) {
-          return apiRequest("POST", `/api/cards/${cardId}/ownership`);
+          return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
         }
         return Promise.resolve();
       });

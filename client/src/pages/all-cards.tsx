@@ -32,7 +32,7 @@ export default function AllCards() {
     queryKey: ["/api/users/1/collections"],
   });
 
-  const { data: cards } = useQuery<Card[]>({
+  const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
     queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
     enabled: true, // Always enabled - will fetch all cards when no collection is selected
   });
@@ -56,7 +56,7 @@ export default function AllCards() {
     return true;
   });
 
-  if (userLoading || collectionsLoading) {
+  if (userLoading || collectionsLoading || cardsLoading) {
     return <LoadingScreen />;
   }
 
@@ -219,8 +219,8 @@ export default function AllCards() {
           </select>
         </div>
 
-        {/* Collections Grid */}
-        {!selectedCollection && (
+        {/* Collections Grid - Only show when no collection is selected and no cards loaded */}
+        {!selectedCollection && (!cards || cards.length === 0) && (
           <div className="collection-grid mb-6">
             {collections?.map((collection) => (
               <div 
@@ -266,23 +266,31 @@ export default function AllCards() {
         )}
 
         {/* Cards Display */}
-        {selectedCollection && cards && (
+        {cards && (
           <>
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-bold text-white font-poppins">
-                {collections?.find(c => c.id === selectedCollection)?.name}
+                {selectedCollection ? collections?.find(c => c.id === selectedCollection)?.name : "Toutes les cartes"}
               </h3>
-              <button
-                onClick={() => setSelectedCollection(null)}
-                className="text-[hsl(9,85%,67%)] text-sm font-poppins"
-              >
-                Voir toutes
-              </button>
+              {selectedCollection && (
+                <button
+                  onClick={() => setSelectedCollection(null)}
+                  className="text-[hsl(9,85%,67%)] text-sm font-poppins"
+                >
+                  Voir toutes
+                </button>
+              )}
             </div>
 
-            {viewMode === "grid" ? (
+            {(!filteredCards || filteredCards.length === 0) ? (
+              <div className="text-center py-8">
+                <p className="text-[hsl(212,23%,69%)] font-poppins">
+                  {searchQuery || filterStatus !== "all" ? "Aucune carte ne correspond aux critères de recherche" : "Aucune carte disponible"}
+                </p>
+              </div>
+            ) : viewMode === "grid" ? (
               <div className="card-grid">
-                {filteredCards?.map((card) => (
+                {filteredCards.map((card) => (
                   <div 
                     key={card.id} 
                     onClick={(e) => {
