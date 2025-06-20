@@ -6,6 +6,7 @@ import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 
 interface CardPhotoImportProps {
   isOpen: boolean;
@@ -37,6 +38,7 @@ interface ImageHistory {
 }
 
 export default function CardPhotoImportImproved({ isOpen, onClose, onSave, availableCards, preselectedCard, currentFilter }: CardPhotoImportProps) {
+  const { toast } = useToast();
   const [step, setStep] = useState<"import" | "edit" | "assign">("import");
   const [showRetouchOptions, setShowRetouchOptions] = useState(false);
   const [selectedRetouchTool, setSelectedRetouchTool] = useState<string | null>(null);
@@ -372,25 +374,28 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
   const handlePlayerNameChange = useCallback((name: string) => {
     setPlayerName(name);
     
-    if (name.trim().length > 0) {
+    if (name.trim().length >= 2) {
+      const searchTerm = name.toLowerCase();
       const uniquePlayers = Array.from(new Set(availableCards.map(card => card.playerName)));
       const suggestions = uniquePlayers.filter(player => 
-        player.toLowerCase().includes(name.toLowerCase())
-      ).slice(0, 5);
+        player.toLowerCase().includes(searchTerm)
+      ).slice(0, 3);
       setPlayerSuggestions(suggestions);
       setShowSuggestions(suggestions.length > 0);
+      
+      const matchingCards = availableCards.filter(card => 
+        card.playerName.toLowerCase().includes(searchTerm)
+      );
+      setPlayerCards(matchingCards);
+      
+      if (matchingCards.length > 0) {
+        setSelectedCardId(matchingCards[0].id);
+      }
     } else {
       setShowSuggestions(false);
       setPlayerSuggestions([]);
-    }
-    
-    const matchingCards = availableCards.filter(card => 
-      card.playerName.toLowerCase().includes(name.toLowerCase())
-    );
-    setPlayerCards(matchingCards);
-    
-    if (matchingCards.length > 0) {
-      setSelectedCardId(matchingCards[0].id);
+      setPlayerCards([]);
+      setSelectedCardId(undefined);
     }
   }, [availableCards]);
 
@@ -430,13 +435,21 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
     if (selectedImage) {
       const processedImage = await processImageWithAdjustments();
       onSave(processedImage, selectedCardId);
+      
+      // Toast de succès vert
+      toast({
+        title: "Photo ajoutée avec succès !",
+        description: "L'image a été assignée à la carte sélectionnée.",
+        className: "bg-green-600 text-white border-green-500",
+      });
+      
       handleClose();
     }
-  }, [processImageWithAdjustments, selectedCardId, onSave, handleClose]);
+  }, [processImageWithAdjustments, selectedCardId, onSave, handleClose, toast]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto overflow-x-hidden bg-[hsl(240,3.7%,15.9%)] text-white p-0 border-gray-700">
+      <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto overflow-x-hidden bg-[hsl(240,3.7%,15.9%)] text-white p-0 border-gray-700 fixed">
         <div className="p-6">
           <DialogHeader>
             <DialogTitle className="text-white text-xl">
@@ -546,7 +559,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
           <div className="space-y-4 px-6 pb-6">
             <div className="flex flex-col gap-4">
               <div className="flex-1">
-                <div className="relative bg-gray-100 rounded-lg overflow-hidden" ref={imageContainerRef}>
+                <div className="relative bg-gray-100 rounded-lg overflow-hidden transform-none" ref={imageContainerRef}>
                   <img
                     ref={imageRef}
                     src={selectedImage}
@@ -668,7 +681,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                 <div className="space-y-0">
                   {/* Bandeau de retouche inspiré d'Instagram */}
                   <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 mx-0 overflow-hidden">
-                    <div className="flex gap-8 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                    <div className="flex gap-6 overflow-x-auto px-4 scrollbar-hide min-w-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
                       <div className="flex flex-col items-center gap-2 min-w-[60px]">
@@ -1104,12 +1117,12 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   </div>
                   
                   {showSuggestions && playerSuggestions.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg">
+                    <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-32 overflow-y-auto">
                       {playerSuggestions.map((suggestion, index) => (
                         <button
                           key={index}
                           type="button"
-                          className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg"
+                          className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
                           onClick={() => handleSuggestionClick(suggestion)}
                         >
                           {suggestion}
