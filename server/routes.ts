@@ -6,6 +6,32 @@ import chatRoutes from "./chatRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 
+// In-memory storage for messages
+const messageStore: Record<number, any[]> = {
+  999: [
+    {
+      id: 1,
+      conversationId: 999,
+      senderId: 999,
+      senderName: "Max la menace",
+      content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
+      timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      isRead: false
+    },
+    {
+      id: 2,
+      conversationId: 999,
+      senderId: 999,
+      senderName: "Max la menace",
+      content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
+      timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
+      isRead: false
+    }
+  ]
+};
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.use('/api/auth', authRoutes);
@@ -495,46 +521,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const conversationId = parseInt(req.params.conversationId);
       
-      let messages = [];
-      
-      if (conversationId === 999) {
-        // Special messages for Max la menace
-        messages = [
-          {
-            id: 1,
-            conversationId: 999,
-            senderId: 999,
-            senderName: "Max la menace",
-            content: "Salut ! J'ai vu ta collection, elle est impressionnante !",
-            timestamp: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
-            isRead: false
-          },
-          {
-            id: 2,
-            conversationId: 999,
-            senderId: 999,
-            senderName: "Max la menace",
-            content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection",
-            timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-            isRead: false
-          }
-        ];
-      } else {
-        // Default message for other users
-        messages = [
-          {
-            id: 1,
-            conversationId: conversationId,
-            senderId: conversationId,
-            senderName: `Utilisateur ${conversationId}`,
-            content: "Salut !",
-            timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-            isRead: false
-          }
-        ];
+      // Initialize conversation if not exists
+      if (!messageStore[conversationId]) {
+        messageStore[conversationId] = [];
       }
       
-      res.json(messages);
+      res.json(messageStore[conversationId]);
     } catch (error) {
       console.error("Error fetching messages:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -549,9 +541,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ message: "Message content is required" });
     }
 
+    const convId = parseInt(conversationId) || 999;
+    
+    // Initialize conversation if not exists
+    if (!messageStore[convId]) {
+      messageStore[convId] = [];
+    }
+
     const newMessage = {
       id: Date.now(),
-      conversationId: parseInt(conversationId) || 999,
+      conversationId: convId,
       senderId: 1,
       senderName: "Floflow87",
       content: content.trim(),
@@ -559,6 +558,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       createdAt: new Date().toISOString(),
       isRead: true
     };
+
+    // Add message to store
+    messageStore[convId].push(newMessage);
 
     res.status(201).json(newMessage);
   });
