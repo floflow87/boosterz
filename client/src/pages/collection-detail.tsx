@@ -267,7 +267,8 @@ export default function CollectionDetail() {
       
       toast({
         title: "Cartes marquées comme acquises",
-        description: `${selectedCards.size} carte(s) marquée(s) comme acquise(s).`
+        description: `${selectedCards.size} carte(s) marquée(s) comme acquise(s).`,
+        className: "bg-green-600 text-white border-green-700"
       });
     } catch (error) {
       console.error("Bulk mark as owned error:", error);
@@ -298,7 +299,8 @@ export default function CollectionDetail() {
       
       toast({
         title: "Cartes marquées comme manquantes",
-        description: `${selectedCards.size} carte(s) marquée(s) comme manquante(s).`
+        description: `${selectedCards.size} carte(s) marquée(s) comme manquante(s).`,
+        className: "bg-green-600 text-white border-green-700"
       });
     } catch (error) {
       console.error("Bulk mark as not owned error:", error);

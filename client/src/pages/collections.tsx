@@ -28,6 +28,10 @@ export default function Collections() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<"all" | "completed" | "incomplete">("all");
+  const [showFilters, setShowFilters] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -106,6 +110,24 @@ export default function Collections() {
       deleteCollectionMutation.mutate(collectionToDelete.id);
     }
   };
+
+  // Filter collections based on search and status
+  const filteredCollections = collections?.filter(collection => {
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesSearch = 
+        collection.name?.toLowerCase().includes(query) ||
+        collection.season?.toLowerCase().includes(query);
+      if (!matchesSearch) return false;
+    }
+
+    // Status filter
+    if (filterStatus === "completed" && collection.completionPercentage !== 100) return false;
+    if (filterStatus === "incomplete" && collection.completionPercentage === 100) return false;
+
+    return true;
+  });
 
   if (userLoading || collectionsLoading) {
     return <LoadingScreen />;
@@ -198,7 +220,91 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="relative pb-4 wallet-container">
+          <div>
+            {/* Controls */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "grid" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("gallery")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "gallery" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("carousel")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "carousel" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
+                </button>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setShowSearch(!showSearch)}
+                  className={`p-2 rounded-lg ${
+                    showSearch ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Search className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setShowFilters(!showFilters)}
+                  className={`p-2 rounded-lg ${
+                    showFilters ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Filter className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            {showSearch && (
+              <div className="mb-4">
+                <input
+                  type="text"
+                  placeholder="Rechercher par nom de collection ou saison..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full bg-[hsl(214,35%,22%)] text-white rounded-lg p-3 border border-gray-600 font-poppins placeholder-gray-400"
+                />
+              </div>
+            )}
+
+            {/* Filter Controls */}
+            {showFilters && (
+              <div className="mb-4 p-4 bg-[hsl(214,35%,22%)] rounded-lg">
+                <h4 className="text-white font-semibold mb-3 font-poppins">Filtres</h4>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-[hsl(212,23%,69%)] text-sm font-poppins">Statut de completion</label>
+                    <select
+                      value={filterStatus}
+                      onChange={(e) => setFilterStatus(e.target.value as "all" | "completed" | "incomplete")}
+                      className="w-full mt-1 bg-[hsl(216,46%,13%)] text-white rounded-lg p-2 border border-gray-600 font-poppins"
+                    >
+                      <option value="all">Toutes les collections</option>
+                      <option value="completed">Collections complètes</option>
+                      <option value="incomplete">Collections incomplètes</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="relative pb-4 wallet-container">
             <style>{`
               .wallet-container {
                 perspective: 1000px;
