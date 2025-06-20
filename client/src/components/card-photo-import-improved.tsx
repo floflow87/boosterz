@@ -1079,6 +1079,9 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   </div>
                 </>
               )}
+            </div>
+          </div>
+        )}
 
         {/* Étape d'assignation */}
         {step === "assign" && (

@@ -3,7 +3,7 @@ import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake } from "lucide-react";
 import Navigation from "@/components/navigation";
-import CardPhotoImport from "@/components/card-photo-import";
+import CardPhotoImport from "@/components/card-photo-import-fixed";
 import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
 import HaloBlur from "@/components/halo-blur";
