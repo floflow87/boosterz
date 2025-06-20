@@ -89,9 +89,10 @@ export default function CollectionDetail() {
 
   const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
     queryKey: [`/api/collections/${collectionId}/cards`],
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+    retry: 2,
   });
 
   // Scroll to top when page loads
@@ -191,11 +192,7 @@ export default function CollectionDetail() {
   ).length || 0;
 
   if (collectionLoading || cardsLoading) {
-    return (
-      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
-        <div className="text-white">Chargement...</div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!collection) {
@@ -880,6 +877,14 @@ export default function CollectionDetail() {
                         src={currentVariant.imageUrl} 
                         alt={currentVariant.playerName || ""} 
                         className="w-full h-full object-cover transition-transform duration-300 ease-out"
+                        onError={(e) => {
+                          console.log("Image failed to load:", currentVariant.imageUrl);
+                          // Fallback to default image if image fails to load
+                          e.currentTarget.src = cardDefaultImage;
+                        }}
+                        onLoad={() => {
+                          console.log("Image loaded successfully:", currentVariant.imageUrl);
+                        }}
                         style={{
                           touchAction: 'pan-x pan-y',
                           willChange: 'transform',
@@ -1104,7 +1109,7 @@ export default function CollectionDetail() {
                   <div className="space-y-3 mb-6">
                     <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)] text-xs">Référence:</span>
-                      <span className="text-white text-xs">{selectedCard.reference}</span>
+                      <span className="text-white text-xs">{currentCard?.reference || selectedCard.reference}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-[hsl(212,23%,69%)] text-xs">Type:</span>
@@ -1305,16 +1310,19 @@ export default function CollectionDetail() {
         onClose={() => setShowPhotoUpload(false)}
         onImageUploaded={async (cardId, imageUrl) => {
           try {
-            // Update local state immediately for visual feedback
-            if (selectedCard && selectedCard.id === cardId) {
-              setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
-            }
-            
-            // Update card image
+            // Update card image first
             await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
             
             // Automatically mark card as owned
             await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            
+            // Force refresh of cards data to ensure images are displayed
+            await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+            
+            // Update local state after successful API calls
+            if (selectedCard && selectedCard.id === cardId) {
+              setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
+            }
             
             // Trigger card pull effect
             setPulledCardEffect(cardId);

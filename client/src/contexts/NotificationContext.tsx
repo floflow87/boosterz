@@ -38,7 +38,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   // Monitor all conversations for new messages
   const { data: conversations = [] } = useQuery<ConversationItem[]>({
     queryKey: ['/api/chat/conversations'],
-    refetchInterval: 3000,
+    refetchInterval: 15000, // Reduced frequency from 3s to 15s
+    staleTime: 12000, // Cache for 12 seconds
+    refetchOnWindowFocus: false,
   });
 
   // Check for new messages and show notifications
