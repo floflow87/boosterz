@@ -777,6 +777,10 @@ export default function CollectionDetail() {
                   animation: `${animationName} 3s infinite`
                 } : {}}
               >
+                {/* Étoiles gravitantes pour l'effet de tirage */}
+                {pulledCardEffect === currentVariant.id && (
+                  <div className="card-stars"></div>
+                )}
                 {/* Checkbox */}
                 <div className="absolute top-2 left-2 z-20">
                   <input

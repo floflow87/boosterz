@@ -248,24 +248,25 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
     setPlayerSuggestions([]);
     
     const searchTerm = suggestion.toLowerCase();
-    const matchingCards = availableCards.filter(card => 
+    let matchingCards = availableCards.filter(card => 
       card.playerName && card.playerName.toLowerCase() === searchTerm
     );
-    setPlayerCards(matchingCards);
-    
-    if (matchingCards.length > 0) {
-      setSelectedCardId(matchingCards[0].id);
-    } else {
+
+    if (matchingCards.length === 0) {
       // Recherche plus large si aucune correspondance exacte
-      const partialMatchCards = availableCards.filter(card => 
+      matchingCards = availableCards.filter(card => 
         card.playerName && card.playerName.toLowerCase().includes(searchTerm)
       );
-      setPlayerCards(partialMatchCards);
-      if (partialMatchCards.length > 0) {
-        setSelectedCardId(partialMatchCards[0].id);
-      }
     }
-  }, [availableCards]);
+
+    // Appliquer le filtre de catégorie
+    const filteredCards = filterCardsByCategory(matchingCards);
+    setPlayerCards(filteredCards);
+    
+    if (filteredCards.length > 0) {
+      setSelectedCardId(filteredCards[0].id);
+    }
+  }, [availableCards, filterCardsByCategory]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>

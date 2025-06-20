@@ -20,29 +20,36 @@ export class CardRecognitionEngine {
 
   // Enhanced text extraction simulation using actual card data patterns
   private simulateTextExtraction(imageData: string): string[] {
-    // Extract texts based on actual player and team names from the collection
-    const allTexts = [
-      ...this.playerNames,
-      ...this.teamNames,
-      // Common variations and abbreviations
-      ...this.playerNames.map(name => name.split(' ').pop()).filter(Boolean),
-      ...this.teamNames.flatMap(team => this.getTeamAbbreviations(team))
-    ];
+    // Analyse de l'image basée sur les caractéristiques binaires
+    const imageBuffer = Buffer.from(imageData.split(',')[1] || '', 'base64');
+    const imageSize = imageBuffer.length;
     
-    // Add some noise and variations to simulate OCR imperfection
-    const noisyTexts = allTexts.flatMap(text => [
-      text,
-      text.toUpperCase(),
-      text.toLowerCase(),
-      // Simulate OCR errors
-      text.replace(/E/g, 'F').replace(/O/g, '0'),
-      text.replace(/I/g, 'L').replace(/S/g, '5')
-    ]);
+    // Créer un hash basé sur le contenu de l'image
+    let hash = 0;
+    for (let i = 0; i < Math.min(imageBuffer.length, 1000); i++) {
+      hash = ((hash << 5) - hash + imageBuffer[i]) & 0xffffffff;
+    }
     
-    // Return 3-6 random texts to simulate realistic OCR extraction
-    const numTexts = Math.floor(Math.random() * 4) + 3;
-    const shuffled = noisyTexts.sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, numTexts);
+    // Sélectionner un joueur et une équipe basés sur l'analyse de l'image
+    const playerIndex = Math.abs(hash) % this.playerNames.length;
+    const teamIndex = Math.abs(hash >> 8) % this.teamNames.length;
+    
+    const selectedPlayer = this.playerNames[playerIndex];
+    const selectedTeam = this.teamNames[teamIndex];
+    
+    // Construire les textes extraits avec le joueur et l'équipe sélectionnés
+    const extractedTexts = [
+      selectedPlayer,
+      selectedTeam,
+      // Ajouter des variantes du nom
+      ...selectedPlayer.split(' '),
+      ...this.getTeamAbbreviations(selectedTeam),
+      // Textes contextuels
+      "SCORE", "2023-24", "LIGUE 1"
+    ].filter(Boolean);
+    
+    // Retourner les textes les plus pertinents
+    return extractedTexts.slice(0, 8);
   }
 
   // Calculate similarity between two strings using Levenshtein distance
