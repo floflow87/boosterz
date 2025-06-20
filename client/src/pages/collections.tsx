@@ -263,8 +263,8 @@ export default function Collections() {
               }
             `}</style>
             
-            <div className="collections-scroll overflow-x-auto">
-              <div className="flex space-x-8 px-6" style={{ width: 'max-content' }}>
+            <div className="collections-scroll overflow-x-auto overflow-y-hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <div className="flex space-x-6 px-4 pb-2" style={{ width: 'max-content', minWidth: '100vw' }}>
                 {collections?.map((collection) => (
                   <div 
                     key={collection.id}
