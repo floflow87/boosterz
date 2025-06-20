@@ -14,6 +14,11 @@ import cardStackIcon from "@assets/image_1750351528484.png";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/pagination';
 
 export default function Collections() {
   const [, setLocation] = useLocation();
@@ -273,13 +278,22 @@ export default function Collections() {
             `}</style>
             
             <div className="collections-scroll">
-              <div className="collections-container">
+              <Swiper
+                slidesPerView="auto"
+                spaceBetween={20}
+                freeMode={true}
+                pagination={{
+                  clickable: true,
+                }}
+                modules={[FreeMode, Pagination]}
+                className="collections-swiper"
+              >
                 {collections?.map((collection) => (
-                  <div 
-                    key={collection.id}
-                    onClick={() => handleCollectionClick(collection.id)}
-                    className="collection-wallet-item flex-shrink-0 w-80 bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
-                  >
+                  <SwiperSlide key={collection.id} className="!w-80">
+                    <div 
+                      onClick={() => handleCollectionClick(collection.id)}
+                      className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
+                    >
                     {/* Header with title and delete button */}
                     <div className="p-6 pb-4">
                       <div className="flex justify-between items-start">
@@ -335,20 +349,23 @@ export default function Collections() {
                       </div>
                     </div>
                   </div>
+                  </SwiperSlide>
                 ))}
 
                 {/* Add Collection Button */}
-                <div 
-                  onClick={() => setShowAddModal(true)}
-                  className="collection-wallet-item bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center"
-                >
-                  <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <Plus className="w-8 h-8 text-white" />
+                <SwiperSlide className="!w-80">
+                  <div 
+                    onClick={() => setShowAddModal(true)}
+                    className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center h-full"
+                  >
+                    <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Plus className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
+                    <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
                   </div>
-                  <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
-                  <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
-                </div>
-              </div>
+                </SwiperSlide>
+              </Swiper>
             </div>
           </div>
         )}
