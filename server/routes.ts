@@ -605,35 +605,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Add message to store
     messageStore[convId].push(newMessage);
 
-    // Simulate Max's auto-response after a delay
-    if (convId === 999) {
-      setTimeout(() => {
-        const responses = [
-          "Salut ! Merci pour ton message 😊",
-          "Intéressant ! J'ai quelques cartes rares aussi",
-          "On pourrait faire un échange bientôt",
-          "Ta collection a l'air vraiment cool !",
-          "J'ai hâte de voir tes nouvelles cartes",
-          "Super ! On se tient au courant"
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        
-        const maxMessage = {
-          id: Date.now() + 1,
-          conversationId: convId,
-          senderId: convId,
-          senderName: "Max la menace",
-          content: randomResponse,
-          timestamp: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-          isRead: false // Max's messages are unread initially
-        };
-        
-        messageStore[convId].push(maxMessage);
-      }, 2000 + Math.random() * 3000); // Random delay between 2-5 seconds
-    }
-
     res.status(201).json(newMessage);
   });
 
