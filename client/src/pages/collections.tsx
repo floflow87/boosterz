@@ -138,7 +138,7 @@ export default function Collections() {
             <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
             
             <div className="flex space-x-4 text-center justify-center max-w-80 mx-auto">
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1 ml-[0px] mr-[0px] pl-[22px] pr-[22px]">
                 <CreditCard className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
                 <div className="text-lg font-bold text-white">{collections?.reduce((total, collection) => total + (collection.ownedCards || 0), 0) || 0}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
