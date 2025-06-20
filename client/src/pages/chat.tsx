@@ -34,12 +34,10 @@ export default function Chat() {
   const currentUserId = 1; // Current logged-in user
 
   // Get or create conversation
-  const { data: conversations, isLoading: conversationLoading } = useQuery<Conversation[]>({
+  const { data: conversation, isLoading: conversationLoading } = useQuery<Conversation>({
     queryKey: [`/api/chat/conversations/user/${userId}`],
     enabled: !!userId,
   });
-
-  const conversation = conversations?.[0];
 
   // Mark messages as read when entering conversation
   useEffect(() => {
@@ -52,7 +50,7 @@ export default function Chat() {
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({
     queryKey: [`/api/chat/conversations/${conversation?.id}/messages`],
     enabled: !!conversation?.id,
-    refetchInterval: 3000, // Auto-refresh every 3 seconds
+    refetchInterval: 2000, // Auto-refresh every 2 seconds
   });
 
   // Get other user info with fallback for non-existent users

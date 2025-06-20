@@ -491,32 +491,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generic route for any user chat conversation
+  // Get conversation with specific user
   app.get("/api/chat/conversations/user/:targetUserId", async (req, res) => {
     try {
       const targetUserId = parseInt(req.params.targetUserId);
+      const currentUserId = 1;
       
-      // Create a conversation structure for any user ID
-      const conversation = {
-        id: targetUserId,
-        participants: [
-          { id: 1, name: "Floflow87", username: "Floflow87" },
-          { 
-            id: targetUserId, 
-            name: targetUserId === 999 ? "Max la menace" : `Utilisateur ${targetUserId}`, 
-            username: targetUserId === 999 ? "maxlamenace" : `user${targetUserId}` 
-          }
-        ],
-        lastMessage: {
-          id: 1,
-          content: targetUserId === 999 ? "Salut ! J'ai vu ta collection, elle est impressionnante !" : "Salut !",
-          senderId: targetUserId,
-          timestamp: new Date().toISOString()
-        },
-        unreadCount: 1
-      };
+      // Find existing conversation
+      let conversation = await storage.getConversation(currentUserId, targetUserId);
       
-      res.json([conversation]);
+      // If no conversation exists, create one
+      if (!conversation) {
+        conversation = await storage.createConversation({
+          user1Id: Math.min(currentUserId, targetUserId),
+          user2Id: Math.max(currentUserId, targetUserId),
+        });
+      }
+      
+      res.json(conversation);
     } catch (error) {
       console.error("Error fetching conversation:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -576,7 +568,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             lastMessage: lastMessage ? {
               content: lastMessage.content.startsWith('data:image/') ? '📷 Image' : lastMessage.content,
               timestamp: lastMessage.createdAt,
-              isRead: lastMessage.senderId === currentUserId || lastMessage.isRead
+              isRead: lastMessage.senderId === currentUserId
             } : {
               content: 'Nouvelle conversation',
               timestamp: conv.createdAt || new Date().toISOString(),
@@ -631,6 +623,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         senderId: currentUserId,
         content: content.trim()
       });
+
+      // Update conversation's last message timestamp using storage
+      // await storage.updateConversationTimestamp(conversation.id);
 
       // Format for frontend
       const formattedMessage = {
