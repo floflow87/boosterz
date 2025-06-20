@@ -178,7 +178,12 @@ export default function Collections() {
             <div className="flex space-x-4 text-center justify-center max-w-80 mx-auto">
               <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1 ml-[0px] mr-[0px] pl-[24px] pr-[24px]">
                 <CreditCard className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-white">{collections?.reduce((total, collection) => total + (collection.ownedCards || 0), 0) || 0}</div>
+                <div className="text-lg font-bold text-white">
+                  {collections?.reduce((total, collection) => {
+                    const completion = getCollectionCompletion(collection.id);
+                    return total + completion.ownedCards;
+                  }, 0) || 0}
+                </div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
               </div>
               <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1">
@@ -450,12 +455,12 @@ export default function Collections() {
                       <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                         <div 
                           className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${Math.round((collection.ownedCards / collection.totalCards) * 100)}%` }}
+                          style={{ width: `${getCollectionCompletion(collection.id).percentage}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between text-xs text-white/60 mt-1">
-                        <span>{Math.round((collection.ownedCards / collection.totalCards) * 100)}% complété</span>
-                        <span>{collection.ownedCards} cartes acquises</span>
+                        <span>{getCollectionCompletion(collection.id).percentage}% complété</span>
+                        <span>{getCollectionCompletion(collection.id).ownedCards} cartes acquises</span>
                       </div>
                     </div>
                   </div>
@@ -575,16 +580,16 @@ export default function Collections() {
                       )}
                     </div>
                     <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
-                      {collection.ownedCards} cartes possédées
+                      {getCollectionCompletion(collection.id).ownedCards} cartes possédées
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
                       <div 
                         className="progress-bar h-1.5 rounded-full" 
-                        style={{ width: `${Math.round((collection.ownedCards / collection.totalCards) * 100)}%` }}
+                        style={{ width: `${getCollectionCompletion(collection.id).percentage}%` }}
                       />
                     </div>
                     <div className="text-xs text-[hsl(9,85%,67%)] font-poppins mt-1">
-                      {Math.round((collection.ownedCards / collection.totalCards) * 100)}% complété
+                      {getCollectionCompletion(collection.id).percentage}% complété
                     </div>
                   </div>
                 ))}
