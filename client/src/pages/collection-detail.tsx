@@ -302,7 +302,8 @@ export default function CollectionDetail() {
       
       toast({
         title: "Cartes marquées comme acquises",
-        description: `${cardsToMark.length} carte(s) marquée(s) comme acquise(s).`
+        description: `${cardsToMark.length} carte(s) marquée(s) comme acquise(s).`,
+        className: "bg-green-900 border-green-700 text-green-100"
       });
     } catch (error) {
       console.error("Bulk mark as owned error:", error);
@@ -341,7 +342,8 @@ export default function CollectionDetail() {
       
       toast({
         title: "Cartes marquées comme manquantes",
-        description: `${cardsToUnmark.length} carte(s) marquée(s) comme manquante(s).`
+        description: `${cardsToUnmark.length} carte(s) marquée(s) comme manquante(s).`,
+        className: "bg-[hsl(9,85%,67%)] border-[hsl(9,85%,57%)] text-white"
       });
     } catch (error) {
       console.error("Bulk mark as not owned error:", error);
@@ -398,7 +400,8 @@ export default function CollectionDetail() {
       }
       toast({
         title: "Carte marquée comme acquise",
-        description: "La carte a été marquée comme acquise avec succès."
+        description: "La carte a été marquée comme acquise avec succès.",
+        className: "bg-green-900 border-green-700 text-green-100"
       });
     } catch (error) {
       // Revert local state on error
@@ -444,7 +447,8 @@ export default function CollectionDetail() {
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: false });
       toast({
         title: "Carte marquée comme manquante",
-        description: "La carte a été marquée comme manquante avec succès."
+        description: "La carte a été marquée comme manquante avec succès.",
+        className: "bg-[hsl(9,85%,67%)] border-[hsl(9,85%,57%)] text-white"
       });
     } catch (error) {
       // Revert local state on error
@@ -579,14 +583,14 @@ export default function CollectionDetail() {
       return "border-blue-500";
     }
     
-    // Violet pour les hits (Insert)
+    // Violet brillant pour les hits (Insert)
     if (card.cardType?.includes("Insert")) {
-      return "border-purple-500";
+      return "border-purple-500 animate-pulse shadow-lg shadow-purple-500/50";
     }
     
-    // Gold pour les autographes
+    // Gold brillant pour les autographes
     if (card.cardType === "Autograph") {
-      return "border-yellow-500";
+      return "border-yellow-500 animate-pulse shadow-lg shadow-yellow-500/50";
     }
     
     // Noir pour les spéciales
@@ -1177,7 +1181,7 @@ export default function CollectionDetail() {
                         <img 
                           src={currentCard.imageUrl} 
                           alt={`${currentCard.playerName} card`}
-                          className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 animate-sparkle-stars"
+                          className={`w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
                           onError={(e) => {
                             console.log("Modal image failed to load:", currentCard.imageUrl);
                             e.currentTarget.src = cardDefaultImage;
