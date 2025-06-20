@@ -27,7 +27,7 @@ export default function MessageNotification({ show, message, onClose }: MessageN
       
       return () => clearTimeout(timer);
     }
-  }, [show, onClose]);
+  }, [show]);
 
   const handleClick = () => {
     setLocation(`/chat/${message.conversationId}`);
