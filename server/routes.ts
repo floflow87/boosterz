@@ -527,13 +527,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/chat/conversations/:conversationId/messages", async (req, res) => {
     try {
       const conversationId = parseInt(req.params.conversationId);
+      const messages = await storage.getMessages(conversationId);
       
-      // Initialize conversation if not exists
-      if (!messageStore[conversationId]) {
-        messageStore[conversationId] = [];
-      }
+      // Format messages for frontend
+      const formattedMessages = messages.map(msg => ({
+        id: msg.id,
+        conversationId: msg.conversationId,
+        senderId: msg.senderId,
+        senderName: msg.senderId === 1 ? "Floflow87" : "Max la menace",
+        content: msg.content,
+        timestamp: msg.createdAt,
+        createdAt: msg.createdAt,
+        isRead: msg.isRead
+      }));
       
-      res.json(messageStore[conversationId]);
+      res.json(formattedMessages);
     } catch (error) {
       console.error("Error fetching messages:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -543,40 +551,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all conversations with last message
   app.get("/api/chat/conversations", async (req, res) => {
     try {
-      const conversations = [];
+      const currentUserId = 1; // Current user ID
+      const conversations = await storage.getConversations(currentUserId);
       
-      // Get all conversation IDs from messageStore
-      const conversationIds = Object.keys(messageStore).map(id => parseInt(id));
-      
-      for (const convId of conversationIds) {
-        const messages = messageStore[convId] || [];
+      const result = [];
+      for (const conv of conversations) {
+        const messages = await storage.getMessages(conv.id);
         const lastMessage = messages[messages.length - 1];
         
-        if (lastMessage) {
+        // Get other user info
+        const otherUserId = conv.user1Id === currentUserId ? conv.user2Id : conv.user1Id;
+        const otherUser = await storage.getUser(otherUserId);
+        
+        if (otherUser && lastMessage) {
           const conversation = {
-            id: convId,
+            id: conv.id,
             user: {
-              id: convId,
-              name: convId === 999 ? "Max la menace" : `Utilisateur ${convId}`,
-              username: convId === 999 ? "maxlamenace" : `user${convId}`,
+              id: otherUser.id,
+              name: otherUser.name,
+              username: otherUser.username,
             },
             lastMessage: {
               content: lastMessage.content,
-              timestamp: lastMessage.timestamp,
-              isRead: lastMessage.senderId === 1 // Messages from current user are read
+              timestamp: lastMessage.createdAt,
+              isRead: lastMessage.senderId === currentUserId || lastMessage.isRead
             },
-            unreadCount: messages.filter(m => m.senderId !== 1 && !m.isRead).length
+            unreadCount: messages.filter(m => m.senderId !== currentUserId && !m.isRead).length
           };
-          conversations.push(conversation);
+          result.push(conversation);
         }
       }
       
       // Sort by last message timestamp (most recent first)
-      conversations.sort((a, b) => 
+      result.sort((a, b) => 
         new Date(b.lastMessage.timestamp).getTime() - new Date(a.lastMessage.timestamp).getTime()
       );
       
-      res.json(conversations);
+      res.json(result);
     } catch (error) {
       console.error("Error fetching conversations:", error);
       res.status(500).json({ message: "Internal server error" });
@@ -584,52 +595,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Send message - completely open route
-  app.post("/api/messages/send", (req, res) => {
-    const { content, conversationId } = req.body;
-    
-    if (!content?.trim()) {
-      return res.status(400).json({ message: "Message content is required" });
+  app.post("/api/messages/send", async (req, res) => {
+    try {
+      const { content, conversationId } = req.body;
+      
+      if (!content?.trim()) {
+        return res.status(400).json({ message: "Message content is required" });
+      }
+
+      const convId = parseInt(conversationId) || 1;
+      const currentUserId = 1; // Current user ID
+      
+      // Create message in database
+      const newMessage = await storage.createMessage({
+        conversationId: convId,
+        senderId: currentUserId,
+        content: content.trim()
+      });
+
+      // Format for frontend
+      const formattedMessage = {
+        id: newMessage.id,
+        conversationId: newMessage.conversationId,
+        senderId: newMessage.senderId,
+        senderName: "Floflow87",
+        content: newMessage.content,
+        timestamp: newMessage.createdAt,
+        createdAt: newMessage.createdAt,
+        isRead: true
+      };
+
+      res.status(201).json(formattedMessage);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ message: "Internal server error" });
     }
-
-    const convId = parseInt(conversationId) || 999;
-    
-    // Initialize conversation if not exists
-    if (!messageStore[convId]) {
-      messageStore[convId] = [];
-    }
-
-    const newMessage = {
-      id: Date.now(),
-      conversationId: convId,
-      senderId: 1,
-      senderName: "Floflow87",
-      content: content.trim(),
-      timestamp: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
-      isRead: true
-    };
-
-    // Add message to store
-    messageStore[convId].push(newMessage);
-
-    res.status(201).json(newMessage);
   });
 
   // Mark conversation messages as read
   app.post("/api/chat/conversations/:conversationId/read", async (req, res) => {
     try {
       const conversationId = parseInt(req.params.conversationId);
+      const currentUserId = 1; // Current user ID
       
-      if (!messageStore[conversationId]) {
-        return res.status(404).json({ message: "Conversation not found" });
-      }
-      
-      // Mark all messages from other users as read
-      messageStore[conversationId].forEach(message => {
-        if (message.senderId !== 1) { // Not from current user
-          message.isRead = true;
-        }
-      });
+      await storage.markMessagesAsRead(conversationId, currentUserId);
       
       res.json({ success: true, message: "Messages marked as read" });
     } catch (error) {
