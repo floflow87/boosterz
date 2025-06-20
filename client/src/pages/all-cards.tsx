@@ -34,7 +34,7 @@ export default function AllCards() {
 
   const { data: cards } = useQuery<Card[]>({
     queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
-    enabled: !!selectedCollection,
+    enabled: true, // Always enabled - will fetch all cards when no collection is selected
   });
 
   // Filter and search cards
@@ -169,6 +169,40 @@ export default function AllCards() {
           </div>
         </div>
 
+        {/* Search Bar */}
+        {showSearch && (
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Rechercher par joueur, équipe ou référence..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[hsl(214,35%,22%)] text-white rounded-lg p-3 border border-gray-600 font-poppins placeholder-gray-400"
+            />
+          </div>
+        )}
+
+        {/* Filter Controls */}
+        {showFilters && (
+          <div className="mb-4 p-4 bg-[hsl(214,35%,22%)] rounded-lg">
+            <h4 className="text-white font-semibold mb-3 font-poppins">Filtres</h4>
+            <div className="space-y-3">
+              <div>
+                <label className="text-[hsl(212,23%,69%)] text-sm font-poppins">Statut</label>
+                <select
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value as "all" | "owned" | "missing")}
+                  className="w-full mt-1 bg-[hsl(216,46%,13%)] text-white rounded-lg p-2 border border-gray-600 font-poppins"
+                >
+                  <option value="all">Toutes les cartes</option>
+                  <option value="owned">Cartes possédées</option>
+                  <option value="missing">Cartes manquantes</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Collection Selector */}
         <div className="mb-4">
           <select
@@ -248,7 +282,7 @@ export default function AllCards() {
 
             {viewMode === "grid" ? (
               <div className="card-grid">
-                {cards.map((card) => (
+                {filteredCards?.map((card) => (
                   <div 
                     key={card.id} 
                     onClick={(e) => {
@@ -280,7 +314,7 @@ export default function AllCards() {
               </div>
             ) : (
               <div className="space-y-3">
-                {cards.map((card) => (
+                {filteredCards?.map((card) => (
                   <div 
                     key={card.id} 
                     onClick={(e) => {
