@@ -678,10 +678,10 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
                     </div>
                   )}
 
-                  {playerCards.length === 0 && playerName && (
+                  {playerCards.length === 0 && (playerName || preselectedPlayer) && (
                     <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-3">
                       <p className="text-yellow-300 text-sm">
-                        Aucune carte trouvée pour "{playerName}". Vérifiez l'orthographe ou ajoutez d'abord la carte à votre collection.
+                        Aucune carte trouvée pour "{preselectedPlayer || playerName}". Vérifiez l'orthographe ou ajoutez d'abord la carte à votre collection.
                       </p>
                     </div>
                   )}

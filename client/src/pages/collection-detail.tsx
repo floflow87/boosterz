@@ -585,12 +585,12 @@ export default function CollectionDetail() {
     
     // Violet brillant pour les hits (Insert)
     if (card.cardType?.includes("Insert")) {
-      return "border-purple-500 animate-pulse shadow-lg shadow-purple-500/50";
+      return "border-purple-500 animate-spin-slow shadow-lg shadow-purple-500/50";
     }
     
     // Gold brillant pour les autographes
     if (card.cardType === "Autograph") {
-      return "border-yellow-500 animate-pulse shadow-lg shadow-yellow-500/50";
+      return "border-yellow-500 animate-spin-slow shadow-lg shadow-yellow-500/50";
     }
     
     // Noir pour les spéciales
