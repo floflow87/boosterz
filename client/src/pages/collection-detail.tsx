@@ -1032,6 +1032,13 @@ export default function CollectionDetail() {
                           src={currentCard.imageUrl} 
                           alt={`${currentCard.playerName} card`}
                           className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 animate-card-3d-float"
+                          onError={(e) => {
+                            console.log("Modal image failed to load:", currentCard.imageUrl);
+                            e.currentTarget.src = cardDefaultImage;
+                          }}
+                          onLoad={() => {
+                            console.log("Modal image loaded successfully:", currentCard.imageUrl);
+                          }}
                           style={{
                             transformStyle: 'preserve-3d',
                             willChange: 'transform'
@@ -1310,18 +1317,25 @@ export default function CollectionDetail() {
         onClose={() => setShowPhotoUpload(false)}
         onImageUploaded={async (cardId, imageUrl) => {
           try {
+            console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
+            
             // Update card image first
-            await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            console.log("Image update result:", imageResult);
             
             // Automatically mark card as owned
-            await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            console.log("Ownership update result:", ownershipResult);
             
             // Force refresh of cards data to ensure images are displayed
             await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+            console.log("Query cache invalidated for cards");
             
             // Update local state after successful API calls
             if (selectedCard && selectedCard.id === cardId) {
-              setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
+              const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
+              setSelectedCard(updatedCard);
+              console.log("Local selected card state updated:", updatedCard);
             }
             
             // Trigger card pull effect
