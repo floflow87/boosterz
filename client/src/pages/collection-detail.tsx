@@ -1002,36 +1002,7 @@ export default function CollectionDetail() {
                 {/* Card Content */}
                 <div 
                   onClick={() => handleCardSelect(currentVariant)}
-                  className="cursor-pointer hover:bg-gray-700 transition-all duration-300 transform hover:scale-105 active:scale-95"
-                  style={{
-                    transformStyle: 'preserve-3d',
-                    perspective: '1000px'
-                  }}
-                  onTouchStart={(e) => {
-                    const element = e.currentTarget;
-                    element.style.transform = 'scale(0.95) rotateX(5deg) rotateY(5deg)';
-                    element.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
-                  }}
-                  onTouchEnd={(e) => {
-                    const element = e.currentTarget;
-                    element.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-                    element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-                  }}
-                  onMouseDown={(e) => {
-                    const element = e.currentTarget;
-                    element.style.transform = 'scale(0.95) rotateX(5deg) rotateY(5deg)';
-                    element.style.boxShadow = '0 20px 40px rgba(0,0,0,0.4)';
-                  }}
-                  onMouseUp={(e) => {
-                    const element = e.currentTarget;
-                    element.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-                    element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    const element = e.currentTarget;
-                    element.style.transform = 'scale(1) rotateX(0deg) rotateY(0deg)';
-                    element.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-                  }}
+                  className="cursor-pointer hover:bg-gray-700 transition-all duration-300"
                 >
                   {/* Card Image */}
                   <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400">
@@ -1048,56 +1019,7 @@ export default function CollectionDetail() {
                         onLoad={() => {
                           console.log("Image loaded successfully:", currentVariant.imageUrl);
                         }}
-                        style={{
-                          touchAction: 'pan-x pan-y',
-                          willChange: 'transform',
-                          transform: (() => {
-                            const cardKey = `card-${currentVariant.id}`;
-                            const panState = panStates[cardKey];
-                            if (panState) {
-                              return `translate(${panState.x * 0.3}px, ${panState.y * 0.3}px) scale(${panState.scale})`;
-                            }
-                            return 'translate(0px, 0px) scale(1)';
-                          })()
-                        }}
-                        onTouchStart={(e) => {
-                          e.preventDefault();
-                          const touch = e.touches[0];
-                          const startX = touch.clientX;
-                          const startY = touch.clientY;
-                          
-                          const handleTouchMove = (moveEvent: TouchEvent) => {
-                            const moveTouch = moveEvent.touches[0];
-                            handleCardPan(currentVariant.id, startX, startY, moveTouch.clientX, moveTouch.clientY);
-                          };
-                          
-                          const handleTouchEnd = () => {
-                            setTimeout(() => resetCardPan(currentVariant.id), 100);
-                            document.removeEventListener('touchmove', handleTouchMove);
-                            document.removeEventListener('touchend', handleTouchEnd);
-                          };
-                          
-                          document.addEventListener('touchmove', handleTouchMove, { passive: false });
-                          document.addEventListener('touchend', handleTouchEnd);
-                        }}
-                        onMouseDown={(e) => {
-                          e.preventDefault();
-                          const startX = e.clientX;
-                          const startY = e.clientY;
-                          
-                          const handleMouseMove = (moveEvent: MouseEvent) => {
-                            handleCardPan(currentVariant.id, startX, startY, moveEvent.clientX, moveEvent.clientY);
-                          };
-                          
-                          const handleMouseUp = () => {
-                            setTimeout(() => resetCardPan(currentVariant.id), 100);
-                            document.removeEventListener('mousemove', handleMouseMove);
-                            document.removeEventListener('mouseup', handleMouseUp);
-                          };
-                          
-                          document.addEventListener('mousemove', handleMouseMove);
-                          document.addEventListener('mouseup', handleMouseUp);
-                        }}
+
                       />
                     ) : (
                       <div className="w-full h-full flex flex-col items-center justify-center text-white p-4">

@@ -42,42 +42,19 @@ export default function Collections() {
     refetchOnWindowFocus: false,
   });
 
-  // Récupérer les cartes pour chaque collection pour calculer le vrai pourcentage
-  const { data: allCollectionCards } = useQuery<{[key: number]: Card[]}>({
-    queryKey: ["/api/collections/cards/all"],
-    queryFn: async () => {
-      if (!collections) return {};
-      
-      const cardsData: {[key: number]: Card[]} = {};
-      
-      for (const collection of collections) {
-        try {
-          const response = await fetch(`/api/collections/${collection.id}/cards`);
-          if (response.ok) {
-            const cards = await response.json();
-            cardsData[collection.id] = cards;
-          }
-        } catch (error) {
-          console.error(`Erreur lors de la récupération des cartes pour la collection ${collection.id}:`, error);
-        }
-      }
-      
-      return cardsData;
-    },
-    enabled: !!collections && collections.length > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  // Fonction pour calculer le vrai pourcentage de completion
-  const getCollectionCompletion = (collectionId: number) => {
-    const cards = allCollectionCards?.[collectionId] || [];
-    if (cards.length === 0) return { totalCards: 0, ownedCards: 0, percentage: 0 };
+  // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
+  const getCollectionCompletion = (collection: Collection) => {
+    // Utiliser d'abord les données de la collection si disponibles
+    if (collection.totalCards && collection.ownedCards !== undefined) {
+      return {
+        totalCards: collection.totalCards,
+        ownedCards: collection.ownedCards,
+        percentage: Math.round((collection.ownedCards / collection.totalCards) * 100)
+      };
+    }
     
-    const totalCards = cards.length;
-    const ownedCards = cards.filter(card => card.isOwned).length;
-    const percentage = Math.round((ownedCards / totalCards) * 100);
-    
-    return { totalCards, ownedCards, percentage };
+    // Valeurs par défaut si pas de données
+    return { totalCards: 0, ownedCards: 0, percentage: 0 };
   };
 
   const { data: cards } = useQuery<Card[]>({
@@ -180,7 +157,7 @@ export default function Collections() {
                 <CreditCard className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
                 <div className="text-lg font-bold text-white">
                   {collections?.reduce((total, collection) => {
-                    const completion = getCollectionCompletion(collection.id);
+                    const completion = getCollectionCompletion(collection);
                     return total + completion.ownedCards;
                   }, 0) || 0}
                 </div>
@@ -455,12 +432,12 @@ export default function Collections() {
                       <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                         <div 
                           className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${getCollectionCompletion(collection.id).percentage}%` }}
+                          style={{ width: `${getCollectionCompletion(collection).percentage}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between text-xs text-white/60 mt-1">
-                        <span>{getCollectionCompletion(collection.id).percentage}% complété</span>
-                        <span>{getCollectionCompletion(collection.id).ownedCards} cartes acquises</span>
+                        <span>{getCollectionCompletion(collection).percentage}% complété</span>
+                        <span>{getCollectionCompletion(collection).ownedCards} cartes acquises</span>
                       </div>
                     </div>
                   </div>
@@ -580,16 +557,16 @@ export default function Collections() {
                       )}
                     </div>
                     <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
-                      {getCollectionCompletion(collection.id).ownedCards} cartes possédées
+                      {getCollectionCompletion(collection).ownedCards} cartes possédées
                     </div>
                     <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
                       <div 
                         className="progress-bar h-1.5 rounded-full" 
-                        style={{ width: `${getCollectionCompletion(collection.id).percentage}%` }}
+                        style={{ width: `${getCollectionCompletion(collection).percentage}%` }}
                       />
                     </div>
                     <div className="text-xs text-[hsl(9,85%,67%)] font-poppins mt-1">
-                      {getCollectionCompletion(collection.id).percentage}% complété
+                      {getCollectionCompletion(collection).percentage}% complété
                     </div>
                   </div>
                 ))}
