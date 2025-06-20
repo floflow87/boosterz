@@ -620,7 +620,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   <Edit className="h-4 w-4 mr-2" />
                   {showRetouchOptions ? "Masquer" : "Retoucher"}
                 </Button>
-                <Button onClick={handleNextFromEdit} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white" disabled={isProcessing}>
+                <Button onClick={handleNextFromEdit} className="flex-1 bg-primary hover:bg-primary/90 text-white" disabled={isProcessing}>
                   {isProcessing ? (
                     <Search className="h-4 w-4 mr-2 animate-spin" />
                   ) : (
@@ -665,10 +665,10 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Interface de retouche style Instagram */}
               {showRetouchOptions && (
-                <div className="space-y-4">
+                <div className="space-y-0">
                   {/* Bandeau de retouche inspiré d'Instagram */}
-                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 px-4 py-6 mx-0 -mb-6 overflow-hidden">
-                    <div className="flex gap-8 overflow-x-auto pb-2 justify-start scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 mx-0 overflow-hidden">
+                    <div className="flex gap-8 overflow-x-auto px-4 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
                       <div className="flex flex-col items-center gap-2 min-w-[60px]">
@@ -774,7 +774,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
                   {/* Panneau de réglage déroulant */}
                   {selectedRetouchTool && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-2">
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-0">
                       {selectedRetouchTool === 'adjust' && (
                         <div>
                           <div className="flex justify-between items-center mb-3">
@@ -1079,13 +1079,29 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
                   <label className="block text-sm font-medium text-white mb-1">
                     Nom du joueur
                   </label>
-                  <Input
-                    value={playerName}
-                    onChange={(e) => handlePlayerNameChange(e.target.value)}
-                    onFocus={() => setShowSuggestions(playerSuggestions.length > 0)}
-                    placeholder="Commencez à taper le nom du joueur..."
-                    className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                  />
+                  <div className="relative">
+                    <Input
+                      value={playerName}
+                      onChange={(e) => handlePlayerNameChange(e.target.value)}
+                      onFocus={() => setShowSuggestions(playerSuggestions.length > 0)}
+                      placeholder="Commencez à taper le nom du joueur..."
+                      className="w-full bg-gray-800 border-gray-600 text-white placeholder-gray-400 pr-10"
+                    />
+                    {playerName && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPlayerName("");
+                          setPlayerCards([]);
+                          setSelectedCardId(undefined);
+                          setShowSuggestions(false);
+                        }}
+                        className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
                   
                   {showSuggestions && playerSuggestions.length > 0 && (
                     <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg">
@@ -1137,7 +1153,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
               <Button variant="outline" onClick={() => setStep("edit")} className="flex-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600">
                 Retour
               </Button>
-              <Button onClick={handleSave} disabled={!selectedCardId} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white">
+              <Button onClick={handleSave} disabled={!selectedCardId} className="flex-1 bg-primary hover:bg-primary/90 text-white">
                 <Check className="h-4 w-4 mr-2" />
                 Confirmer
               </Button>
