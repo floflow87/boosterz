@@ -767,7 +767,7 @@ export default function Collections() {
                 <Plus className="w-6 h-6 text-white" />
               </button>
             </div>
-          </>
+          </div>
         )}
 
         {/* Marketplace Tab Content */}
