@@ -643,7 +643,7 @@ export default function CollectionDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-x-hidden relative">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white overflow-x-hidden relative">
       <HaloBlur />
       <main className="px-3 pt-3 pb-20 relative z-10" id="collection-top">
         {/* Collection Header */}
@@ -914,10 +914,10 @@ export default function CollectionDetail() {
                 className={`relative bg-gray-800 rounded-xl overflow-hidden transition-all duration-200 ${
                   isAnyVariantSelected 
                     ? `border-4 ${getCardBorderColor(currentVariant)} shadow-lg ring-2 ring-opacity-50 ${
-                        getCardBorderColor(currentVariant) === 'border-green-500' ? 'ring-green-400' :
-                        getCardBorderColor(currentVariant) === 'border-blue-500' ? 'ring-blue-400' :
-                        getCardBorderColor(currentVariant) === 'border-purple-500' ? 'ring-purple-400' :
-                        getCardBorderColor(currentVariant) === 'border-yellow-500' ? 'ring-yellow-400' :
+                        getCardBorderColor(currentVariant).includes('border-green-500') ? 'ring-green-400' :
+                        getCardBorderColor(currentVariant).includes('border-blue-500') ? 'ring-blue-400' :
+                        getCardBorderColor(currentVariant).includes('border-purple-500') ? 'ring-purple-400' :
+                        getCardBorderColor(currentVariant).includes('border-yellow-500') ? 'ring-yellow-400' :
                         'ring-gray-400'
                       }`
                     : `border-2 ${getCardBorderColor(currentVariant)}`

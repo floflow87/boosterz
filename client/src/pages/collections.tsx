@@ -355,8 +355,7 @@ export default function Collections() {
                 speed={400}
                 pagination={{
                   clickable: true,
-                  dynamicBullets: true,
-                  dynamicMainBullets: 3,
+                  dynamicBullets: false
                 }}
                 modules={[FreeMode, Pagination]}
                 className="collections-swiper"
