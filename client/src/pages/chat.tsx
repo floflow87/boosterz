@@ -31,12 +31,6 @@ export default function Chat() {
     setIsBlocked(blockedUsers.includes(userId));
   }, [userId]);
 
-  // Mark messages as read when entering conversation
-  useEffect(() => {
-    if (conversation?.id) {
-      markAsReadMutation.mutate(conversation.id);
-    }
-  }, [conversation?.id]);
   const currentUserId = 1; // Current logged-in user
 
   // Get or create conversation
@@ -46,6 +40,13 @@ export default function Chat() {
   });
 
   const conversation = conversations?.[0];
+
+  // Mark messages as read when entering conversation
+  useEffect(() => {
+    if (conversation?.id) {
+      markAsReadMutation.mutate(conversation.id);
+    }
+  }, [conversation?.id]);
 
   // Get messages for this conversation
   const { data: messages, isLoading: messagesLoading } = useQuery<Message[]>({

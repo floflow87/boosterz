@@ -563,7 +563,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const otherUserId = conv.user1Id === currentUserId ? conv.user2Id : conv.user1Id;
         const otherUser = await storage.getUser(otherUserId);
         
-        if (otherUser && lastMessage) {
+        if (otherUser) {
           const conversation = {
             id: conv.id,
             user: {
@@ -571,10 +571,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
               name: otherUser.name,
               username: otherUser.username,
             },
-            lastMessage: {
-              content: lastMessage.content,
+            lastMessage: lastMessage ? {
+              content: lastMessage.content.startsWith('data:image/') ? '📷 Image' : lastMessage.content,
               timestamp: lastMessage.createdAt,
               isRead: lastMessage.senderId === currentUserId || lastMessage.isRead
+            } : {
+              content: 'Aucun message',
+              timestamp: conv.createdAt || new Date().toISOString(),
+              isRead: true
             },
             unreadCount: messages.filter(m => m.senderId !== currentUserId && !m.isRead).length
           };

@@ -95,7 +95,26 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCollectionsByUserId(userId: number): Promise<Collection[]> {
-    return await db.select().from(collections).where(eq(collections.userId, userId));
+    const collectionsData = await db.select().from(collections).where(eq(collections.userId, userId));
+    
+    // For each collection, calculate the actual owned cards count
+    const collectionsWithCounts = await Promise.all(
+      collectionsData.map(async (collection) => {
+        const collectionCards = await db.select().from(cards).where(eq(cards.collectionId, collection.id));
+        const ownedCards = collectionCards.filter(card => card.isOwned).length;
+        const totalCards = collectionCards.length;
+        
+        return {
+          ...collection,
+          ownedCards,
+          totalCards,
+          completionPercentage: totalCards > 0 ? Math.round((ownedCards / totalCards) * 100) : 0,
+          season: collection.season || null
+        };
+      })
+    );
+    
+    return collectionsWithCounts;
   }
 
   async getCollection(id: number): Promise<Collection | undefined> {
@@ -279,15 +298,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async markMessagesAsRead(conversationId: number, userId: number): Promise<void> {
-    // Mark messages as read where the user is NOT the sender (i.e., messages received by the user)
+    // Mark all unread messages in this conversation as read
     await db
       .update(messages)
       .set({ isRead: true })
       .where(
         and(
           eq(messages.conversationId, conversationId),
-          // Mark as read messages NOT sent by this user (messages they received)
-          // This is a simplified approach - in a real app you'd have a separate read status per user
+          eq(messages.isRead, false)
         )
       );
   }
