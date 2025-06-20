@@ -111,8 +111,8 @@ export default function Chat() {
     toast({
       title: isBlocked ? "Utilisateur débloqué" : "Utilisateur bloqué",
       description: isBlocked 
-        ? `${displayUser.name} peut maintenant vous envoyer des messages.`
-        : `${displayUser.name} ne peut plus vous envoyer de messages.`,
+        ? `${displayUser?.name} peut maintenant vous envoyer des messages.`
+        : `${displayUser?.name} ne peut plus vous envoyer de messages.`,
       className: "bg-green-600 text-white border-green-700"
     });
   };
@@ -182,9 +182,32 @@ export default function Chat() {
             <p className="text-xs text-gray-400">@{displayUser.username}</p>
           </div>
         </div>
-        <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors">
-          <MoreVertical className="w-5 h-5" />
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-2 rounded-lg hover:bg-gray-800 transition-colors">
+              <MoreVertical className="w-5 h-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="bg-gray-800 border-gray-700">
+            <DropdownMenuItem onClick={handleViewProfile} className="text-white hover:bg-gray-700 cursor-pointer">
+              <Eye className="w-4 h-4 mr-2" />
+              Voir le profil
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleBlockUser} className="text-white hover:bg-gray-700 cursor-pointer">
+              {isBlocked ? (
+                <>
+                  <UserCheck className="w-4 h-4 mr-2" />
+                  Débloquer
+                </>
+              ) : (
+                <>
+                  <UserX className="w-4 h-4 mr-2" />
+                  Bloquer
+                </>
+              )}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Messages */}
@@ -227,23 +250,62 @@ export default function Chat() {
       </div>
 
       {/* Message Input */}
-      <div className="p-4 border-t border-gray-800 bg-gray-900">
+      <div className={`p-4 border-t border-gray-800 bg-gray-900 ${isBlocked ? 'opacity-50 pointer-events-none' : ''}`}>
+        {isBlocked && (
+          <div className="text-center text-red-400 text-sm mb-2">
+            Vous avez bloqué cet utilisateur. Débloquez-le pour envoyer des messages.
+          </div>
+        )}
+        
         <form onSubmit={handleSendMessage} className="flex space-x-2">
+          <DropdownMenu open={showPhotoOptions} onOpenChange={setShowPhotoOptions}>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                type="button"
+                variant="outline"
+                size="icon"
+                className="bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+                disabled={isBlocked}
+              >
+                <Camera className="w-4 h-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="bg-gray-800 border-gray-700">
+              <DropdownMenuItem onClick={handleCameraCapture} className="text-white hover:bg-gray-700 cursor-pointer">
+                <Camera className="w-4 h-4 mr-2" />
+                Prendre une photo
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={handleGallerySelect} className="text-white hover:bg-gray-700 cursor-pointer">
+                <Image className="w-4 h-4 mr-2" />
+                Choisir depuis la galerie
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Tapez votre message..."
+            placeholder={isBlocked ? "Utilisateur bloqué" : "Tapez votre message..."}
             className="flex-1 bg-gray-800 border-gray-700 text-white"
-            disabled={sendMessageMutation.isPending}
+            disabled={sendMessageMutation.isPending || isBlocked}
           />
+          
           <Button
             type="submit"
-            disabled={!newMessage.trim() || sendMessageMutation.isPending}
+            disabled={!newMessage.trim() || sendMessageMutation.isPending || isBlocked}
             className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
           >
             <Send className="w-4 h-4" />
           </Button>
         </form>
+        
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handlePhotoUpload}
+          accept="image/*"
+          className="hidden"
+        />
       </div>
     </div>
   );
