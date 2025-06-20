@@ -80,7 +80,7 @@ export default function LoadingScreen({ message }: LoadingScreenProps) {
         
         {/* Power up effect */}
         <div className="mt-4 text-blue-300 text-sm animate-pulse">
-          ⚡ Collection en cours de chargement ⚡
+          ⚡ Préparation de votre collection ⚡
         </div>
       </div>
     </div>

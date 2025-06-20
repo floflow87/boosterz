@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useParams } from "wouter";
-import { Send, ArrowLeft, MoreVertical } from "lucide-react";
+import { Send, ArrowLeft, MoreVertical, Camera, Image, UserCheck, UserX, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -14,7 +15,10 @@ export default function Chat() {
   const [, setLocation] = useLocation();
   const [newMessage, setNewMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+  const [showPhotoOptions, setShowPhotoOptions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -74,9 +78,47 @@ export default function Chat() {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || isBlocked) return;
     
     sendMessageMutation.mutate(newMessage.trim());
+  };
+
+  const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && !isBlocked) {
+      const photoMessage = `📷 Photo partagée: ${file.name}`;
+      sendMessageMutation.mutate(photoMessage);
+    }
+    event.target.value = '';
+  };
+
+  const handleCameraCapture = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.setAttribute('capture', 'environment');
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleGallerySelect = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.removeAttribute('capture');
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleBlockUser = () => {
+    setIsBlocked(!isBlocked);
+    toast({
+      title: isBlocked ? "Utilisateur débloqué" : "Utilisateur bloqué",
+      description: isBlocked 
+        ? `${displayUser.name} peut maintenant vous envoyer des messages.`
+        : `${displayUser.name} ne peut plus vous envoyer de messages.`,
+      className: "bg-green-600 text-white border-green-700"
+    });
+  };
+
+  const handleViewProfile = () => {
+    setLocation(`/profile/${userId}`);
   };
 
   // Auto-scroll to bottom when new messages arrive

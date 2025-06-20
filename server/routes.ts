@@ -542,7 +542,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Send message to any conversation
-  app.post("/api/chat/conversations/:conversationId/messages", async (req, res) => {
+  app.post("/api/chat/conversations/:conversationId/messages", optionalAuth, async (req: AuthRequest, res) => {
     try {
       const conversationId = parseInt(req.params.conversationId);
       const { content } = req.body;

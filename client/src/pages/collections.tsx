@@ -211,10 +211,21 @@ export default function Collections() {
                 scrollbar-width: none;
                 -ms-overflow-style: none;
                 scroll-behavior: smooth;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
               }
               
               .collections-scroll::-webkit-scrollbar {
                 display: none;
+              }
+              
+              .collections-container {
+                display: flex;
+                gap: 1.5rem;
+                padding: 0 1rem;
+                width: max-content;
+                min-width: calc(100vw - 2rem);
               }
               
               .collection-wallet-item {
@@ -263,8 +274,8 @@ export default function Collections() {
               }
             `}</style>
             
-            <div className="collections-scroll overflow-x-auto overflow-y-hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-              <div className="flex space-x-6 px-4 pb-2" style={{ width: 'max-content', minWidth: '100vw' }}>
+            <div className="collections-scroll">
+              <div className="collections-container">
                 {collections?.map((collection) => (
                   <div 
                     key={collection.id}
