@@ -402,8 +402,18 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
   const handleSuggestionClick = useCallback((suggestion: string) => {
     setPlayerName(suggestion);
     setShowSuggestions(false);
-    handlePlayerNameChange(suggestion);
-  }, [handlePlayerNameChange]);
+    
+    // Rechercher directement les cartes sans déclencher handlePlayerNameChange
+    const searchTerm = suggestion.toLowerCase();
+    const matchingCards = availableCards.filter(card => 
+      card.playerName.toLowerCase().includes(searchTerm)
+    );
+    setPlayerCards(matchingCards);
+    
+    if (matchingCards.length > 0) {
+      setSelectedCardId(matchingCards[0].id);
+    }
+  }, [availableCards]);
 
   const handleClose = useCallback(() => {
     setStep("import");
@@ -556,10 +566,10 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
         {/* Étape d'édition */}
         {step === "edit" && selectedImage && (
-          <div className="space-y-4 px-6 pb-6 w-full">
-            <div className="flex flex-col gap-4 w-full">
-              <div className="flex-1 w-full">
-                <div className="relative bg-gray-100 rounded-lg overflow-hidden transform-none w-full" ref={imageContainerRef}>
+          <div className="space-y-4 px-6 pb-6">
+            <div className="flex flex-col gap-4">
+              <div className="flex-1">
+                <div className="relative bg-gray-100 rounded-lg overflow-hidden" ref={imageContainerRef}>
                   <img
                     ref={imageRef}
                     src={selectedImage}
@@ -678,9 +688,9 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
               {/* Interface de retouche style Instagram */}
               {showRetouchOptions && (
-                <div className="space-y-4">
+                <div className="space-y-4 -mx-6">
                   {/* Bandeau de retouche inspiré d'Instagram */}
-                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4 -mx-6">
+                  <div className="bg-gray-900/95 backdrop-blur-sm border-t border-gray-700 py-4">
                     <div className="flex gap-6 overflow-x-auto px-6 pb-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                       
                       {/* Outil Ajuster */}
@@ -787,7 +797,7 @@ export default function CardPhotoImportImproved({ isOpen, onClose, onSave, avail
 
                   {/* Panneau de réglage déroulant */}
                   {selectedRetouchTool && (
-                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mx-6">
                       {selectedRetouchTool === 'adjust' && (
                         <div>
                           <div className="flex justify-between items-center mb-3">

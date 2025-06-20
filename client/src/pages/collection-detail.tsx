@@ -323,6 +323,10 @@ export default function CollectionDetail() {
 
   const handleMarkAsOwned = async (cardId: number, withPhoto: boolean) => {
     try {
+      // Déclencher l'effet de tirage avant la mutation
+      setPulledCardEffect(cardId);
+      setTimeout(() => setPulledCardEffect(null), 2000);
+      
       // Update local state immediately for visual feedback
       if (selectedCard && selectedCard.id === cardId) {
         setSelectedCard({ ...selectedCard, isOwned: true });
@@ -1022,7 +1026,7 @@ export default function CollectionDetail() {
                         <img 
                           src={currentCard.imageUrl} 
                           alt={`${currentCard.playerName} card`}
-                          className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500"
+                          className="w-full h-full object-cover rounded-lg cursor-pointer transition-transform duration-500 animate-card-3d-float"
                           style={{
                             transformStyle: 'preserve-3d',
                             willChange: 'transform'
