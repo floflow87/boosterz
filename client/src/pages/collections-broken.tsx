@@ -845,7 +845,7 @@ export default function Collections() {
                     />
                   ))}
                 </div>
-              ) : marketplaceCards && marketplaceCards.length > 0 ? (
+              ) : (
                 <div className="space-y-3">
                   {marketplaceCards
                     .filter(card => {
@@ -866,8 +866,9 @@ export default function Collections() {
                     />
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-12">
+              )
+            ) : (
+              <div className="text-center py-12">
                 <TrendingUp className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <div className="text-gray-400 mb-2 text-lg">Aucune carte en vente</div>
                 <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
