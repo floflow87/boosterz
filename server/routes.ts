@@ -425,6 +425,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update card sale settings
+  app.patch("/api/cards/:id/sale-settings", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const { salePrice, saleDescription, tradeOnly } = req.body;
+      
+      const updatedCard = await storage.updateCard(cardId, { 
+        salePrice, 
+        saleDescription, 
+        tradeOnly 
+      });
+      
+      if (!updatedCard) {
+        return res.status(404).json({ message: "Card not found" });
+      }
+      
+      res.json(updatedCard);
+    } catch (error) {
+      console.error('Error updating card sale settings:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Toggle card ownership
   app.patch("/api/cards/:id/toggle", async (req, res) => {
     try {

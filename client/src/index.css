@@ -55,6 +55,10 @@
   }
 }
 
+.animate-slide-in {
+  animation: slideInFromRight 0.4s ease-out;
+}
+
 @keyframes slideInFromLeft {
   from {
     transform: translateX(100%);
