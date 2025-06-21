@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -30,6 +30,8 @@ export default function Collections() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [showOptionsPanel, setShowOptionsPanel] = useState(false);
+  const [showTradePanel, setShowTradePanel] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -809,26 +811,63 @@ export default function Collections() {
           </div>
         )}
 
-        {/* Card Detail Modal */}
+        {/* Card Detail Modal - Fullscreen with slide animation */}
         {selectedCard && (
-          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-[hsl(214,35%,22%)] rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-[hsl(214,35%,30%)]">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-bold text-white">
-                    {selectedCard.playerName}
-                  </h3>
+          <>
+            <style>{`
+              @keyframes slideInFromRight {
+                from {
+                  transform: translateX(100%);
+                }
+                to {
+                  transform: translateX(0);
+                }
+              }
+            `}</style>
+            <div 
+              className="fixed inset-0 bg-black z-50"
+              style={{
+                animation: 'slideInFromRight 0.4s ease-out'
+              }}
+            >
+            <div className="w-full h-full flex flex-col">
+              {/* Header - Fixed */}
+              <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
+                <div className="flex-1">
+                  <h2 className="text-lg font-bold text-white">
+                    {selectedCard.playerName || 'Joueur Inconnu'}
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    {selectedCard.teamName || 'Équipe Inconnue'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowOptionsPanel(true);
+                    }}
+                    className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
+                    type="button"
+                  >
+                    <MoreVertical className="w-6 h-6" />
+                  </button>
                   <button
                     onClick={() => setSelectedCard(null)}
-                    className="text-gray-400 hover:text-white transition-colors"
+                    className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
                   >
-                    ✕
+                    <X className="w-6 h-6" />
                   </button>
                 </div>
-                
-                <div className="space-y-4">
+              </div>
+
+              {/* Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-6">
+                {/* Card Container with margins */}
+                <div className="max-w-md mx-auto">
                   {/* Card Image */}
-                  <div className="aspect-[3/4] bg-gray-700 rounded-lg overflow-hidden">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-6">
                     {selectedCard.imageUrl ? (
                       <img 
                         src={selectedCard.imageUrl} 
@@ -837,18 +876,13 @@ export default function Collections() {
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <span className="text-sm">#{selectedCard.reference}</span>
+                        <span className="text-lg">#{selectedCard.reference}</span>
                       </div>
                     )}
                   </div>
                   
                   {/* Card Info */}
-                  <div className="space-y-3">
-                    <div>
-                      <div className="text-white font-medium">{selectedCard.playerName}</div>
-                      <div className="text-gray-400 text-sm">{selectedCard.teamName}</div>
-                    </div>
-                    
+                  <div className="space-y-4 text-white">
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <div className="text-gray-400">Référence</div>
@@ -888,19 +922,103 @@ export default function Collections() {
                       </div>
                     )}
                   </div>
-                  
-                  {/* Actions */}
-                  <div className="flex gap-2 pt-4">
-                    <button className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+                </div>
+              </div>
+            </div>
+
+            {/* Options Panel */}
+            {showOptionsPanel && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
+                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-sm border border-[hsl(214,35%,30%)]">
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-lg font-bold text-white mb-4">Actions</h3>
+                    
+                    <button 
+                      onClick={() => {
+                        setShowOptionsPanel(false);
+                        setShowTradePanel(true);
+                      }}
+                      className="w-full p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors"
+                    >
+                      Paramètres de vente
+                    </button>
+                    
+                    <button className="w-full p-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
                       Marquer vendue
                     </button>
-                    <button className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+                    
+                    <button className="w-full p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
                       Retirer de la vente
+                    </button>
+                    
+                    <button 
+                      onClick={() => setShowOptionsPanel(false)}
+                      className="w-full p-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                    >
+                      Annuler
                     </button>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {/* Trade Panel */}
+            {showTradePanel && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
+                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md border border-[hsl(214,35%,30%)]">
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-lg font-bold text-white mb-4">Paramètres de vente</h3>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Prix de vente
+                        </label>
+                        <input
+                          type="text"
+                          placeholder="Ex: 15€"
+                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Description
+                        </label>
+                        <textarea
+                          rows={3}
+                          placeholder="Décrivez l'état de la carte..."
+                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          id="tradeOnly"
+                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor="tradeOnly" className="text-sm text-gray-300">
+                          Échange uniquement (pas de vente)
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 pt-4">
+                      <button 
+                        onClick={() => setShowTradePanel(false)}
+                        className="flex-1 p-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                      >
+                        Annuler
+                      </button>
+                      <button className="flex-1 p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors">
+                        Sauvegarder
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </main>
