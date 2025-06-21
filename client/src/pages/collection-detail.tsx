@@ -112,12 +112,15 @@ export default function CollectionDetail() {
     queryKey: [`/api/collections/${collectionId}`],
   });
 
-  const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
+  const { data: cards, isLoading: cardsLoading, error: cardsError } = useQuery<Card[]>({
     queryKey: [`/api/collections/${collectionId}/cards`],
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-    retry: 2,
+    staleTime: 0, // Pas de cache pour forcer le rechargement
+    gcTime: 1 * 60 * 1000, // 1 minute
+    refetchOnWindowFocus: true,
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
   });
 
   // Scroll to top when page loads
@@ -216,8 +219,34 @@ export default function CollectionDetail() {
     card.numbering !== "1/1"
   ).length || 0;
 
+  // Debug logging pour la production
+  useEffect(() => {
+    console.log("Collection loading state:", { collectionLoading, cardsLoading, cardsError });
+    console.log("Cards data:", cards ? `${cards.length} cards loaded` : "No cards data");
+    if (cardsError) {
+      console.error("Cards loading error:", cardsError);
+    }
+  }, [collectionLoading, cardsLoading, cards, cardsError]);
+
   if (collectionLoading || cardsLoading) {
     return <LoadingScreen />;
+  }
+
+  if (cardsError) {
+    return (
+      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-white text-xl mb-4">Erreur de chargement</h2>
+          <p className="text-gray-400 mb-4">Impossible de charger les cartes de la collection</p>
+          <button 
+            onClick={() => queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] })}
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (!collection) {
@@ -910,7 +939,27 @@ export default function CollectionDetail() {
         </div>
 
         {/* Cards Display */}
-        {viewMode === "grid" ? (
+        {!filteredCards || filteredCards.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4 text-lg">
+              {cardsLoading ? "Chargement des cartes..." : 
+               cards === undefined ? "Aucune donnée de carte disponible" :
+               searchTerm ? "Aucune carte trouvée pour cette recherche" : 
+               "Aucune carte dans cette catégorie"}
+            </div>
+            {cards === undefined && (
+              <button 
+                onClick={() => {
+                  queryClient.removeQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+                  queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+                }}
+                className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
+              >
+                Recharger les cartes
+              </button>
+            )}
+          </div>
+        ) : viewMode === "grid" ? (
           <div className="grid grid-cols-2 gap-3">
           {filteredCards?.map((card) => {
             const variants = getCardVariants(card);
