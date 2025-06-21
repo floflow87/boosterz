@@ -250,33 +250,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get cards in collection with chunked loading
+  // Get cards in collection
   app.get("/api/collections/:id/cards", async (req, res) => {
     try {
       const collectionId = parseInt(req.params.id);
-      const chunk = parseInt(req.query.chunk as string) || 0;
-      const chunkSize = 500; // Load 500 cards at a time
       
-      console.log(`Loading cards chunk ${chunk} for collection ${collectionId}`);
+      console.log(`Loading cards for collection ${collectionId}`);
       const startTime = Date.now();
       
       const cards = await storage.getCardsByCollectionId(collectionId);
       
       const endTime = Date.now();
-      console.log(`Loaded ${cards.length} total cards in ${endTime - startTime}ms`);
+      console.log(`Loaded ${cards.length} cards in ${endTime - startTime}ms`);
       
-      // Calculate chunk boundaries
-      const startIndex = chunk * chunkSize;
-      const endIndex = startIndex + chunkSize;
-      const chunkedCards = cards.slice(startIndex, endIndex);
-      
-      res.json({
-        cards: chunkedCards,
-        totalCards: cards.length,
-        currentChunk: chunk,
-        totalChunks: Math.ceil(cards.length / chunkSize),
-        hasMore: endIndex < cards.length
-      });
+      res.json(cards);
     } catch (error) {
       console.error("Error loading cards:", error);
       res.status(500).json({ message: "Internal server error" });

@@ -8,7 +8,6 @@ import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
 import HaloBlur from "@/components/halo-blur";
 import { ProductionDiagnostic } from "@/components/production-diagnostic";
-import { useChunkedCards } from "@/hooks/use-chunked-cards";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
@@ -238,7 +237,7 @@ export default function CollectionDetail() {
     return <LoadingScreen />;
   }
 
-  if (cardsLoading && (!cards || cards.length === 0)) {
+  if (cardsLoading) {
     return <LoadingScreen message="Chargement des cartes..." />;
   }
 
@@ -948,32 +947,21 @@ export default function CollectionDetail() {
           </div>
         </div>
 
-        {/* Loading progress indicator */}
-        {cardsLoading && cards && cards.length > 0 && (
-          <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg mb-4">
-            <div className="flex items-center justify-center">
-              <span className="text-gray-300 text-sm">Chargement en cours...</span>
-            </div>
-          </div>
-        )}
+
 
         {/* Cards Display */}
         {!filteredCards || filteredCards.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4 text-lg">
-              {cardsLoading && (!cards || cards.length === 0) ? "Chargement des cartes..." : 
-               !cards || cards.length === 0 ? "Aucune donnée de carte disponible" :
-               searchTerm ? "Aucune carte trouvée pour cette recherche" : 
+              {searchTerm ? "Aucune carte trouvée pour cette recherche" : 
                "Aucune carte dans cette catégorie"}
             </div>
-            {(!cards || cards.length === 0) && !cardsLoading && (
-              <button 
-                onClick={() => window.location.reload()}
-                className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
-              >
-                Recharger la page
-              </button>
-            )}
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
+            >
+              Recharger la page
+            </button>
           </div>
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-2 gap-3">
