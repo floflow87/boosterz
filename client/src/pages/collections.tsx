@@ -161,7 +161,7 @@ export default function Collections() {
                 />
               )}
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">{user.name || user.username}</h2>
+            <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
               <div className="flex items-center space-x-1">
                 <span className="font-medium text-white">{user.totalCards || 0}</span>
@@ -172,8 +172,8 @@ export default function Collections() {
                 <span>collections</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.completionPercentage || 0}%</span>
-                <span>complet</span>
+                <span className="font-medium text-white">{user.followersCount || 1250}</span>
+                <span>abonnés</span>
               </div>
             </div>
           </div>
