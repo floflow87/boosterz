@@ -813,23 +813,9 @@ export default function Collections() {
 
         {/* Card Detail Modal - Fullscreen with slide animation */}
         {selectedCard && (
-          <>
-            <style>{`
-              @keyframes slideInFromRight {
-                from {
-                  transform: translateX(100%);
-                }
-                to {
-                  transform: translateX(0);
-                }
-              }
-            `}</style>
-            <div 
-              className="fixed inset-0 bg-black z-50"
-              style={{
-                animation: 'slideInFromRight 0.4s ease-out'
-              }}
-            >
+          <div 
+            className="fixed inset-0 bg-black z-50 animate-slide-in"
+          >
             <div className="w-full h-full flex flex-col">
               {/* Header - Fixed */}
               <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
