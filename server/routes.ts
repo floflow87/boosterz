@@ -5,7 +5,7 @@ import authRoutes from "./authRoutes";
 import chatRoutes from "./chatRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
-import { performHealthCheck } from "./healthcheck";
+// import { performHealthCheck } from "./healthcheck";
 import type { Card } from "@shared/schema";
 
 // Initialize sample data in database
@@ -62,48 +62,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Health check endpoint for production debugging
-  app.get("/api/health", async (req, res) => {
-    try {
-      const healthData = await performHealthCheck();
-      res.json(healthData);
-    } catch (error) {
-      res.status(500).json({ 
-        status: "error", 
-        message: error instanceof Error ? error.message : "Unknown error" 
-      });
-    }
-  });
 
-  // Diagnostic endpoint for collection data
-  app.get("/api/collections/:id/diagnostic", async (req, res) => {
-    try {
-      const collectionId = parseInt(req.params.id);
-      console.log(`🔍 Running diagnostic for collection ${collectionId}`);
-      
-      const startTime = Date.now();
-      const cards = await storage.getCardsByCollectionId(collectionId);
-      const loadTime = Date.now() - startTime;
-      
-      res.json({
-        collectionId,
-        totalCards: cards.length,
-        loadTimeMs: loadTime,
-        sampleCards: cards.slice(0, 3).map(c => ({ 
-          id: c.id, 
-          reference: c.reference, 
-          playerName: c.playerName 
-        })),
-        timestamp: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error("Diagnostic error:", error);
-      res.status(500).json({ 
-        error: error instanceof Error ? error.message : "Unknown error",
-        timestamp: new Date().toISOString()
-      });
-    }
-  });
 
   // Search all users
   // Card recognition endpoint
