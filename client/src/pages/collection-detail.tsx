@@ -768,7 +768,7 @@ export default function CollectionDetail() {
           </div>
         </div>
 
-        {/* Search Bar */}
+        {/* Search Bar and View Toggle */}
         <div className="flex items-center gap-3 mb-2 mt-2">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -835,6 +835,30 @@ export default function CollectionDetail() {
             )}
           </div>
           
+          {/* View Toggle Buttons */}
+          <div className="flex items-center bg-gray-800 rounded-lg p-1">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-2 rounded-md transition-all ${
+                viewMode === "grid" 
+                  ? "bg-blue-600 text-white" 
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <Grid className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={`p-2 rounded-md transition-all ${
+                viewMode === "list" 
+                  ? "bg-blue-600 text-white" 
+                  : "text-gray-400 hover:text-white"
+              }`}
+            >
+              <List className="w-4 h-4" />
+            </button>
+          </div>
+          
           {/* Photo upload button */}
           <button 
             onClick={() => setShowPhotoUpload(true)}
@@ -865,8 +889,9 @@ export default function CollectionDetail() {
           </div>
         )}
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-2 gap-3">
+        {/* Cards Display */}
+        {viewMode === "grid" ? (
+          <div className="grid grid-cols-2 gap-3">
           {filteredCards?.map((card) => {
             const variants = getCardVariants(card);
             const playerKey = `${card.playerName}-${card.teamName}`;
@@ -1074,7 +1099,80 @@ export default function CollectionDetail() {
               </div>
             );
           })}
-        </div>
+          </div>
+        ) : (
+          // List View
+          <div className="space-y-2">
+            {filteredCards?.map((card) => {
+              const variants = getCardVariants(card);
+              const playerKey = `${card.playerName}-${card.teamName}`;
+              const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
+              const currentVariant = variants[currentVariantIdx] || card;
+              const isAnyVariantSelected = variants.some(variant => selectedCards.has(variant.id));
+
+              return (
+                <div 
+                  key={playerKey}
+                  className={`bg-gray-800 rounded-lg p-3 flex items-center gap-3 transition-all duration-200 cursor-pointer hover:bg-gray-700 ${
+                    isAnyVariantSelected ? 'border-2 border-blue-500' : 'border border-gray-600'
+                  }`}
+                  onClick={() => handleCardSelect(currentVariant)}
+                >
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={isAnyVariantSelected}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCardSelection(currentVariant.id, e.target.checked);
+                    }}
+                    className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
+                  />
+
+                  {/* Card Image */}
+                  <div className="w-12 h-16 bg-gray-600 rounded overflow-hidden flex-shrink-0">
+                    {currentVariant.imageUrl ? (
+                      <img 
+                        src={currentVariant.imageUrl} 
+                        alt={currentVariant.playerName || 'Card'} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <HelpCircle className="w-6 h-6 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Player Info */}
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium text-sm">
+                      {currentVariant.playerName || 'Joueur Inconnu'}
+                    </h3>
+                    <p className="text-gray-400 text-xs">
+                      {currentVariant.teamName || 'Équipe Inconnue'}
+                    </p>
+                  </div>
+
+                  {/* Variants Count */}
+                  <div className="text-right">
+                    <div className="text-white text-sm font-medium">
+                      {variants.length} variant{variants.length > 1 ? 's' : ''}
+                    </div>
+                    <div className="text-gray-400 text-xs">
+                      {variants.filter(v => v.isOwned).length} / {variants.length} possédées
+                    </div>
+                  </div>
+
+                  {/* Status indicator */}
+                  <div className="w-3 h-3 rounded-full flex-shrink-0" 
+                       style={{ backgroundColor: currentVariant.isOwned ? '#10B981' : '#EF4444' }}>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </main>
 
       <Navigation />
@@ -1128,11 +1226,11 @@ export default function CollectionDetail() {
                 
                 return (
                   <div className="p-6 space-y-6">
-                    {/* Card Image */}
-                    <div className="w-full max-w-md mx-auto">
+                    {/* Card Image with Navigation */}
+                    <div className="w-full max-w-md mx-auto relative">
                       {currentCard?.imageUrl ? (
                         <div 
-                          className="relative w-full h-80 perspective-1000"
+                          className="relative w-full h-96 perspective-1000"
                           style={{ perspective: '1000px' }}
                         >
                           <img 
@@ -1147,10 +1245,49 @@ export default function CollectionDetail() {
                           />
                         </div>
                       ) : (
-                        <div className="w-full h-80 bg-gray-600 rounded-lg flex items-center justify-center">
+                        <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
                           <HelpCircle className="w-16 h-16 text-gray-400" />
                         </div>
                       )}
+                      
+                      {/* Navigation Arrows for Variants */}
+                      {(() => {
+                        const variants = getCardVariants(selectedCard);
+                        if (variants.length <= 1) return null;
+                        
+                        return (
+                          <>
+                            {/* Previous Arrow */}
+                            <button
+                              onClick={() => {
+                                const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
+                                handleCardSelect(variants[prevIndex]);
+                              }}
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-10"
+                            >
+                              <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            
+                            {/* Next Arrow */}
+                            <button
+                              onClick={() => {
+                                const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                                const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
+                                handleCardSelect(variants[nextIndex]);
+                              }}
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-10"
+                            >
+                              <ChevronRight className="w-6 h-6" />
+                            </button>
+                            
+                            {/* Variant Counter */}
+                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
+                              {(variants.findIndex(v => v.id === currentCard?.id) + 1)} / {variants.length}
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
 
                     {/* Card Details */}
