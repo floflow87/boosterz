@@ -22,7 +22,7 @@ import 'swiper/css/pagination';
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace">("collections");
+  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace" | "deck">("collections");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel">("grid");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -209,7 +209,14 @@ export default function Collections() {
               <TrendingUp className="w-3 h-3 mr-1 inline" />
               A la vente
             </button>
-            <button className="px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap bg-gray-700 text-gray-300">
+            <button 
+              onClick={() => setActiveTab("deck")}
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "deck" 
+                  ? "bg-orange-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+            >
               <Package className="w-3 h-3 mr-1 inline" />
               Decks
             </button>
@@ -743,6 +750,29 @@ export default function Collections() {
                 </p>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Deck Tab Content */}
+        {activeTab === "deck" && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
+            
+            <div className="text-center py-12">
+              <div className="mb-6">
+                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              </div>
+              <div className="text-gray-400 mb-4 text-lg">
+                Vous n'avez pas créé de deck.
+              </div>
+              <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                Créez votre premier deck de cartes et montrez à votre communauté.
+              </p>
+              <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <Plus className="w-4 h-4 mr-2 inline" />
+                Créer mon premier deck
+              </button>
+            </div>
           </div>
         )}
       </main>
