@@ -78,6 +78,15 @@ export default function CollectionDetail() {
     }
   });
 
+  const updateCardFeaturedMutation = useMutation({
+    mutationFn: async ({ cardId, isFeatured }: { cardId: number; isFeatured: boolean }) => {
+      return apiRequest("PATCH", `/api/cards/${cardId}/featured`, { isFeatured });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+    }
+  });
+
   const toggleOwnershipMutation = useMutation({
     mutationFn: async ({ cardId, isOwned }: { cardId: number; isOwned: boolean }) => {
       return apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned });
@@ -1570,21 +1579,44 @@ export default function CollectionDetail() {
 
                 {/* Mettre à la une */}
                 <button
-                  onClick={() => {
-                    // TODO: Implémenter la mise à la une en base de données
-                    toast({
-                      title: "Mise à la une",
-                      description: "Cette carte a été mise à la une de votre collection.",
-                      className: "bg-yellow-900 border-yellow-700 text-yellow-100",
-                    });
-                    setShowOptionsPanel(false);
+                  onClick={async () => {
+                    try {
+                      const currentCard = getCurrentCard();
+                      const cardId = currentCard?.id || selectedCard.id;
+                      const newFeaturedStatus = !currentCard?.isFeatured;
+                      
+                      await updateCardFeaturedMutation.mutateAsync({ 
+                        cardId, 
+                        isFeatured: newFeaturedStatus 
+                      });
+                      
+                      toast({
+                        title: newFeaturedStatus ? "Mise à la une" : "Retirée de la une",
+                        description: newFeaturedStatus 
+                          ? "Cette carte a été mise à la une de votre collection." 
+                          : "Cette carte a été retirée de la une.",
+                        className: "bg-yellow-900 border-yellow-700 text-yellow-100",
+                      });
+                      setShowOptionsPanel(false);
+                    } catch (error) {
+                      toast({
+                        title: "Erreur",
+                        description: "Impossible de modifier le statut de la carte.",
+                        variant: "destructive"
+                      });
+                    }
                   }}
                   className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
                   <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
                     <Star className="w-5 h-5 text-white" />
                   </div>
-                  <span className="font-medium">Mettre à la une</span>
+                  <span className="font-medium">
+                    {(() => {
+                      const currentCard = getCurrentCard();
+                      return currentCard?.isFeatured ? "Retirer de la une" : "Mettre à la une";
+                    })()}
+                  </span>
                 </button>
               </div>
             </div>

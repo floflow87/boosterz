@@ -249,6 +249,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update card featured status
+  app.patch("/api/cards/:id/featured", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const { isFeatured } = req.body;
+      
+      const updatedCard = await storage.updateCard(cardId, { isFeatured });
+      if (!updatedCard) {
+        return res.status(404).json({ message: "Card not found" });
+      }
+      res.json(updatedCard);
+    } catch (error) {
+      console.error('Error updating card featured status:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Toggle card ownership
   app.patch("/api/cards/:id/toggle", async (req, res) => {
     try {
