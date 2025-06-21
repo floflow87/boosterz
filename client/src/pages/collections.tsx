@@ -415,8 +415,7 @@ export default function Collections() {
                     <SwiperSlide key={collection.id} className="!w-80">
                       <div 
                         onClick={() => {
-                          setSelectedCollection(collection.id);
-                          setActiveTab("cards");
+                          setLocation(`/collection/${collection.id}`);
                         }}
                         className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
                       >
@@ -586,9 +585,9 @@ export default function Collections() {
         {/* Marketplace Tab Content */}
         {activeTab === "marketplace" && (
           <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes cartes à la vente</h3>
+            
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins">Mes cartes à la vente</h3>
-              
               {/* Filtres */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
@@ -600,7 +599,7 @@ export default function Collections() {
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
-                    Disponibles
+                    En vente
                   </button>
                   <button
                     onClick={() => setSaleFilter('sold')}
@@ -611,16 +610,6 @@ export default function Collections() {
                     }`}
                   >
                     Vendues
-                  </button>
-                  <button
-                    onClick={() => setSaleFilter('all')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'all' 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Toutes
                   </button>
                 </div>
               
@@ -656,7 +645,7 @@ export default function Collections() {
                     .filter(card => {
                       if (saleFilter === 'available') return card.isForTrade && !card.isSold;
                       if (saleFilter === 'sold') return card.isSold;
-                      return card.isForTrade || card.isSold;
+                      return card.isForTrade && !card.isSold;
                     })
                     .map((card) => (
                     <CardDisplay
@@ -677,7 +666,7 @@ export default function Collections() {
                     .filter(card => {
                       if (saleFilter === 'available') return card.isForTrade && !card.isSold;
                       if (saleFilter === 'sold') return card.isSold;
-                      return card.isForTrade || card.isSold;
+                      return card.isForTrade && !card.isSold;
                     })
                     .map((card) => (
                     <CardDisplay
@@ -966,7 +955,7 @@ export default function Collections() {
         isOpen={showAddModal}
         onClose={() => setShowAddModal(false)}
         collections={collections || []}
-        selectedCollection={selectedCollection ? collections?.find(c => c.id === selectedCollection) : undefined}
+        selectedCollection={selectedCollection || undefined}
       />
       
       {/* Delete Confirmation Modal */}
