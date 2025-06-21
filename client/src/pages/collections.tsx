@@ -73,7 +73,8 @@ export default function Collections() {
   const { data: marketplaceCards } = useQuery<Card[]>({
     queryKey: ["/api/cards/marketplace"],
     enabled: activeTab === "marketplace",
-    staleTime: 1 * 60 * 1000, // 1 minute
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   const deleteCollectionMutation = useMutation({
@@ -449,30 +450,31 @@ export default function Collections() {
             <div className="collections-scroll">
               <Swiper
                 slidesPerView="auto"
-                spaceBetween={20}
+                spaceBetween={24}
                 freeMode={{
                   enabled: true,
                   momentum: true,
-                  momentumRatio: 0.85,
+                  momentumRatio: 0.9,
                   momentumBounce: true,
-                  momentumBounceRatio: 0.1,
-                  momentumVelocityRatio: 1.0,
+                  momentumBounceRatio: 0.15,
+                  momentumVelocityRatio: 1.2,
                   sticky: true,
-                  minimumVelocity: 0.02,
+                  minimumVelocity: 0.03,
                 }}
                 resistance={true}
-                resistanceRatio={0.15}
-                speed={350}
-                touchRatio={1.2}
+                resistanceRatio={0.2}
+                speed={400}
+                touchRatio={1.5}
                 touchAngle={45}
                 grabCursor={true}
-                centeredSlides={false}
-                slidesOffsetBefore={16}
-                slidesOffsetAfter={16}
+                centeredSlides={true}
+                initialSlide={0}
+                slidesOffsetBefore={20}
+                slidesOffsetAfter={20}
                 pagination={{
                   clickable: true,
                   dynamicBullets: true,
-                  dynamicMainBullets: 3,
+                  dynamicMainBullets: 5,
                   hideOnClick: false,
                   type: 'bullets'
                 }}
