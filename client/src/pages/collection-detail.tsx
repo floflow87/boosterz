@@ -907,21 +907,23 @@ export default function CollectionDetail() {
           
 
           
-          {/* Photo upload button */}
-          <button 
-            onClick={() => setShowPhotoUpload(true)}
-            className="p-3 rounded-lg transition-colors shadow-lg"
-            style={{
-              backgroundColor: '#F37261',
-              borderColor: '#F37261',
-              animation: 'pulse-shadow 2s infinite',
-              boxShadow: '0 0 0 0 rgba(243, 114, 97, 0.7)'
-            }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E65A47'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F37261'}
-          >
-            <Camera className="w-4 h-4 text-white" />
-          </button>
+          {/* Photo upload button - Only visible in "for_sale" tab */}
+          {filter === "for_sale" && (
+            <button 
+              onClick={() => setShowPhotoUpload(true)}
+              className="p-3 rounded-lg transition-colors shadow-lg"
+              style={{
+                backgroundColor: '#F37261',
+                borderColor: '#F37261',
+                animation: 'pulse-shadow 2s infinite',
+                boxShadow: '0 0 0 0 rgba(243, 114, 97, 0.7)'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E65A47'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F37261'}
+            >
+              <Camera className="w-4 h-4 text-white" />
+            </button>
+          )}
         </div>
 
         {/* View Toggle and Selection Controls */}

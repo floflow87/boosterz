@@ -378,18 +378,39 @@ export default function Collections() {
                 freeMode={{
                   enabled: true,
                   momentum: true,
-                  momentumRatio: 0.7,
-                  momentumBounce: false,
-                  momentumVelocityRatio: 0.8,
-                  sticky: false,
+                  momentumRatio: 0.85,
+                  momentumBounce: true,
+                  momentumBounceRatio: 0.1,
+                  momentumVelocityRatio: 1.0,
+                  sticky: true,
+                  minimumVelocity: 0.02,
                 }}
                 resistance={true}
-                resistanceRatio={0.3}
-                speed={400}
+                resistanceRatio={0.15}
+                speed={350}
+                touchRatio={1.2}
+                touchAngle={45}
+                grabCursor={true}
+                centeredSlides={false}
+                slidesOffsetBefore={16}
+                slidesOffsetAfter={16}
                 pagination={{
                   clickable: true,
                   dynamicBullets: true,
-                  dynamicMainBullets: 5
+                  dynamicMainBullets: 3,
+                  renderBullet: function (index, className) {
+                    return '<span class="' + className + '" data-index="' + index + '"></span>';
+                  }
+                }}
+                onSlideChange={(swiper) => {
+                  // Update bullets based on active slide
+                  const bullets = document.querySelectorAll('.collections-swiper .swiper-pagination-bullet');
+                  bullets.forEach((bullet, i) => {
+                    bullet.classList.remove('swiper-pagination-bullet-active-main');
+                    if (i === swiper.activeIndex) {
+                      bullet.classList.add('swiper-pagination-bullet-active-main');
+                    }
+                  });
                 }}
                 modules={[FreeMode, Pagination]}
                 className="collections-swiper"

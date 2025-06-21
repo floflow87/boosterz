@@ -175,9 +175,9 @@ export default function CardDisplay({
                 </div>
               )}
               {card.isForTrade && card.tradeOnly && (
-                <div className="flex items-center text-xs text-blue-400">
+                <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
                   <Handshake className="w-3 h-3 mr-1" />
-                  <span>Trade seul</span>
+                  <span>Échange seul</span>
                 </div>
               )}
               {card.tradePrice && !card.isForTrade && (
@@ -301,9 +301,9 @@ export default function CardDisplay({
                 </div>
               )}
               {card.isForTrade && card.tradeOnly && (
-                <div className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
                   <Handshake className="w-3 h-3 mr-1" />
-                  Trade seul
+                  Échange seul
                 </div>
               )}
               {card.tradePrice && !card.isForTrade && (
