@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Star, Handshake, Eye, MoreVertical, Share2, Heart } from "lucide-react";
+import { Star, Handshake, Eye, MoreVertical, Share2, Heart, DollarSign, RefreshCw, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Card } from "@shared/schema";
 import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
@@ -20,6 +20,7 @@ interface CardDisplayProps {
   showTradeInfo?: boolean;
   showStats?: boolean;
   variant?: "default" | "compact" | "detailed";
+  context?: "sale" | "collection" | "default";
 }
 
 export default function CardDisplay({
@@ -37,7 +38,8 @@ export default function CardDisplay({
   showActions = true,
   showTradeInfo = true,
   showStats = false,
-  variant = "default"
+  variant = "default",
+  context = "default"
 }: CardDisplayProps) {
   const [imageError, setImageError] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -895,9 +895,9 @@ export default function Collections() {
               </div>
 
               {/* Content - Scrollable avec scroll fluide et hauteur augmentée */}
-              <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-8" style={{ scrollBehavior: 'smooth' }}>
+              <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-8 pb-20" style={{ scrollBehavior: 'smooth' }}>
                 {/* Card Container avec marges augmentées */}
-                <div className="max-w-lg mx-auto min-h-screen">
+                <div className="max-w-lg mx-auto min-h-full pb-20">
                   {/* Card Image avec effet 3D */}
                   <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
                     {selectedCard.imageUrl ? (
@@ -963,40 +963,56 @@ export default function Collections() {
               </div>
             </div>
 
-            {/* Options Panel */}
+            {/* Options Panel - Slide from bottom */}
             {showOptionsPanel && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-sm border border-[hsl(214,35%,30%)]">
+              <>
+                <div 
+                  className="fixed inset-0 bg-black/50 z-50"
+                  onClick={() => setShowOptionsPanel(false)}
+                />
+                <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl z-60 transform transition-transform duration-300 ease-out">
                   <div className="p-6 space-y-4">
-                    <h3 className="text-lg font-bold text-white mb-4">Actions</h3>
+                    {/* Handle bar */}
+                    <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-4" />
+                    
+                    <h3 className="text-lg font-bold text-white mb-4 text-center">Actions</h3>
                     
                     <button 
                       onClick={() => {
                         setShowOptionsPanel(false);
                         setShowTradePanel(true);
                       }}
-                      className="w-full p-3 text-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left"
+                      className="w-full p-4 text-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
+                      <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
+                        <Edit className="w-4 h-4 text-white" />
+                      </div>
                       Paramètres de vente
                     </button>
                     
-                    <button className="w-full p-3 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left">
+                    <button className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3">
+                      <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
                       Marquer vendue
                     </button>
                     
-                    <button className="w-full p-3 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left">
+                    <button className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3">
+                      <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                        <X className="w-4 h-4 text-white" />
+                      </div>
                       Retirer de la vente
                     </button>
                     
                     <button 
                       onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-3 text-gray-400 hover:bg-gray-400/10 rounded-lg font-medium transition-colors text-left"
+                      className="w-full p-4 text-gray-400 hover:bg-gray-400/10 rounded-lg font-medium transition-colors text-center mt-6"
                     >
                       Annuler
                     </button>
                   </div>
                 </div>
-              </div>
+              </>
             )}
 
             {/* Trade Panel */}
