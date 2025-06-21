@@ -35,7 +35,7 @@ export async function performHealthCheck() {
     console.error("❌ Health check failed:", error);
     return {
       status: "unhealthy",
-      error: error.message
+      error: error instanceof Error ? error.message : "Unknown error"
     };
   }
 }
