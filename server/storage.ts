@@ -149,7 +149,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCardsByCollectionId(collectionId: number): Promise<Card[]> {
-    return await db.select().from(cards).where(eq(cards.collectionId, collectionId));
+    console.log(`DatabaseStorage: Loading cards for collection ${collectionId}`);
+    const startTime = Date.now();
+    
+    try {
+      const result = await db
+        .select()
+        .from(cards)
+        .where(eq(cards.collectionId, collectionId))
+        .limit(5000); // Limite pour éviter les timeouts
+      
+      const endTime = Date.now();
+      console.log(`DatabaseStorage: Loaded ${result.length} cards in ${endTime - startTime}ms`);
+      
+      return result;
+    } catch (error) {
+      console.error(`DatabaseStorage: Error loading cards for collection ${collectionId}:`, error);
+      throw error;
+    }
   }
 
   async getCard(id: number): Promise<Card | undefined> {
