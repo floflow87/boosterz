@@ -1101,9 +1101,9 @@ export default function CollectionDetail() {
             </div>
             
             {/* Content - Single screen view */}
-            <div className="flex-1 bg-[hsl(216,46%,13%)] flex flex-col md:flex-row">
+            <div className="flex-1 bg-[hsl(216,46%,13%)] flex flex-col md:flex-row overflow-y-auto">
               {/* Card Image Section */}
-              <div className="flex-1 flex items-center justify-center p-6">
+              <div className="flex-1 flex items-center justify-center p-6 min-h-0">
                 {(() => {
                   const currentCard = getCurrentCard();
                   const variants = getCardVariants(selectedCard);
@@ -1124,7 +1124,7 @@ export default function CollectionDetail() {
                               style={{
                                 transformStyle: 'preserve-3d',
                                 willChange: 'transform',
-                                animation: 'card-auto-float 6s ease-in-out infinite'
+                                animation: 'card-auto-float 12s ease-in-out infinite'
                               }}
                             />
                           </div>
@@ -1140,7 +1140,7 @@ export default function CollectionDetail() {
               </div>
               
               {/* Card Info Section */}
-              <div className="flex-1 p-6 overflow-y-auto">
+              <div className="flex-1 p-6 overflow-y-auto max-h-full">
                 <div className="mb-6">
                   <h3 className="text-2xl font-bold text-white mb-2">
                     {selectedCard.playerName || 'Joueur Inconnu'}
