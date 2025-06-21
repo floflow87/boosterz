@@ -739,6 +739,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.patch("/api/cards/:id/sold", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const { isSold } = req.body;
+
+      const updatedCard = await db
+        .update(cards)
+        .set({ isSold })
+        .where(eq(cards.id, cardId))
+        .returning();
+
+      if (updatedCard.length === 0) {
+        return res.status(404).json({ error: "Card not found" });
+      }
+
+      res.json(updatedCard[0]);
+    } catch (error) {
+      console.error("Error updating card sold status:", error);
+      res.status(500).json({ error: "Failed to update card sold status" });
+    }
+  });
+
   // Get conversation with specific user
   app.get("/api/chat/conversations/user/:targetUserId", async (req, res) => {
     try {
