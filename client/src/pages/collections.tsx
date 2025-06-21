@@ -197,7 +197,7 @@ export default function Collections() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
       <HaloBlur />
-      <Header title="Collections" />
+      <Header title="Mes cartes" />
       <main className="relative z-10 px-4 pb-24">
         {/* User Profile Section */}
         {user && (
@@ -240,53 +240,55 @@ export default function Collections() {
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div className="flex space-x-2 mb-6 bg-[hsl(214,35%,22%)] rounded-xl p-1">
-          <button
-            onClick={() => handleTabChange("collections")}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-              activeTab === "collections" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
-                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-            }`}
-            style={activeTab === "collections" ? { backgroundColor: '#F37261' } : {}}
-          >
-            <Layers className="w-4 h-4" />
-            Collections
-          </button>
-          <button
-            onClick={() => handleTabChange("cards")}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-              activeTab === "cards" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
-                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <Trophy className="w-4 h-4" />
-            Cartes
-          </button>
-          <button
-            onClick={() => handleTabChange("marketplace")}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-              activeTab === "marketplace" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
-                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            Ventes
-          </button>
-          <button
-            onClick={() => handleTabChange("deck")}
-            className={`flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-              activeTab === "deck" 
-                ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
-                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-            }`}
-          >
-            <Package className="w-4 h-4" />
-            Decks
-          </button>
+        {/* Navigation Tabs - Horizontal Scroll */}
+        <div className="overflow-x-auto scrollbar-hide mb-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="flex space-x-2 bg-[hsl(214,35%,22%)] rounded-xl p-1 min-w-max">
+            <button
+              onClick={() => handleTabChange("collections")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "collections" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+              style={activeTab === "collections" ? { backgroundColor: '#F37261' } : {}}
+            >
+              <Layers className="w-4 h-4" />
+              Collections
+            </button>
+            <button
+              onClick={() => handleTabChange("cards")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "cards" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Trophy className="w-4 h-4" />
+              Cartes
+            </button>
+            <button
+              onClick={() => handleTabChange("marketplace")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "marketplace" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Ventes
+            </button>
+            <button
+              onClick={() => handleTabChange("deck")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "deck" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Package className="w-4 h-4" />
+              Decks
+            </button>
+          </div>
         </div>
 
         {/* Collections Tab Content */}
@@ -657,33 +659,8 @@ export default function Collections() {
         {/* Marketplace Tab Content */}
         {activeTab === "marketplace" && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes cartes à la vente</h3>
-            
-            <div className="flex items-center justify-between mb-6">
-              {/* Filtres */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
-                  <button
-                    onClick={() => setSaleFilter('available')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'available' 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    En vente
-                  </button>
-                  <button
-                    onClick={() => setSaleFilter('sold')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'sold' 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Vendues
-                  </button>
-                </div>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-white font-poppins">Mes cartes à la vente</h3>
               
               <div className="flex items-center gap-2">
                 <button
@@ -708,6 +685,33 @@ export default function Collections() {
                 </button>
               </div>
             </div>
+            
+            <div className="flex items-center justify-start mb-6">
+              {/* Filtres */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
+                  <button
+                    onClick={() => setSaleFilter('available')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'available' 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    En vente
+                  </button>
+                  <button
+                    onClick={() => setSaleFilter('sold')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'sold' 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Vendues
+                  </button>
+                </div>
+              </div>
             </div>
             
             {marketplaceCards && marketplaceCards.length > 0 ? (

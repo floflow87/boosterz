@@ -298,22 +298,7 @@ export default function CardDisplay({
         )}
 
         {/* Sale Status or Ownership Indicator */}
-        {context === "sale" ? (
-          <div className="absolute top-2 left-2 space-y-1">
-            {/* Always show sale status for sale context */}
-            <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
-              <DollarSign className="w-3 h-3 mr-1" />
-              Vente
-            </div>
-            {/* Show trade status if it's also for trade */}
-            {card.isForTrade && (
-              <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
-                <RefreshCw className="w-3 h-3 mr-1" />
-                Trade
-              </div>
-            )}
-          </div>
-        ) : (
+        {context !== "sale" && (
           <div className={cn(
             "absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg",
             card.isOwned ? "bg-green-600" : "bg-red-600"
