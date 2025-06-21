@@ -19,7 +19,7 @@ export default function CollectionDetail() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("all");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
@@ -787,9 +787,10 @@ export default function CollectionDetail() {
             onClick={() => setFilter("bases_numbered")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "bases_numbered" 
-                ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                ? "text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
+            style={filter === "bases_numbered" ? { backgroundColor: '#F37261' } : {}}
           >
             Bases numérotées ({numberedBasesCount})
           </button>
@@ -797,9 +798,10 @@ export default function CollectionDetail() {
             onClick={() => setFilter("hits")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "hits" 
-                ? "bg-purple-600 text-white shadow-lg transform scale-105" 
+                ? "text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
+            style={filter === "hits" ? { backgroundColor: '#F37261' } : {}}
           >
             Hits
           </button>
@@ -807,9 +809,10 @@ export default function CollectionDetail() {
             onClick={() => setFilter("autographs")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "autographs" 
-                ? "bg-yellow-600 text-white shadow-lg transform scale-105" 
+                ? "text-white shadow-lg transform scale-105" 
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
+            style={filter === "autographs" ? { backgroundColor: '#F37261' } : {}}
           >
             Autographes
           </button>

@@ -219,11 +219,16 @@ export default function Collections() {
             <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.totalCards || 0}</span>
+                <span className="font-medium text-white">
+                  {collections?.reduce((total, collection) => {
+                    const completion = getCollectionCompletion(collection);
+                    return total + completion.ownedCards;
+                  }, 0) || 0}
+                </span>
                 <span>cartes</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.collectionsCount || 0}</span>
+                <span className="font-medium text-white">{collections?.length || 0}</span>
                 <span>collections</span>
               </div>
               <div className="flex items-center space-x-1">
@@ -319,21 +324,31 @@ export default function Collections() {
                 left: auto !important;
                 transform: none !important;
                 width: auto !important;
-                margin-top: 20px;
+                margin-top: 24px;
                 text-align: center;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 8px !important;
               }
               
               .collections-swiper .swiper-pagination-bullet {
-                background: rgba(255, 255, 255, 0.3) !important;
+                background: rgba(255, 255, 255, 0.25) !important;
                 opacity: 1 !important;
-                width: 8px !important;
-                height: 8px !important;
-                margin: 0 4px !important;
+                width: 12px !important;
+                height: 12px !important;
+                margin: 0 !important;
+                border-radius: 50% !important;
+                transition: all 0.3s ease !important;
+                cursor: pointer !important;
+                border: 2px solid transparent !important;
               }
               
               .collections-swiper .swiper-pagination-bullet-active {
-                background: hsl(9, 85%, 67%) !important;
-                transform: scale(1.2) !important;
+                background: #F37261 !important;
+                transform: scale(1.3) !important;
+                border-color: rgba(243, 114, 97, 0.3) !important;
+                box-shadow: 0 0 0 4px rgba(243, 114, 97, 0.15) !important;
               }
               
               .collection-wallet-item {
