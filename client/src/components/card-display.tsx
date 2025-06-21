@@ -118,18 +118,20 @@ export default function CardDisplay({
       <div
         ref={cardRef}
         className={cn(
-          "flex items-center p-3 rounded-lg border transition-all duration-200 cursor-pointer hover:shadow-lg group",
-          card.isOwned 
-            ? "bg-green-900/20 border-green-500/30 hover:border-green-400/50" 
-            : "bg-red-900/20 border-red-500/30 hover:border-red-400/50",
+          "flex items-center p-2 rounded-lg border transition-all duration-200 cursor-pointer hover:shadow-lg group",
+          context === "sale" 
+            ? "bg-gray-800/40 border-gray-600/30 hover:border-gray-500/50"
+            : card.isOwned 
+              ? "bg-green-900/20 border-green-500/30 hover:border-green-400/50" 
+              : "bg-red-900/20 border-red-500/30 hover:border-red-400/50",
           isSelected && "ring-2 ring-blue-500",
           isPulledEffect && "animate-pulse bg-yellow-400/30 border-yellow-400",
           isStarEffect && "animate-bounce"
         )}
         onClick={handleCardClick}
       >
-        {/* Image - Reduced size for trade info */}
-        <div className="relative w-12 h-16 flex-shrink-0 mr-3">
+        {/* Image - Reduced size */}
+        <div className="relative w-10 h-12 flex-shrink-0 mr-3">
           {!isImageLoaded && (
             <div className="absolute inset-0 bg-gray-800 rounded animate-pulse" />
           )}
@@ -167,48 +169,27 @@ export default function CardDisplay({
             )}
           </div>
 
-          {/* Trade/Sale Info for List View */}
-          {showTradeInfo && (card.isForTrade || card.tradePrice) && (
+          {/* Trade/Sale Info for List View - Hide for sale context */}
+          {showTradeInfo && (card.isForTrade || card.tradePrice) && context !== "sale" && (
             <div className="mt-2 space-y-1">
-              {/* Status */}
-              {context === "sale" ? (
-                <>
-                  <div className="flex items-center text-xs">
-                    <DollarSign className="w-3 h-3 mr-1 text-[hsl(9,85%,67%)]" />
-                    <span className="text-[hsl(9,85%,67%)]">Vente</span>
-                    {card.tradePrice && (
-                      <span className="ml-2 text-white font-bold">{card.tradePrice}</span>
-                    )}
-                  </div>
-                  {card.isForTrade && (
-                    <div className="flex items-center text-xs text-[hsl(9,85%,67%)] mt-1">
-                      <RefreshCw className="w-3 h-3 mr-1" />
-                      <span>Trade</span>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <>
-                  {card.isForTrade && card.tradePrice && !card.tradeOnly && (
-                    <div className="flex items-center text-xs">
-                      <Handshake className="w-3 h-3 mr-1 text-blue-400" />
-                      <span className="text-blue-400">Vente & Trade</span>
-                      <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
-                    </div>
-                  )}
-                  {card.isForTrade && card.tradeOnly && (
-                    <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
-                      <Handshake className="w-3 h-3 mr-1" />
-                      <span>Échange seul</span>
-                    </div>
-                  )}
-                  {card.tradePrice && !card.isForTrade && (
-                    <div className="flex items-center text-xs">
-                      <span className="text-green-400">À vendre:</span>
-                      <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
-                    </div>
-                  )}
-                </>
+              {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+                <div className="flex items-center text-xs">
+                  <Handshake className="w-3 h-3 mr-1 text-blue-400" />
+                  <span className="text-blue-400">Vente & Trade</span>
+                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                </div>
+              )}
+              {card.isForTrade && card.tradeOnly && (
+                <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
+                  <Handshake className="w-3 h-3 mr-1" />
+                  <span>Échange seul</span>
+                </div>
+              )}
+              {card.tradePrice && !card.isForTrade && (
+                <div className="flex items-center text-xs">
+                  <span className="text-green-400">À vendre:</span>
+                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                </div>
               )}
             </div>
           )}

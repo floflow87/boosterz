@@ -451,8 +451,9 @@ export default function Collections() {
             
             <div className="collections-scroll">
               <Swiper
-                slidesPerView="auto"
-                spaceBetween={24}
+                slidesPerView={1.5}
+                spaceBetween={20}
+                centeredSlides={true}
                 freeMode={{
                   enabled: true,
                   momentum: true,
@@ -469,10 +470,23 @@ export default function Collections() {
                 touchRatio={1.5}
                 touchAngle={45}
                 grabCursor={true}
-                centeredSlides={true}
                 initialSlide={0}
-                slidesOffsetBefore={20}
-                slidesOffsetAfter={20}
+                slidesOffsetBefore={0}
+                slidesOffsetAfter={0}
+                breakpoints={{
+                  640: {
+                    slidesPerView: 1.8,
+                    spaceBetween: 24,
+                  },
+                  768: {
+                    slidesPerView: 2.2,
+                    spaceBetween: 28,
+                  },
+                  1024: {
+                    slidesPerView: 2.5,
+                    spaceBetween: 32,
+                  },
+                }}
                 pagination={{
                   clickable: true,
                   dynamicBullets: true,
@@ -486,7 +500,7 @@ export default function Collections() {
                 {collections?.map((collection) => {
                   const completion = getCollectionCompletion(collection);
                   return (
-                    <SwiperSlide key={collection.id} className="!w-80">
+                    <SwiperSlide key={collection.id} className="!w-72">
                       <div 
                         onClick={() => {
                           setLocation(`/collection/${collection.id}`);
