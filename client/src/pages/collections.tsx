@@ -500,12 +500,12 @@ export default function Collections() {
                 {collections?.map((collection) => {
                   const completion = getCollectionCompletion(collection);
                   return (
-                    <SwiperSlide key={collection.id} className="!w-72">
+                    <SwiperSlide key={collection.id} className="!w-64">
                       <div 
                         onClick={() => {
                           setLocation(`/collection/${collection.id}`);
                         }}
-                        className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
+                        className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-105"
                       >
                         {/* Header with title and delete button */}
                         <div className="p-6 pb-4">
@@ -703,7 +703,7 @@ export default function Collections() {
             <div className="flex items-center justify-start mb-6">
               {/* Filtres */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
+                <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
                   <button
                     onClick={() => setSaleFilter('available')}
                     className={`px-3 py-1 rounded text-xs transition-all ${
@@ -751,7 +751,7 @@ export default function Collections() {
                   ))}
                 </div>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {marketplaceCards
                     .filter(card => {
                       if (saleFilter === 'available') return card.isForTrade && !card.isSold;
@@ -764,7 +764,7 @@ export default function Collections() {
                       card={card}
                       viewMode="list"
                       showActions={true}
-                      showTradeInfo={true}
+                      showTradeInfo={false}
                       variant="detailed"
                       context="sale"
                       onCardClick={() => setSelectedCard(card)}
