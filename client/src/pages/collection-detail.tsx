@@ -1409,6 +1409,16 @@ export default function CollectionDetail() {
                         <p className="text-gray-300">Rareté: {selectedCard.cardType?.includes('Insert') ? 'Insert' : 'Base'}</p>
                       </div>
                     </div>
+
+                    {/* Deck Section */}
+                    <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
+                      <h4 className="text-lg font-semibold text-white">Deck</h4>
+                      <div className="text-center py-6">
+                        <div className="text-gray-400 text-sm leading-relaxed">
+                          Vous n'avez pas créé de deck. Créez votre premier deck de cartes et montrez à votre communauté.
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 );
               })()}
