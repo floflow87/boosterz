@@ -25,7 +25,7 @@ export default function Collections() {
   const [salePrice, setSalePrice] = useState('');
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
-  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('available');
+
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -398,42 +398,6 @@ export default function Collections() {
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white font-poppins">Mes cartes à la vente</h3>
-              
-              {/* Filtres */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
-                  <button
-                    onClick={() => setSaleFilter('available')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'available' 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Disponibles
-                  </button>
-                  <button
-                    onClick={() => setSaleFilter('sold')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'sold' 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Vendues
-                  </button>
-                  <button
-                    onClick={() => setSaleFilter('all')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'all' 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Toutes
-                  </button>
-                </div>
-              
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setViewMode("grid")}
