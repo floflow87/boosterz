@@ -983,6 +983,15 @@ export default function CollectionDetail() {
                     className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
                   />
                 </div>
+
+                {/* Featured Star */}
+                {currentVariant.isFeatured && (
+                  <div className="absolute top-2 right-2 z-20">
+                    <div className="bg-yellow-500 rounded-full p-1">
+                      <Star className="w-3 h-3 text-white fill-current" />
+                    </div>
+                  </div>
+                )}
                 
                 {/* Variant Navigation */}
                 {variants.length > 1 && (
@@ -1231,29 +1240,79 @@ export default function CollectionDetail() {
                 
                 return (
                   <div className="p-6 space-y-6">
-                    {/* Card Image with Navigation */}
+                    {/* Card Carousel with Touch Support */}
                     <div className="w-full max-w-md mx-auto relative">
-                      {currentCard?.imageUrl ? (
-                        <div 
-                          className="relative w-full h-96 perspective-1000"
-                          style={{ perspective: '1000px' }}
-                        >
-                          <img 
-                            src={currentCard.imageUrl} 
-                            alt={`${currentCard.playerName} card`}
-                            className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
-                            style={{
-                              transformStyle: 'preserve-3d',
-                              willChange: 'transform',
-                              animation: 'card-auto-float 12s ease-in-out infinite'
+                      {(() => {
+                        const variants = getCardVariants(selectedCard);
+                        if (variants.length <= 1) {
+                          return currentCard?.imageUrl ? (
+                            <div 
+                              className="relative w-full h-96 perspective-1000"
+                              style={{ perspective: '1000px' }}
+                            >
+                              <img 
+                                src={currentCard.imageUrl} 
+                                alt={`${currentCard.playerName} card`}
+                                className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                                style={{
+                                  transformStyle: 'preserve-3d',
+                                  willChange: 'transform',
+                                  animation: 'card-auto-float 12s ease-in-out infinite'
+                                }}
+                              />
+                            </div>
+                          ) : (
+                            <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
+                              <HelpCircle className="w-16 h-16 text-gray-400" />
+                            </div>
+                          );
+                        }
+
+                        // Carousel pour multiple variantes
+                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        
+                        return (
+                          <div 
+                            className="relative w-full h-96 overflow-hidden rounded-lg"
+                            onTouchStart={(e) => {
+                              const touch = e.touches[0];
+                              setCurrentVariantIndex(touch.clientX);
                             }}
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
-                          <HelpCircle className="w-16 h-16 text-gray-400" />
-                        </div>
-                      )}
+                            onTouchMove={(e) => {
+                              e.preventDefault();
+                            }}
+                            onTouchEnd={(e) => {
+                              const touch = e.changedTouches[0];
+                              const diffX = currentVariantIndex - touch.clientX;
+                              
+                              if (Math.abs(diffX) > 50) {
+                                if (diffX > 0 && currentIndex < variants.length - 1) {
+                                  setSelectedCard(variants[currentIndex + 1]);
+                                } else if (diffX < 0 && currentIndex > 0) {
+                                  setSelectedCard(variants[currentIndex - 1]);
+                                }
+                              }
+                            }}
+                          >
+                            {currentCard?.imageUrl ? (
+                              <img 
+                                src={currentCard.imageUrl} 
+                                alt={`${currentCard.playerName} card`}
+                                className={`w-full h-full object-cover transition-transform duration-300 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                                style={{
+                                  transformStyle: 'preserve-3d',
+                                  willChange: 'transform',
+                                  animation: 'card-auto-float 12s ease-in-out infinite'
+                                }}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                                <HelpCircle className="w-16 h-16 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                       
                       {/* Navigation Arrows for Variants */}
                       {(() => {
@@ -1305,20 +1364,29 @@ export default function CollectionDetail() {
                     <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
                       <div className="flex justify-between">
                         <span className="text-gray-400">Type:</span>
-                        <span className="text-white">{selectedCard.cardType || 'N/A'}</span>
+                        <span className="text-white">{currentCard?.cardType || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Numérotation:</span>
-                        <span className="text-white">{selectedCard.numbering || 'N/A'}</span>
+                        <span className="text-white">{currentCard?.numbering || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Référence:</span>
-                        <span className="text-white">{selectedCard.reference || 'N/A'}</span>
+                        <span className="text-white">{currentCard?.reference || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Statut:</span>
-                        <span className={selectedCard.isOwned ? "text-green-400" : "text-red-400"}>
-                          {selectedCard.isOwned ? "Possédée" : "Manquante"}
+                        <span className={currentCard?.isOwned ? "text-green-400" : "text-red-400"}>
+                          {currentCard?.isOwned ? "Possédée" : "Manquante"}
+                        </span>
+                      </div>
+                      {/* Dispo à la vente */}
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Dispo à la vente:</span>
+                        <span className="text-white">
+                          {currentCard?.tradeOnly ? "Trade uniquement" : 
+                           currentCard?.tradePrice ? `${currentCard.tradePrice}€` : 
+                           "Non renseigné"}
                         </span>
                       </div>
                     </div>
@@ -1396,7 +1464,7 @@ export default function CollectionDetail() {
           
           {/* Panel */}
           <div 
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-300 ease-out"
+            className="absolute bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl shadow-2xl transform transition-transform duration-300 ease-out"
             style={{
               animation: 'slideInFromBottom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
               height: '50vh',
@@ -1406,11 +1474,11 @@ export default function CollectionDetail() {
           >
             {/* Handle bar */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+              <div className="w-10 h-1 bg-gray-400 rounded-full"></div>
             </div>
             
             <div className="px-6 pb-8 h-full overflow-y-auto">
-              <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Options</h3>
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">Options</h3>
             
               <div className="space-y-4">
                 {/* Proposer à l'échange */}
@@ -1420,10 +1488,10 @@ export default function CollectionDetail() {
                     setShowTradePanel(true);
                     setShowOptionsPanel(false);
                   }}
-                  className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Handshake className="w-5 h-5 text-green-600" />
+                  <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                    <Handshake className="w-5 h-5 text-white" />
                   </div>
                   <span className="font-medium">Proposer à l'échange</span>
                 </button>
@@ -1457,12 +1525,12 @@ export default function CollectionDetail() {
                         }
                         setShowOptionsPanel(false);
                       }}
-                      className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                      className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                     >
-                      <div className={`w-8 h-8 ${hasPhoto ? 'bg-red-100' : 'bg-blue-100'} rounded-lg flex items-center justify-center`}>
+                      <div className={`w-8 h-8 ${hasPhoto ? 'bg-red-600' : 'bg-blue-600'} rounded-lg flex items-center justify-center`}>
                         {hasPhoto ? 
-                          <Trash2 className="w-5 h-5 text-red-600" /> : 
-                          <Camera className="w-5 h-5 text-blue-600" />
+                          <Trash2 className="w-5 h-5 text-white" /> : 
+                          <Camera className="w-5 h-5 text-white" />
                         }
                       </div>
                       <span className="font-medium">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
@@ -1489,12 +1557,12 @@ export default function CollectionDetail() {
                       });
                     }
                   }}
-                  className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
-                  <div className={`w-8 h-8 ${selectedCard.isOwned ? 'bg-red-100' : 'bg-green-100'} rounded-lg flex items-center justify-center`}>
+                  <div className={`w-8 h-8 ${selectedCard.isOwned ? 'bg-red-600' : 'bg-green-600'} rounded-lg flex items-center justify-center`}>
                     {selectedCard.isOwned ? 
-                      <Minus className="w-5 h-5 text-red-600" /> : 
-                      <Check className="w-5 h-5 text-green-600" />
+                      <Minus className="w-5 h-5 text-white" /> : 
+                      <Check className="w-5 h-5 text-white" />
                     }
                   </div>
                   <span className="font-medium">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
@@ -1503,6 +1571,7 @@ export default function CollectionDetail() {
                 {/* Mettre à la une */}
                 <button
                   onClick={() => {
+                    // TODO: Implémenter la mise à la une en base de données
                     toast({
                       title: "Mise à la une",
                       description: "Cette carte a été mise à la une de votre collection.",
@@ -1510,10 +1579,10 @@ export default function CollectionDetail() {
                     });
                     setShowOptionsPanel(false);
                   }}
-                  className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
-                  <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <Star className="w-5 h-5 text-yellow-600" />
+                  <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
+                    <Star className="w-5 h-5 text-white" />
                   </div>
                   <span className="font-medium">Mettre à la une</span>
                 </button>

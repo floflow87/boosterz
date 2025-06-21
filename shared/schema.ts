@@ -59,6 +59,7 @@ export const cards = pgTable("cards", {
   tradeDescription: text("trade_description"), // Description pour trade/vente
   tradePrice: text("trade_price"), // Prix indicatif pour trade/vente
   tradeOnly: boolean("trade_only").default(false).notNull(), // Si true, pas de prix affiché
+  isFeatured: boolean("is_featured").default(false).notNull(), // Carte mise à la une
 });
 
 export const userCards = pgTable("user_cards", {
