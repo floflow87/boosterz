@@ -82,8 +82,14 @@ export default function CollectionDetail() {
     mutationFn: async ({ cardId, isFeatured }: { cardId: number; isFeatured: boolean }) => {
       return apiRequest("PATCH", `/api/cards/${cardId}/featured`, { isFeatured });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+    onSuccess: (updatedCard, { cardId, isFeatured }) => {
+      // Mise à jour optimiste du cache sans invalider (pour éviter le réordonnancement)
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isFeatured } : card
+        );
+      });
     }
   });
 
@@ -1269,6 +1275,14 @@ export default function CollectionDetail() {
                                   animation: 'card-auto-float 12s ease-in-out infinite'
                                 }}
                               />
+                              {/* Featured Star on Photo */}
+                              {currentCard.isFeatured && (
+                                <div className="absolute top-3 right-3 z-20">
+                                  <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
+                                    <Star className="w-4 h-4 text-white fill-current" />
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           ) : (
                             <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
@@ -1304,16 +1318,26 @@ export default function CollectionDetail() {
                             }}
                           >
                             {currentCard?.imageUrl ? (
-                              <img 
-                                src={currentCard.imageUrl} 
-                                alt={`${currentCard.playerName} card`}
-                                className={`w-full h-full object-cover transition-transform duration-300 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
-                                style={{
-                                  transformStyle: 'preserve-3d',
-                                  willChange: 'transform',
-                                  animation: 'card-auto-float 12s ease-in-out infinite'
-                                }}
-                              />
+                              <div className="relative w-full h-full">
+                                <img 
+                                  src={currentCard.imageUrl} 
+                                  alt={`${currentCard.playerName} card`}
+                                  className={`w-full h-full object-cover transition-transform duration-300 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                                  style={{
+                                    transformStyle: 'preserve-3d',
+                                    willChange: 'transform',
+                                    animation: 'card-auto-float 12s ease-in-out infinite'
+                                  }}
+                                />
+                                {/* Featured Star on Carousel Photo */}
+                                {currentCard.isFeatured && (
+                                  <div className="absolute top-3 right-3 z-20">
+                                    <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
+                                      <Star className="w-4 h-4 text-white fill-current" />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
                             ) : (
                               <div className="w-full h-full bg-gray-600 flex items-center justify-center">
                                 <HelpCircle className="w-16 h-16 text-gray-400" />
@@ -1393,9 +1417,11 @@ export default function CollectionDetail() {
                       <div className="flex justify-between">
                         <span className="text-gray-400">Dispo à la vente:</span>
                         <span className="text-white">
-                          {currentCard?.tradeOnly ? "Trade uniquement" : 
-                           currentCard?.tradePrice ? `${currentCard.tradePrice}€` : 
-                           "Non renseigné"}
+                          {currentCard?.isForTrade ? (
+                            currentCard?.tradeOnly ? "Trade uniquement" : 
+                            currentCard?.tradePrice ? `Vente et trade - ${currentCard.tradePrice}` : 
+                            "Vente et trade"
+                          ) : "Non renseigné"}
                         </span>
                       </div>
                     </div>
