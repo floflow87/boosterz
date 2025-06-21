@@ -63,15 +63,15 @@ export function useChunkedCards(collectionId: number) {
 
   const isLoading = isChunkLoading || isLoadingAll;
   const totalCards = chunkData?.totalCards || 0;
-  const loadedCards = allCards.length;
+  const loadedCards = allCards?.length || 0;
 
   return {
-    cards: allCards,
+    cards: allCards || [],
     isLoading,
     error,
     totalCards,
     loadedCards,
     loadingProgress,
-    isComplete: !isLoading && loadedCards === totalCards
+    isComplete: !isLoading && totalCards > 0 && loadedCards === totalCards
   };
 }

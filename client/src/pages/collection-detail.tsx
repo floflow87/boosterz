@@ -114,16 +114,16 @@ export default function CollectionDetail() {
     queryKey: [`/api/collections/${collectionId}`],
   });
 
-  // Import the chunked cards hook
-  const { 
-    cards, 
-    isLoading: cardsLoading, 
-    error: cardsError,
-    totalCards,
-    loadedCards,
-    loadingProgress,
-    isComplete
-  } = useChunkedCards(collectionId);
+  const { data: cards, isLoading: cardsLoading, error: cardsError } = useQuery<Card[]>({
+    queryKey: [`/api/collections/${collectionId}/cards`],
+    staleTime: 0,
+    gcTime: 1 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+  });
 
   // Scroll to top when page loads
   useEffect(() => {
@@ -226,42 +226,20 @@ export default function CollectionDetail() {
     console.log("Collection loading state:", { 
       collectionLoading, 
       cardsLoading, 
-      cardsError,
-      totalCards,
-      loadedCards,
-      loadingProgress 
+      cardsError
     });
     console.log("Cards data:", cards ? `${cards.length} cards loaded` : "No cards data");
     if (cardsError) {
       console.error("Cards loading error:", cardsError);
     }
-  }, [collectionLoading, cardsLoading, cards, cardsError, totalCards, loadedCards, loadingProgress]);
+  }, [collectionLoading, cardsLoading, cards, cardsError]);
 
   if (collectionLoading) {
     return <LoadingScreen />;
   }
 
   if (cardsLoading && (!cards || cards.length === 0)) {
-    return (
-      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <h2 className="text-white text-xl mb-2">Chargement des cartes...</h2>
-          {totalCards > 0 && (
-            <>
-              <p className="text-gray-400 mb-2">{loadedCards} / {totalCards} cartes chargées</p>
-              <div className="w-64 bg-gray-700 rounded-full h-2 mx-auto">
-                <div 
-                  className="bg-orange-500 h-2 rounded-full transition-all duration-300" 
-                  style={{ width: `${loadingProgress}%` }}
-                ></div>
-              </div>
-              <p className="text-orange-400 text-sm mt-2">{loadingProgress}%</p>
-            </>
-          )}
-        </div>
-      </div>
-    );
+    return <LoadingScreen message="Chargement des cartes..." />;
   }
 
   if (cardsError) {
@@ -971,17 +949,10 @@ export default function CollectionDetail() {
         </div>
 
         {/* Loading progress indicator */}
-        {cardsLoading && cards && cards.length > 0 && !isComplete && (
+        {cardsLoading && cards && cards.length > 0 && (
           <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg mb-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-center">
               <span className="text-gray-300 text-sm">Chargement en cours...</span>
-              <span className="text-orange-400 text-sm">{loadedCards} / {totalCards}</span>
-            </div>
-            <div className="w-full bg-gray-700 rounded-full h-1">
-              <div 
-                className="bg-orange-500 h-1 rounded-full transition-all duration-300" 
-                style={{ width: `${loadingProgress}%` }}
-              ></div>
             </div>
           </div>
         )}

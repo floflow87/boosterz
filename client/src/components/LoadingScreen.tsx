@@ -2,9 +2,10 @@ import captainTsubasaPath from "@assets/b2585610-b824-4549-bf16-f1fd4a8f0da0_175
 
 interface LoadingScreenProps {
   message?: string;
+  progress?: number;
 }
 
-export default function LoadingScreen({ message }: LoadingScreenProps) {
+export default function LoadingScreen({ message, progress }: LoadingScreenProps) {
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-green-800">
       {/* Animated background elements */}
@@ -75,8 +76,21 @@ export default function LoadingScreen({ message }: LoadingScreenProps) {
         
         {/* Energy bar */}
         <div className="w-80 h-3 bg-black bg-opacity-30 rounded-full mx-auto overflow-hidden border border-blue-400">
-          <div className="h-full bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"></div>
+          <div 
+            className="h-full bg-gradient-to-r from-blue-400 via-cyan-400 to-green-400 rounded-full shadow-lg shadow-blue-400/50 transition-all duration-300"
+            style={{ 
+              width: progress !== undefined ? `${progress}%` : '100%',
+              animation: progress !== undefined ? 'none' : 'pulse 2s infinite'
+            }}
+          ></div>
         </div>
+        
+        {/* Progress percentage */}
+        {progress !== undefined && (
+          <div className="mt-2 text-cyan-300 text-sm font-bold">
+            {Math.round(progress)}%
+          </div>
+        )}
         
         {/* Power up effect */}
         <div className="mt-4 text-blue-300 text-sm animate-pulse">
