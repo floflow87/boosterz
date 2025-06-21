@@ -99,6 +99,61 @@ export default function Collections() {
     }
   });
 
+  const handleMarkAsSold = async () => {
+    if (!selectedCard) return;
+    
+    try {
+      await apiRequest("PATCH", `/api/cards/${selectedCard.id}/sale-settings`, {
+        isSold: true,
+        isForTrade: false
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
+      toast({
+        title: "Carte marquée comme vendue",
+        description: "La carte a été marquée comme vendue avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      setShowOptionsPanel(false);
+      setSelectedCard(null);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de marquer la carte comme vendue.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleRemoveFromSale = async () => {
+    if (!selectedCard) return;
+    
+    try {
+      await apiRequest("PATCH", `/api/cards/${selectedCard.id}/sale-settings`, {
+        isForTrade: false,
+        tradePrice: null,
+        tradeDescription: null,
+        tradeOnly: false,
+        isSold: false
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
+      toast({
+        title: "Carte retirée de la vente",
+        description: "La carte a été retirée de la vente avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      setShowOptionsPanel(false);
+      setSelectedCard(null);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de retirer la carte de la vente.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleDeleteCollection = (collection: Collection) => {
     setCollectionToDelete(collection);
     setShowDeleteModal(true);
@@ -856,14 +911,20 @@ export default function Collections() {
                       Paramètres de vente
                     </button>
                     
-                    <button className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3">
+                    <button 
+                      onClick={handleMarkAsSold}
+                      className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                    >
                       <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                       Marquer vendue
                     </button>
                     
-                    <button className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3">
+                    <button 
+                      onClick={handleRemoveFromSale}
+                      className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                    >
                       <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                         <X className="w-4 h-4 text-white" />
                       </div>

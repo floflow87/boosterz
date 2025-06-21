@@ -331,33 +331,32 @@ export default function CardDisplay({
           {getRarityIndicator()} {card.cardType}
         </div>
 
-        {/* Trade/Sale Info */}
+        {/* Trade/Sale Info - Always show at bottom center */}
         {showTradeInfo && (card.isForTrade || card.tradePrice) && (
-          <div className="absolute bottom-2 left-2 right-2 space-y-1">
-            {/* Trade Status */}
+          <div className="absolute bottom-2 left-2 right-2">
             <div className="flex items-center justify-center">
-              {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+              {card.isForTrade && card.tradePrice && !card.tradeOnly ? (
                 <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                  <DollarSign className="w-3 h-3 mr-1" />
                   <Handshake className="w-3 h-3 mr-1" />
                   Vente & Trade
                 </div>
-              )}
-              {card.isForTrade && card.tradeOnly && (
+              ) : card.isForTrade && card.tradeOnly ? (
                 <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
                   <Handshake className="w-3 h-3 mr-1" />
                   Échange seul
                 </div>
-              )}
-              {card.tradePrice && !card.isForTrade && (
-                <div className="bg-green-600 text-white px-2 py-1 rounded-full text-xs">
-                  À vendre
+              ) : card.tradePrice && !card.isForTrade ? (
+                <div className="bg-green-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                  <DollarSign className="w-3 h-3 mr-1" />
+                  Vente
                 </div>
-              )}
+              ) : null}
             </div>
             
-            {/* Price */}
+            {/* Price - Show below the status */}
             {card.tradePrice && !card.tradeOnly && (
-              <div className="text-center">
+              <div className="text-center mt-1">
                 <span className="bg-black/70 text-white px-2 py-1 rounded text-xs font-bold">
                   {card.tradePrice}
                 </span>
