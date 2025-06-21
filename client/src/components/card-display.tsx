@@ -173,24 +173,17 @@ export default function CardDisplay({
               {/* Status */}
               {context === "sale" ? (
                 <>
-                  {card.isForTrade && card.tradePrice && !card.tradeOnly && (
-                    <div className="flex items-center text-xs">
-                      <DollarSign className="w-3 h-3 mr-1 text-[hsl(9,85%,67%)]" />
-                      <span className="text-[hsl(9,85%,67%)]">Vente</span>
+                  <div className="flex items-center text-xs">
+                    <DollarSign className="w-3 h-3 mr-1 text-[hsl(9,85%,67%)]" />
+                    <span className="text-[hsl(9,85%,67%)]">Vente</span>
+                    {card.tradePrice && (
                       <span className="ml-2 text-white font-bold">{card.tradePrice}</span>
-                    </div>
-                  )}
-                  {card.isForTrade && card.tradeOnly && (
-                    <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
+                    )}
+                  </div>
+                  {card.isForTrade && (
+                    <div className="flex items-center text-xs text-[hsl(9,85%,67%)] mt-1">
                       <RefreshCw className="w-3 h-3 mr-1" />
-                      <span>Échange seul</span>
-                    </div>
-                  )}
-                  {card.tradePrice && !card.isForTrade && (
-                    <div className="flex items-center text-xs">
-                      <DollarSign className="w-3 h-3 mr-1 text-[hsl(9,85%,67%)]" />
-                      <span className="text-[hsl(9,85%,67%)]">À vendre:</span>
-                      <span className="ml-2 text-white font-bold">{card.tradePrice}</span>
+                      <span>Trade</span>
                     </div>
                   )}
                 </>
@@ -224,30 +217,38 @@ export default function CardDisplay({
         {/* Actions */}
         {showActions && (
           <div className="flex items-center gap-2 ml-4">
-            <button
-              onClick={handleToggleOwnership}
-              className={cn(
-                "p-2 rounded-full transition-colors",
-                card.isOwned 
-                  ? "bg-green-600 hover:bg-green-700" 
-                  : "bg-red-600 hover:bg-red-700"
-              )}
-            >
-              {card.isOwned ? "✓" : "✗"}
-            </button>
-            
-            {card.isOwned && (
-              <button
-                onClick={handleToggleFeatured}
-                className={cn(
-                  "p-2 rounded-full transition-colors",
-                  card.isFeatured 
-                    ? "text-yellow-400 hover:bg-yellow-400/20" 
-                    : "text-gray-400 hover:bg-gray-600"
+            {context === "sale" ? (
+              <div className="w-6 h-6 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
+                <Eye className="w-3 h-3 text-white" />
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={handleToggleOwnership}
+                  className={cn(
+                    "p-2 rounded-full transition-colors",
+                    card.isOwned 
+                      ? "bg-green-600 hover:bg-green-700" 
+                      : "bg-red-600 hover:bg-red-700"
+                  )}
+                >
+                  {card.isOwned ? "✓" : "✗"}
+                </button>
+                
+                {card.isOwned && (
+                  <button
+                    onClick={handleToggleFeatured}
+                    className={cn(
+                      "p-2 rounded-full transition-colors",
+                      card.isFeatured 
+                        ? "text-yellow-400 hover:bg-yellow-400/20" 
+                        : "text-gray-400 hover:bg-gray-600"
+                    )}
+                  >
+                    <Star className={cn("w-4 h-4", card.isFeatured && "fill-current")} />
+                  </button>
                 )}
-              >
-                <Star className={cn("w-4 h-4", card.isFeatured && "fill-current")} />
-              </button>
+              </>
             )}
           </div>
         )}
@@ -318,21 +319,14 @@ export default function CardDisplay({
         {/* Sale Status or Ownership Indicator */}
         {context === "sale" ? (
           <div className="absolute top-2 left-2 space-y-1">
-            {/* Sale/Trade Status */}
-            {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+            {/* Always show sale status for sale context */}
+            <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
+              <DollarSign className="w-3 h-3 mr-1" />
+              Vente
+            </div>
+            {/* Show trade status if it's also for trade */}
+            {card.isForTrade && (
               <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
-                <DollarSign className="w-3 h-3 mr-1" />
-                Vente
-              </div>
-            )}
-            {card.isForTrade && card.tradeOnly && (
-              <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
-                <RefreshCw className="w-3 h-3 mr-1" />
-                Échange
-              </div>
-            )}
-            {card.isForTrade && card.tradePrice && !card.tradeOnly && (
-              <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center mt-1">
                 <RefreshCw className="w-3 h-3 mr-1" />
                 Trade
               </div>
