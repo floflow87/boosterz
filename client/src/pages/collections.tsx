@@ -969,10 +969,10 @@ export default function Collections() {
             {showOptionsPanel && (
               <>
                 <div 
-                  className="fixed inset-0 bg-black/50 z-50"
+                  className="fixed inset-0 bg-black/50 z-[70]"
                   onClick={() => setShowOptionsPanel(false)}
                 />
-                <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl z-60 transform transition-transform duration-300 ease-out">
+                <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl z-[80] transform transition-transform duration-300 ease-out">
                   <div className="p-6 space-y-4">
                     {/* Handle bar */}
                     <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-4" />

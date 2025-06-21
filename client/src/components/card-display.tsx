@@ -162,31 +162,60 @@ export default function CardDisplay({
           
           <div className="flex items-center justify-between text-sm text-gray-400">
             <span>{card.teamName}</span>
-            <span className="font-mono">#{card.reference}</span>
+            {context !== "sale" && (
+              <span className="font-mono">#{card.reference}</span>
+            )}
           </div>
 
           {/* Trade/Sale Info for List View */}
           {showTradeInfo && (card.isForTrade || card.tradePrice) && (
             <div className="mt-2 space-y-1">
               {/* Status */}
-              {card.isForTrade && card.tradePrice && !card.tradeOnly && (
-                <div className="flex items-center text-xs">
-                  <Handshake className="w-3 h-3 mr-1 text-blue-400" />
-                  <span className="text-blue-400">Vente & Trade</span>
-                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
-                </div>
-              )}
-              {card.isForTrade && card.tradeOnly && (
-                <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
-                  <Handshake className="w-3 h-3 mr-1" />
-                  <span>Échange seul</span>
-                </div>
-              )}
-              {card.tradePrice && !card.isForTrade && (
-                <div className="flex items-center text-xs">
-                  <span className="text-green-400">À vendre:</span>
-                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
-                </div>
+              {context === "sale" ? (
+                <>
+                  {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+                    <div className="flex items-center text-xs">
+                      <DollarSign className="w-3 h-3 mr-1 text-[hsl(9,85%,67%)]" />
+                      <span className="text-[hsl(9,85%,67%)]">Vente</span>
+                      <span className="ml-2 text-white font-bold">{card.tradePrice}</span>
+                    </div>
+                  )}
+                  {card.isForTrade && card.tradeOnly && (
+                    <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
+                      <RefreshCw className="w-3 h-3 mr-1" />
+                      <span>Échange seul</span>
+                    </div>
+                  )}
+                  {card.tradePrice && !card.isForTrade && (
+                    <div className="flex items-center text-xs">
+                      <DollarSign className="w-3 h-3 mr-1 text-[hsl(9,85%,67%)]" />
+                      <span className="text-[hsl(9,85%,67%)]">À vendre:</span>
+                      <span className="ml-2 text-white font-bold">{card.tradePrice}</span>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+                    <div className="flex items-center text-xs">
+                      <Handshake className="w-3 h-3 mr-1 text-blue-400" />
+                      <span className="text-blue-400">Vente & Trade</span>
+                      <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                    </div>
+                  )}
+                  {card.isForTrade && card.tradeOnly && (
+                    <div className="flex items-center text-xs text-[hsl(9,85%,67%)]">
+                      <Handshake className="w-3 h-3 mr-1" />
+                      <span>Échange seul</span>
+                    </div>
+                  )}
+                  {card.tradePrice && !card.isForTrade && (
+                    <div className="flex items-center text-xs">
+                      <span className="text-green-400">À vendre:</span>
+                      <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
