@@ -19,7 +19,7 @@ export default function CollectionDetail() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1" | "for_sale">("for_sale");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
@@ -164,9 +164,7 @@ export default function CollectionDetail() {
         case "special_1_1": 
           includeCard = card.cardType === "special_1_1" || card.numbering === "1/1";
           break;
-        case "for_sale":
-          includeCard = card.isForTrade || !!card.tradePrice;
-          break;
+
         default: 
           includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
       }
@@ -815,16 +813,7 @@ export default function CollectionDetail() {
           >
             Autographes
           </button>
-          <button
-            onClick={() => setFilter("for_sale")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-              filter === "for_sale" 
-                ? "bg-green-600 text-white shadow-lg transform scale-105" 
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-          >
-            Cartes à la vente
-          </button>
+
           <button
             onClick={() => setFilter("special_1_1")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
@@ -907,23 +896,7 @@ export default function CollectionDetail() {
           
 
           
-          {/* Photo upload button - Only visible in "for_sale" tab */}
-          {filter === "for_sale" && (
-            <button 
-              onClick={() => setShowPhotoUpload(true)}
-              className="p-3 rounded-lg transition-colors shadow-lg"
-              style={{
-                backgroundColor: '#F37261',
-                borderColor: '#F37261',
-                animation: 'pulse-shadow 2s infinite',
-                boxShadow: '0 0 0 0 rgba(243, 114, 97, 0.7)'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#E65A47'}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#F37261'}
-            >
-              <Camera className="w-4 h-4 text-white" />
-            </button>
-          )}
+
         </div>
 
         {/* View Toggle and Selection Controls */}
