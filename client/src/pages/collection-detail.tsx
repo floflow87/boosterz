@@ -164,6 +164,9 @@ export default function CollectionDetail() {
         case "special_1_1": 
           includeCard = card.cardType === "special_1_1" || card.numbering === "1/1";
           break;
+        case "for_sale":
+          includeCard = card.isForTrade || !!card.tradePrice;
+          break;
         default: 
           includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
       }
@@ -811,6 +814,16 @@ export default function CollectionDetail() {
             }`}
           >
             Autographes
+          </button>
+          <button
+            onClick={() => setFilter("for_sale")}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+              filter === "for_sale" 
+                ? "bg-green-600 text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+          >
+            Cartes à la vente
           </button>
           <button
             onClick={() => setFilter("special_1_1")}
