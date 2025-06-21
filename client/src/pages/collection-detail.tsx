@@ -7,6 +7,7 @@ import CardPhotoImportFixed from "@/components/card-photo-import-fixed";
 import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
 import HaloBlur from "@/components/halo-blur";
+import CardDisplay from "@/components/card-display";
 // import { ProductionDiagnostic } from "@/components/production-diagnostic";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";

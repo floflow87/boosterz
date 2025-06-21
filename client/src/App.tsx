@@ -19,6 +19,7 @@ import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
 import Welcome from "@/pages/welcome";
 import Landing from "@/pages/landing";
+import CardExamples from "@/pages/card-examples";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -48,6 +49,7 @@ function Router() {
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
       <Route path="/profile" component={Profile} />
+      <Route path="/card-examples" component={CardExamples} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/landing" component={Landing} />
       <Route component={NotFound} />
