@@ -113,7 +113,7 @@ export default function CollectionDetail() {
     queryKey: [`/api/collections/${collectionId}`],
   });
 
-  const { data: cards, isLoading: cardsLoading, error: cardsError } = useQuery<Card[]>({
+  const { data: cardsResponse, isLoading: cardsLoading, error: cardsError } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${collectionId}/cards`],
     staleTime: 0,
     gcTime: 1 * 60 * 1000,
@@ -123,6 +123,9 @@ export default function CollectionDetail() {
     refetchInterval: false,
     refetchIntervalInBackground: false,
   });
+
+  // Extract cards from response (handle both old array format and new paginated format)
+  const cards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
 
   // Scroll to top when page loads
   useEffect(() => {

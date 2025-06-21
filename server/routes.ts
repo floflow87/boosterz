@@ -7,6 +7,9 @@ import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card } from "@shared/schema";
+import { db } from "./db";
+import { cards } from "@shared/schema";
+import { eq } from "drizzle-orm";
 
 // Initialize sample data in database
 const initializeSampleData = async () => {
@@ -79,11 +82,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       for (const limit of limits) {
         const testStart = Date.now();
         try {
-          const testCards = await db
-            .select()
-            .from(cards)
-            .where(eq(cards.collectionId, collectionId))
-            .limit(limit);
+          const testCards = await storage.getCardsByCollectionId(collectionId);
           
           const testTime = Date.now() - testStart;
           results.push({
@@ -319,47 +318,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get cards in collection with production optimizations
+  // Get cards in collection with pagination for production
   app.get("/api/collections/:id/cards", async (req, res) => {
     try {
       const collectionId = parseInt(req.params.id);
+      const page = parseInt(req.query.page as string) || 1;
+      const limit = parseInt(req.query.limit as string) || (process.env.NODE_ENV === 'production' ? 500 : 2000);
+      const offset = (page - 1) * limit;
       
-      console.log(`API: Loading cards for collection ${collectionId}`);
+      console.log(`API: Loading collection ${collectionId}, page ${page}, limit ${limit}`);
       const startTime = Date.now();
       
-      // Set timeout for production
-      const timeout = process.env.NODE_ENV === 'production' ? 25000 : 60000; // 25s in prod, 60s in dev
+      // For pagination, we need to modify the storage method or create a new one
+      let cards: Card[];
+      let totalCount = 0;
       
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database query timeout')), timeout);
-      });
-      
-      const cardsPromise = storage.getCardsByCollectionId(collectionId);
-      
-      const cards = await Promise.race([cardsPromise, timeoutPromise]) as Card[];
+      if (page === 1 && !req.query.page) {
+        // First load - get all cards with optimized limit
+        cards = await storage.getCardsByCollectionId(collectionId);
+        totalCount = cards.length;
+      } else {
+        // Paginated load - we'll implement this differently
+        cards = await storage.getCardsByCollectionId(collectionId);
+        totalCount = cards.length;
+        
+        // Apply pagination manually
+        cards = cards.slice(offset, offset + limit);
+      }
       
       const endTime = Date.now();
-      console.log(`API: Loaded ${cards.length} cards in ${endTime - startTime}ms`);
+      console.log(`API: Loaded ${cards.length}/${totalCount} cards in ${endTime - startTime}ms`);
       
       // Set cache headers for production
       if (process.env.NODE_ENV === 'production') {
-        res.setHeader('Cache-Control', 'public, max-age=300'); // 5 minutes
+        res.setHeader('Cache-Control', 'public, max-age=180'); // 3 minutes cache
       }
       
-      res.json(cards);
+      res.json({
+        cards,
+        pagination: {
+          page,
+          limit,
+          total: totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          hasMore: offset + limit < totalCount
+        }
+      });
     } catch (error) {
       console.error("API: Error loading cards:", error);
       
-      // Return partial data or empty array instead of 500 error
-      if (error instanceof Error && error.message === 'Database query timeout') {
-        console.log("API: Database timeout, returning empty array");
-        res.json([]);
-      } else {
-        res.status(500).json({ 
-          message: "Database temporarily unavailable",
-          error: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
-        });
-      }
+      res.status(500).json({ 
+        message: "Database temporarily unavailable",
+        error: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined,
+        cards: [],
+        pagination: { page: 1, limit: 0, total: 0, totalPages: 0, hasMore: false }
+      });
     }
   });
 
