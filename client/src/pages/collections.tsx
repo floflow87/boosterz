@@ -8,7 +8,7 @@ import Navigation from "@/components/navigation";
 import CardAddModal from "@/components/card-add-modal";
 import CardDisplay from "../components/card-display";
 import LoadingScreen from "@/components/LoadingScreen";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import avatarImage from "@assets/image_1750196240581.png";
 import cardStackIcon from "@assets/image_1750351528484.png";
@@ -126,6 +126,49 @@ export default function Collections() {
   const confirmDeleteCollection = () => {
     if (collectionToDelete) {
       deleteCollectionMutation.mutate(collectionToDelete.id);
+    }
+  };
+
+  const handleSaveSaleSettings = async () => {
+    if (!selectedCard) return;
+    
+    try {
+      const response = await fetch(`/api/cards/${selectedCard.id}/sale-settings`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          salePrice,
+          saleDescription,
+          tradeOnly
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la sauvegarde');
+      }
+      
+      setShowTradePanel(false);
+      setSalePrice('');
+      setSaleDescription('');
+      setTradeOnly(false);
+      
+      toast({
+        title: "Paramètres sauvegardés",
+        description: "Les paramètres de vente ont été mis à jour.",
+      });
+      
+      // Actualiser les données
+      await queryClient.invalidateQueries({ queryKey: ['/api/cards'] });
+      
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les paramètres.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -970,8 +1013,10 @@ export default function Collections() {
                         </label>
                         <input
                           type="text"
+                          value={salePrice}
+                          onChange={(e) => setSalePrice(e.target.value)}
                           placeholder="Ex: 15€"
-                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
                         />
                       </div>
                       
@@ -981,8 +1026,10 @@ export default function Collections() {
                         </label>
                         <textarea
                           rows={3}
+                          value={saleDescription}
+                          onChange={(e) => setSaleDescription(e.target.value)}
                           placeholder="Décrivez l'état de la carte..."
-                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)] resize-none"
                         />
                       </div>
                       
@@ -990,7 +1037,9 @@ export default function Collections() {
                         <input
                           type="checkbox"
                           id="tradeOnly"
-                          className="w-4 h-4 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500"
+                          checked={tradeOnly}
+                          onChange={(e) => setTradeOnly(e.target.checked)}
+                          className="w-4 h-4 text-[hsl(9,85%,67%)] bg-gray-700 border-gray-600 rounded focus:ring-[hsl(9,85%,67%)]"
                         />
                         <label htmlFor="tradeOnly" className="text-sm text-gray-300">
                           Échange uniquement (pas de vente)
@@ -1005,7 +1054,10 @@ export default function Collections() {
                       >
                         Annuler
                       </button>
-                      <button className="flex-1 p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors">
+                      <button 
+                        onClick={handleSaveSaleSettings}
+                        className="flex-1 p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors"
+                      >
                         Sauvegarder
                       </button>
                     </div>
