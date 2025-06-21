@@ -835,29 +835,7 @@ export default function CollectionDetail() {
             )}
           </div>
           
-          {/* View Toggle Buttons */}
-          <div className="flex items-center bg-gray-800 rounded-lg p-1">
-            <button
-              onClick={() => setViewMode("grid")}
-              className={`p-2 rounded-md transition-all ${
-                viewMode === "grid" 
-                  ? "bg-blue-600 text-white" 
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <Grid className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode("list")}
-              className={`p-2 rounded-md transition-all ${
-                viewMode === "list" 
-                  ? "bg-blue-600 text-white" 
-                  : "text-gray-400 hover:text-white"
-              }`}
-            >
-              <List className="w-4 h-4" />
-            </button>
-          </div>
+
           
           {/* Photo upload button */}
           <button 
@@ -876,18 +854,45 @@ export default function CollectionDetail() {
           </button>
         </div>
 
-        {/* Selection Controls - Only show "Select All" when no cards selected */}
-        {selectedCards.size === 0 && filteredCards && filteredCards.length > 0 && (
-          <div className="mb-4">
-            <button
-              onClick={handleSelectAll}
-              className="text-sm hover:opacity-80"
-              style={{ color: '#F37261' }}
-            >
-              Tout sélectionner
-            </button>
+        {/* View Toggle and Selection Controls */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            {/* View Toggle Buttons */}
+            <div className="flex items-center bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-md transition-all ${
+                  viewMode === "grid" 
+                    ? "bg-blue-600 text-white" 
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-md transition-all ${
+                  viewMode === "list" 
+                    ? "bg-blue-600 text-white" 
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <List className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Select All - Only show when no cards selected */}
+            {selectedCards.size === 0 && filteredCards && filteredCards.length > 0 && (
+              <button
+                onClick={handleSelectAll}
+                className="text-sm hover:opacity-80"
+                style={{ color: '#F37261' }}
+              >
+                Tout sélectionner
+              </button>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Cards Display */}
         {viewMode === "grid" ? (
@@ -1255,35 +1260,41 @@ export default function CollectionDetail() {
                         const variants = getCardVariants(selectedCard);
                         if (variants.length <= 1) return null;
                         
+                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        
                         return (
                           <>
                             {/* Previous Arrow */}
                             <button
-                              onClick={() => {
-                                const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
-                                handleCardSelect(variants[prevIndex]);
+                                const prevCard = variants[prevIndex];
+                                setSelectedCard(prevCard);
                               }}
-                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-10"
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
                             >
                               <ChevronLeft className="w-6 h-6" />
                             </button>
                             
                             {/* Next Arrow */}
                             <button
-                              onClick={() => {
-                                const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
                                 const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
-                                handleCardSelect(variants[nextIndex]);
+                                const nextCard = variants[nextIndex];
+                                setSelectedCard(nextCard);
                               }}
-                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-10"
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
                             >
                               <ChevronRight className="w-6 h-6" />
                             </button>
                             
                             {/* Variant Counter */}
                             <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
-                              {(variants.findIndex(v => v.id === currentCard?.id) + 1)} / {variants.length}
+                              {currentIndex + 1} / {variants.length}
                             </div>
                           </>
                         );
@@ -1374,118 +1385,138 @@ export default function CollectionDetail() {
         </div>
       )}
 
-      {/* Options Panel */}
+      {/* Options Panel - Replit-style */}
       {showOptionsPanel && selectedCard && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-end"
+          className="fixed inset-0 z-[70]"
           onClick={() => setShowOptionsPanel(false)}
         >
+          {/* Background overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+          
+          {/* Panel */}
           <div 
-            className="w-full bg-[hsl(214,35%,22%)] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out"
+            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl transform transition-transform duration-300 ease-out"
             style={{
-              animation: 'slideInFromBottom 0.3s ease-out',
-              maxHeight: '80vh'
+              animation: 'slideInFromBottom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              height: '50vh',
+              minHeight: '400px'
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Handle bar */}
-            <div className="w-12 h-1 bg-gray-400 rounded-full mx-auto mt-3 mb-6"></div>
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+            </div>
             
-            <div className="px-6 pb-6">
-              <h3 className="text-lg font-bold text-white mb-6 text-center">Options de la carte</h3>
+            <div className="px-6 pb-8 h-full overflow-y-auto">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6 text-center">Options</h3>
             
-              <div className="space-y-3">
-              {/* Proposer à l'échange */}
-              <button
-                onClick={() => {
-                  setSelectedTradeCard(selectedCard);
-                  setShowTradePanel(true);
-                  setShowOptionsPanel(false);
-                }}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3"
-              >
-                <Handshake className="w-5 h-5" />
-                <span className="font-medium">Proposer à l'échange</span>
-              </button>
+              <div className="space-y-4">
+                {/* Proposer à l'échange */}
+                <button
+                  onClick={() => {
+                    setSelectedTradeCard(selectedCard);
+                    setShowTradePanel(true);
+                    setShowOptionsPanel(false);
+                  }}
+                  className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <Handshake className="w-5 h-5 text-green-600" />
+                  </div>
+                  <span className="font-medium">Proposer à l'échange</span>
+                </button>
 
-              {/* Photo action */}
-              {(() => {
-                const currentCard = getCurrentCard();
-                const hasPhoto = currentCard?.imageUrl;
-                
-                return (
-                  <button
-                    onClick={() => {
-                      if (hasPhoto) {
-                        // Supprimer la photo
-                        updateCardImageMutation.mutateAsync({
-                          cardId: currentCard.id,
-                          imageUrl: ""
-                        }).then(() => {
-                          toast({
-                            title: "Photo supprimée",
-                            description: "La photo de la carte a été supprimée avec succès."
+                {/* Photo action */}
+                {(() => {
+                  const currentCard = getCurrentCard();
+                  const hasPhoto = currentCard?.imageUrl;
+                  
+                  return (
+                    <button
+                      onClick={() => {
+                        if (hasPhoto) {
+                          updateCardImageMutation.mutateAsync({
+                            cardId: currentCard.id,
+                            imageUrl: ""
+                          }).then(() => {
+                            toast({
+                              title: "Photo supprimée",
+                              description: "La photo de la carte a été supprimée avec succès."
+                            });
+                          }).catch(() => {
+                            toast({
+                              title: "Erreur",
+                              description: "Impossible de supprimer la photo.",
+                              variant: "destructive"
+                            });
                           });
-                        }).catch(() => {
-                          toast({
-                            title: "Erreur",
-                            description: "Impossible de supprimer la photo.",
-                            variant: "destructive"
-                          });
-                        });
+                        } else {
+                          setShowPhotoUpload(true);
+                        }
+                        setShowOptionsPanel(false);
+                      }}
+                      className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                    >
+                      <div className={`w-8 h-8 ${hasPhoto ? 'bg-red-100' : 'bg-blue-100'} rounded-lg flex items-center justify-center`}>
+                        {hasPhoto ? 
+                          <Trash2 className="w-5 h-5 text-red-600" /> : 
+                          <Camera className="w-5 h-5 text-blue-600" />
+                        }
+                      </div>
+                      <span className="font-medium">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
+                    </button>
+                  );
+                })()}
+
+                {/* Statut de possession */}
+                <button
+                  onClick={async () => {
+                    try {
+                      const currentCard = getCurrentCard();
+                      if (selectedCard.isOwned) {
+                        await handleMarkAsNotOwned(currentCard?.id || selectedCard.id);
                       } else {
-                        setShowPhotoUpload(true);
+                        await handleMarkAsOwned(currentCard?.id || selectedCard.id, false);
                       }
                       setShowOptionsPanel(false);
-                    }}
-                    className={`w-full ${hasPhoto ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3`}
-                  >
-                    {hasPhoto ? <Trash2 className="w-5 h-5" /> : <Camera className="w-5 h-5" />}
-                    <span className="font-medium">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
-                  </button>
-                );
-              })()}
-
-              {/* Statut de possession */}
-              <button
-                onClick={async () => {
-                  try {
-                    const currentCard = getCurrentCard();
-                    if (selectedCard.isOwned) {
-                      await handleMarkAsNotOwned(currentCard?.id || selectedCard.id);
-                    } else {
-                      await handleMarkAsOwned(currentCard?.id || selectedCard.id, false);
+                    } catch (error) {
+                      toast({
+                        title: "Erreur",
+                        description: "Impossible de modifier le statut de la carte.",
+                        variant: "destructive"
+                      });
                     }
-                    setShowOptionsPanel(false);
-                  } catch (error) {
-                    toast({
-                      title: "Erreur",
-                      description: "Impossible de modifier le statut de la carte.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-                className={`w-full ${selectedCard.isOwned ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3`}
-              >
-                {selectedCard.isOwned ? <Minus className="w-5 h-5" /> : <Check className="w-5 h-5" />}
-                <span className="font-medium">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
-              </button>
+                  }}
+                  className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                >
+                  <div className={`w-8 h-8 ${selectedCard.isOwned ? 'bg-red-100' : 'bg-green-100'} rounded-lg flex items-center justify-center`}>
+                    {selectedCard.isOwned ? 
+                      <Minus className="w-5 h-5 text-red-600" /> : 
+                      <Check className="w-5 h-5 text-green-600" />
+                    }
+                  </div>
+                  <span className="font-medium">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
+                </button>
 
-              {/* Mettre à la une */}
-              <button
-                onClick={() => {
-                  toast({
-                    title: "Mise à la une",
-                    description: "Cette carte a été mise à la une de votre collection.",
-                    className: "bg-yellow-900 border-yellow-700 text-yellow-100",
-                  });
-                  setShowOptionsPanel(false);
-                }}
-                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3"
-              >
-                <Star className="w-5 h-5" />
-                <span className="font-medium">Mettre à la une</span>
-              </button>
+                {/* Mettre à la une */}
+                <button
+                  onClick={() => {
+                    toast({
+                      title: "Mise à la une",
+                      description: "Cette carte a été mise à la une de votre collection.",
+                      className: "bg-yellow-900 border-yellow-700 text-yellow-100",
+                    });
+                    setShowOptionsPanel(false);
+                  }}
+                  className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-900 py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <Star className="w-5 h-5 text-yellow-600" />
+                  </div>
+                  <span className="font-medium">Mettre à la une</span>
+                </button>
               </div>
             </div>
           </div>

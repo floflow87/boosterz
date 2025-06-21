@@ -68,6 +68,12 @@
   }
 }
 
+/* Touch-friendly scrolling for carousel */
+.card-carousel-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
 @keyframes pulse-shadow-card {
   0% {
     box-shadow: 0 0 0 0 rgba(243, 114, 97, 0.4);
