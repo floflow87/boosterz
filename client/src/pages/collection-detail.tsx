@@ -8,6 +8,7 @@ import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
 import HaloBlur from "@/components/halo-blur";
 import { ProductionDiagnostic } from "@/components/production-diagnostic";
+import { useChunkedCards } from "@/hooks/use-chunked-cards";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
@@ -113,16 +114,16 @@ export default function CollectionDetail() {
     queryKey: [`/api/collections/${collectionId}`],
   });
 
-  const { data: cards, isLoading: cardsLoading, error: cardsError } = useQuery<Card[]>({
-    queryKey: [`/api/collections/${collectionId}/cards`],
-    staleTime: 0, // Pas de cache pour forcer le rechargement
-    gcTime: 1 * 60 * 1000, // 1 minute
-    refetchOnWindowFocus: true,
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    refetchInterval: false,
-    refetchIntervalInBackground: false,
-  });
+  // Import the chunked cards hook
+  const { 
+    cards, 
+    isLoading: cardsLoading, 
+    error: cardsError,
+    totalCards,
+    loadedCards,
+    loadingProgress,
+    isComplete
+  } = useChunkedCards(collectionId);
 
   // Scroll to top when page loads
   useEffect(() => {
@@ -222,15 +223,45 @@ export default function CollectionDetail() {
 
   // Debug logging pour la production
   useEffect(() => {
-    console.log("Collection loading state:", { collectionLoading, cardsLoading, cardsError });
+    console.log("Collection loading state:", { 
+      collectionLoading, 
+      cardsLoading, 
+      cardsError,
+      totalCards,
+      loadedCards,
+      loadingProgress 
+    });
     console.log("Cards data:", cards ? `${cards.length} cards loaded` : "No cards data");
     if (cardsError) {
       console.error("Cards loading error:", cardsError);
     }
-  }, [collectionLoading, cardsLoading, cards, cardsError]);
+  }, [collectionLoading, cardsLoading, cards, cardsError, totalCards, loadedCards, loadingProgress]);
 
-  if (collectionLoading || cardsLoading) {
+  if (collectionLoading) {
     return <LoadingScreen />;
+  }
+
+  if (cardsLoading && (!cards || cards.length === 0)) {
+    return (
+      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-white text-xl mb-2">Chargement des cartes...</h2>
+          {totalCards > 0 && (
+            <>
+              <p className="text-gray-400 mb-2">{loadedCards} / {totalCards} cartes chargées</p>
+              <div className="w-64 bg-gray-700 rounded-full h-2 mx-auto">
+                <div 
+                  className="bg-orange-500 h-2 rounded-full transition-all duration-300" 
+                  style={{ width: `${loadingProgress}%` }}
+                ></div>
+              </div>
+              <p className="text-orange-400 text-sm mt-2">{loadingProgress}%</p>
+            </>
+          )}
+        </div>
+      </div>
+    );
   }
 
   if (cardsError) {
@@ -939,24 +970,37 @@ export default function CollectionDetail() {
           </div>
         </div>
 
+        {/* Loading progress indicator */}
+        {cardsLoading && cards && cards.length > 0 && !isComplete && (
+          <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-300 text-sm">Chargement en cours...</span>
+              <span className="text-orange-400 text-sm">{loadedCards} / {totalCards}</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-1">
+              <div 
+                className="bg-orange-500 h-1 rounded-full transition-all duration-300" 
+                style={{ width: `${loadingProgress}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+
         {/* Cards Display */}
         {!filteredCards || filteredCards.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4 text-lg">
-              {cardsLoading ? "Chargement des cartes..." : 
-               cards === undefined ? "Aucune donnée de carte disponible" :
+              {cardsLoading && (!cards || cards.length === 0) ? "Chargement des cartes..." : 
+               !cards || cards.length === 0 ? "Aucune donnée de carte disponible" :
                searchTerm ? "Aucune carte trouvée pour cette recherche" : 
                "Aucune carte dans cette catégorie"}
             </div>
-            {cards === undefined && (
+            {(!cards || cards.length === 0) && !cardsLoading && (
               <button 
-                onClick={() => {
-                  queryClient.removeQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-                  queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-                }}
+                onClick={() => window.location.reload()}
                 className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
               >
-                Recharger les cartes
+                Recharger la page
               </button>
             )}
           </div>
