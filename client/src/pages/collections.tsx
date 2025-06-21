@@ -35,6 +35,7 @@ export default function Collections() {
   const [salePrice, setSalePrice] = useState('');
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
+  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('available');
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -159,8 +160,8 @@ export default function Collections() {
         description: "Les paramètres de vente ont été mis à jour.",
       });
       
-      // Actualiser les données
-      await queryClient.invalidateQueries({ queryKey: ['/api/cards'] });
+      // Actualiser les données du marketplace
+      await queryClient.invalidateQueries({ queryKey: ['/api/cards/marketplace'] });
       
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
@@ -762,12 +763,48 @@ export default function Collections() {
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white font-poppins">Mes cartes à la vente</h3>
+              
+              {/* Filtres */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
+                  <button
+                    onClick={() => setSaleFilter('available')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'available' 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Disponibles
+                  </button>
+                  <button
+                    onClick={() => setSaleFilter('sold')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'sold' 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Vendues
+                  </button>
+                  <button
+                    onClick={() => setSaleFilter('all')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'all' 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Toutes
+                  </button>
+                </div>
+              
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setViewMode("list")}
                   className={`p-2 rounded-md transition-all ${
                     viewMode === "list" 
-                      ? "bg-blue-600 text-white" 
+                      ? "bg-[hsl(9,85%,67%)] text-white" 
                       : "text-gray-400 hover:text-white"
                   }`}
                 >
@@ -777,7 +814,7 @@ export default function Collections() {
                   onClick={() => setViewMode("grid")}
                   className={`p-2 rounded-md transition-all ${
                     viewMode === "grid" 
-                      ? "bg-blue-600 text-white" 
+                      ? "bg-[hsl(9,85%,67%)] text-white" 
                       : "text-gray-400 hover:text-white"
                   }`}
                 >
@@ -789,7 +826,13 @@ export default function Collections() {
             {marketplaceCards && marketplaceCards.length > 0 ? (
               viewMode === "grid" ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {marketplaceCards.filter(card => card.isForTrade).map((card) => (
+                  {marketplaceCards
+                    .filter(card => {
+                      if (saleFilter === 'available') return card.isForTrade && !card.isSold;
+                      if (saleFilter === 'sold') return card.isSold;
+                      return card.isForTrade || card.isSold;
+                    })
+                    .map((card) => (
                     <CardDisplay
                       key={card.id}
                       card={card}
@@ -804,7 +847,13 @@ export default function Collections() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {marketplaceCards.filter(card => card.isForTrade).map((card) => (
+                  {marketplaceCards
+                    .filter(card => {
+                      if (saleFilter === 'available') return card.isForTrade && !card.isSold;
+                      if (saleFilter === 'sold') return card.isSold;
+                      return card.isForTrade || card.isSold;
+                    })
+                    .map((card) => (
                     <CardDisplay
                       key={card.id}
                       card={card}

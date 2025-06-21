@@ -214,41 +214,33 @@ export default function CardDisplay({
           )}
         </div>
 
-        {/* Actions */}
-        {showActions && (
+        {/* Actions - Hide for sale context */}
+        {showActions && context !== "sale" && (
           <div className="flex items-center gap-2 ml-4">
-            {context === "sale" ? (
-              <div className="w-6 h-6 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
-                <Eye className="w-3 h-3 text-white" />
-              </div>
-            ) : (
-              <>
-                <button
-                  onClick={handleToggleOwnership}
-                  className={cn(
-                    "p-2 rounded-full transition-colors",
-                    card.isOwned 
-                      ? "bg-green-600 hover:bg-green-700" 
-                      : "bg-red-600 hover:bg-red-700"
-                  )}
-                >
-                  {card.isOwned ? "✓" : "✗"}
-                </button>
-                
-                {card.isOwned && (
-                  <button
-                    onClick={handleToggleFeatured}
-                    className={cn(
-                      "p-2 rounded-full transition-colors",
-                      card.isFeatured 
-                        ? "text-yellow-400 hover:bg-yellow-400/20" 
-                        : "text-gray-400 hover:bg-gray-600"
-                    )}
-                  >
-                    <Star className={cn("w-4 h-4", card.isFeatured && "fill-current")} />
-                  </button>
+            <button
+              onClick={handleToggleOwnership}
+              className={cn(
+                "p-2 rounded-full transition-colors",
+                card.isOwned 
+                  ? "bg-green-600 hover:bg-green-700" 
+                  : "bg-red-600 hover:bg-red-700"
+              )}
+            >
+              {card.isOwned ? "✓" : "✗"}
+            </button>
+            
+            {card.isOwned && (
+              <button
+                onClick={handleToggleFeatured}
+                className={cn(
+                  "p-2 rounded-full transition-colors",
+                  card.isFeatured 
+                    ? "text-yellow-400 hover:bg-yellow-400/20" 
+                    : "text-gray-400 hover:bg-gray-600"
                 )}
-              </>
+              >
+                <Star className={cn("w-4 h-4", card.isFeatured && "fill-current")} />
+              </button>
             )}
           </div>
         )}
@@ -296,24 +288,13 @@ export default function CardDisplay({
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* Sale Status or Featured Star */}
-        {context === "sale" ? (
-          <div className="absolute top-2 right-2 space-y-1">
-            {/* View Icons in salmon color */}
-            <div className="flex items-center gap-1">
-              <div className="w-6 h-6 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
-                <Eye className="w-3 h-3 text-white" />
-              </div>
-            </div>
+        {/* Featured Star - Only for non-sale context */}
+        {context !== "sale" && card.isFeatured && (
+          <div className="absolute top-2 right-2 z-20">
+            <Star 
+              className="w-6 h-6 text-yellow-400 fill-current drop-shadow-lg animate-pulse" 
+            />
           </div>
-        ) : (
-          card.isFeatured && (
-            <div className="absolute top-2 right-2 z-20">
-              <Star 
-                className="w-6 h-6 text-yellow-400 fill-current drop-shadow-lg animate-pulse" 
-              />
-            </div>
-          )
         )}
 
         {/* Sale Status or Ownership Indicator */}
@@ -341,9 +322,10 @@ export default function CardDisplay({
           </div>
         )}
 
-        {/* Card Type Badge */}
+        {/* Card Type Badge - Move to right for sale context */}
         <div className={cn(
-          "absolute top-2 left-1/2 transform -translate-x-1/2 px-2 py-1 rounded-full text-xs border font-medium",
+          "absolute top-2 px-2 py-1 rounded-full text-xs border font-medium",
+          context === "sale" ? "right-2" : "left-1/2 transform -translate-x-1/2",
           getCardTypeColor(card.cardType)
         )}>
           {getRarityIndicator()} {card.cardType}
