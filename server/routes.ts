@@ -64,6 +64,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
+  // Production test endpoint for collection 23/24
+  app.get("/api/test-collection/:id", async (req, res) => {
+    try {
+      const collectionId = parseInt(req.params.id);
+      console.log(`🧪 Testing collection ${collectionId} load performance`);
+      
+      const startTime = Date.now();
+      
+      // Test with progressive limits
+      const limits = [100, 500, 1000, 2000];
+      const results = [];
+      
+      for (const limit of limits) {
+        const testStart = Date.now();
+        try {
+          const testCards = await db
+            .select()
+            .from(cards)
+            .where(eq(cards.collectionId, collectionId))
+            .limit(limit);
+          
+          const testTime = Date.now() - testStart;
+          results.push({
+            limit,
+            count: testCards.length,
+            timeMs: testTime,
+            status: 'success'
+          });
+          
+          // Stop if we're taking too long
+          if (testTime > 15000) break;
+          
+        } catch (error) {
+          results.push({
+            limit,
+            count: 0,
+            timeMs: Date.now() - testStart,
+            status: 'error',
+            error: error instanceof Error ? error.message : String(error)
+          });
+          break;
+        }
+      }
+      
+      const totalTime = Date.now() - startTime;
+      
+      res.json({
+        collectionId,
+        environment: process.env.NODE_ENV || 'unknown',
+        database: process.env.DATABASE_URL ? 'configured' : 'missing',
+        totalTestTimeMs: totalTime,
+        progressiveTests: results,
+        recommendation: results.length > 0 ? 
+          `Use limit of ${results.find(r => r.status === 'success' && r.timeMs < 10000)?.limit || 100}` :
+          'Database connection issues'
+      });
+      
+    } catch (error) {
+      console.error("Test endpoint error:", error);
+      res.status(500).json({
+        error: error instanceof Error ? error.message : String(error),
+        collectionId: parseInt(req.params.id),
+        environment: process.env.NODE_ENV || 'unknown'
+      });
+    }
+  });
+
+  // Simple diagnostic endpoint
+  app.get("/api/diagnostic", async (req, res) => {
+    try {
+      const startTime = Date.now();
+      
+      // Test database connection
+      const collections = await storage.getCollectionsByUserId(1);
+      const dbTime = Date.now() - startTime;
+      
+      // Test specific collection
+      let collectionTest = null;
+      if (collections.length > 0) {
+        const testCollection = collections.find(c => c.id === 23) || collections[0];
+        const testStart = Date.now();
+        const testCards = await storage.getCardsByCollectionId(testCollection.id);
+        const testTime = Date.now() - testStart;
+        
+        collectionTest = {
+          collectionId: testCollection.id,
+          collectionName: testCollection.name,
+          cardsCount: testCards.length,
+          loadTimeMs: testTime
+        };
+      }
+      
+      res.json({
+        status: "ok",
+        environment: process.env.NODE_ENV || "unknown",
+        databaseConnection: dbTime < 5000 ? "good" : "slow",
+        collectionsFound: collections.length,
+        dbLoadTimeMs: dbTime,
+        collectionTest,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: "error",
+        error: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
   // Search all users
   // Card recognition endpoint
   app.post("/api/recognize-card", async (req, res) => {
@@ -209,23 +319,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get cards in collection
+  // Get cards in collection with production optimizations
   app.get("/api/collections/:id/cards", async (req, res) => {
     try {
       const collectionId = parseInt(req.params.id);
       
-      console.log(`Loading cards for collection ${collectionId}`);
+      console.log(`API: Loading cards for collection ${collectionId}`);
       const startTime = Date.now();
       
-      const cards = await storage.getCardsByCollectionId(collectionId);
+      // Set timeout for production
+      const timeout = process.env.NODE_ENV === 'production' ? 25000 : 60000; // 25s in prod, 60s in dev
+      
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database query timeout')), timeout);
+      });
+      
+      const cardsPromise = storage.getCardsByCollectionId(collectionId);
+      
+      const cards = await Promise.race([cardsPromise, timeoutPromise]) as Card[];
       
       const endTime = Date.now();
-      console.log(`Loaded ${cards.length} cards in ${endTime - startTime}ms`);
+      console.log(`API: Loaded ${cards.length} cards in ${endTime - startTime}ms`);
+      
+      // Set cache headers for production
+      if (process.env.NODE_ENV === 'production') {
+        res.setHeader('Cache-Control', 'public, max-age=300'); // 5 minutes
+      }
       
       res.json(cards);
     } catch (error) {
-      console.error("Error loading cards:", error);
-      res.status(500).json({ message: "Internal server error" });
+      console.error("API: Error loading cards:", error);
+      
+      // Return partial data or empty array instead of 500 error
+      if (error instanceof Error && error.message === 'Database query timeout') {
+        console.log("API: Database timeout, returning empty array");
+        res.json([]);
+      } else {
+        res.status(500).json({ 
+          message: "Database temporarily unavailable",
+          error: process.env.NODE_ENV === 'development' ? (error instanceof Error ? error.message : String(error)) : undefined
+        });
+      }
     }
   });
 

@@ -153,19 +153,36 @@ export class DatabaseStorage implements IStorage {
     const startTime = Date.now();
     
     try {
+      // Try with smaller chunks first in production
+      const chunkSize = process.env.NODE_ENV === 'production' ? 1000 : 5000;
       const result = await db
         .select()
         .from(cards)
         .where(eq(cards.collectionId, collectionId))
-        .limit(5000); // Limite pour éviter les timeouts
+        .limit(chunkSize);
       
       const endTime = Date.now();
-      console.log(`DatabaseStorage: Loaded ${result.length} cards in ${endTime - startTime}ms`);
+      console.log(`DatabaseStorage: Loaded ${result.length} cards in ${endTime - startTime}ms (chunk size: ${chunkSize})`);
       
       return result;
     } catch (error) {
       console.error(`DatabaseStorage: Error loading cards for collection ${collectionId}:`, error);
-      throw error;
+      
+      // Fallback: try with even smaller limit
+      try {
+        console.log(`DatabaseStorage: Attempting fallback with smaller limit`);
+        const fallbackResult = await db
+          .select()
+          .from(cards)
+          .where(eq(cards.collectionId, collectionId))
+          .limit(500);
+        
+        console.log(`DatabaseStorage: Fallback loaded ${fallbackResult.length} cards`);
+        return fallbackResult;
+      } catch (fallbackError) {
+        console.error(`DatabaseStorage: Fallback also failed:`, fallbackError);
+        throw fallbackError;
+      }
     }
   }
 
