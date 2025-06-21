@@ -19,7 +19,7 @@ export default function CollectionDetail() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("bases");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1" | "for_sale">("for_sale");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);

@@ -126,8 +126,8 @@ export default function CardDisplay({
         )}
         onClick={handleCardClick}
       >
-        {/* Image */}
-        <div className="relative w-16 h-20 flex-shrink-0 mr-4">
+        {/* Image - Reduced size for trade info */}
+        <div className="relative w-12 h-16 flex-shrink-0 mr-3">
           {!isImageLoaded && (
             <div className="absolute inset-0 bg-gray-800 rounded animate-pulse" />
           )}
@@ -142,7 +142,7 @@ export default function CardDisplay({
             onError={handleImageError}
           />
           {card.isFeatured && (
-            <Star className="absolute -top-1 -right-1 w-4 h-4 text-yellow-400 fill-current drop-shadow-lg" />
+            <Star className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-current drop-shadow-lg" />
           )}
         </div>
 
@@ -163,10 +163,29 @@ export default function CardDisplay({
             <span className="font-mono">#{card.reference}</span>
           </div>
 
-          {showTradeInfo && card.isForTrade && (
-            <div className="mt-2 flex items-center text-xs text-blue-400">
-              <Handshake className="w-3 h-3 mr-1" />
-              {card.tradeOnly ? "Trade uniquement" : `Trade ou ${card.tradePrice}`}
+          {/* Trade/Sale Info for List View */}
+          {showTradeInfo && (card.isForTrade || card.tradePrice) && (
+            <div className="mt-2 space-y-1">
+              {/* Status */}
+              {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+                <div className="flex items-center text-xs">
+                  <Handshake className="w-3 h-3 mr-1 text-blue-400" />
+                  <span className="text-blue-400">Vente & Trade</span>
+                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                </div>
+              )}
+              {card.isForTrade && card.tradeOnly && (
+                <div className="flex items-center text-xs text-blue-400">
+                  <Handshake className="w-3 h-3 mr-1" />
+                  <span>Trade seul</span>
+                </div>
+              )}
+              {card.tradePrice && !card.isForTrade && (
+                <div className="flex items-center text-xs">
+                  <span className="text-green-400">À vendre:</span>
+                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -270,11 +289,38 @@ export default function CardDisplay({
           {getRarityIndicator()} {card.cardType}
         </div>
 
-        {/* Trade Indicator */}
-        {showTradeInfo && card.isForTrade && (
-          <div className="absolute bottom-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
-            <Handshake className="w-3 h-3 mr-1" />
-            Trade
+        {/* Trade/Sale Info */}
+        {showTradeInfo && (card.isForTrade || card.tradePrice) && (
+          <div className="absolute bottom-2 left-2 right-2 space-y-1">
+            {/* Trade Status */}
+            <div className="flex items-center justify-center">
+              {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+                <div className="bg-gradient-to-r from-blue-600 to-green-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                  <Handshake className="w-3 h-3 mr-1" />
+                  Vente & Trade
+                </div>
+              )}
+              {card.isForTrade && card.tradeOnly && (
+                <div className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                  <Handshake className="w-3 h-3 mr-1" />
+                  Trade seul
+                </div>
+              )}
+              {card.tradePrice && !card.isForTrade && (
+                <div className="bg-green-600 text-white px-2 py-1 rounded-full text-xs">
+                  À vendre
+                </div>
+              )}
+            </div>
+            
+            {/* Price */}
+            {card.tradePrice && !card.tradeOnly && (
+              <div className="text-center">
+                <span className="bg-black/70 text-white px-2 py-1 rounded text-xs font-bold">
+                  {card.tradePrice}
+                </span>
+              </div>
+            )}
           </div>
         )}
 
