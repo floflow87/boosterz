@@ -1100,8 +1100,14 @@ export default function CollectionDetail() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setShowOptionsPanel(true)}
-                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Options button clicked");
+                    setShowOptionsPanel(true);
+                  }}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
+                  type="button"
                 >
                   <MoreVertical className="w-6 h-6" />
                 </button>
@@ -1238,17 +1244,20 @@ export default function CollectionDetail() {
           onClick={() => setShowOptionsPanel(false)}
         >
           <div 
-            className="w-full bg-[hsl(214,35%,22%)] rounded-t-2xl p-6 transform transition-transform duration-300 ease-out"
+            className="w-full bg-[hsl(214,35%,22%)] rounded-t-2xl shadow-2xl transform transition-transform duration-300 ease-out"
             style={{
-              animation: 'slideInFromBottom 0.3s ease-out'
+              animation: 'slideInFromBottom 0.3s ease-out',
+              maxHeight: '80vh'
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="w-12 h-1 bg-gray-400 rounded-full mx-auto mb-6"></div>
+            {/* Handle bar */}
+            <div className="w-12 h-1 bg-gray-400 rounded-full mx-auto mt-3 mb-6"></div>
             
-            <h3 className="text-lg font-bold text-white mb-4 text-center">Options</h3>
+            <div className="px-6 pb-6">
+              <h3 className="text-lg font-bold text-white mb-6 text-center">Options de la carte</h3>
             
-            <div className="space-y-3">
+              <div className="space-y-3">
               {/* Proposer à l'échange */}
               <button
                 onClick={() => {
@@ -1340,6 +1349,7 @@ export default function CollectionDetail() {
                 <Star className="w-5 h-5" />
                 <span className="font-medium">Mettre à la une</span>
               </button>
+              </div>
             </div>
           </div>
         </div>
