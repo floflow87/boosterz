@@ -7,6 +7,7 @@ import CardPhotoImportFixed from "@/components/card-photo-import-fixed";
 import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
 import HaloBlur from "@/components/halo-blur";
+import { ProductionDiagnostic } from "@/components/production-diagnostic";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
@@ -1782,6 +1783,9 @@ export default function CollectionDetail() {
           }}
         />
       )}
+      
+      {/* Production Diagnostic Tool */}
+      <ProductionDiagnostic />
     </div>
   );
 }
