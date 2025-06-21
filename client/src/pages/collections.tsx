@@ -797,6 +797,7 @@ export default function Collections() {
                       showActions={true}
                       showTradeInfo={true}
                       variant="detailed"
+                      context="sale"
                       onCardClick={() => setSelectedCard(card)}
                     />
                   ))}
@@ -811,6 +812,7 @@ export default function Collections() {
                       showActions={true}
                       showTradeInfo={true}
                       variant="detailed"
+                      context="sale"
                       onCardClick={() => setSelectedCard(card)}
                     />
                   ))}

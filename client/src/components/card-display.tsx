@@ -266,22 +266,57 @@ export default function CardDisplay({
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-        {/* Featured Star */}
-        {card.isFeatured && (
-          <div className="absolute top-2 right-2 z-20">
-            <Star 
-              className="w-6 h-6 text-yellow-400 fill-current drop-shadow-lg animate-pulse" 
-            />
+        {/* Sale Status or Featured Star */}
+        {context === "sale" ? (
+          <div className="absolute top-2 right-2 space-y-1">
+            {/* View Icons in salmon color */}
+            <div className="flex items-center gap-1">
+              <div className="w-6 h-6 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
+                <Eye className="w-3 h-3 text-white" />
+              </div>
+            </div>
           </div>
+        ) : (
+          card.isFeatured && (
+            <div className="absolute top-2 right-2 z-20">
+              <Star 
+                className="w-6 h-6 text-yellow-400 fill-current drop-shadow-lg animate-pulse" 
+              />
+            </div>
+          )
         )}
 
-        {/* Ownership Indicator */}
-        <div className={cn(
-          "absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg",
-          card.isOwned ? "bg-green-600" : "bg-red-600"
-        )}>
-          {card.isOwned ? "✓" : "✗"}
-        </div>
+        {/* Sale Status or Ownership Indicator */}
+        {context === "sale" ? (
+          <div className="absolute top-2 left-2 space-y-1">
+            {/* Sale/Trade Status */}
+            {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+              <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
+                <DollarSign className="w-3 h-3 mr-1" />
+                Vente
+              </div>
+            )}
+            {card.isForTrade && card.tradeOnly && (
+              <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center">
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Échange
+              </div>
+            )}
+            {card.isForTrade && card.tradePrice && !card.tradeOnly && (
+              <div className="bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full text-xs flex items-center mt-1">
+                <RefreshCw className="w-3 h-3 mr-1" />
+                Trade
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className={cn(
+            "absolute top-2 left-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-lg",
+            card.isOwned ? "bg-green-600" : "bg-red-600"
+          )}>
+            {card.isOwned ? "✓" : "✗"}
+          </div>
+        )}
 
         {/* Card Type Badge */}
         <div className={cn(
