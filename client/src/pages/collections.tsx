@@ -32,6 +32,9 @@ export default function Collections() {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
+  const [salePrice, setSalePrice] = useState('');
+  const [saleDescription, setSaleDescription] = useState('');
+  const [tradeOnly, setTradeOnly] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -834,7 +837,7 @@ export default function Collections() {
                       e.stopPropagation();
                       setShowOptionsPanel(true);
                     }}
-                    className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
+                    className="text-white p-2 hover:bg-gray-700/30 rounded-lg transition-all z-20"
                     type="button"
                   >
                     <MoreVertical className="w-6 h-6" />
@@ -848,17 +851,22 @@ export default function Collections() {
                 </div>
               </div>
 
-              {/* Content - Scrollable */}
-              <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-6">
-                {/* Card Container with margins */}
-                <div className="max-w-md mx-auto">
-                  {/* Card Image */}
-                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-6">
+              {/* Content - Scrollable avec scroll fluide et hauteur augmentée */}
+              <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-8" style={{ scrollBehavior: 'smooth' }}>
+                {/* Card Container avec marges augmentées */}
+                <div className="max-w-lg mx-auto min-h-screen">
+                  {/* Card Image avec effet 3D */}
+                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
                     {selectedCard.imageUrl ? (
                       <img 
                         src={selectedCard.imageUrl} 
                         alt={selectedCard.playerName || "Card"}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+                        style={{
+                          animation: 'card-auto-float 8s ease-in-out infinite',
+                          transformStyle: 'preserve-3d',
+                          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -924,22 +932,22 @@ export default function Collections() {
                         setShowOptionsPanel(false);
                         setShowTradePanel(true);
                       }}
-                      className="w-full p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors"
+                      className="w-full p-3 text-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left"
                     >
                       Paramètres de vente
                     </button>
                     
-                    <button className="w-full p-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors">
+                    <button className="w-full p-3 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left">
                       Marquer vendue
                     </button>
                     
-                    <button className="w-full p-3 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors">
+                    <button className="w-full p-3 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left">
                       Retirer de la vente
                     </button>
                     
                     <button 
                       onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
+                      className="w-full p-3 text-gray-400 hover:bg-gray-400/10 rounded-lg font-medium transition-colors text-left"
                     >
                       Annuler
                     </button>
