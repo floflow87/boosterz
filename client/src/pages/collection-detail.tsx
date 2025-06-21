@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
-import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake } from "lucide-react";
+import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake, MoreVertical, Star } from "lucide-react";
 import Navigation from "@/components/navigation";
 import CardPhotoImportFixed from "@/components/card-photo-import-fixed";
 import CardTradePanel from "@/components/card-trade-panel";
@@ -34,6 +34,7 @@ export default function CollectionDetail() {
   const [selectedTradeCard, setSelectedTradeCard] = useState<Card | null>(null);
   const [pulledCardEffect, setPulledCardEffect] = useState<number | null>(null);
   const [starEffectCards, setStarEffectCards] = useState<Set<number>>(new Set());
+  const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -1087,113 +1088,99 @@ export default function CollectionDetail() {
           }}
         >
           <div className="w-full h-full flex flex-col">
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700">
-              <h2 className="text-lg font-bold text-white">
-                {selectedCard.playerName || 'Joueur Inconnu'}
-              </h2>
-              <button
-                onClick={() => setSelectedCard(null)}
-                className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
-              >
-                <X className="w-6 h-6" />
-              </button>
+            {/* Header - Fixed */}
+            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-white">
+                  {selectedCard.playerName || 'Joueur Inconnu'}
+                </h2>
+                <p className="text-gray-400 text-sm">
+                  {selectedCard.teamName || 'Équipe Inconnue'}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowOptionsPanel(true)}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+                >
+                  <MoreVertical className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setSelectedCard(null)}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
             
-            {/* Content - Single screen view */}
-            <div className="flex-1 bg-[hsl(216,46%,13%)] flex flex-col md:flex-row overflow-y-auto">
-              {/* Card Image Section */}
-              <div className="flex-1 flex items-center justify-center p-6 min-h-0">
-                {(() => {
-                  const currentCard = getCurrentCard();
-                  const variants = getCardVariants(selectedCard);
-                  
-                  return (
-                    <div className="w-full max-w-md">
-                      {/* Card Image */}
-                      <div className="relative mb-6">
-                        {currentCard?.imageUrl ? (
-                          <div 
-                            className="relative w-full h-80 perspective-1000"
-                            style={{ perspective: '1000px' }}
-                          >
-                            <img 
-                              src={currentCard.imageUrl} 
-                              alt={`${currentCard.playerName} card`}
-                              className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
-                              style={{
-                                transformStyle: 'preserve-3d',
-                                willChange: 'transform',
-                                animation: 'card-auto-float 12s ease-in-out infinite'
-                              }}
-                            />
-                          </div>
-                        ) : (
-                          <div className="w-full h-80 bg-gray-600 rounded-lg flex items-center justify-center">
-                            <HelpCircle className="w-16 h-16 text-gray-400" />
-                          </div>
-                        )}
+            {/* Content - Scrollable content */}
+            <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
+              {(() => {
+                const currentCard = getCurrentCard();
+                const variants = getCardVariants(selectedCard);
+                
+                return (
+                  <div className="p-6 space-y-6">
+                    {/* Card Image */}
+                    <div className="w-full max-w-md mx-auto">
+                      {currentCard?.imageUrl ? (
+                        <div 
+                          className="relative w-full h-80 perspective-1000"
+                          style={{ perspective: '1000px' }}
+                        >
+                          <img 
+                            src={currentCard.imageUrl} 
+                            alt={`${currentCard.playerName} card`}
+                            className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                            style={{
+                              transformStyle: 'preserve-3d',
+                              willChange: 'transform',
+                              animation: 'card-auto-float 12s ease-in-out infinite'
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-80 bg-gray-600 rounded-lg flex items-center justify-center">
+                          <HelpCircle className="w-16 h-16 text-gray-400" />
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Card Details */}
+                    <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Type:</span>
+                        <span className="text-white">{selectedCard.cardType || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Numérotation:</span>
+                        <span className="text-white">{selectedCard.numbering || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Référence:</span>
+                        <span className="text-white">{selectedCard.reference || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Statut:</span>
+                        <span className={selectedCard.isOwned ? "text-green-400" : "text-red-400"}>
+                          {selectedCard.isOwned ? "Possédée" : "Manquante"}
+                        </span>
                       </div>
                     </div>
-                  );
-                })()}
-              </div>
-              
-              {/* Card Info Section */}
-              <div className="flex-1 p-6 overflow-y-auto max-h-full">
-                <div className="mb-6">
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    {selectedCard.playerName || 'Joueur Inconnu'}
-                  </h3>
-                  <p className="text-gray-400 text-lg">
-                    {selectedCard.teamName || 'Équipe Inconnue'}
-                  </p>
-                </div>
 
-                {/* Card Details */}
-                <div className="space-y-4">
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Type:</span>
-                    <span className="text-white">{selectedCard.cardType || 'N/A'}</span>
+                    {/* Additional Information */}
+                    <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
+                      <h4 className="text-lg font-semibold text-white">Informations supplémentaires</h4>
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-300">Collection: SCORE LIGUE 1</p>
+                        <p className="text-gray-300">Saison: 2023-24</p>
+                        <p className="text-gray-300">Rareté: {selectedCard.cardType?.includes('Insert') ? 'Insert' : 'Base'}</p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Numérotation:</span>
-                    <span className="text-white">{selectedCard.numbering || 'N/A'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-400">Statut:</span>
-                    <span className={selectedCard.isOwned ? "text-green-400" : "text-red-400"}>
-                      {selectedCard.isOwned ? "Possédée" : "Manquante"}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="mt-8 space-y-3">
-                  <button
-                    onClick={() => {
-                      setShowPhotoUpload(true);
-                    }}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    <Camera className="w-5 h-5" />
-                    Ajouter une photo
-                  </button>
-                  
-                  {selectedCard.isOwned && (
-                    <button
-                      onClick={() => {
-                        setSelectedTradeCard(selectedCard);
-                        setShowTradePanel(true);
-                      }}
-                      className="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg transition-all flex items-center justify-center gap-2"
-                    >
-                      <Handshake className="w-5 h-5" />
-                      Proposer un échange
-                    </button>
-                  )}
-                </div>
-              </div>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -1240,6 +1227,120 @@ export default function CollectionDetail() {
           
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
             <p className="text-sm opacity-75">Bougez votre souris ou doigt pour faire pivoter la carte</p>
+          </div>
+        </div>
+      )}
+
+      {/* Options Panel */}
+      {showOptionsPanel && selectedCard && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-end"
+          onClick={() => setShowOptionsPanel(false)}
+        >
+          <div 
+            className="w-full bg-[hsl(214,35%,22%)] rounded-t-2xl p-6 transform transition-transform duration-300 ease-out"
+            style={{
+              animation: 'slideInFromBottom 0.3s ease-out'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="w-12 h-1 bg-gray-400 rounded-full mx-auto mb-6"></div>
+            
+            <h3 className="text-lg font-bold text-white mb-4 text-center">Options</h3>
+            
+            <div className="space-y-3">
+              {/* Proposer à l'échange */}
+              <button
+                onClick={() => {
+                  setSelectedTradeCard(selectedCard);
+                  setShowTradePanel(true);
+                  setShowOptionsPanel(false);
+                }}
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3"
+              >
+                <Handshake className="w-5 h-5" />
+                <span className="font-medium">Proposer à l'échange</span>
+              </button>
+
+              {/* Photo action */}
+              {(() => {
+                const currentCard = getCurrentCard();
+                const hasPhoto = currentCard?.imageUrl;
+                
+                return (
+                  <button
+                    onClick={() => {
+                      if (hasPhoto) {
+                        // Supprimer la photo
+                        updateCardImageMutation.mutateAsync({
+                          cardId: currentCard.id,
+                          imageUrl: ""
+                        }).then(() => {
+                          toast({
+                            title: "Photo supprimée",
+                            description: "La photo de la carte a été supprimée avec succès."
+                          });
+                        }).catch(() => {
+                          toast({
+                            title: "Erreur",
+                            description: "Impossible de supprimer la photo.",
+                            variant: "destructive"
+                          });
+                        });
+                      } else {
+                        setShowPhotoUpload(true);
+                      }
+                      setShowOptionsPanel(false);
+                    }}
+                    className={`w-full ${hasPhoto ? 'bg-red-600 hover:bg-red-700' : 'bg-blue-600 hover:bg-blue-700'} text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3`}
+                  >
+                    {hasPhoto ? <Trash2 className="w-5 h-5" /> : <Camera className="w-5 h-5" />}
+                    <span className="font-medium">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
+                  </button>
+                );
+              })()}
+
+              {/* Statut de possession */}
+              <button
+                onClick={async () => {
+                  try {
+                    const currentCard = getCurrentCard();
+                    if (selectedCard.isOwned) {
+                      await handleMarkAsNotOwned(currentCard?.id || selectedCard.id);
+                    } else {
+                      await handleMarkAsOwned(currentCard?.id || selectedCard.id, false);
+                    }
+                    setShowOptionsPanel(false);
+                  } catch (error) {
+                    toast({
+                      title: "Erreur",
+                      description: "Impossible de modifier le statut de la carte.",
+                      variant: "destructive"
+                    });
+                  }
+                }}
+                className={`w-full ${selectedCard.isOwned ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3`}
+              >
+                {selectedCard.isOwned ? <Minus className="w-5 h-5" /> : <Check className="w-5 h-5" />}
+                <span className="font-medium">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
+              </button>
+
+              {/* Mettre à la une */}
+              <button
+                onClick={() => {
+                  toast({
+                    title: "Mise à la une",
+                    description: "Cette carte a été mise à la une de votre collection.",
+                    className: "bg-yellow-900 border-yellow-700 text-yellow-100",
+                  });
+                  setShowOptionsPanel(false);
+                }}
+                className="w-full bg-yellow-600 hover:bg-yellow-700 text-white py-4 px-6 rounded-lg transition-all flex items-center gap-3"
+              >
+                <Star className="w-5 h-5" />
+                <span className="font-medium">Mettre à la une</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
