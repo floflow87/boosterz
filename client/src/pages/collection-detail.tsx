@@ -1489,7 +1489,7 @@ export default function CollectionDetail() {
             <div className="px-6 pb-8 h-full overflow-y-auto">
               <h3 className="text-xl font-semibold text-white mb-6 text-center">Options</h3>
             
-              <div className="space-y-4">
+              <div className="space-y-2">
                 {/* Proposer à l'échange */}
                 <button
                   onClick={() => {
@@ -1497,12 +1497,12 @@ export default function CollectionDetail() {
                     setShowTradePanel(true);
                     setShowOptionsPanel(false);
                   }}
-                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
                   <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                     <Handshake className="w-5 h-5 text-white" />
                   </div>
-                  <span className="font-medium">Proposer à l'échange</span>
+                  <span className="text-sm">Proposer à l'échange</span>
                 </button>
 
                 {/* Photo action */}
@@ -1534,15 +1534,15 @@ export default function CollectionDetail() {
                         }
                         setShowOptionsPanel(false);
                       }}
-                      className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                      className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                     >
-                      <div className={`w-8 h-8 ${hasPhoto ? 'bg-red-600' : 'bg-blue-600'} rounded-lg flex items-center justify-center`}>
+                      <div className={`w-8 h-8 ${hasPhoto ? 'bg-red-600' : 'bg-orange-500'} rounded-lg flex items-center justify-center`}>
                         {hasPhoto ? 
                           <Trash2 className="w-5 h-5 text-white" /> : 
                           <Camera className="w-5 h-5 text-white" />
                         }
                       </div>
-                      <span className="font-medium">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
+                      <span className="text-sm">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
                     </button>
                   );
                 })()}
@@ -1566,7 +1566,7 @@ export default function CollectionDetail() {
                       });
                     }
                   }}
-                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
                   <div className={`w-8 h-8 ${selectedCard.isOwned ? 'bg-red-600' : 'bg-green-600'} rounded-lg flex items-center justify-center`}>
                     {selectedCard.isOwned ? 
@@ -1574,7 +1574,7 @@ export default function CollectionDetail() {
                       <Check className="w-5 h-5 text-white" />
                     }
                   </div>
-                  <span className="font-medium">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
+                  <span className="text-sm">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
                 </button>
 
                 {/* Mettre à la une */}
@@ -1606,12 +1606,12 @@ export default function CollectionDetail() {
                       });
                     }
                   }}
-                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-4 px-6 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
                   <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
                     <Star className="w-5 h-5 text-white" />
                   </div>
-                  <span className="font-medium">
+                  <span className="text-sm">
                     {(() => {
                       const currentCard = getCurrentCard();
                       return currentCard?.isFeatured ? "Retirer de la une" : "Mettre à la une";

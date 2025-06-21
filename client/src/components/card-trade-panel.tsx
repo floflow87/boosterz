@@ -33,6 +33,7 @@ export default function CardTradePanel({ card, isOpen, onClose }: CardTradePanel
       toast({
         title: "Informations de trade mises à jour",
         description: "Les informations de trade ont été sauvegardées avec succès.",
+        className: "bg-green-900 border-green-700 text-green-100",
       });
       onClose();
     },

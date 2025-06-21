@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update card featured status
-  app.patch("/api/cards/:id/featured", authenticateToken, async (req: AuthRequest, res) => {
+  app.patch("/api/cards/:id/featured", optionalAuth, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);
       const { isFeatured } = req.body;
