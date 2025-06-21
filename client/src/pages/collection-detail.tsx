@@ -1595,6 +1595,22 @@ export default function CollectionDetail() {
                       const cardId = currentCard?.id || selectedCard.id;
                       const newFeaturedStatus = !currentCard?.isFeatured;
                       
+                      // Fermer le panel immédiatement pour un feedback rapide
+                      setShowOptionsPanel(false);
+                      
+                      // Mettre à jour l'état local immédiatement pour l'affichage de l'étoile
+                      if (selectedCard && selectedCard.id === cardId) {
+                        setSelectedCard({ ...selectedCard, isFeatured: newFeaturedStatus });
+                      }
+                      
+                      // Mettre à jour le cache immédiatement
+                      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+                        if (!oldData) return oldData;
+                        return oldData.map(card => 
+                          card.id === cardId ? { ...card, isFeatured: newFeaturedStatus } : card
+                        );
+                      });
+                      
                       await updateCardFeaturedMutation.mutateAsync({ 
                         cardId, 
                         isFeatured: newFeaturedStatus 
@@ -1607,8 +1623,9 @@ export default function CollectionDetail() {
                           : "Cette carte a été retirée de la une.",
                         className: "bg-yellow-900 border-yellow-700 text-yellow-100",
                       });
-                      setShowOptionsPanel(false);
                     } catch (error) {
+                      // En cas d'erreur, rétablir l'état précédent
+                      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
                       toast({
                         title: "Erreur",
                         description: "Impossible de modifier le statut de la carte.",
