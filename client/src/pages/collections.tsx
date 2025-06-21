@@ -230,91 +230,273 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="space-y-6">
-            {collections && collections.length > 0 ? (
-              <div className="space-y-4">
-                {collections.map((collection) => {
+          <div>
+            <style>{`
+              .wallet-container {
+                perspective: 1000px;
+              }
+              
+              .collections-scroll {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                scroll-behavior: smooth;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+              }
+              
+              .collections-scroll::-webkit-scrollbar {
+                display: none;
+              }
+              
+              .collections-swiper {
+                overflow: visible;
+                padding: 0 16px;
+              }
+              
+              .collections-swiper .swiper-slide {
+                height: auto;
+              }
+              
+              .collections-swiper .swiper-pagination {
+                position: static !important;
+                bottom: auto !important;
+                left: auto !important;
+                transform: none !important;
+                width: auto !important;
+                margin-top: 20px;
+                text-align: center;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet {
+                background: rgba(255, 255, 255, 0.3) !important;
+                opacity: 1 !important;
+                width: 8px !important;
+                height: 8px !important;
+                margin: 0 4px !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active {
+                background: hsl(9, 85%, 67%) !important;
+                transform: scale(1.2) !important;
+              }
+              
+              .collection-wallet-item {
+                transform-style: preserve-3d;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                min-width: 320px;
+                max-width: 320px;
+                flex-shrink: 0;
+                width: 320px;
+                scroll-snap-align: start;
+              }
+              
+              .collection-wallet-item:hover {
+                transform: translateY(-8px) rotateY(5deg) scale(1.02);
+                box-shadow: 0 12px 40px rgba(243, 114, 97, 0.25);
+              }
+              
+              .collection-wallet-item:nth-child(even):hover {
+                transform: translateY(-8px) rotateY(-5deg) scale(1.02);
+              }
+              
+              .wallet-card-display {
+                position: relative;
+                overflow: hidden;
+                background: linear-gradient(135deg, hsl(216,46%,13%) 0%, hsl(214,35%,15%) 50%, hsl(214,35%,20%) 100%);
+              }
+              
+              .wallet-card-stack {
+                position: relative;
+                transform-style: preserve-3d;
+              }
+              
+              .wallet-card-layer {
+                position: absolute;
+                transition: all 0.3s ease;
+                border-radius: 20px;
+                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(1) {
+                transform: translateX(-8px) translateY(-4px) rotateZ(-3deg);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(2) {
+                transform: translateX(0px) translateY(-2px) rotateZ(0deg);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(3) {
+                transform: translateX(8px) translateY(-6px) rotateZ(3deg);
+              }
+              
+              .collections-swiper {
+                padding-bottom: 40px !important;
+                overflow: visible !important;
+              }
+              
+              .collections-swiper .swiper-wrapper {
+                transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+              }
+              
+              .collections-swiper .swiper-slide {
+                transition: transform 0.3s ease, opacity 0.3s ease !important;
+              }
+              
+              .collections-swiper .swiper-pagination {
+                bottom: 10px !important;
+                position: absolute !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: auto !important;
+                display: flex !important;
+                justify-content: center !important;
+                gap: 8px !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet {
+                width: 8px !important;
+                height: 8px !important;
+                border-radius: 50% !important;
+                background: rgba(255, 255, 255, 0.3) !important;
+                opacity: 1 !important;
+                margin: 0 !important;
+                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active {
+                background: #F37261 !important;
+                transform: scale(1.2) !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active-main {
+                background: #F37261 !important;
+                transform: scale(1.4) !important;
+              }
+            `}</style>
+            
+            <div className="collections-scroll">
+              <Swiper
+                slidesPerView="auto"
+                spaceBetween={20}
+                freeMode={{
+                  enabled: true,
+                  momentum: true,
+                  momentumRatio: 0.85,
+                  momentumBounce: true,
+                  momentumBounceRatio: 0.1,
+                  momentumVelocityRatio: 1.0,
+                  sticky: true,
+                  minimumVelocity: 0.02,
+                }}
+                resistance={true}
+                resistanceRatio={0.15}
+                speed={350}
+                touchRatio={1.2}
+                touchAngle={45}
+                grabCursor={true}
+                centeredSlides={false}
+                slidesOffsetBefore={16}
+                slidesOffsetAfter={16}
+                pagination={{
+                  clickable: true,
+                  dynamicBullets: true,
+                  dynamicMainBullets: 3,
+                  hideOnClick: false,
+                  type: 'bullets'
+                }}
+                modules={[FreeMode, Pagination]}
+                className="collections-swiper"
+              >
+                {collections?.map((collection) => {
                   const completion = getCollectionCompletion(collection);
                   return (
-                    <div
-                      key={collection.id}
-                      className="bg-gradient-to-br from-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-6 border border-[hsl(214,35%,30%)] hover:border-[hsl(9,85%,67%)] transition-all duration-300 cursor-pointer transform hover:scale-[1.02] hover:shadow-xl"
-                      onClick={() => {
-                        setSelectedCollection(collection.id);
-                        setActiveTab("cards");
-                      }}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-[hsl(9,85%,67%)] to-[hsl(9,85%,60%)] rounded-xl flex items-center justify-center">
-                            <img 
-                              src={cardStackIcon} 
-                              alt="Collection icon"
-                              className="w-6 h-6"
-                            />
+                    <SwiperSlide key={collection.id} className="!w-80">
+                      <div 
+                        onClick={() => {
+                          setSelectedCollection(collection.id);
+                          setActiveTab("cards");
+                        }}
+                        className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
+                      >
+                        {/* Header with title and delete button */}
+                        <div className="p-6 pb-4">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-bold text-white font-poppins text-xl">{collection.name}</h3>
+                              <p className="text-white/60 text-base italic">{collection.season || 'Saison non spécifiée'}</p>
+                            </div>
+                            <div className="flex items-center gap-3">
+                              {!collection.name?.includes("SCORE LIGUE 1") && (
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteCollection(collection);
+                                  }}
+                                  className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
+                                  title="Supprimer la collection"
+                                >
+                                  <Trash2 className="w-5 h-5" />
+                                </button>
+                              )}
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="text-lg font-bold text-white">{collection.name}</h3>
-                            <p className="text-sm text-[hsl(212,23%,69%)]">{collection.season || 'Saison non spécifiée'}</p>
+                        </div>
+
+                        {/* Card carousel area with wallet-style display */}
+                        <div className="h-40 relative flex items-center justify-center overflow-hidden px-6 pb-3 wallet-card-display">
+                          {/* Wallet-style card stack container */}
+                          <div className="relative w-full max-w-md h-32 flex items-center justify-center wallet-card-stack">
+                            {/* Background card layers for wallet effect */}
+                            <div className="wallet-card-layer w-24 h-32 bg-white/10" style={{ zIndex: 1 }}></div>
+                            <div className="wallet-card-layer w-24 h-32 bg-white/15" style={{ zIndex: 2 }}></div>
+                            <div className="wallet-card-layer w-24 h-32 bg-white/20" style={{ zIndex: 3 }}></div>
+                            
+                            {/* Main card with golden cards image */}
+                            <div className="relative w-32 h-32 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-3 shadow-2xl flex items-center justify-center" style={{ zIndex: 4 }}>
+                              <img 
+                                src={goldenCardsIcon}
+                                alt="Golden trading cards"
+                                className="w-28 h-28 object-contain rounded-[20px] shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                              />
+                            </div>
                           </div>
                         </div>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteCollection(collection);
-                          }}
-                          className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                      
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center space-x-4">
-                          <span className="text-[hsl(212,23%,69%)]">
-                            {completion.ownedCards}/{completion.totalCards} cartes
-                          </span>
-                          <span className="text-green-400 font-medium">
-                            {completion.percentage}% complet
-                          </span>
-                        </div>
-                        <div className="w-20 bg-gray-700 rounded-full h-2">
-                          <div
-                            className="bg-gradient-to-r from-green-400 to-green-500 h-2 rounded-full transition-all duration-500"
-                            style={{ width: `${completion.percentage}%` }}
-                          />
+                        
+                        {/* Progress bar */}
+                        <div className="px-6 pb-4">
+                          <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                            <div 
+                              className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${completion.percentage}%` }}
+                            ></div>
+                          </div>
+                          <div className="flex justify-between text-xs text-white/60 mt-1">
+                            <span>{completion.percentage}% complété</span>
+                            <span>{completion.ownedCards} cartes acquises</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    </SwiperSlide>
                   );
                 })}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <div className="mb-6">
-                  <div className="w-20 h-20 bg-gradient-to-br from-[hsl(9,85%,67%)] to-[hsl(9,85%,60%)] rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <img 
-                      src={cardStackIcon} 
-                      alt="Collection icon"
-                      className="w-10 h-10"
-                    />
+
+                {/* Add Collection Button */}
+                <SwiperSlide className="!w-80">
+                  <div 
+                    onClick={() => setShowAddModal(true)}
+                    className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center h-full"
+                  >
+                    <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Plus className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
+                    <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
                   </div>
-                </div>
-                <div className="text-gray-400 mb-4 text-lg">
-                  Vous n'avez pas encore de collections.
-                </div>
-                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  Créez votre première collection pour commencer à organiser vos cartes et suivre votre progression.
-                </p>
-                <button
-                  onClick={() => setShowAddModal(true)}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                >
-                  <Plus className="w-4 h-4 mr-2 inline" />
-                  Créer ma première collection
-                </button>
-              </div>
-            )}
+                </SwiperSlide>
+              </Swiper>
+            </div>
           </div>
         )}
 
