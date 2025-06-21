@@ -24,11 +24,12 @@ import 'swiper/css/pagination';
 export default function Collections() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace" | "deck">("collections");
-  const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("grid");
+  const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -712,7 +713,7 @@ export default function Collections() {
         {activeTab === "marketplace" && (
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins">Cartes à la vente</h3>
+              <h3 className="text-lg font-bold text-white font-poppins">Mes cartes à la vente</h3>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setViewMode("list")}
@@ -748,6 +749,7 @@ export default function Collections() {
                       showActions={true}
                       showTradeInfo={true}
                       variant="detailed"
+                      onCardClick={() => setSelectedCard(card)}
                     />
                   ))}
                 </div>
@@ -761,6 +763,7 @@ export default function Collections() {
                       showActions={true}
                       showTradeInfo={true}
                       variant="detailed"
+                      onCardClick={() => setSelectedCard(card)}
                     />
                   ))}
                 </div>
@@ -802,6 +805,101 @@ export default function Collections() {
                 <Plus className="w-4 h-4 mr-2 inline" />
                 Créer mon premier deck
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Card Detail Modal */}
+        {selectedCard && (
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-[hsl(214,35%,22%)] rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto border border-[hsl(214,35%,30%)]">
+              <div className="p-6">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-bold text-white">
+                    {selectedCard.playerName}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedCard(null)}
+                    className="text-gray-400 hover:text-white transition-colors"
+                  >
+                    ✕
+                  </button>
+                </div>
+                
+                <div className="space-y-4">
+                  {/* Card Image */}
+                  <div className="aspect-[3/4] bg-gray-700 rounded-lg overflow-hidden">
+                    {selectedCard.imageUrl ? (
+                      <img 
+                        src={selectedCard.imageUrl} 
+                        alt={selectedCard.playerName || "Card"}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
+                        <span className="text-sm">#{selectedCard.reference}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Card Info */}
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-white font-medium">{selectedCard.playerName}</div>
+                      <div className="text-gray-400 text-sm">{selectedCard.teamName}</div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <div className="text-gray-400">Référence</div>
+                        <div className="text-white">{selectedCard.reference}</div>
+                      </div>
+                      <div>
+                        <div className="text-gray-400">Type</div>
+                        <div className="text-white">{selectedCard.cardType}</div>
+                      </div>
+                    </div>
+                    
+                    {selectedCard.numbering && (
+                      <div>
+                        <div className="text-gray-400 text-sm">Numérotation</div>
+                        <div className="text-white">{selectedCard.numbering}</div>
+                      </div>
+                    )}
+                    
+                    {/* Trade Info */}
+                    {selectedCard.isForTrade && (
+                      <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4 space-y-2">
+                        <div className="text-[hsl(9,85%,67%)] font-medium text-sm">
+                          {selectedCard.tradeOnly ? "Échange uniquement" : "Vente & Échange"}
+                        </div>
+                        
+                        {selectedCard.tradePrice && !selectedCard.tradeOnly && (
+                          <div className="text-green-400 font-bold">
+                            {selectedCard.tradePrice}
+                          </div>
+                        )}
+                        
+                        {selectedCard.tradeDescription && (
+                          <div className="text-gray-300 text-sm">
+                            {selectedCard.tradeDescription}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Actions */}
+                  <div className="flex gap-2 pt-4">
+                    <button className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+                      Marquer vendue
+                    </button>
+                    <button className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg text-sm font-medium transition-colors">
+                      Retirer de la vente
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
