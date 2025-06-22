@@ -221,6 +221,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get posts from followed users (À la une) - MUST be before /:id routes
+  app.get("/api/users/feed", (req, res) => {
+    res.json({ message: "Feed API working" });
+  });
+
   // Get user profile
   app.get("/api/users/:id", async (req, res) => {
     try {
