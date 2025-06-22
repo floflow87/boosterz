@@ -476,37 +476,26 @@ export default function Collections() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white font-poppins">Mes cartes</h3>
               
-              <div className="flex items-center gap-3">
-                {/* View Mode Buttons */}
-                <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "list" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "grid" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <Grid className="w-4 h-4" />
-                  </button>
-                </div>
-
+              <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
                 <button
-                  onClick={() => setLocation("/add-card")}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "list" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
                 >
-                  <Plus className="w-4 h-4" />
-                  Ajouter une carte
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "grid" 
+                      ? "bg-primary text-primary-foreground" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  <Grid className="w-4 h-4" />
                 </button>
               </div>
             </div>
