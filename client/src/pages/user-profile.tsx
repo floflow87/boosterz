@@ -66,10 +66,11 @@ export default function UserProfile() {
         description: "Le post a été supprimé avec succès",
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Delete post error:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de supprimer le post",
+        description: error.message || "Impossible de supprimer le post",
         variant: "destructive",
       });
     },
