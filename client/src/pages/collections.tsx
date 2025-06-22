@@ -790,20 +790,38 @@ export default function Collections() {
                     )}
 
                     {/* Sale Price */}
-                    {selectedCard.isForTrade && selectedCard.tradePrice ? (
+                    {selectedCard.salePrice ? (
+                      <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
+                        <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
+                        <div className="text-green-400 font-bold text-lg">
+                          {selectedCard.salePrice}€
+                        </div>
+                        {selectedCard.isSold && (
+                          <div className="text-yellow-400 font-medium text-sm mt-1">
+                            ✓ Vendue
+                          </div>
+                        )}
+                      </div>
+                    ) : selectedCard.tradePrice ? (
                       <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
                         <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
                         <div className="text-green-400 font-bold text-lg">
                           {selectedCard.tradePrice}€
                         </div>
                       </div>
-                    ) : !selectedCard.isForTrade ? (
+                    ) : selectedCard.isForTrade ? (
+                      <div className="bg-blue-600/10 rounded-lg p-4 border border-blue-600/20">
+                        <div className="text-blue-400 font-medium text-sm">
+                          Disponible à l'échange
+                        </div>
+                      </div>
+                    ) : (
                       <div className="bg-gray-600/10 rounded-lg p-4 border border-gray-600/20">
                         <div className="text-gray-400 font-medium text-sm">
                           Pas disponible à la vente
                         </div>
                       </div>
-                    ) : null}
+                    )}
                     
                     {/* Trade Info */}
                     {selectedCard.isForTrade && (
@@ -867,14 +885,39 @@ export default function Collections() {
                       Marquer vendue
                     </button>
                     
+                    {(selectedCard.tradePrice || selectedCard.salePrice) ? (
+                      <button 
+                        onClick={handleRemoveFromSale}
+                        className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      >
+                        <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                          <X className="w-4 h-4 text-white" />
+                        </div>
+                        Retirer de la vente
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={() => {
+                          setShowOptionsPanel(false);
+                          setShowTradePanel(true);
+                        }}
+                        className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      >
+                        <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                          <DollarSign className="w-4 h-4 text-white" />
+                        </div>
+                        Mettre en vente
+                      </button>
+                    )}
+                    
                     <button 
-                      onClick={handleRemoveFromSale}
-                      className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      onClick={() => setShowOptionsPanel(false)}
+                      className="w-full p-4 text-blue-400 hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
-                      <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                        <X className="w-4 h-4 text-white" />
+                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <Plus className="w-4 h-4 text-white" />
                       </div>
-                      Retirer de la vente
+                      Ajouter à la collection
                     </button>
                     
                     <button 
