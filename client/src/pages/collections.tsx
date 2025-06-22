@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "personal" | "collections" | "marketplace" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -50,7 +50,7 @@ export default function Collections() {
   const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery<any[]>({
     queryKey: ["/api/personal-cards"],
     staleTime: 5 * 60 * 1000,
-    enabled: activeTab === "personal",
+    enabled: activeTab === "cards",
   });
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
@@ -181,7 +181,7 @@ export default function Collections() {
     }
   };
 
-  const handleTabChange = (tab: "collections" | "cards" | "personal" | "marketplace" | "deck") => {
+  const handleTabChange = (tab: "collections" | "cards" | "marketplace" | "deck") => {
     setActiveTab(tab);
     if (tab === "collections") {
       setSelectedCollection(null);
@@ -269,17 +269,7 @@ export default function Collections() {
               <Trophy className="w-4 h-4" />
               Cartes
             </button>
-            <button
-              onClick={() => handleTabChange("personal")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "personal" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <CardIcon className="w-4 h-4" />
-              Mes cartes
-            </button>
+
             <button
               onClick={() => handleTabChange("collections")}
               className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
@@ -400,12 +390,14 @@ export default function Collections() {
           </div>
         )}
 
-        {/* Personal Cards Tab Content */}
-        {activeTab === "personal" && (
+
+
+        {/* Cards Tab Content - Personal Cards */}
+        {activeTab === "cards" && (
           <div className="space-y-4">
-            {/* Header with Add Card Button */}
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white font-poppins">Mes cartes</h3>
+              
               <button
                 onClick={() => setLocation("/add-card")}
                 className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
@@ -459,102 +451,6 @@ export default function Collections() {
                   onClick={() => setLocation("/add-card")}
                   className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
                 >
-                  Ajouter une carte
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Cards Tab Content */}
-        {activeTab === "cards" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins">
-                {selectedCollection ? `Collection` : "Mes cartes"}
-              </h3>
-              
-              <div className="flex items-center gap-2">
-                {/* Add Card Button for "Mes cartes" */}
-                {!selectedCollection && (
-                  <button
-                    onClick={() => setLocation("/add-card")}
-                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Ajouter une carte
-                  </button>
-                )}
-                
-                {/* View Mode Toggle */}
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "list" 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "grid" 
-                        ? "bg-[hsl(9,85%,67%)] text-white" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <Grid className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-            
-            {cards && cards.length > 0 ? (
-              viewMode === "grid" ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {cards.map((card) => (
-                    <CardDisplay
-                      key={card.id}
-                      card={card}
-                      viewMode="grid"
-                      showActions={true}
-                      variant="detailed"
-                      onCardClick={() => setSelectedCard(card)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {cards.map((card) => (
-                    <CardDisplay
-                      key={card.id}
-                      card={card}
-                      viewMode="list"
-                      showActions={true}
-                      variant="detailed"
-                      onCardClick={() => setSelectedCard(card)}
-                    />
-                  ))}
-                </div>
-              )
-            ) : (
-              <div className="text-center py-12">
-                <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <div className="text-gray-400 mb-2 text-lg">Aucune carte trouvée</div>
-                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  {selectedCollection 
-                    ? "Cette collection ne contient pas encore de cartes. Ajoutes-en pour commencer ta collection."
-                    : "Tu n'as pas encore de cartes. Crée une collection et ajoute tes premières cartes."
-                  }
-                </p>
-                <button
-                  onClick={() => setLocation("/add-card")}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                >
-                  <Plus className="w-4 h-4 mr-2 inline" />
                   Ajouter une carte
                 </button>
               </div>
