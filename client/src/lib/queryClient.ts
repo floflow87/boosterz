@@ -8,8 +8,8 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  url: string,
   method: string = "GET",
+  url: string,
   data?: unknown | undefined,
 ): Promise<any> {
   const controller = new AbortController();
@@ -34,7 +34,7 @@ export async function apiRequest(
     return await res.json();
   } catch (error) {
     clearTimeout(timeoutId);
-    if (error.name === 'AbortError') {
+    if ((error as Error).name === 'AbortError') {
       throw new Error('Request timeout - server took too long to respond');
     }
     throw error;

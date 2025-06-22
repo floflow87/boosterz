@@ -426,7 +426,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update card sale settings
-  app.patch("/api/cards/:id/sale-settings", optionalAuth, async (req: AuthRequest, res) => {
+  app.patch("/api/cards/:id/sale-settings", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);
       const { salePrice, saleDescription, tradeOnly, isForTrade, tradePrice, tradeDescription, isSold } = req.body;
