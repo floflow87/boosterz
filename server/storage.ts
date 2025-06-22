@@ -1099,6 +1099,56 @@ export class MemStorage implements IStorage {
 
   // Social network methods for MemStorage
   async getUserPosts(userId: number): Promise<any[]> {
+    // Return mock posts for user 999 (Max la menace)
+    if (userId === 999) {
+      return [
+        {
+          id: 3,
+          userId: 999,
+          content: "Enfin reçu ma carte Mbappé autographe ! Une pièce magnifique pour ma collection 🔥",
+          type: "text",
+          cardId: null,
+          isVisible: true,
+          createdAt: new Date("2025-06-22T08:35:10.884Z"),
+          updatedAt: new Date("2025-06-22T08:35:10.884Z"),
+          user: {
+            id: 999,
+            name: "Max la menace",
+            username: "maxlamenace"
+          }
+        },
+        {
+          id: 4,
+          userId: 999,
+          content: "Quelqu'un aurait la carte Benzema #45 de la collection UEFA CL 2024 ? Je propose un échange intéressant !",
+          type: "text",
+          cardId: null,
+          isVisible: true,
+          createdAt: new Date("2025-06-22T08:35:10.884Z"),
+          updatedAt: new Date("2025-06-22T08:35:10.884Z"),
+          user: {
+            id: 999,
+            name: "Max la menace",
+            username: "maxlamenace"
+          }
+        },
+        {
+          id: 5,
+          userId: 999,
+          content: "Ma collection FIFA Qatar 2022 est presque complète ! Plus que 103 cartes à trouver. Qui peut m'aider ?",
+          type: "text",
+          cardId: null,
+          isVisible: true,
+          createdAt: new Date("2025-06-22T08:35:10.884Z"),
+          updatedAt: new Date("2025-06-22T08:35:10.884Z"),
+          user: {
+            id: 999,
+            name: "Max la menace",
+            username: "maxlamenace"
+          }
+        }
+      ];
+    }
     return [];
   }
 
@@ -1145,6 +1195,35 @@ export class MemStorage implements IStorage {
   async createActivity(activity: any): Promise<any> {
     return { id: Date.now(), ...activity, createdAt: new Date() };
   }
+
+  async getPost(id: number): Promise<any> {
+    return null;
+  }
+
+  async deletePost(id: number): Promise<boolean> {
+    return true;
+  }
+
+  async followUser(followerId: number, followingId: number): Promise<boolean> {
+    return true;
+  }
+
+  async unfollowUser(followerId: number, followingId: number): Promise<boolean> {
+    return true;
+  }
+
+  async isFollowing(followerId: number, followingId: number): Promise<boolean> {
+    // User 1 is following user 999 for testing
+    return followerId === 1 && followingId === 999;
+  }
+
+  async getFollowedUsersPosts(userId: number): Promise<any[]> {
+    // Return posts from user 999 if user 1 is requesting (following relationship)
+    if (userId === 1) {
+      return await this.getUserPosts(999);
+    }
+    return [];
+  }
 }
 
-export const storage = new DatabaseStorage();
+export const storage = new MemStorage();
