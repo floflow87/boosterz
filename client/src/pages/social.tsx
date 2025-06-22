@@ -9,7 +9,7 @@ import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
 import { useToast } from "@/hooks/use-toast";
-import { apiRequest } from "@/lib/queryClient";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 
 interface SocialUser {
   id: number;
@@ -61,6 +61,7 @@ interface NotificationItem {
 export default function Social() {
   const [searchTerm, setSearchTerm] = useState("");
   const [forSaleSearchTerm, setForSaleSearchTerm] = useState("");
+  const [newPostContent, setNewPostContent] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -85,6 +86,36 @@ export default function Social() {
   const { data: userActivities = [] } = useQuery<Activity[]>({
     queryKey: ["/api/users/1/posts"],
   });
+
+  // Mutation pour créer un post
+  const createPostMutation = useMutation({
+    mutationFn: async (content: string) => {
+      return apiRequest("/api/posts", "POST", { content, type: "text" });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/posts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/social/activities"] });
+      setNewPostContent("");
+      toast({
+        title: "Publication créée avec succès",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur lors de la création",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Fonction pour créer un post
+  const handleCreatePost = () => {
+    if (newPostContent.trim()) {
+      createPostMutation.mutate(newPostContent);
+    }
+  };
+
+
 
   // Mutation pour suivre/arrêter de suivre un utilisateur
   const followMutation = useMutation({
@@ -487,7 +518,50 @@ export default function Social() {
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
-            {/* Mon Profil - Activities Display */}
+            {/* Mon Profil - Post Creation */}
+            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)] mb-4">
+              <div className="flex items-center space-x-3 mb-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                  <Users className="w-5 h-5 text-white" />
+                </div>
+                <div className="flex-1">
+                  <textarea
+                    placeholder="Que voulez-vous partager aujourd'hui ?"
+                    className="w-full bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,35%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors"
+                    rows={3}
+                    value={newPostContent}
+                    onChange={(e) => setNewPostContent(e.target.value)}
+                  />
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                    <div className="w-8 h-8 bg-[hsl(214,35%,18%)] rounded-full flex items-center justify-center">
+                      📷
+                    </div>
+                    <span className="text-sm">Photo</span>
+                  </button>
+                  <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                    <div className="w-8 h-8 bg-[hsl(214,35%,18%)] rounded-full flex items-center justify-center">
+                      🃏
+                    </div>
+                    <span className="text-sm">Carte</span>
+                  </button>
+                </div>
+                
+                <button
+                  onClick={handleCreatePost}
+                  disabled={!newPostContent.trim() || createPostMutation.isPending}
+                  className="px-4 py-2 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                >
+                  {createPostMutation.isPending ? "Publication..." : "Publier"}
+                </button>
+              </div>
+            </div>
+
+            {/* Activities Display */}
             <div className="space-y-4">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-white">Mes Activités</h3>
@@ -526,7 +600,20 @@ export default function Social() {
                             </span>
                           </div>
                           <p className="text-gray-400 text-sm">
-                            {getActivityDescription(activity)}
+                            {(() => {
+                              switch (activity.type) {
+                                case "marked_for_sale":
+                                  return `a mis ${activity.card?.playerName} en vente`;
+                                case "added_card":
+                                  return `a ajouté ${activity.card?.playerName} à sa collection`;
+                                case "marked_for_trade":
+                                  return `propose ${activity.card?.playerName} en échange`;
+                                case "completed_collection":
+                                  return `a complété la collection ${activity.collection?.name}`;
+                                default:
+                                  return "activité inconnue";
+                              }
+                            })()}
                           </p>
                           {activity.card && (
                             <div className="mt-2 text-xs text-[hsl(9,85%,67%)]">
