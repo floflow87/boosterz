@@ -97,7 +97,7 @@ export default function Collections() {
     const suggestions = generateSuggestions(searchQuery);
     setSearchSuggestions(suggestions);
     setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
-  }, [searchQuery, personalCards]);
+  }, [searchQuery]);
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
   const getCollectionCompletion = (collection: Collection) => {
@@ -136,6 +136,80 @@ export default function Collections() {
     enabled: activeTab === "marketplace",
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: false,
+  });
+
+  // Mutation pour mettre à jour les paramètres de vente
+  const updateSaleSettingsMutation = useMutation({
+    mutationFn: async ({ cardId, price, description, tradeOnly }: {
+      cardId: number;
+      price: string;
+      description: string;
+      tradeOnly: boolean;
+    }) => {
+      console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
+      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
+        salePrice: price,
+        saleDescription: description,
+        isForSale: true,
+        tradeOnly
+      });
+    },
+    onSuccess: (updatedCard) => {
+      // Mettre à jour les cartes personnelles
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      
+      // Mettre à jour la carte sélectionnée avec les nouvelles données
+      if (selectedCard && updatedCard) {
+        setSelectedCard(updatedCard);
+      }
+      
+      toast({
+        title: "Paramètres sauvegardés",
+        description: "Les paramètres de vente ont été mis à jour.",
+      });
+      
+      setShowTradePanel(false);
+      setShowOptionsPanel(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les paramètres.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation pour retirer de la vente
+  const removeFromSaleMutation = useMutation({
+    mutationFn: async (cardId: number) => {
+      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
+        isForSale: false,
+        salePrice: null,
+        saleDescription: null
+      });
+    },
+    onSuccess: (updatedCard) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      
+      if (selectedCard && updatedCard) {
+        setSelectedCard(updatedCard);
+      }
+      
+      toast({
+        title: "Carte retirée de la vente",
+        description: "La carte n'est plus disponible à la vente.",
+      });
+      
+      setShowOptionsPanel(false);
+    },
+    onError: (error) => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de retirer la carte de la vente.",
+        variant: "destructive",
+      });
+    },
   });
 
   const deleteCollectionMutation = useMutation({
@@ -187,33 +261,9 @@ export default function Collections() {
     }
   };
 
-  const handleRemoveFromSale = async () => {
+  const handleRemoveFromSale = () => {
     if (!selectedCard) return;
-    
-    try {
-      await apiRequest("PATCH", `/api/cards/${selectedCard.id}/sale-settings`, {
-        isForTrade: false,
-        tradePrice: null,
-        tradeDescription: null,
-        tradeOnly: false,
-        isSold: false
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      toast({
-        title: "Carte retirée de la vente",
-        description: "La carte a été retirée de la vente avec succès.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de retirer la carte de la vente.",
-        variant: "destructive"
-      });
-    }
+    removeFromSaleMutation.mutate(selectedCard.id);
   };
 
   const handleDeleteCollection = (collection: Collection) => {
@@ -556,42 +606,77 @@ export default function Collections() {
               viewMode === "grid" ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {filteredPersonalCards.map((card: any) => (
-                  <div 
-                    key={card.id} 
-                    className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer"
-                    onClick={() => setSelectedCard(card)}
-                  >
-                    {card.imageUrl && (
-                      <img 
-                        src={card.imageUrl} 
-                        alt={`${card.playerName || 'Carte'}`}
-                        className="w-full h-32 object-cover rounded-md mb-2"
-                      />
-                    )}
-                    <div className="space-y-1">
-                      {card.playerName && (
-                        <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
+                    <div 
+                      key={card.id} 
+                      className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer"
+                      onClick={() => setSelectedCard(card)}
+                    >
+                      {card.imageUrl && (
+                        <img 
+                          src={card.imageUrl} 
+                          alt={`${card.playerName || 'Carte'}`}
+                          className="w-full h-32 object-cover rounded-md mb-2"
+                        />
                       )}
-                      {card.teamName && (
-                        <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
+                      <div className="space-y-1">
+                        {card.playerName && (
+                          <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
+                        )}
+                        {card.teamName && (
+                          <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
+                        )}
+                        <p className="text-gray-500 text-xs">{card.cardType}</p>
+                        {card.isForSale && card.salePrice && (
+                          <div className="flex items-center gap-1 mt-2">
+                            <DollarSign className="w-3 h-3 text-primary" />
+                            <span className="text-primary text-xs font-medium">{card.salePrice}€</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // List view
+                <div className="space-y-3">
+                  {filteredPersonalCards.map((card: any) => (
+                    <div 
+                      key={card.id} 
+                      className="bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer flex items-center gap-4"
+                      onClick={() => setSelectedCard(card)}
+                    >
+                      {card.imageUrl && (
+                        <img 
+                          src={card.imageUrl} 
+                          alt={`${card.playerName || 'Carte'}`}
+                          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                        />
                       )}
-                      <p className="text-gray-500 text-xs">{card.cardType}</p>
+                      <div className="flex-1 space-y-1">
+                        {card.playerName && (
+                          <h4 className="text-white font-medium">{card.playerName}</h4>
+                        )}
+                        {card.teamName && (
+                          <p className="text-gray-400 text-sm">{card.teamName}</p>
+                        )}
+                        <p className="text-gray-500 text-sm">{card.cardType}</p>
+                      </div>
                       {card.isForSale && card.salePrice && (
-                        <div className="flex items-center gap-1 mt-2">
-                          <DollarSign className="w-3 h-3 text-primary" />
-                          <span className="text-primary text-xs font-medium">{card.salePrice}€</span>
+                        <div className="flex items-center gap-2">
+                          <DollarSign className="w-4 h-4 text-primary" />
+                          <span className="text-primary font-medium">{card.salePrice}€</span>
                         </div>
                       )}
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )
             ) : (
               <div className="text-center py-12">
                 <CardIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <div className="text-gray-400 mb-2 text-lg">Aucune carte personnelle</div>
+                <div className="text-gray-400 mb-2 text-lg">Aucune carte trouvée</div>
                 <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  Ajoute tes cartes personnelles pour les organiser et les mettre en vente.
+                  {searchQuery ? "Aucune carte ne correspond à votre recherche." : "Ajoute tes cartes personnelles pour les organiser et les mettre en vente."}
                 </p>
               </div>
             )}
