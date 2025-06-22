@@ -250,6 +250,27 @@ export default function Social() {
     setSelectedPhoto(null);
   };
 
+  // Fonctions pour le menu vertical
+  const handleViewProfile = (userId: number) => {
+    // Navigation vers le profil de l'utilisateur
+    console.log(`Voir profil utilisateur ${userId}`);
+  };
+
+  const handleFollowUser = (userId: number) => {
+    // Logique pour suivre/ne plus suivre un utilisateur
+    console.log(`Suivre utilisateur ${userId}`);
+  };
+
+  const handleContactUser = (userId: number) => {
+    // Ouvrir une conversation avec l'utilisateur
+    console.log(`Contacter utilisateur ${userId}`);
+  };
+
+  const handleBlockUser = (userId: number) => {
+    // Bloquer l'utilisateur
+    console.log(`Bloquer utilisateur ${userId}`);
+  };
+
   // Filtrer les utilisateurs pour l'autocomplete des tags
   const filteredUsersForTags = users.filter(user =>
     (user.name || '').toLowerCase().includes(searchPeople.toLowerCase()) ||
@@ -504,28 +525,28 @@ export default function Social() {
                       <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-600">
                         <DropdownMenuItem 
                           className="text-white hover:bg-gray-700 cursor-pointer"
-                          onClick={() => {/* Navigate to profile */}}
+                          onClick={() => handleViewProfile(item.user?.id || 0)}
                         >
                           <Eye className="mr-2 h-4 w-4" />
                           Voir le profil
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="text-blue-400 hover:bg-gray-700 cursor-pointer"
-                          onClick={() => {/* Follow/Unfollow logic */}}
+                          onClick={() => handleFollowUser(item.user?.id || 0)}
                         >
                           <UserPlus className="mr-2 h-4 w-4" />
                           Suivre
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="text-green-400 hover:bg-gray-700 cursor-pointer"
-                          onClick={() => {/* Contact user */}}
+                          onClick={() => handleContactUser(item.user?.id || 0)}
                         >
                           <MessageSquare className="mr-2 h-4 w-4" />
                           Contacter
                         </DropdownMenuItem>
                         <DropdownMenuItem 
                           className="text-red-400 hover:bg-gray-700 cursor-pointer"
-                          onClick={() => {/* Block user */}}
+                          onClick={() => handleBlockUser(item.user?.id || 0)}
                         >
                           <UserX className="mr-2 h-4 w-4" />
                           Bloquer
@@ -589,33 +610,33 @@ export default function Social() {
                     </div>
                     
                     <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <div className="flex items-center space-x-2">
-                        <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
-                        <span className="text-xs text-gray-400">@{item.user?.username}</span>
-                      </div>
-                      <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {getActivityIcon(item.type)}
-                      <span className="text-gray-300">{getActivityMessage(item)}</span>
-                    </div>
-                    
-                    {item.card && (
-                      <div className="flex items-center space-x-2 mt-2 p-2 bg-[hsl(214,35%,18%)] rounded">
-                        {item.card.imageUrl && (
-                          <img 
-                            src={item.card.imageUrl} 
-                            alt={item.card.playerName}
-                            className="w-8 h-10 object-cover rounded"
-                          />
-                        )}
-                        <div>
-                          <div className="text-sm text-white">{item.card.playerName}</div>
-                          <div className="text-xs text-gray-400">{item.card.teamName} • {item.card.reference}</div>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <div className="flex items-center space-x-2">
+                          <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
+                          <span className="text-xs text-gray-400">@{item.user?.username}</span>
                         </div>
+                        <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
                       </div>
-                    )}
+                      <div className="flex items-center space-x-2">
+                        {getActivityIcon(item.type)}
+                        <span className="text-gray-300">{getActivityMessage(item)}</span>
+                      </div>
+                      
+                      {item.card && (
+                        <div className="flex items-center space-x-2 mt-2 p-2 bg-[hsl(214,35%,18%)] rounded">
+                          {item.card.imageUrl && (
+                            <img 
+                              src={item.card.imageUrl} 
+                              alt={item.card.playerName}
+                              className="w-8 h-10 object-cover rounded"
+                            />
+                          )}
+                          <div>
+                            <div className="text-sm text-white">{item.card.playerName}</div>
+                            <div className="text-xs text-gray-400">{item.card.teamName} • {item.card.reference}</div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -633,28 +654,28 @@ export default function Social() {
                     <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-600">
                       <DropdownMenuItem 
                         className="text-white hover:bg-gray-700 cursor-pointer"
-                        onClick={() => {/* Navigate to profile */}}
+                        onClick={() => handleViewProfile(item.user?.id || 0)}
                       >
                         <Eye className="mr-2 h-4 w-4" />
                         Voir le profil
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="text-blue-400 hover:bg-gray-700 cursor-pointer"
-                        onClick={() => {/* Follow/Unfollow logic */}}
+                        onClick={() => handleFollowUser(item.user?.id || 0)}
                       >
                         <UserPlus className="mr-2 h-4 w-4" />
                         Suivre
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="text-green-400 hover:bg-gray-700 cursor-pointer"
-                        onClick={() => {/* Contact user */}}
+                        onClick={() => handleContactUser(item.user?.id || 0)}
                       >
                         <MessageSquare className="mr-2 h-4 w-4" />
                         Contacter
                       </DropdownMenuItem>
                       <DropdownMenuItem 
                         className="text-red-400 hover:bg-gray-700 cursor-pointer"
-                        onClick={() => {/* Block user */}}
+                        onClick={() => handleBlockUser(item.user?.id || 0)}
                       >
                         <UserX className="mr-2 h-4 w-4" />
                         Bloquer
