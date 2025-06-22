@@ -524,19 +524,31 @@ export default function Social() {
               // Affichage des activités
               <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
                 <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold">
+                  <div className="w-10 h-10 rounded-full overflow-hidden">
                     {item.user?.avatar ? (
-                      <img src={item.user.avatar} alt={item.user?.name || 'User'} className="w-full h-full rounded-full object-cover" />
+                      <img 
+                        src={item.user.avatar} 
+                        alt={`Avatar de ${item.user.name}`}
+                        className="w-full h-full object-cover"
+                      />
                     ) : (
-                      (item.user?.name || 'U').charAt(0).toUpperCase()
+                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
+                      </div>
                     )}
                   </div>
                   
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <div className="flex items-center space-x-2">
+                        <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
+                        <span className="text-xs text-gray-400">@{item.user?.username}</span>
+                      </div>
+                      <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
+                    </div>
+                    <div className="flex items-center space-x-2">
                       {getActivityIcon(item.type)}
-                      <span className="font-semibold text-white">{item.user?.name || 'Utilisateur'}</span>
-                      <span className="text-gray-400">{getActivityMessage(item)}</span>
+                      <span className="text-gray-300">{getActivityMessage(item)}</span>
                     </div>
                     
                     {item.card && (
@@ -554,10 +566,6 @@ export default function Social() {
                         </div>
                       </div>
                     )}
-                    
-                    <div className="text-xs text-gray-400 mt-2">
-                      {formatTimeAgo(item.createdAt)}
-                    </div>
                   </div>
                 </div>
               </div>
