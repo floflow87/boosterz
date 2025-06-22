@@ -1087,6 +1087,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete a post
+  app.delete("/api/posts/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      // First, get the post to verify ownership
+      const post = await storage.getPost(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      
+      // Check if the user owns this post
+      if (post.userId !== userId) {
+        return res.status(403).json({ message: "You can only delete your own posts" });
+      }
+      
+      // Delete the post
+      const success = await storage.deletePost(postId);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to delete post" });
+      }
+      
+      res.json({ message: "Post deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Get user's followers
   app.get("/api/users/:id/followers", optionalAuth, async (req: AuthRequest, res) => {
     try {
