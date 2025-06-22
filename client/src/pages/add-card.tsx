@@ -114,13 +114,16 @@ export default function AddCard() {
     mutationFn: async (cardData: any) => {
       return apiRequest("POST", "/api/cards", cardData);
     },
-    onSuccess: () => {
+    onSuccess: (newCard: any) => {
       toast({
         title: "Carte ajoutée",
         description: "La carte a été ajoutée avec succès à ta collection",
       });
+      // Clear relevant queries to avoid showing stale data
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      setLocation("/");
+      queryClient.invalidateQueries({ queryKey: ["/api/cards"] });
+      // Navigate back to collections main page to see the updated collection
+      setLocation("/collections");
     },
     onError: (error: any) => {
       toast({
@@ -416,7 +419,7 @@ export default function AddCard() {
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-gray-600">
                       {selectedCollection.cardTypes?.map((cardType) => (
-                        <SelectItem key={cardType.type} value={cardType.type}>
+                        <SelectItem key={cardType.type} value={cardType.type} className="text-white">
                           {cardType.label}
                         </SelectItem>
                       ))}
