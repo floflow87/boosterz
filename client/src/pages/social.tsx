@@ -581,12 +581,12 @@ export default function Social() {
           <TabsContent value="profile" className="space-y-4">
             {/* Mon Profil - Post Creation Trigger */}
             <div 
-              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)] mb-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 mb-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors w-full"
               onClick={handleOpenPostModal}
             >
               <div className="flex items-center space-x-3">
                 <div className="flex-1">
-                  <div className="w-full bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,35%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
+                  <div className="w-full bg-[hsl(214,35%,18%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
                     Quoi de neuf ?
                   </div>
                 </div>

@@ -23,7 +23,7 @@ import 'swiper/css/pagination';
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace" | "deck">("collections");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -244,6 +244,17 @@ export default function Collections() {
         <div className="overflow-x-auto scrollbar-hide mb-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <div className="flex space-x-2 bg-[hsl(214,35%,22%)] rounded-xl p-1 min-w-max">
             <button
+              onClick={() => handleTabChange("cards")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "cards" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Trophy className="w-4 h-4" />
+              Cartes
+            </button>
+            <button
               onClick={() => handleTabChange("collections")}
               className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                 activeTab === "collections" 
@@ -254,17 +265,6 @@ export default function Collections() {
             >
               <Layers className="w-4 h-4" />
               Collections
-            </button>
-            <button
-              onClick={() => handleTabChange("cards")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "cards" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <Trophy className="w-4 h-4" />
-              Cartes
             </button>
             <button
               onClick={() => handleTabChange("marketplace")}
@@ -449,70 +449,23 @@ export default function Collections() {
               }
             `}</style>
             
-            <div className="collections-scroll">
-              <Swiper
-                slidesPerView={1.5}
-                spaceBetween={20}
-                centeredSlides={true}
-                freeMode={{
-                  enabled: true,
-                  momentum: true,
-                  momentumRatio: 0.9,
-                  momentumBounce: true,
-                  momentumBounceRatio: 0.15,
-                  momentumVelocityRatio: 1.2,
-                  sticky: true,
-                  minimumVelocity: 0.03,
-                }}
-                resistance={true}
-                resistanceRatio={0.2}
-                speed={400}
-                touchRatio={1.5}
-                touchAngle={45}
-                grabCursor={true}
-                initialSlide={0}
-                slidesOffsetBefore={0}
-                slidesOffsetAfter={0}
-                breakpoints={{
-                  640: {
-                    slidesPerView: 1.8,
-                    spaceBetween: 24,
-                  },
-                  768: {
-                    slidesPerView: 2.2,
-                    spaceBetween: 28,
-                  },
-                  1024: {
-                    slidesPerView: 2.5,
-                    spaceBetween: 32,
-                  },
-                }}
-                pagination={{
-                  clickable: true,
-                  dynamicBullets: true,
-                  dynamicMainBullets: 5,
-                  hideOnClick: false,
-                  type: 'bullets'
-                }}
-                modules={[FreeMode, Pagination]}
-                className="collections-swiper"
-              >
+            <div className="space-y-4">
                 {collections?.map((collection) => {
                   const completion = getCollectionCompletion(collection);
                   return (
-                    <SwiperSlide key={collection.id} className="!w-64">
+                    <div key={collection.id}>
                       <div 
                         onClick={() => {
                           setLocation(`/collection/${collection.id}`);
                         }}
-                        className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-105"
+                        className="w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02]"
                       >
                         {/* Header with title and delete button */}
-                        <div className="p-6 pb-4">
+                        <div className="p-4 pb-3">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="font-bold text-white font-poppins text-xl">{collection.name}</h3>
-                              <p className="text-white/60 text-base italic">{collection.season || 'Saison non spécifiée'}</p>
+                              <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
+                              <p className="text-white/60 text-sm italic">{collection.season || 'Saison non spécifiée'}</p>
                             </div>
                             <div className="flex items-center gap-3">
                               {!collection.name?.includes("SCORE LIGUE 1") && (
@@ -524,35 +477,29 @@ export default function Collections() {
                                   className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
                                   title="Supprimer la collection"
                                 >
-                                  <Trash2 className="w-5 h-5" />
+                                  <Trash2 className="w-4 h-4" />
                                 </button>
                               )}
                             </div>
                           </div>
                         </div>
 
-                        {/* Card carousel area with wallet-style display */}
-                        <div className="h-40 relative flex items-center justify-center overflow-hidden px-6 pb-3 wallet-card-display">
-                          {/* Wallet-style card stack container */}
-                          <div className="relative w-full max-w-md h-32 flex items-center justify-center wallet-card-stack">
-                            {/* Background card layers for wallet effect */}
-                            <div className="wallet-card-layer w-24 h-32 bg-white/10" style={{ zIndex: 1 }}></div>
-                            <div className="wallet-card-layer w-24 h-32 bg-white/15" style={{ zIndex: 2 }}></div>
-                            <div className="wallet-card-layer w-24 h-32 bg-white/20" style={{ zIndex: 3 }}></div>
-                            
+                        {/* Card display area */}
+                        <div className="h-32 relative flex items-center justify-center overflow-hidden px-4 pb-3">
+                          <div className="relative w-full max-w-md h-24 flex items-center justify-center">
                             {/* Main card with golden cards image */}
-                            <div className="relative w-32 h-32 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-3 shadow-2xl flex items-center justify-center" style={{ zIndex: 4 }}>
+                            <div className="relative w-24 h-24 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-xl p-2 shadow-xl flex items-center justify-center">
                               <img 
                                 src={goldenCardsIcon}
                                 alt="Golden trading cards"
-                                className="w-28 h-28 object-contain rounded-[20px] shadow-[0_0_20px_rgba(0,0,0,0.4)]"
+                                className="w-20 h-20 object-contain rounded-lg"
                               />
                             </div>
                           </div>
                         </div>
                         
                         {/* Progress bar */}
-                        <div className="px-6 pb-4">
+                        <div className="px-4 pb-4">
                           <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                             <div 
                               className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
@@ -565,24 +512,21 @@ export default function Collections() {
                           </div>
                         </div>
                       </div>
-                    </SwiperSlide>
+                    </div>
                   );
                 })}
 
                 {/* Add Collection Button */}
-                <SwiperSlide className="!w-80">
-                  <div 
-                    onClick={() => setShowAddModal(true)}
-                    className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center h-full"
-                  >
-                    <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Plus className="w-8 h-8 text-white" />
-                    </div>
-                    <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
-                    <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à ta bibliothèque</p>
+                <div 
+                  onClick={() => setShowAddModal(true)}
+                  className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-6 flex flex-col items-center justify-center text-center"
+                >
+                  <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                    <Plus className="w-6 h-6 text-white" />
                   </div>
-                </SwiperSlide>
-              </Swiper>
+                  <h3 className="font-bold text-white mb-2 font-poppins text-lg">Nouvelle Collection</h3>
+                  <p className="text-[hsl(212,23%,69%)] text-sm">Ajouter une collection à ta bibliothèque</p>
+                </div>
             </div>
           </div>
         )}
