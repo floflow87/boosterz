@@ -74,6 +74,8 @@ export default function Social() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [profileSearchTerm, setProfileSearchTerm] = useState("");
   const [saleFilter, setSaleFilter] = useState<"all" | "available" | "sold">("all");
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [postLikes, setPostLikes] = useState<Record<number, number>>({});
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -157,6 +159,23 @@ export default function Social() {
         minute: '2-digit'
       });
     }
+  };
+
+  // Handle like functionality
+  const handleLike = (postId: number) => {
+    const isCurrentlyLiked = likedPosts.has(postId);
+    const newLikedPosts = new Set(likedPosts);
+    const currentLikes = postLikes[postId] || 0;
+
+    if (isCurrentlyLiked) {
+      newLikedPosts.delete(postId);
+      setPostLikes(prev => ({ ...prev, [postId]: Math.max(0, currentLikes - 1) }));
+    } else {
+      newLikedPosts.add(postId);
+      setPostLikes(prev => ({ ...prev, [postId]: currentLikes + 1 }));
+    }
+
+    setLikedPosts(newLikedPosts);
   };
 
   // Fonction pour convertir un fichier en base64
@@ -432,7 +451,7 @@ export default function Social() {
                 }`}
               >
                 <Users className="w-3 h-3 mr-1 inline" />
-                Mon Profil
+                Mes Posts
               </button>
               <button
                 onClick={() => setActiveTab("activity")}
@@ -680,25 +699,15 @@ export default function Social() {
                   </div>
                 </div>
 
-                {/* Enhanced Profile Tabs */}
-                <Tabs defaultValue="posts" className="w-full">
-                  <TabsList className="grid w-full grid-cols-5 bg-[hsl(214,35%,22%)] mb-6">
-                    <TabsTrigger value="posts" className="text-xs">Posts</TabsTrigger>
-                    <TabsTrigger value="collections" className="text-xs">Collections</TabsTrigger>
-                    <TabsTrigger value="featured" className="text-xs">À la une</TabsTrigger>
-                    <TabsTrigger value="marketplace" className="text-xs">Marché</TabsTrigger>
-                    <TabsTrigger value="sold" className="text-xs">Vendues</TabsTrigger>
-                  </TabsList>
-
-                  {/* Posts Tab Content */}
-                  <TabsContent value="posts" className="space-y-4">
+                {/* Posts Section */}
+                <div className="space-y-4">
                     {/* Post Creation Trigger */}
                     <div 
                       className="bg-[hsl(214,35%,22%)] rounded-lg p-4 mb-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors w-full"
                       onClick={handleOpenPostModal}
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                           <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
                         </div>
                         <div className="flex-1">
@@ -717,11 +726,11 @@ export default function Social() {
                       <div className="space-y-4">
                         {posts.map((post) => (
                           <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
-                            {/* Post Header */}
-                            <div className="p-4 border-b border-[hsl(214,35%,30%)]">
+                            {/* Post Header - Darker Background */}
+                            <div className="p-4 border-b border-[hsl(214,35%,30%)] bg-[hsl(214,35%,18%)]">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center space-x-3">
-                                  <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                                     <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
                                   </div>
                                   <div>
@@ -760,9 +769,16 @@ export default function Social() {
                                 <div className="flex items-center space-x-6">
                                   {/* Likes */}
                                   <div className="flex items-center space-x-2">
-                                    <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400 transition-colors">
-                                      <Heart className="w-4 h-4" />
-                                      <span className="text-xs">0</span>
+                                    <button 
+                                      onClick={() => handleLike(post.id)}
+                                      className={`flex items-center space-x-1 transition-colors ${
+                                        likedPosts.has(post.id) 
+                                          ? 'text-red-400' 
+                                          : 'text-gray-400 hover:text-red-400'
+                                      }`}
+                                    >
+                                      <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
+                                      <span className="text-xs">{postLikes[post.id] || 0}</span>
                                     </button>
                                   </div>
 
@@ -774,17 +790,19 @@ export default function Social() {
                                     </button>
                                   </div>
                                 </div>
-
-                                {/* Actions Menu */}
-                                <button className="text-gray-400 hover:text-white transition-colors">
-                                  <MoreHorizontal className="w-4 h-4" />
-                                </button>
                               </div>
 
                               {/* Action Buttons */}
                               <div className="flex items-center justify-between mt-3 pt-3 border-t border-[hsl(214,35%,30%)]">
-                                <button className="flex items-center space-x-2 text-gray-400 hover:text-red-400 transition-colors text-xs">
-                                  <Heart className="w-4 h-4" />
+                                <button 
+                                  onClick={() => handleLike(post.id)}
+                                  className={`flex items-center space-x-2 transition-colors text-xs ${
+                                    likedPosts.has(post.id) 
+                                      ? 'text-red-400' 
+                                      : 'text-gray-400 hover:text-red-400'
+                                  }`}
+                                >
+                                  <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
                                   <span>J'aime</span>
                                 </button>
                                 <button className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors text-xs">
@@ -804,71 +822,7 @@ export default function Social() {
                         </p>
                       </div>
                     )}
-                  </TabsContent>
-
-                  {/* Collections Tab */}
-                  <TabsContent value="collections" className="space-y-4">
-                    {collections.length > 0 ? (
-                      <div className="grid grid-cols-1 gap-4">
-                        {collections.map((collection) => (
-                          <div key={collection.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
-                            <div className="flex items-center justify-between">
-                              <div>
-                                <h3 className="text-white font-medium">{collection.name}</h3>
-                                <p className="text-gray-400 text-sm">{collection.ownedCards}/{collection.totalCards} cartes</p>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-[hsl(9,85%,67%)] font-bold text-lg">{collection.completionPercentage}%</div>
-                                <div className="text-gray-400 text-xs">Complété</div>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <div className="text-gray-400">Aucune collection pour le moment</div>
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  {/* Featured Tab */}
-                  <TabsContent value="featured" className="space-y-4">
-                    {featuredCards.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-4">
-                        {featuredCards.map((card) => (
-                          <CardDisplay key={card.id} card={card} viewMode="grid" />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <div className="text-gray-400">Aucune carte à la une</div>
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  {/* Marketplace Tab */}
-                  <TabsContent value="marketplace" className="space-y-4">
-                    {marketplaceCards.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-4">
-                        {marketplaceCards.map((card) => (
-                          <CardDisplay key={card.id} card={card} viewMode="grid" />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-12">
-                        <div className="text-gray-400">Aucune carte en vente</div>
-                      </div>
-                    )}
-                  </TabsContent>
-
-                  {/* Sold Tab */}
-                  <TabsContent value="sold" className="space-y-4">
-                    <div className="text-center py-12">
-                      <div className="text-gray-400">Aucune carte vendue</div>
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                </div>
               </>
             )}
           </TabsContent>
