@@ -65,6 +65,9 @@ export default function Social() {
   const [forSaleSearchTerm, setForSaleSearchTerm] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [taggedPeople, setTaggedPeople] = useState<string[]>([]);
+  const [searchPeople, setSearchPeople] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -122,6 +125,38 @@ export default function Social() {
   // Fonction pour ouvrir le modal de création de post
   const handleOpenPostModal = () => {
     setIsPostModalOpen(true);
+  };
+
+  // Fonction pour gérer l'upload de photo
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedPhoto(file);
+    }
+  };
+
+  // Fonction pour retirer la photo
+  const removePhoto = () => {
+    setSelectedPhoto(null);
+  };
+
+  // Filtrer les utilisateurs pour l'autocomplete des tags
+  const filteredUsersForTags = users.filter(user =>
+    user.name.toLowerCase().includes(searchPeople.toLowerCase()) ||
+    user.username.toLowerCase().includes(searchPeople.toLowerCase())
+  );
+
+  // Ajouter une personne aux tags
+  const addTaggedPerson = (username: string) => {
+    if (!taggedPeople.includes(username)) {
+      setTaggedPeople([...taggedPeople, username]);
+      setSearchPeople("");
+    }
+  };
+
+  // Retirer une personne des tags
+  const removeTaggedPerson = (username: string) => {
+    setTaggedPeople(taggedPeople.filter(person => person !== username));
   };
 
 
@@ -336,9 +371,9 @@ export default function Social() {
               <div className="w-24 h-24 bg-yellow-600/20 rounded-full flex items-center justify-center mb-6">
                 <Star className="w-12 h-12 text-yellow-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-white">Vous ne suivez personne</h3>
+              <h3 className="text-xl font-semibold mb-4 text-white">Tu ne suis personne</h3>
               <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
-                Pour suivre l'actualité de vos concurrents favoris, c'est par ici
+                Pour suivre l'actualité de tes concurrents favoris, c'est par ici
               </p>
               <button
                 onClick={() => setActiveTab("discover")}
@@ -618,17 +653,26 @@ export default function Social() {
         </Tabs>
       </main>
 
-      {/* Modal de création de publication à la Facebook */}
-      <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>
-        <DialogContent className="bg-[hsl(214,35%,11%)] border-[hsl(214,35%,30%)] text-white max-w-lg">
-          <div className="space-y-3">
+      {/* Page de création de publication */}
+      {isPostModalOpen && (
+        <div className="fixed inset-0 bg-[hsl(214,35%,11%)] z-50 overflow-y-auto">
+          <div className="min-h-screen px-4 py-6">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <button
+                onClick={() => setIsPostModalOpen(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                ← Retour
+              </button>
+              <h1 className="text-lg font-semibold text-white">Nouvelle publication</h1>
+              <div className="w-16"></div>
+            </div>
+
             {/* Profil utilisateur */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Users className="w-5 h-5 text-white" />
-              </div>
+            <div className="flex items-center space-x-3 mb-4">
               <div>
-                <div className="font-medium text-sm">Floflow87</div>
+                <div className="font-medium text-sm text-white">Floflow87</div>
                 <div className="text-xs text-gray-400">🌍 Public</div>
               </div>
             </div>
@@ -638,28 +682,88 @@ export default function Social() {
               placeholder="Quoi de neuf ?"
               value={newPostContent}
               onChange={(e) => setNewPostContent(e.target.value)}
-              className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-sm min-h-[100px] focus:outline-none"
+              className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-sm min-h-[150px] focus:outline-none w-full mb-4"
               autoFocus
             />
 
-            {/* Boutons d'options simplifiés */}
-            <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
-                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                  📷
+            {/* Photo preview */}
+            {selectedPhoto && (
+              <div className="relative mb-4">
+                <img
+                  src={URL.createObjectURL(selectedPhoto)}
+                  alt="Photo sélectionnée"
+                  className="w-full max-h-64 object-cover rounded-lg"
+                />
+                <button
+                  onClick={removePhoto}
+                  className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full w-8 h-8 flex items-center justify-center"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+
+            {/* Tagged people */}
+            {taggedPeople.length > 0 && (
+              <div className="mb-4">
+                <div className="text-xs text-gray-400 mb-2">Personnes identifiées :</div>
+                <div className="flex flex-wrap gap-2">
+                  {taggedPeople.map((person) => (
+                    <div key={person} className="bg-blue-600 text-white px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                      {person}
+                      <button onClick={() => removeTaggedPerson(person)} className="ml-1">×</button>
+                    </div>
+                  ))}
                 </div>
-                <span className="text-xs">Photo/Vidéo</span>
-              </button>
-              <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                  👥
-                </div>
-                <span className="text-xs">Identifier des personnes</span>
+              </div>
+            )}
+
+            {/* Search people input */}
+            {searchPeople && (
+              <div className="mb-4">
+                <Input
+                  placeholder="Rechercher une personne..."
+                  value={searchPeople}
+                  onChange={(e) => setSearchPeople(e.target.value)}
+                  className="bg-[hsl(214,35%,18%)] border-gray-600 text-white text-sm"
+                />
+                {filteredUsersForTags.length > 0 && (
+                  <div className="bg-[hsl(214,35%,18%)] border border-gray-600 rounded-lg mt-1 max-h-32 overflow-y-auto">
+                    {filteredUsersForTags.slice(0, 5).map((user) => (
+                      <button
+                        key={user.id}
+                        onClick={() => addTaggedPerson(user.username)}
+                        className="w-full text-left px-3 py-2 text-white text-sm hover:bg-[hsl(214,35%,25%)] transition-colors"
+                      >
+                        {user.name} (@{user.username})
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Boutons d'options */}
+            <div className="flex items-center space-x-6 mb-6">
+              <label className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors cursor-pointer">
+                <span className="text-sm">Photo/Vidéo</span>
+                <input
+                  type="file"
+                  accept="image/*,video/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+              <button 
+                onClick={() => setSearchPeople(searchPeople ? "" : " ")}
+                className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
+              >
+                <span className="text-sm">Identifier des personnes</span>
               </button>
             </div>
 
             {/* Boutons Annuler et Publier */}
-            <div className="flex justify-between gap-3">
+            <div className="flex justify-between gap-3 fixed bottom-6 left-4 right-4">
               <Button
                 onClick={() => setIsPostModalOpen(false)}
                 variant="outline"
@@ -676,8 +780,8 @@ export default function Social() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      )}
 
       <Navigation />
     </div>
