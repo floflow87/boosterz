@@ -1760,7 +1760,7 @@ export default function CollectionDetail() {
             console.error("Erreur lors de la sauvegarde:", error);
             toast({
               title: "Erreur",
-              description: "Impossible de sauvegarder la photo. Vérifiez votre connexion.",
+              description: "Impossible de sauvegarder la photo. Vérifie ta connexion.",
               variant: "destructive"
             });
           }
