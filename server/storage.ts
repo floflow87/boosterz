@@ -1005,6 +1005,18 @@ export class MemStorage implements IStorage {
     return { id, ...updates, updatedAt: new Date() };
   }
 
+  async getUserSubscriptions(userId: number): Promise<any[]> {
+    return [];
+  }
+
+  async getUserSubscribers(userId: number): Promise<any[]> {
+    return [];
+  }
+
+  async deleteSubscription(followerId: number, followingId: number): Promise<void> {
+    // Implementation for subscription deletion
+  }
+
   async getActivityFeed(userId: number): Promise<any[]> {
     return [];
   }

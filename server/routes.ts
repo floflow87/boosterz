@@ -701,6 +701,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Subscription system endpoints
+  app.post("/api/subscriptions", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { followingId } = req.body;
+      const followerId = req.user!.id;
+
+      if (followerId === followingId) {
+        return res.status(400).json({ message: "Tu ne peux pas te suivre toi-même" });
+      }
+
+      const subscription = await storage.createSubscription({
+        followerId,
+        followingId,
+        status: "accepted"
+      });
+
+      res.json(subscription);
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  app.get("/api/users/:id/subscriptions", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const subscriptions = await storage.getUserSubscriptions(userId);
+      res.json(subscriptions);
+    } catch (error) {
+      console.error("Error fetching subscriptions:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  app.delete("/api/subscriptions/:followingId", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const followingId = parseInt(req.params.followingId);
+      const followerId = req.user!.id;
+      
+      await storage.deleteSubscription(followerId, followingId);
+      res.json({ success: true, message: "Abonnement supprimé" });
+    } catch (error) {
+      console.error("Error deleting subscription:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  app.get("/api/users/:id/subscribers", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const subscribers = await storage.getUserSubscribers(userId);
+      res.json(subscribers);
+    } catch (error) {
+      console.error("Error fetching subscribers:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  app.get("/api/users/:id/feed", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (req.user?.id !== userId) {
+        return res.status(403).json({ message: "Accès refusé" });
+      }
+
+      const posts = await storage.getUserPosts(userId);
+      res.json(posts);
+    } catch (error) {
+      console.error("Error fetching user feed:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
   app.post('/api/social/users/:userId/follow', async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
