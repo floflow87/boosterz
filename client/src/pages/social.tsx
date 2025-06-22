@@ -93,6 +93,16 @@ export default function Social() {
     queryKey: ["/api/users/1/posts"],
   });
 
+  // Fonction pour convertir un fichier en base64
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
+
   // Mutation pour créer un post
   const createPostMutation = useMutation({
     mutationFn: async (content: string) => {
@@ -721,31 +731,6 @@ export default function Social() {
               </div>
             )}
 
-            {/* Search people input */}
-            {searchPeople && (
-              <div className="mb-4">
-                <Input
-                  placeholder="Rechercher une personne..."
-                  value={searchPeople}
-                  onChange={(e) => setSearchPeople(e.target.value)}
-                  className="bg-[hsl(214,35%,18%)] border-gray-600 text-white text-sm"
-                />
-                {filteredUsersForTags.length > 0 && (
-                  <div className="bg-[hsl(214,35%,18%)] border border-gray-600 rounded-lg mt-1 max-h-32 overflow-y-auto">
-                    {filteredUsersForTags.slice(0, 5).map((user) => (
-                      <button
-                        key={user.id}
-                        onClick={() => addTaggedPerson(user.username)}
-                        className="w-full text-left px-3 py-2 text-white text-sm hover:bg-[hsl(214,35%,25%)] transition-colors"
-                      >
-                        {user.name} (@{user.username})
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
             {/* Boutons d'options */}
             <div className="flex items-center space-x-6 mb-6">
               <label className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors cursor-pointer">
@@ -765,12 +750,52 @@ export default function Social() {
               </button>
             </div>
 
+            {/* Search people input - positioned to avoid button overlap */}
+            {searchPeople && (
+              <div className={`mb-4 ${searchPeople ? 'pb-20' : ''}`}>
+                <div className="relative">
+                  <Input
+                    placeholder="Rechercher une personne..."
+                    value={searchPeople}
+                    onChange={(e) => setSearchPeople(e.target.value)}
+                    className="bg-[hsl(214,35%,18%)] border-gray-600 text-white text-sm"
+                    autoFocus
+                    onBlur={(e) => {
+                      // Keep the input open if clicking on autocomplete results
+                      if (!e.relatedTarget?.closest('.autocomplete-results')) {
+                        setTimeout(() => setSearchPeople(""), 150);
+                      }
+                    }}
+                  />
+                  {filteredUsersForTags.length > 0 && (
+                    <div className="autocomplete-results absolute top-full left-0 right-0 bg-[hsl(214,35%,18%)] border border-gray-600 rounded-lg mt-1 max-h-32 overflow-y-auto z-10">
+                      {filteredUsersForTags.slice(0, 5).map((user) => (
+                        <button
+                          key={user.id}
+                          onClick={() => addTaggedPerson(user.username)}
+                          className="w-full text-left px-3 py-2 text-white text-sm hover:bg-[hsl(214,35%,25%)] transition-colors"
+                        >
+                          {user.name} (@{user.username})
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* Boutons Annuler et Publier */}
             <div className="flex justify-between gap-3 fixed bottom-6 left-4 right-4">
               <Button
-                onClick={() => setIsPostModalOpen(false)}
+                onClick={() => {
+                  setIsPostModalOpen(false);
+                  setSearchPeople("");
+                  setNewPostContent("");
+                  setSelectedPhoto(null);
+                  setTaggedPeople([]);
+                }}
                 variant="outline"
-                className="flex-1 border-gray-600 text-gray-300 hover:text-white hover:border-gray-500"
+                className="flex-1 border-gray-700 bg-gray-800 text-gray-300 hover:text-white hover:border-gray-600 hover:bg-gray-700"
               >
                 Annuler
               </Button>

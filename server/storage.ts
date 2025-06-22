@@ -1,4 +1,4 @@
-import { users, collections, cards, userCards, conversations, messages, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
+import { users, collections, cards, userCards, conversations, messages, posts, activities, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ilike } from "drizzle-orm";
 
@@ -47,6 +47,7 @@ export interface IStorage {
   // Social network system
   getUserPosts(userId: number): Promise<any[]>;
   createPost(post: any): Promise<any>;
+  createActivity(activity: any): Promise<any>;
   getUserFollowers(userId: number): Promise<User[]>;
   getUserFollowing(userId: number): Promise<User[]>;
   getPendingSubscriptionRequests(userId: number): Promise<any[]>;
@@ -372,13 +373,36 @@ export class DatabaseStorage implements IStorage {
 
   // Social network methods
   async getUserPosts(userId: number): Promise<any[]> {
-    // Mock implementation for now - would connect to posts table
-    return [];
+    const result = await db.select().from(posts).where(eq(posts.userId, userId));
+    return result;
   }
 
   async createPost(post: any): Promise<any> {
-    // Mock implementation for now - would insert into posts table
-    return { id: Date.now(), ...post, createdAt: new Date() };
+    const [newPost] = await db
+      .insert(posts)
+      .values({
+        userId: post.userId,
+        content: post.content,
+        type: post.type || "text",
+        cardId: post.cardId || null,
+        isVisible: true
+      })
+      .returning();
+    return newPost;
+  }
+
+  async createActivity(activity: any): Promise<any> {
+    const [newActivity] = await db
+      .insert(activities)
+      .values({
+        userId: activity.userId,
+        type: activity.type,
+        cardId: activity.cardId || null,
+        collectionId: activity.collectionId || null,
+        metadata: activity.metadata || null
+      })
+      .returning();
+    return newActivity;
   }
 
   async getUserFollowers(userId: number): Promise<User[]> {
