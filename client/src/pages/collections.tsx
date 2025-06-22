@@ -163,6 +163,7 @@ export default function Collections() {
     onSuccess: (updatedCard) => {
       // Mettre à jour les cartes personnelles
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       
       // Mettre à jour la carte sélectionnée avec les nouvelles données
       if (selectedCard && updatedCard) {
@@ -198,6 +199,8 @@ export default function Collections() {
     },
     onSuccess: (updatedCard) => {
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
       
       if (selectedCard && updatedCard) {
         setSelectedCard(updatedCard);
@@ -254,6 +257,8 @@ export default function Collections() {
       
       queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
       toast({
         title: "Carte marquée comme vendue",
         description: "La carte a été marquée comme vendue avec succès.",
@@ -875,57 +880,68 @@ export default function Collections() {
                     
                     <h3 className="text-lg font-bold text-white mb-4 text-center">Actions</h3>
                     
-                    <button 
-                      onClick={() => {
-                        setShowOptionsPanel(false);
-                        setShowTradePanel(true);
-                      }}
-                      className="w-full p-4 text-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                    >
-                      <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
-                        <Edit className="w-4 h-4 text-white" />
-                      </div>
-                      Paramètres de vente
-                    </button>
+                    {!selectedCard.isSold && (
+                      <>
+                        <button 
+                          onClick={() => {
+                            setShowOptionsPanel(false);
+                            setShowTradePanel(true);
+                          }}
+                          className="w-full p-4 text-white hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                        >
+                          <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
+                            <Edit className="w-4 h-4 text-white" />
+                          </div>
+                          Paramètres de vente
+                        </button>
+                        
+                        <button 
+                          onClick={handleMarkAsSold}
+                          className="w-full p-4 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                        >
+                          <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                          Marquer comme vendue
+                        </button>
+                        
+                        {(selectedCard.tradePrice || selectedCard.salePrice) ? (
+                          <button 
+                            onClick={handleRemoveFromSale}
+                            className="w-full p-4 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          >
+                            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                              <X className="w-4 h-4 text-white" />
+                            </div>
+                            Retirer de la vente
+                          </button>
+                        ) : (
+                          <button 
+                            onClick={() => {
+                              setShowOptionsPanel(false);
+                              setShowTradePanel(true);
+                            }}
+                            className="w-full p-4 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          >
+                            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                              <DollarSign className="w-4 h-4 text-white" />
+                            </div>
+                            Mettre en vente
+                          </button>
+                        )}
+                      </>
+                    )}
                     
-                    <button 
-                      onClick={handleMarkAsSold}
-                      className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                    >
-                      <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                        <Check className="w-4 h-4 text-white" />
+                    {selectedCard.isSold && (
+                      <div className="w-full p-4 text-gray-400 rounded-lg font-medium text-center">
+                        <div className="text-yellow-400 font-bold mb-2">✓ Carte vendue</div>
+                        <div className="text-sm">Aucune action disponible</div>
                       </div>
-                      Marquer comme vendue
-                    </button>
-                    
-                    {(selectedCard.tradePrice || selectedCard.salePrice) ? (
-                      <button 
-                        onClick={handleRemoveFromSale}
-                        className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                      >
-                        <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                          <X className="w-4 h-4 text-white" />
-                        </div>
-                        Retirer de la vente
-                      </button>
-                    ) : (
-                      <button 
-                        onClick={() => {
-                          setShowOptionsPanel(false);
-                          setShowTradePanel(true);
-                        }}
-                        className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                      >
-                        <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                          <DollarSign className="w-4 h-4 text-white" />
-                        </div>
-                        Mettre en vente
-                      </button>
                     )}
                     
                     <button 
                       onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-4 text-blue-400 hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-4 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
                       <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                         <Plus className="w-4 h-4 text-white" />
