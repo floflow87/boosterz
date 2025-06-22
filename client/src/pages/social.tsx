@@ -362,7 +362,9 @@ export default function Social() {
       case "added_card":
         return <Star className="w-4 h-4 text-yellow-500" />;
       case "marked_for_trade":
-        return <TrendingUp className="w-4 h-4 text-blue-500" />;
+        return <ArrowLeftRight className="w-4 h-4 text-blue-500" />;
+      case "marked_for_sale":
+        return <ShoppingBag className="w-4 h-4 text-purple-500" />;
       case "completed_collection":
         return <Star className="w-4 h-4 text-green-500" />;
       default:
@@ -376,6 +378,8 @@ export default function Social() {
         return `a ajouté ${activity.card?.playerName} à sa collection`;
       case "marked_for_trade":
         return `propose ${activity.card?.playerName} en échange`;
+      case "marked_for_sale":
+        return `a mis ${activity.card?.playerName} à la vente`;
       case "completed_collection":
         return `a complété la collection ${activity.collection?.name}`;
       default:
@@ -396,6 +400,159 @@ export default function Social() {
     
     const diffInDays = Math.floor(diffInHours / 24);
     return `Il y a ${diffInDays}j`;
+  };
+
+  // Composant pour le feed des utilisateurs suivis
+  const FeedContent = () => {
+    // Pour l'instant, récupérer les posts et activités existants
+    const { data: feedPosts = [] } = useQuery<any[]>({
+      queryKey: [`/api/users/feed`],
+    });
+
+    const { data: activities = [] } = useQuery<Activity[]>({
+      queryKey: [`/api/social/activities`],
+    });
+
+    // Combiner posts et activités et les trier par date
+    const feedItems = [
+      ...feedPosts.map(post => ({ ...post, type: 'post', itemType: 'post' })),
+      ...activities.map(activity => ({ ...activity, itemType: 'activity' }))
+    ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    if (feedItems.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div className="w-24 h-24 bg-yellow-600/20 rounded-full flex items-center justify-center mb-6">
+            <Star className="w-12 h-12 text-yellow-600" />
+          </div>
+          <h3 className="text-xl font-semibold mb-4 text-white">Tu ne suis personne</h3>
+          <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
+            Pour suivre l'actualité de tes concurrents favoris, c'est par ici
+          </p>
+          <button
+            onClick={() => setActiveTab("discover")}
+            className="px-6 py-3 bg-[#F37261] hover:bg-[#e5624f] text-white font-medium rounded-lg transition-colors"
+          >
+            Découvrir
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-4">
+        {feedItems.map((item) => (
+          <div key={`${item.itemType}-${item.id}`}>
+            {item.itemType === 'post' ? (
+              // Affichage des posts
+              <div className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)] overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden">
+                        {user?.avatar ? (
+                          <img 
+                            src={user.avatar} 
+                            alt={`Avatar de ${user.name}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <h4 className="text-white font-medium text-sm">{user?.name}</h4>
+                          <span className="text-xs text-gray-400">@{user?.username}</span>
+                        </div>
+                        <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Post Content */}
+                  {item.content && (
+                    <div className="text-white text-sm mb-3 leading-relaxed mt-3">
+                      {item.content}
+                    </div>
+                  )}
+                </div>
+
+                {/* Post Actions */}
+                <div className="px-4 pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                      <div className="flex items-center space-x-2">
+                        <button 
+                          onClick={() => handleLike(item.id)}
+                          className={`flex items-center space-x-1 transition-colors ${
+                            likedPosts.has(item.id) 
+                              ? 'text-red-400' 
+                              : 'text-gray-400 hover:text-red-400'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${likedPosts.has(item.id) ? 'fill-current' : ''}`} />
+                          <span className="text-xs">{postLikes[item.id] || 0}</span>
+                        </button>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button className="flex items-center space-x-1 text-gray-400 hover:text-blue-400 transition-colors">
+                          <MessageCircle className="w-4 h-4" />
+                          <span className="text-xs">0</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // Affichage des activités
+              <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+                <div className="flex items-start space-x-3">
+                  <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold">
+                    {item.user?.avatar ? (
+                      <img src={item.user.avatar} alt={item.user?.name || 'User'} className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                      (item.user?.name || 'U').charAt(0).toUpperCase()
+                    )}
+                  </div>
+                  
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-1">
+                      {getActivityIcon(item.type)}
+                      <span className="font-semibold text-white">{item.user?.name || 'Utilisateur'}</span>
+                      <span className="text-gray-400">{getActivityMessage(item)}</span>
+                    </div>
+                    
+                    {item.card && (
+                      <div className="flex items-center space-x-2 mt-2 p-2 bg-[hsl(214,35%,18%)] rounded">
+                        {item.card.imageUrl && (
+                          <img 
+                            src={item.card.imageUrl} 
+                            alt={item.card.playerName}
+                            className="w-8 h-10 object-cover rounded"
+                          />
+                        )}
+                        <div>
+                          <div className="text-sm text-white">{item.card.playerName}</div>
+                          <div className="text-xs text-gray-400">{item.card.teamName} • {item.card.reference}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="text-xs text-gray-400 mt-2">
+                      {formatTimeAgo(item.createdAt)}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
@@ -423,10 +580,9 @@ export default function Social() {
                 onClick={() => setActiveTab("forsale")}
                 className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                   activeTab === "forsale" 
-                    ? "text-white shadow-lg transform scale-105" 
+                    ? "bg-purple-600 text-white shadow-lg transform scale-105" 
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
-                style={activeTab === "forsale" ? { backgroundColor: '#F37261' } : {}}
               >
                 <ShoppingBag className="w-3 h-3 mr-1 inline" />
                 Sur le marché
@@ -454,37 +610,12 @@ export default function Social() {
                 <PenTool className="w-3 h-3 mr-1 inline" />
                 Mes Posts
               </button>
-              <button
-                onClick={() => setActiveTab("activity")}
-                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
-                  activeTab === "activity" 
-                    ? "bg-purple-600 text-white shadow-lg transform scale-105" 
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
-              >
-                <TrendingUp className="w-3 h-3 mr-1 inline" />
-                Activité
-              </button>
             </div>
           </div>
 
           <TabsContent value="featured" className="space-y-4">
-            {/* À la une - Empty state */}
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="w-24 h-24 bg-yellow-600/20 rounded-full flex items-center justify-center mb-6">
-                <Star className="w-12 h-12 text-yellow-600" />
-              </div>
-              <h3 className="text-xl font-semibold mb-4 text-white">Tu ne suis personne</h3>
-              <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
-                Pour suivre l'actualité de tes concurrents favoris, c'est par ici
-              </p>
-              <button
-                onClick={() => setActiveTab("discover")}
-                className="px-6 py-3 bg-[#F37261] hover:bg-[#e5624f] text-white font-medium rounded-lg transition-colors"
-              >
-                Découvrir
-              </button>
-            </div>
+            {/* Feed des utilisateurs suivis */}
+            <FeedContent />
           </TabsContent>
 
           <TabsContent value="discover" className="space-y-4">
@@ -559,63 +690,7 @@ export default function Social() {
             </div>
           </TabsContent>
 
-          <TabsContent value="activity" className="space-y-4">
-            {activitiesLoading ? (
-              <div className="text-center py-8">
-                <div className="text-gray-400">Chargement...</div>
-              </div>
-            ) : activities.length === 0 ? (
-              <div className="text-center py-8">
-                <TrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-400">Aucune activité récente</p>
-              </div>
-            ) : (
-              activities.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]"
-                >
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold">
-                      {activity.user?.avatar ? (
-                        <img src={activity.user.avatar} alt={activity.user?.name || 'User'} className="w-full h-full rounded-full object-cover" />
-                      ) : (
-                        (activity.user?.name || 'U').charAt(0).toUpperCase()
-                      )}
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-1">
-                        {getActivityIcon(activity.type)}
-                        <span className="font-semibold text-white">{activity.user?.name || 'Utilisateur'}</span>
-                        <span className="text-gray-400">{getActivityMessage(activity)}</span>
-                      </div>
-                      
-                      {activity.card && (
-                        <div className="flex items-center space-x-2 mt-2 p-2 bg-[hsl(214,35%,18%)] rounded">
-                          {activity.card.imageUrl && (
-                            <img 
-                              src={activity.card.imageUrl} 
-                              alt={activity.card.playerName}
-                              className="w-8 h-10 object-cover rounded"
-                            />
-                          )}
-                          <div>
-                            <div className="text-sm text-white">{activity.card.playerName}</div>
-                            <div className="text-xs text-gray-400">{activity.card.teamName} • {activity.card.reference}</div>
-                          </div>
-                        </div>
-                      )}
-                      
-                      <div className="text-xs text-gray-400 mt-2">
-                        {formatTimeAgo(activity.createdAt)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </TabsContent>
+
 
           <TabsContent value="forsale" className="space-y-4">
             {/* Barre de recherche pour cartes à la vente */}
