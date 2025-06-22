@@ -61,10 +61,13 @@ export default function Collections() {
     return { totalCards: 0, ownedCards: 0, percentage: 0 };
   };
 
-  const { data: cards } = useQuery<Card[]>({
+  const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
   });
+
+  // Extract cards from response
+  const cards = cardsResponse?.cards || [];
 
   const { data: marketplaceCards } = useQuery<Card[]>({
     queryKey: ["/api/cards/marketplace"],
