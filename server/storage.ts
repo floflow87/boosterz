@@ -60,6 +60,12 @@ export interface IStorage {
   updateSubscription(id: number, updates: any): Promise<any>;
   getActivityFeed(userId: number): Promise<any[]>;
   createActivity(activity: any): Promise<any>;
+  
+  // Follow system
+  followUser(followerId: number, followingId: number): Promise<boolean>;
+  unfollowUser(followerId: number, followingId: number): Promise<boolean>;
+  isFollowing(followerId: number, followingId: number): Promise<boolean>;
+  getFollowedUsersPosts(userId: number): Promise<any[]>;
 }
 
 export class DatabaseStorage implements IStorage {
