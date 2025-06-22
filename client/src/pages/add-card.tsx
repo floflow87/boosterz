@@ -25,6 +25,7 @@ export default function AddCard() {
   const [currentStep, setCurrentStep] = useState<Step>("import");
   
   // Form data - pour les cartes personnelles
+  const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [editedImage, setEditedImage] = useState<string | null>(null);
   const [teamName, setTeamName] = useState("");
@@ -52,7 +53,24 @@ export default function AddCard() {
     { type: "special_1_1", label: "Spéciale 1/1" }
   ];
 
-  // Fetch all players for suggestions
+  // Fetch collections for selection
+  const { data: collections = [] } = useQuery<any[]>({
+    queryKey: ["/api/users/1/collections"],
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch cards from selected collection for player suggestions
+  const { data: collectionCards = [] } = useQuery<any[]>({
+    queryKey: [`/api/collections/${selectedCollectionId}/cards`],
+    enabled: !!selectedCollectionId,
+    select: (data: any) => {
+      const cards = Array.isArray(data) ? data : (data?.cards || []);
+      return cards;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch all players for fallback suggestions
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ["/api/cards/all"],
     select: (data: any[]) => {
@@ -71,15 +89,30 @@ export default function AddCard() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Get unique teams
-  const teamSet = new Set(allPlayers.map(p => p.teamName));
+  // Get players from selected collection or all players as fallback
+  const playersForSuggestions = selectedCollectionId ? 
+    collectionCards.map(card => ({
+      playerName: card.playerName,
+      teamName: card.teamName
+    })).filter(player => player.playerName && player.teamName)
+      .reduce((acc, player) => {
+        const key = `${player.playerName}-${player.teamName}`;
+        if (!acc.find(p => `${p.playerName}-${p.teamName}` === key)) {
+          acc.push(player);
+        }
+        return acc;
+      }, [] as Player[])
+    : allPlayers;
+
+  // Get unique teams from current player source
+  const teamSet = new Set(playersForSuggestions.map(p => p.teamName));
   const allTeams = Array.from(teamSet).sort();
 
   // Filter players based on search
   const getPlayerSuggestions = () => {
     if (!playerName) return [];
     
-    return allPlayers.filter(player => {
+    return playersForSuggestions.filter(player => {
       const nameMatch = player.playerName.toLowerCase().includes(playerName.toLowerCase());
       const teamMatch = !teamName || player.teamName.toLowerCase().includes(teamName.toLowerCase());
       return nameMatch && teamMatch;
@@ -104,6 +137,7 @@ export default function AddCard() {
       toast({
         title: "Carte ajoutée",
         description: "La carte a été ajoutée dans 'Mes cartes' !",
+        className: "bg-green-600 text-white border-green-700"
       });
       // Clear relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
@@ -293,6 +327,33 @@ export default function AddCard() {
             <h2 className="text-2xl font-bold mb-6">Détails de la carte</h2>
             
             <div className="grid gap-6 max-w-2xl">
+              {/* Collection pour l'autocomplétion */}
+              <div>
+                <Label htmlFor="collection" className="text-white mb-2 block">Collection (pour l'autocomplétion des joueurs)</Label>
+                <Select value={selectedCollectionId?.toString() || ""} onValueChange={(value) => setSelectedCollectionId(value ? parseInt(value) : null)}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Choisir une collection (optionnel)" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectItem value="" className="text-white hover:bg-zinc-700">
+                      Toutes les collections
+                    </SelectItem>
+                    {collections.map((collection) => (
+                      <SelectItem 
+                        key={collection.id} 
+                        value={collection.id.toString()}
+                        className="text-white hover:bg-zinc-700"
+                      >
+                        {collection.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Sélectionne une collection pour voir uniquement ses joueurs dans l'autocomplétion
+                </p>
+              </div>
+
               {/* Type de carte */}
               <div>
                 <Label htmlFor="cardType" className="text-white mb-2 block">Type de carte *</Label>
