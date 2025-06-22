@@ -303,7 +303,7 @@ export default function AddCard() {
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 border-gray-600 text-white hover:bg-gray-700"
+                className="flex-1 border-gray-600 text-black hover:bg-gray-700 hover:text-white"
               >
                 Retour
               </Button>
@@ -452,7 +452,7 @@ export default function AddCard() {
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 border-gray-600 text-white hover:bg-gray-700"
+                className="flex-1 border-gray-600 text-black hover:bg-gray-700 hover:text-white"
               >
                 Retour
               </Button>
@@ -494,7 +494,7 @@ export default function AddCard() {
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 border-gray-600 text-white hover:bg-gray-700"
+                className="flex-1 border-gray-600 text-black hover:bg-gray-700 hover:text-white"
               >
                 Retour
               </Button>

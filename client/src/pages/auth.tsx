@@ -60,6 +60,15 @@ export default function Auth() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="w-full max-w-md">
+        {/* Logo/Branding */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold font-poppins">
+            <span className="text-white">Booster</span>
+            <span className="text-[#F37261]">Z</span>
+          </h1>
+          <p className="text-gray-400 mt-2">Collecte et échange tes cartes</p>
+        </div>
+        
         <div className="bg-gray-900 rounded-xl p-8 shadow-2xl border border-gray-800">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
