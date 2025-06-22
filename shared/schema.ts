@@ -65,6 +65,25 @@ export const cards = pgTable("cards", {
   isFeatured: boolean("is_featured").default(false).notNull(), // Carte mise à la une
 });
 
+// Table pour les cartes personnelles de l'utilisateur (hors collections)
+export const personalCards = pgTable("personal_cards", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  playerName: text("player_name"),
+  teamName: text("team_name"),
+  cardType: text("card_type").notNull(),
+  reference: text("reference"),
+  numbering: text("numbering"),
+  imageUrl: text("image_url"),
+  salePrice: text("sale_price"),
+  saleDescription: text("sale_description"),
+  isForSale: boolean("is_for_sale").default(false).notNull(),
+  isSold: boolean("is_sold").default(false).notNull(),
+  condition: text("condition"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 export const userCards = pgTable("user_cards", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
@@ -174,6 +193,7 @@ export const posts = pgTable("posts", {
 export const usersRelations = relations(users, ({ many }) => ({
   collections: many(collections),
   userCards: many(userCards),
+  personalCards: many(personalCards),
   followers: many(follows, { relationName: "followers" }),
   following: many(follows, { relationName: "following" }),
   subscriptionFollowers: many(subscriptions, { relationName: "subscriptionFollowers" }),
@@ -249,6 +269,13 @@ export const cardsRelations = relations(cards, ({ one, many }) => ({
   }),
   variants: many(cards, {
     relationName: "cardVariants",
+  }),
+}));
+
+export const personalCardsRelations = relations(personalCards, ({ one }) => ({
+  user: one(users, {
+    fields: [personalCards.userId],
+    references: [users.id],
   }),
 }));
 
@@ -375,12 +402,28 @@ export const insertUserCardSchema = createInsertSchema(userCards).pick({
   images: true,
 });
 
+export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
+  userId: true,
+  playerName: true,
+  teamName: true,
+  cardType: true,
+  reference: true,
+  numbering: true,
+  imageUrl: true,
+  salePrice: true,
+  saleDescription: true,
+  isForSale: true,
+  condition: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type InsertCollection = z.infer<typeof insertCollectionSchema>;
 export type Collection = typeof collections.$inferSelect;
 export type InsertCard = z.infer<typeof insertCardSchema>;
 export type Card = typeof cards.$inferSelect;
+export type InsertPersonalCard = z.infer<typeof insertPersonalCardSchema>;
+export type PersonalCard = typeof personalCards.$inferSelect;
 export type InsertUserCard = z.infer<typeof insertUserCardSchema>;
 export type UserCard = typeof userCards.$inferSelect;
 

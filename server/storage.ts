@@ -1,4 +1,4 @@
-import { users, collections, cards, userCards, conversations, messages, posts, activities, subscriptions, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
+import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ilike, desc, inArray } from "drizzle-orm";
 
@@ -36,6 +36,13 @@ export interface IStorage {
   createUserCard(userCard: InsertUserCard): Promise<UserCard>;
   updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined>;
   deleteUserCard(id: number): Promise<boolean>;
+
+  // Personal Cards (pour "Mes cartes")
+  getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]>;
+  getPersonalCard(id: number): Promise<PersonalCard | undefined>;
+  createPersonalCard(personalCard: InsertPersonalCard): Promise<PersonalCard>;
+  updatePersonalCard(id: number, updates: Partial<PersonalCard>): Promise<PersonalCard | undefined>;
+  deletePersonalCard(id: number): Promise<boolean>;
 
   // Chat system
   getConversations(userId: number): Promise<Conversation[]>;
