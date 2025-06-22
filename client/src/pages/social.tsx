@@ -416,9 +416,19 @@ export default function Social() {
     // Filtrer les activités pour exclure celles de l'utilisateur actuel (userId = 1)
     const filteredActivities = activities.filter(activity => activity.user.id !== 1);
 
+    // Filtrer également les posts pour s'assurer qu'aucun post de l'utilisateur actuel n'apparaît
+    const filteredFeedPosts = feedPosts.filter(post => post.userId !== 1);
+
+    console.log('DEBUG FeedContent:', {
+      rawFeedPosts: feedPosts,
+      filteredFeedPosts,
+      rawActivities: activities,
+      filteredActivities
+    });
+
     // Combiner posts et activités filtrées et les trier par date
     const feedItems = [
-      ...feedPosts.map(post => ({ ...post, type: 'post', itemType: 'post' })),
+      ...filteredFeedPosts.map(post => ({ ...post, type: 'post', itemType: 'post' })),
       ...filteredActivities.map(activity => ({ ...activity, itemType: 'activity' }))
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
