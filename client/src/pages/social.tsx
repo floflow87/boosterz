@@ -441,11 +441,11 @@ export default function Social() {
       queryKey: [`/api/social/activities`],
     });
 
-    // Filtrer les activités pour exclure celles de l'utilisateur actuel (userId = 1)
-    const filteredActivities = activities.filter(activity => activity.user.id !== 1);
+    // Filtrer les activités pour exclure celles de l'utilisateur actuel (userId = 1) et Max C (userId = 2)
+    const filteredActivities = activities.filter(activity => activity.user.id !== 1 && activity.user.id !== 2);
 
-    // Filtrer également les posts pour s'assurer qu'aucun post de l'utilisateur actuel n'apparaît
-    const filteredFeedPosts = feedPosts.filter(post => post.userId !== 1);
+    // Filtrer également les posts pour exclure ceux de l'utilisateur actuel (userId = 1) et Max C (userId = 2)  
+    const filteredFeedPosts = feedPosts.filter(post => post.userId !== 1 && post.userId !== 2);
 
     // Combiner posts et activités filtrées et les trier par date décroissante
     const feedItems = [
@@ -591,97 +591,119 @@ export default function Social() {
                 </div>
               </div>
             ) : (
-              // Affichage des activités
-              <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-10 h-10 rounded-full overflow-hidden">
-                      {item.user?.avatar ? (
-                        <img 
-                          src={item.user.avatar} 
-                          alt={`Avatar de ${item.user.name}`}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                          <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex items-center space-x-2 mb-2">
+              // Affichage des activités - même format que les posts
+              <div className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)] overflow-hidden">
+                <div className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-10 h-10 rounded-full overflow-hidden">
+                        {item.user?.avatar ? (
+                          <img 
+                            src={item.user.avatar} 
+                            alt={`Avatar de ${item.user.name}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                            <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
+                          </div>
+                        )}
+                      </div>
+                      <div>
                         <div className="flex items-center space-x-2">
                           <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
                           <span className="text-xs text-gray-400">@{item.user?.username}</span>
                         </div>
                         <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        {getActivityIcon(item.type)}
-                        <span className="text-gray-300">{getActivityMessage(item)}</span>
-                      </div>
-                      
-                      {item.card && (
-                        <div className="flex items-center space-x-2 mt-2 p-2 bg-[hsl(214,35%,18%)] rounded">
-                          {item.card.imageUrl && (
-                            <img 
-                              src={item.card.imageUrl} 
-                              alt={item.card.playerName}
-                              className="w-8 h-10 object-cover rounded"
-                            />
-                          )}
-                          <div>
-                            <div className="text-sm text-white">{item.card.playerName}</div>
-                            <div className="text-xs text-gray-400">{item.card.teamName} • {item.card.reference}</div>
-                          </div>
-                        </div>
-                      )}
                     </div>
+                    
+                    {/* Menu vertical pour les activités */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-600">
+                        <DropdownMenuItem 
+                          className="text-white hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleViewProfile(item.user?.id || 0)}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Voir le profil
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-blue-400 hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleFollowUser(item.user?.id || 0)}
+                        >
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Suivre
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-green-400 hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleContactUser(item.user?.id || 0)}
+                        >
+                          <MessageSquare className="mr-2 h-4 w-4" />
+                          Contacter
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-red-400 hover:bg-gray-700 cursor-pointer"
+                          onClick={() => handleBlockUser(item.user?.id || 0)}
+                        >
+                          <UserX className="mr-2 h-4 w-4" />
+                          Bloquer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+
+                  {/* Activity Content - Format similaire aux posts */}
+                  <div className="text-white text-sm mb-3 leading-relaxed mt-3 flex items-center space-x-2">
+                    {getActivityIcon(item.type)}
+                    <span>{getActivityMessage(item)}</span>
                   </div>
                   
-                  {/* Menu vertical pour les activités */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
-                      >
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-600">
-                      <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer"
-                        onClick={() => handleViewProfile(item.user?.id || 0)}
-                      >
-                        <Eye className="mr-2 h-4 w-4" />
-                        Voir le profil
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-blue-400 hover:bg-gray-700 cursor-pointer"
-                        onClick={() => handleFollowUser(item.user?.id || 0)}
-                      >
-                        <UserPlus className="mr-2 h-4 w-4" />
-                        Suivre
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-green-400 hover:bg-gray-700 cursor-pointer"
-                        onClick={() => handleContactUser(item.user?.id || 0)}
-                      >
-                        <MessageSquare className="mr-2 h-4 w-4" />
-                        Contacter
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-red-400 hover:bg-gray-700 cursor-pointer"
-                        onClick={() => handleBlockUser(item.user?.id || 0)}
-                      >
-                        <UserX className="mr-2 h-4 w-4" />
-                        Bloquer
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {/* Card info si présente */}
+                  {item.card && (
+                    <div className="flex items-center space-x-2 mt-2 p-2 bg-[hsl(214,35%,18%)] rounded">
+                      {item.card.imageUrl && (
+                        <img 
+                          src={item.card.imageUrl} 
+                          alt={item.card.playerName}
+                          className="w-8 h-10 object-cover rounded"
+                        />
+                      )}
+                      <div>
+                        <div className="text-sm text-white">{item.card.playerName}</div>
+                        <div className="text-xs text-gray-400">{item.card.teamName} • {item.card.reference}</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Activity Actions - même format que les posts */}
+                <div className="px-4 pb-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-6">
+                      <div className="flex items-center space-x-2">
+                        <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400 transition-colors">
+                          <Heart className="w-4 h-4" />
+                          <span className="text-xs">0</span>
+                        </button>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <button className="flex items-center space-x-1 text-gray-400 hover:text-blue-400 transition-colors">
+                          <MessageCircle className="w-4 h-4" />
+                          <span className="text-xs">0</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
