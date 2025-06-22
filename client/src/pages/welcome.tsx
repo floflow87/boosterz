@@ -9,27 +9,27 @@ export default function Welcome() {
 
   const steps = [
     {
-      icon: Gift,
-      title: "Félicitations !",
-      description: "Commencez votre aventure en complétant votre PC avec la checklist de la collection Score Ligue 1 2023/24.",
-      buttonText: "Continuer"
-    },
-    {
       icon: Star,
-      title: "Collectionnez",
-      description: "Quand le digital se met au services de vos collections de cartes : Agrémentez votre catalogue grâce à des centaines de collections disponibles !",
+      title: "Collectionne",
+      description: "Quand le digital se met au service de tes collections de cartes : Agrémente ton catalogue grâce à des centaines de collections disponibles !",
       buttonText: "Continuer"
     },
     {
       icon: Users,
-      title: "Échangez",
-      description: "Rejoignez une communauté active de collectionneurs et échangez vos cartes pour compléter vos collections.",
+      title: "Échange",
+      description: "Rejoins une communauté active de collectionneurs et échange tes cartes pour compléter tes collections.",
       buttonText: "Continuer"
     },
     {
       icon: Trophy,
       title: "Prêt à commencer !",
-      description: "Votre collection vous attend. Explorez, collectionnez et devenez le plus gros collectionneur de votre cercle d'amis !",
+      description: "Ta collection t'attend. Explore, collectionne et deviens le plus gros collectionneur de ton cercle d'amis !",
+      buttonText: "Continuer"
+    },
+    {
+      icon: Gift,
+      title: "Félicitations !",
+      description: "Commence ton aventure en complétant ton PC avec la checklist de la collection Score Ligue 1 2023/24.",
       buttonText: "Commencer"
     }
   ];

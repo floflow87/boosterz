@@ -5,6 +5,8 @@ import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, Messag
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
@@ -62,6 +64,7 @@ export default function Social() {
   const [searchTerm, setSearchTerm] = useState("");
   const [forSaleSearchTerm, setForSaleSearchTerm] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
+  const [isPostModalOpen, setIsPostModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("featured");
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -112,7 +115,13 @@ export default function Social() {
   const handleCreatePost = () => {
     if (newPostContent.trim()) {
       createPostMutation.mutate(newPostContent);
+      setIsPostModalOpen(false);
     }
+  };
+
+  // Fonction pour ouvrir le modal de création de post
+  const handleOpenPostModal = () => {
+    setIsPostModalOpen(true);
   };
 
 
@@ -518,46 +527,17 @@ export default function Social() {
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
-            {/* Mon Profil - Post Creation */}
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)] mb-4">
-              <div className="flex items-center space-x-3 mb-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                  <Users className="w-5 h-5 text-white" />
-                </div>
+            {/* Mon Profil - Post Creation Trigger */}
+            <div 
+              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)] mb-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+              onClick={handleOpenPostModal}
+            >
+              <div className="flex items-center space-x-3">
                 <div className="flex-1">
-                  <textarea
-                    placeholder="Que voulez-vous partager aujourd'hui ?"
-                    className="w-full bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,35%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 resize-none focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors"
-                    rows={3}
-                    value={newPostContent}
-                    onChange={(e) => setNewPostContent(e.target.value)}
-                  />
+                  <div className="w-full bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,35%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
+                    Quoi de neuf ?
+                  </div>
                 </div>
-              </div>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
-                    <div className="w-8 h-8 bg-[hsl(214,35%,18%)] rounded-full flex items-center justify-center">
-                      📷
-                    </div>
-                    <span className="text-sm">Photo</span>
-                  </button>
-                  <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
-                    <div className="w-8 h-8 bg-[hsl(214,35%,18%)] rounded-full flex items-center justify-center">
-                      🃏
-                    </div>
-                    <span className="text-sm">Carte</span>
-                  </button>
-                </div>
-                
-                <button
-                  onClick={handleCreatePost}
-                  disabled={!newPostContent.trim() || createPostMutation.isPending}
-                  className="px-4 py-2 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
-                >
-                  {createPostMutation.isPending ? "Publication..." : "Publier"}
-                </button>
               </div>
             </div>
 
@@ -577,7 +557,7 @@ export default function Social() {
                   </div>
                   <p className="text-gray-400 mb-2">Aucune activité récente</p>
                   <p className="text-sm text-gray-500">
-                    Vos actions de vente et échange apparaîtront ici
+                    Tes actions de vente et échange apparaîtront ici
                   </p>
                 </div>
               ) : (
@@ -637,6 +617,87 @@ export default function Social() {
 
         </Tabs>
       </main>
+
+      {/* Modal de création de publication à la Facebook */}
+      <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>
+        <DialogContent className="bg-[hsl(214,35%,11%)] border-[hsl(214,35%,30%)] text-white max-w-lg">
+          <DialogHeader className="flex flex-row items-center justify-between border-b border-[hsl(214,35%,30%)] pb-3 mb-4">
+            <DialogTitle className="text-lg font-semibold text-center flex-1">
+              Créer une publication
+            </DialogTitle>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsPostModalOpen(false)}
+              className="text-gray-400 hover:text-white"
+            >
+              ✕
+            </Button>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {/* Profil utilisateur */}
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <div className="font-medium">Floflow87</div>
+                <div className="text-sm text-gray-400">🌍 Public</div>
+              </div>
+            </div>
+
+            {/* Zone de texte */}
+            <Textarea
+              placeholder="Quoi de neuf ?"
+              value={newPostContent}
+              onChange={(e) => setNewPostContent(e.target.value)}
+              className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-lg min-h-[120px] focus:outline-none"
+              autoFocus
+            />
+
+            {/* Boutons d'options à la Facebook */}
+            <div className="border border-[hsl(214,35%,30%)] rounded-lg p-3">
+              <div className="text-sm text-gray-300 mb-3">Ajouter à ta publication</div>
+              <div className="grid grid-cols-2 gap-2">
+                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
+                  <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                    📷
+                  </div>
+                  <span className="text-sm">Photo/Vidéo</span>
+                </button>
+                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
+                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                    👥
+                  </div>
+                  <span className="text-sm">Identifier des personnes</span>
+                </button>
+                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
+                  <div className="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center">
+                    😀
+                  </div>
+                  <span className="text-sm">Humeur/Activité</span>
+                </button>
+                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
+                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
+                    📍
+                  </div>
+                  <span className="text-sm">Je suis là</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Bouton Publier */}
+            <Button
+              onClick={handleCreatePost}
+              disabled={!newPostContent.trim() || createPostMutation.isPending}
+              className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium py-3"
+            >
+              {createPostMutation.isPending ? "Publication..." : "Publier"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Navigation />
     </div>
