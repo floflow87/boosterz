@@ -679,4 +679,8 @@
   .card-hover:hover::before {
     left: 100%;
   }
+
+  .hover\:rotate-y-10:hover {
+    transform: perspective(1000px) rotateY(10deg) scale(1.05);
+  }
 }

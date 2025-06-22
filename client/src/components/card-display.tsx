@@ -243,7 +243,7 @@ export default function CardDisplay({
     <div
       ref={cardRef}
       className={cn(
-        "relative group cursor-pointer transition-all duration-300 hover:scale-105",
+        "relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:rotate-y-10",
         isSelected && "ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900",
         isPulledEffect && "animate-pulse scale-110 shadow-2xl shadow-yellow-400/50",
         isStarEffect && "animate-bounce"

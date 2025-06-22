@@ -94,10 +94,12 @@ export default function Collections() {
 
   // Mettre à jour les suggestions quand la recherche change
   useEffect(() => {
+    if (personalCards.length === 0) return;
+    
     const suggestions = generateSuggestions(searchQuery);
     setSearchSuggestions(suggestions);
     setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
-  }, [searchQuery, personalCards]);
+  }, [searchQuery]);
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
   const getCollectionCompletion = (collection: Collection) => {
