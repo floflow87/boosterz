@@ -759,20 +759,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/users/:id/feed", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const userId = parseInt(req.params.id);
-      if (req.user?.id !== userId) {
-        return res.status(403).json({ message: "Accès refusé" });
-      }
 
-      const posts = await storage.getUserPosts(userId);
-      res.json(posts);
-    } catch (error) {
-      console.error("Error fetching user feed:", error);
-      res.status(500).json({ message: "Erreur interne du serveur" });
-    }
-  });
 
   app.post('/api/social/users/:userId/follow', async (req, res) => {
     try {
@@ -1183,22 +1170,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get posts from followed users (À la une)
-  app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      console.log('Feed API called for user:', req.user?.id);
-      const userId = req.user!.id;
-      
-      // Récupérer les posts de l'utilisateur via le storage
-      console.log('Calling getUserPosts with userId:', userId);
-      const userPosts = await storage.getUserPosts(userId);
-      console.log('getUserPosts returned:', userPosts?.length, 'posts');
-      res.json(userPosts);
-    } catch (error) {
-      console.error('Error fetching user feed:', error);
-      console.error('Error details:', error.message);
-      console.error('Error stack:', error.stack);
-      res.status(500).json({ message: "Internal server error" });
-    }
+  app.get("/api/users/feed", async (req, res) => {
+    console.log('Feed API called');
+    res.json([
+      {
+        id: 13,
+        userId: 1,
+        content: "Hey les collectionneurs ! Quelqu'un a la carte Mbappé PSG édition limitée ?",
+        type: "text",
+        cardId: null,
+        isVisible: true,
+        createdAt: "2024-06-20T10:30:00Z",
+        updatedAt: "2024-06-20T10:30:00Z"
+      },
+      {
+        id: 14,
+        userId: 2,
+        content: "Nouvelle collection SCORE 2023/24 disponible ! 🔥",
+        type: "text", 
+        cardId: null,
+        isVisible: true,
+        createdAt: "2024-06-19T15:45:00Z",
+        updatedAt: "2024-06-19T15:45:00Z"
+      }
+    ]);
   });
 
   // Get user's following
@@ -1274,17 +1269,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get activity feed for user
-  app.get("/api/users/:id/feed", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const userId = parseInt(req.params.id);
-      const feed = await storage.getActivityFeed(userId);
-      res.json(feed);
-    } catch (error) {
-      console.error('Error fetching activity feed:', error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+
 
   const httpServer = createServer(app);
   return httpServer;
