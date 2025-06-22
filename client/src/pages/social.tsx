@@ -1,18 +1,24 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingBag, ArrowLeftRight, Plus, Globe, Heart, MoreHorizontal, Trash2, Grid, List, Filter, PenTool } from "lucide-react";
+import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingBag, ArrowLeftRight, Plus, Globe, Heart, MoreHorizontal, Trash2, Grid, List, Filter, PenTool, MoreVertical, UserX, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { User, Collection, Card, Post } from "@shared/schema";
+import type { User as UserType, Collection, Card, Post } from "@shared/schema";
 import CardDisplay from "@/components/card-display";
 
 interface SocialUser {
@@ -85,7 +91,7 @@ export default function Social() {
   const userId = "1";
 
   // Profile data queries
-  const { data: user, isLoading: userLoading } = useQuery<User>({
+  const { data: user, isLoading: userLoading } = useQuery<UserType>({
     queryKey: [`/api/users/${userId}`],
   });
 
@@ -483,6 +489,49 @@ export default function Social() {
                         <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
                       </div>
                     </div>
+                    
+                    {/* Menu vertical */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
+                        >
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-600">
+                        <DropdownMenuItem 
+                          className="text-white hover:bg-gray-700 cursor-pointer"
+                          onClick={() => {/* Navigate to profile */}}
+                        >
+                          <Eye className="mr-2 h-4 w-4" />
+                          Voir le profil
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-blue-400 hover:bg-gray-700 cursor-pointer"
+                          onClick={() => {/* Follow/Unfollow logic */}}
+                        >
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Suivre
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-green-400 hover:bg-gray-700 cursor-pointer"
+                          onClick={() => {/* Contact user */}}
+                        >
+                          <MessageSquare className="mr-2 h-4 w-4" />
+                          Contacter
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          className="text-red-400 hover:bg-gray-700 cursor-pointer"
+                          onClick={() => {/* Block user */}}
+                        >
+                          <UserX className="mr-2 h-4 w-4" />
+                          Bloquer
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
 
                   {/* Post Content */}
@@ -523,22 +572,23 @@ export default function Social() {
             ) : (
               // Affichage des activités
               <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
-                <div className="flex items-start space-x-3">
-                  <div className="w-10 h-10 rounded-full overflow-hidden">
-                    {item.user?.avatar ? (
-                      <img 
-                        src={item.user.avatar} 
-                        alt={`Avatar de ${item.user.name}`}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                        <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  <div className="flex-1">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start space-x-3">
+                    <div className="w-10 h-10 rounded-full overflow-hidden">
+                      {item.user?.avatar ? (
+                        <img 
+                          src={item.user.avatar} 
+                          alt={`Avatar de ${item.user.name}`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                          <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <div className="flex items-center space-x-2">
                         <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
@@ -566,7 +616,51 @@ export default function Social() {
                         </div>
                       </div>
                     )}
+                    </div>
                   </div>
+                  
+                  {/* Menu vertical pour les activités */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700"
+                      >
+                        <MoreVertical className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 bg-gray-800 border-gray-600">
+                      <DropdownMenuItem 
+                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {/* Navigate to profile */}}
+                      >
+                        <Eye className="mr-2 h-4 w-4" />
+                        Voir le profil
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-blue-400 hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {/* Follow/Unfollow logic */}}
+                      >
+                        <UserPlus className="mr-2 h-4 w-4" />
+                        Suivre
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-green-400 hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {/* Contact user */}}
+                      >
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Contacter
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-red-400 hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {/* Block user */}}
+                      >
+                        <UserX className="mr-2 h-4 w-4" />
+                        Bloquer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             )}
