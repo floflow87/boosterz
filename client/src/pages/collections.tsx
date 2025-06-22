@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "personal" | "collections" | "marketplace" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -44,6 +44,13 @@ export default function Collections() {
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
     refetchOnWindowFocus: false,
+  });
+
+  // Query pour les cartes personnelles
+  const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery({
+    queryKey: ["/api/personal-cards"],
+    staleTime: 5 * 60 * 1000,
+    enabled: activeTab === "personal",
   });
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection

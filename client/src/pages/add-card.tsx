@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,15 +8,6 @@ import { ArrowLeft, Camera, Upload, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-
-interface Collection {
-  id: number;
-  name: string;
-  cardTypes?: Array<{
-    type: string;
-    label: string;
-  }>;
-}
 
 interface Player {
   playerName: string;
@@ -33,39 +24,35 @@ export default function AddCard() {
   // Step management
   const [currentStep, setCurrentStep] = useState<Step>("import");
   
-  // Form data
-  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("");
+  // Form data - pour les cartes personnelles
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [editedImage, setEditedImage] = useState<string | null>(null);
   const [teamName, setTeamName] = useState("");
   const [playerName, setPlayerName] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
+  const [cardType, setCardType] = useState("");
+  const [reference, setReference] = useState("");
   const [numbering, setNumbering] = useState("");
+  const [condition, setCondition] = useState("");
+  const [salePrice, setSalePrice] = useState("");
+  const [saleDescription, setSaleDescription] = useState("");
+  const [isForSale, setIsForSale] = useState(false);
   
   // UI state
   const [showPlayerSuggestions, setShowPlayerSuggestions] = useState(false);
   const [showTeamSuggestions, setShowTeamSuggestions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch collections with card types
-  const { data: collections = [] } = useQuery<Collection[]>({
-    queryKey: ["/api/users/1/collections"],
-    select: (data: any[]) => {
-      return data.map(collection => ({
-        ...collection,
-        cardTypes: [
-          { type: "base", label: "Base" },
-          { type: "base_numbered", label: "Base Numérotée" },
-          { type: "insert", label: "Insert" },
-          { type: "autograph", label: "Autographe" },
-          { type: "numbered", label: "Numérotée" },
-          { type: "special_1_1", label: "Spéciale 1/1" }
-        ]
-      }));
-    }
-  });
+  // Types de cartes disponibles pour les cartes personnelles
+  const cardTypes = [
+    { type: "base", label: "Base" },
+    { type: "base_numbered", label: "Base Numérotée" },
+    { type: "insert", label: "Insert" },
+    { type: "autograph", label: "Autographe" },
+    { type: "numbered", label: "Numérotée" },
+    { type: "special_1_1", label: "Spéciale 1/1" }
+  ];
 
-  // Fetch all players for suggestions - stable query
+  // Fetch all players for suggestions
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ["/api/cards/all"],
     select: (data: any[]) => {
@@ -81,48 +68,45 @@ export default function AddCard() {
       });
       return Array.from(playersMap.values());
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    enabled: !!collections.length
+    staleTime: 5 * 60 * 1000,
   });
 
   // Get unique teams
   const teamSet = new Set(allPlayers.map(p => p.teamName));
   const allTeams = Array.from(teamSet).sort();
 
-  // Filter players based on search - no useEffect to avoid loops
+  // Filter players based on search
   const getPlayerSuggestions = () => {
     if (!playerName) return [];
     
     return allPlayers.filter(player => {
-      const matchesTeam = !teamName || player.teamName.toLowerCase().includes(teamName.toLowerCase());
-      const matchesPlayer = player.playerName.toLowerCase().includes(playerName.toLowerCase());
-      return matchesTeam && matchesPlayer;
+      const nameMatch = player.playerName.toLowerCase().includes(playerName.toLowerCase());
+      const teamMatch = !teamName || player.teamName.toLowerCase().includes(teamName.toLowerCase());
+      return nameMatch && teamMatch;
     }).slice(0, 10);
   };
 
-  // Get team suggestions
+  // Filter teams
   const getTeamSuggestions = () => {
-    if (!teamName) return allTeams.slice(0, 10);
+    if (!teamName) return [];
     
-    return allTeams.filter(team => 
+    return allTeams.filter(team =>
       team.toLowerCase().includes(teamName.toLowerCase())
     ).slice(0, 10);
   };
 
-  // Add card mutation
-  const addCardMutation = useMutation({
+  // Add personal card mutation
+  const addPersonalCardMutation = useMutation({
     mutationFn: async (cardData: any) => {
-      return apiRequest("POST", "/api/cards", cardData);
+      return apiRequest("POST", "/api/personal-cards", cardData);
     },
     onSuccess: (newCard: any) => {
       toast({
         title: "Carte ajoutée",
-        description: "La carte a été ajoutée avec succès à ta collection",
+        description: "La carte a été ajoutée dans 'Mes cartes' !",
       });
       // Clear relevant queries to refresh data
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}/cards`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       // Navigate back to collections page to see the card in "Mes cartes"
       setLocation("/collections");
     },
@@ -159,7 +143,7 @@ export default function AddCard() {
         setCurrentStep("details");
         break;
       case "details":
-        if (!selectedCollectionId || !cardNumber) return;
+        if (!cardType) return;
         setCurrentStep("confirmation");
         break;
       case "confirmation":
@@ -183,137 +167,118 @@ export default function AddCard() {
   };
 
   const handleSubmitCard = async () => {
-    if (!selectedCollectionId || !cardNumber) {
+    if (!cardType) {
       toast({
         title: "Informations manquantes",
-        description: "Veuillez remplir tous les champs obligatoires",
+        description: "Veuillez sélectionner un type de carte",
         variant: "destructive",
       });
       return;
     }
 
     const cardData = {
-      collectionId: parseInt(selectedCollectionId),
       playerName: playerName || null,
       teamName: teamName || null,
-      cardType: cardNumber,
-      reference: `${cardNumber}-${Date.now()}`,
+      cardType: cardType,
+      reference: reference || null,
       numbering: numbering || null,
       imageUrl: editedImage || null,
-      isOwned: true,
-      isForTrade: false,
-      cardSubType: null,
-      isRookieCard: false,
-      rarity: null,
-      condition: null,
-      tradeDescription: null,
-      tradePrice: null,
-      tradeOnly: false,
-      salePrice: null,
-      saleDescription: null,
-      isSold: false,
-      isFeatured: false
+      condition: condition || null,
+      salePrice: salePrice || null,
+      saleDescription: saleDescription || null,
+      isForSale: isForSale,
     };
 
-    addCardMutation.mutate(cardData);
+    addPersonalCardMutation.mutate(cardData);
   };
 
-  const selectedCollection = collections.find(c => c.id === parseInt(selectedCollectionId));
-
-  const getStepTitle = () => {
-    switch (currentStep) {
-      case "import": return "Importer une photo";
-      case "edit": return "Retoucher la photo";
-      case "details": return "Détails de la carte";
-      case "confirmation": return "Confirmation";
-      default: return "Ajouter une carte";
-    }
+  const handleCancel = () => {
+    setLocation("/collections");
   };
 
   return (
-    <div className="min-h-screen bg-[#0A1628] text-white">
+    <div className="min-h-screen bg-zinc-950 text-white">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setLocation("/")}
-            className="text-white hover:bg-gray-700"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-lg font-bold font-poppins">{getStepTitle()}</h1>
-        </div>
-        
-        {/* Step Progress */}
-        <div className="flex space-x-2">
-          {["import", "edit", "details", "confirmation"].map((step, index) => (
-            <div
-              key={step}
-              className={`w-3 h-3 rounded-full ${
-                step === currentStep
-                  ? "bg-[hsl(9,85%,67%)]"
-                  : ["import", "edit", "details", "confirmation"].indexOf(currentStep) > index
-                  ? "bg-green-500"
-                  : "bg-gray-600"
-              }`}
-            />
-          ))}
+      <div className="bg-zinc-900 border-b border-zinc-800">
+        <div className="max-w-4xl mx-auto px-4 py-4">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleCancel}
+              className="text-zinc-400 hover:text-white"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Retour
+            </Button>
+            <h1 className="text-xl font-bold">Ajouter une carte</h1>
+          </div>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 space-y-6">
-        {/* Import Step */}
-        {currentStep === "import" && (
-          <div className="space-y-6">
-            <div className="text-center">
-              <p className="text-gray-400 mb-6">Sélectionne une photo de ta carte</p>
-              
-              <div className="space-y-4">
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white py-4"
-                >
-                  <Upload className="h-5 w-5 mr-2" />
-                  Importer une photo
-                </Button>
-                
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileImport}
-                  className="hidden"
-                />
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Progress Steps */}
+        <div className="flex items-center mb-8 space-x-4">
+          {["import", "edit", "details", "confirmation"].map((step, index) => (
+            <div key={step} className="flex items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === step ? "bg-orange-500 text-white" : 
+                ["import", "edit", "details", "confirmation"].indexOf(currentStep) > index ? "bg-green-500 text-white" : "bg-zinc-700 text-zinc-400"
+              }`}>
+                {index + 1}
               </div>
+              {index < 3 && <div className="w-12 h-1 bg-zinc-700 mx-2" />}
+            </div>
+          ))}
+        </div>
+
+        {/* Step Content */}
+        {currentStep === "import" && (
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Importer ta carte</h2>
+            <p className="text-zinc-400 mb-8">Prends une photo ou importe une image de ta carte</p>
+            
+            <div className="space-y-4">
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3"
+              >
+                <Upload className="h-5 w-5 mr-2" />
+                Choisir une image
+              </Button>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileImport}
+                className="hidden"
+              />
             </div>
           </div>
         )}
 
-        {/* Edit Step */}
         {currentStep === "edit" && editedImage && (
-          <div className="space-y-6">
-            <div className="bg-gray-800 rounded-lg p-4">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Vérifier l'image</h2>
+            <div className="mb-8">
               <img
                 src={editedImage}
-                alt="Carte à éditer"
-                className="w-full max-w-sm mx-auto rounded-lg"
+                alt="Card preview"
+                className="max-w-md mx-auto rounded-lg border border-zinc-700"
               />
             </div>
-            
-            <div className="flex space-x-4">
+            <div className="flex gap-4 justify-center">
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 border-gray-600 text-black hover:bg-gray-700 hover:text-white"
+                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
               >
                 Retour
               </Button>
               <Button
                 onClick={handleNextStep}
-                className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
+                className="bg-orange-500 hover:bg-orange-600 text-white"
               >
                 Continuer
               </Button>
@@ -321,149 +286,193 @@ export default function AddCard() {
           </div>
         )}
 
-        {/* Details Step */}
         {currentStep === "details" && (
-          <div className="space-y-6">
-            <div className="space-y-4">
-              {/* Collection Selection */}
-              <div className="space-y-2">
-                <Label className="text-white">Collection *</Label>
-                <Select value={selectedCollectionId} onValueChange={setSelectedCollectionId}>
-                  <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
-                    <SelectValue placeholder="Sélectionne une collection" />
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Détails de la carte</h2>
+            
+            <div className="grid gap-6 max-w-2xl">
+              {/* Type de carte */}
+              <div>
+                <Label htmlFor="cardType" className="text-white mb-2 block">Type de carte *</Label>
+                <Select value={cardType} onValueChange={setCardType}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Sélectionne le type de carte" />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-800 border-gray-600">
-                    {collections.map((collection) => (
-                      <SelectItem key={collection.id} value={collection.id.toString()}>
-                        {collection.name}
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    {cardTypes.map((type) => (
+                      <SelectItem 
+                        key={type.type} 
+                        value={type.type}
+                        className="text-white hover:bg-zinc-700"
+                      >
+                        {type.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Team Name with Suggestions */}
-              <div className="space-y-2 relative">
-                <Label className="text-white">Équipe</Label>
+              {/* Nom du joueur */}
+              <div className="relative">
+                <Label htmlFor="playerName" className="text-white mb-2 block">Nom du joueur</Label>
                 <Input
-                  value={teamName}
-                  onChange={(e) => {
-                    setTeamName(e.target.value);
-                    setShowTeamSuggestions(true);
-                  }}
-                  onFocus={() => setShowTeamSuggestions(true)}
-                  placeholder="Ex: Olympique de Marseille"
-                  className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
-                />
-                
-                {/* Team Suggestions */}
-                {showTeamSuggestions && getTeamSuggestions().length > 0 && (
-                  <div className="absolute top-full left-0 right-0 z-50 bg-gray-800 border border-gray-600 rounded-md mt-1 max-h-60 overflow-y-auto">
-                    {getTeamSuggestions().map((team: string, index: number) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          setTeamName(team);
-                          setShowTeamSuggestions(false);
-                        }}
-                        className="w-full text-left px-3 py-2 hover:bg-gray-700 text-white border-b border-gray-700 last:border-b-0"
-                      >
-                        {team}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Player Name with Suggestions */}
-              <div className="space-y-2 relative">
-                <Label className="text-white">Nom du joueur *</Label>
-                <Input
+                  id="playerName"
                   value={playerName}
                   onChange={(e) => {
                     setPlayerName(e.target.value);
-                    setShowPlayerSuggestions(true);
+                    setShowPlayerSuggestions(e.target.value.length > 0);
                   }}
-                  onFocus={() => setShowPlayerSuggestions(true)}
+                  onFocus={() => setShowPlayerSuggestions(playerName.length > 0)}
+                  className="bg-zinc-800 border-zinc-700 text-white"
                   placeholder="Ex: Kylian Mbappé"
-                  className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                 />
-                
-                {/* Player Suggestions */}
                 {showPlayerSuggestions && getPlayerSuggestions().length > 0 && (
-                  <div className="absolute top-full left-0 right-0 z-50 bg-gray-800 border border-gray-600 rounded-md mt-1 max-h-60 overflow-y-auto">
-                    {getPlayerSuggestions().map((player: Player, index: number) => (
-                      <button
+                  <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {getPlayerSuggestions().map((player, index) => (
+                      <div
                         key={index}
+                        className="px-3 py-2 cursor-pointer hover:bg-zinc-700 text-white"
                         onClick={() => {
                           setPlayerName(player.playerName);
                           setTeamName(player.teamName);
                           setShowPlayerSuggestions(false);
                         }}
-                        className="w-full text-left px-3 py-2 hover:bg-gray-700 text-white border-b border-gray-700 last:border-b-0"
                       >
                         <div className="font-medium">{player.playerName}</div>
-                        <div className="text-sm text-gray-400">{player.teamName}</div>
-                      </button>
+                        <div className="text-sm text-zinc-400">{player.teamName}</div>
+                      </div>
                     ))}
                   </div>
                 )}
               </div>
 
-              {/* Card Type */}
-              {selectedCollection && (
-                <div className="space-y-2">
-                  <Label className="text-white">Type de carte *</Label>
-                  <Select value={cardNumber} onValueChange={setCardNumber}>
-                    <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
-                      <SelectValue placeholder="Sélectionne le type de carte" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-600">
-                      {selectedCollection.cardTypes?.map((cardType) => (
-                        <SelectItem key={cardType.type} value={cardType.type} className="text-white">
-                          {cardType.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {/* Numbering */}
-              <div className="space-y-2">
-                <Label className="text-white">Numérotation</Label>
+              {/* Équipe */}
+              <div className="relative">
+                <Label htmlFor="teamName" className="text-white mb-2 block">Équipe</Label>
                 <Input
+                  id="teamName"
+                  value={teamName}
+                  onChange={(e) => {
+                    setTeamName(e.target.value);
+                    setShowTeamSuggestions(e.target.value.length > 0);
+                  }}
+                  onFocus={() => setShowTeamSuggestions(teamName.length > 0)}
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: Paris Saint-Germain"
+                />
+                {showTeamSuggestions && getTeamSuggestions().length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {getTeamSuggestions().map((team, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 cursor-pointer hover:bg-zinc-700 text-white"
+                        onClick={() => {
+                          setTeamName(team);
+                          setShowTeamSuggestions(false);
+                        }}
+                      >
+                        {team}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Référence */}
+              <div>
+                <Label htmlFor="reference" className="text-white mb-2 block">Référence</Label>
+                <Input
+                  id="reference"
+                  value={reference}
+                  onChange={(e) => setReference(e.target.value)}
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: #001"
+                />
+              </div>
+
+              {/* Numérotation */}
+              <div>
+                <Label htmlFor="numbering" className="text-white mb-2 block">Numérotation</Label>
+                <Input
+                  id="numbering"
                   value={numbering}
                   onChange={(e) => setNumbering(e.target.value)}
-                  placeholder="Ex: /99, /199"
-                  className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: 125/199"
                 />
+              </div>
+
+              {/* État */}
+              <div>
+                <Label htmlFor="condition" className="text-white mb-2 block">État</Label>
+                <Select value={condition} onValueChange={setCondition}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Sélectionne l'état" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectItem value="mint" className="text-white hover:bg-zinc-700">Mint</SelectItem>
+                    <SelectItem value="near_mint" className="text-white hover:bg-zinc-700">Near Mint</SelectItem>
+                    <SelectItem value="excellent" className="text-white hover:bg-zinc-700">Excellent</SelectItem>
+                    <SelectItem value="good" className="text-white hover:bg-zinc-700">Bon</SelectItem>
+                    <SelectItem value="played" className="text-white hover:bg-zinc-700">Usagé</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Prix de vente */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isForSale"
+                    checked={isForSale}
+                    onChange={(e) => setIsForSale(e.target.checked)}
+                    className="rounded"
+                  />
+                  <Label htmlFor="isForSale" className="text-white">Carte à vendre</Label>
+                </div>
+                
+                {isForSale && (
+                  <>
+                    <div>
+                      <Label htmlFor="salePrice" className="text-white mb-2 block">Prix de vente (€)</Label>
+                      <Input
+                        id="salePrice"
+                        value={salePrice}
+                        onChange={(e) => setSalePrice(e.target.value)}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                        placeholder="Ex: 25.00"
+                        type="number"
+                        step="0.01"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="saleDescription" className="text-white mb-2 block">Description de vente</Label>
+                      <Input
+                        id="saleDescription"
+                        value={saleDescription}
+                        onChange={(e) => setSaleDescription(e.target.value)}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                        placeholder="Description de la carte à vendre"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
-            {/* Click outside to close suggestions */}
-            {(showPlayerSuggestions || showTeamSuggestions) && (
-              <div 
-                className="fixed inset-0 z-40" 
-                onClick={() => {
-                  setShowPlayerSuggestions(false);
-                  setShowTeamSuggestions(false);
-                }}
-              />
-            )}
-
-            <div className="flex space-x-4">
+            <div className="flex gap-4 mt-8">
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 border-gray-600 text-black hover:bg-gray-700 hover:text-white"
+                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
               >
                 Retour
               </Button>
               <Button
                 onClick={handleNextStep}
-                disabled={!selectedCollectionId || !cardNumber}
-                className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white disabled:bg-gray-600"
+                disabled={!cardType}
+                className="bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50"
               >
                 Continuer
               </Button>
@@ -471,43 +480,49 @@ export default function AddCard() {
           </div>
         )}
 
-        {/* Confirmation Step */}
         {currentStep === "confirmation" && (
-          <div className="space-y-6">
-            <div className="bg-gray-800 rounded-lg p-4 space-y-4">
-              <h3 className="text-lg font-semibold text-white">Résumé de la carte</h3>
-              
-              {editedImage && (
-                <img
-                  src={editedImage}
-                  alt="Aperçu de la carte"
-                  className="w-32 h-44 object-cover rounded-lg mx-auto"
-                />
-              )}
-              
-              <div className="space-y-2 text-sm">
-                <p><span className="text-gray-400">Collection:</span> {collections.find(c => c.id === parseInt(selectedCollectionId))?.name}</p>
-                {teamName && <p><span className="text-gray-400">Équipe:</span> {teamName}</p>}
-                {playerName && <p><span className="text-gray-400">Joueur:</span> {playerName}</p>}
-                <p><span className="text-gray-400">Type:</span> {selectedCollection?.cardTypes?.find(ct => ct.type === cardNumber)?.label}</p>
-                {numbering && <p><span className="text-gray-400">Numérotation:</span> {numbering}</p>}
+          <div>
+            <h2 className="text-2xl font-bold mb-6">Confirmer l'ajout</h2>
+            
+            <div className="bg-zinc-800 rounded-lg p-6 mb-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                {editedImage && (
+                  <div>
+                    <img
+                      src={editedImage}
+                      alt="Card preview"
+                      className="w-full max-w-sm rounded-lg border border-zinc-700"
+                    />
+                  </div>
+                )}
+                
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold">Détails de la carte</h3>
+                  {playerName && <p><span className="text-zinc-400">Joueur:</span> {playerName}</p>}
+                  {teamName && <p><span className="text-zinc-400">Équipe:</span> {teamName}</p>}
+                  <p><span className="text-zinc-400">Type:</span> {cardTypes.find(ct => ct.type === cardType)?.label}</p>
+                  {reference && <p><span className="text-zinc-400">Référence:</span> {reference}</p>}
+                  {numbering && <p><span className="text-zinc-400">Numérotation:</span> {numbering}</p>}
+                  {condition && <p><span className="text-zinc-400">État:</span> {condition}</p>}
+                  {isForSale && salePrice && <p><span className="text-zinc-400">Prix:</span> {salePrice}€</p>}
+                </div>
               </div>
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex gap-4">
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="flex-1 border-gray-600 text-black hover:bg-gray-700 hover:text-white"
+                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
               >
                 Retour
               </Button>
               <Button
                 onClick={handleSubmitCard}
-                disabled={addCardMutation.isPending}
-                className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
+                disabled={addPersonalCardMutation.isPending}
+                className="bg-orange-500 hover:bg-orange-600 text-white"
               >
-                {addCardMutation.isPending ? "Ajout en cours..." : "Ajouter la carte"}
+                {addPersonalCardMutation.isPending ? "Ajout en cours..." : "Ajouter la carte"}
               </Button>
             </div>
           </div>
