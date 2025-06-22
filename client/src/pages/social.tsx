@@ -419,13 +419,6 @@ export default function Social() {
     // Filtrer également les posts pour s'assurer qu'aucun post de l'utilisateur actuel n'apparaît
     const filteredFeedPosts = feedPosts.filter(post => post.userId !== 1);
 
-    console.log('DEBUG FeedContent:', {
-      rawFeedPosts: feedPosts,
-      filteredFeedPosts,
-      rawActivities: activities,
-      filteredActivities
-    });
-
     // Combiner posts et activités filtrées et les trier par date
     const feedItems = [
       ...filteredFeedPosts.map(post => ({ ...post, type: 'post', itemType: 'post' })),

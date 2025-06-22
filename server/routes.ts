@@ -226,6 +226,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Only return posts from other users (not the current user)
     res.json([
       {
+        id: 16,
+        userId: 999,
+        content: "🔥 EXCLUSIF ! Je vends ma carte Mbappé PSG autographée ! Prix spécial pour les vrais collectionneurs. Première offre sérieuse 💎⚽",
+        type: "text", 
+        cardId: null,
+        isVisible: true,
+        createdAt: "2024-06-22T12:30:00Z",
+        updatedAt: "2024-06-22T12:30:00Z",
+        user: {
+          id: 999,
+          name: "Max la menace",
+          username: "maxlamenace",
+          avatar: null
+        }
+      },
+      {
         id: 14,
         userId: 2,
         content: "Nouvelle collection SCORE 2023/24 disponible ! 🔥",
