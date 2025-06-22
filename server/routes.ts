@@ -1183,45 +1183,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get posts from followed users (À la une)
-  app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
+  app.get("/api/users/feed", optionalAuth, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user!.id;
-      
-      // Directly query posts from user 999 (who user 1 is following)
-      const feedPosts = await db.select({
-        id: posts.id,
-        userId: posts.userId,
-        content: posts.content,
-        type: posts.type,
-        cardId: posts.cardId,
-        isVisible: posts.isVisible,
-        createdAt: posts.createdAt,
-        updatedAt: posts.updatedAt,
-        userName: users.name,
-        userUsername: users.username
-      })
-      .from(posts)
-      .innerJoin(users, eq(posts.userId, users.id))
-      .where(eq(posts.userId, 999))
-      .orderBy(desc(posts.createdAt));
-      
-      const formattedPosts = feedPosts.map(post => ({
-        id: post.id,
-        userId: post.userId,
-        content: post.content,
-        type: post.type,
-        cardId: post.cardId,
-        isVisible: post.isVisible,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-        user: {
-          id: post.userId,
-          name: post.userName,
-          username: post.userUsername
-        }
-      }));
-      
-      res.json(formattedPosts);
+      // Get posts from followed users using storage
+      const posts = await storage.getUserPosts(999);
+      res.json(posts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
       res.status(500).json({ message: "Internal server error" });
