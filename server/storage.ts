@@ -22,6 +22,7 @@ export interface IStorage {
   // Cards
   getCardsByCollectionId(collectionId: number): Promise<Card[]>;
   getCard(id: number): Promise<Card | undefined>;
+  getAllCards(): Promise<Card[]>;
   createCard(card: InsertCard): Promise<Card>;
   updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined>;
   updateCardImage(id: number, imageUrl: string): Promise<Card | undefined>;
@@ -212,6 +213,16 @@ export class DatabaseStorage implements IStorage {
   async getCard(id: number): Promise<Card | undefined> {
     const [card] = await db.select().from(cards).where(eq(cards.id, id));
     return card || undefined;
+  }
+
+  async getAllCards(): Promise<Card[]> {
+    try {
+      const allCards = await db.select().from(cards).limit(5000);
+      return allCards;
+    } catch (error) {
+      console.error("DatabaseStorage: Error loading all cards:", error);
+      return [];
+    }
   }
 
   async createCard(insertCard: InsertCard): Promise<Card> {

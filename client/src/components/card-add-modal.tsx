@@ -193,163 +193,421 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
     createCardMutation.mutate(cardData);
   };
 
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case "import": return "Importer une photo";
+      case "edit": return "Retoucher la photo";
+      case "recognition": return "Reconnaissance automatique";
+      case "details": return "Détails de la carte";
+      case "confirmation": return "Confirmation";
+      default: return "Ajouter une carte";
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-[hsl(214,35%,11%)] z-50 overflow-y-auto">
       <div className="min-h-screen">
+        {/* Header with step indicator */}
         <div className="flex items-center justify-between p-6 bg-[hsl(214,35%,22%)] border-b border-gray-600 sticky top-0 z-10">
-          <h2 className="text-lg font-bold text-white font-poppins">Ajouter une carte</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all">
+          <div className="flex items-center space-x-4">
+            {currentStep !== "import" && (
+              <button
+                onClick={() => {
+                  const steps: Step[] = ["import", "edit", "recognition", "details", "confirmation"];
+                  const currentIndex = steps.indexOf(currentStep);
+                  if (currentIndex > 0) {
+                    setCurrentStep(steps[currentIndex - 1]);
+                  }
+                }}
+                className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-all"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
+            )}
+            <h2 className="text-lg font-bold text-white font-poppins">{getStepTitle()}</h2>
+          </div>
+          
+          {/* Step Progress */}
+          <div className="flex space-x-2">
+            {["import", "edit", "recognition", "details", "confirmation"].map((step, index) => (
+              <div
+                key={step}
+                className={`w-3 h-3 rounded-full ${
+                  step === currentStep
+                    ? "bg-[hsl(9,85%,67%)]"
+                    : ["import", "edit", "recognition", "details", "confirmation"].indexOf(currentStep) > index
+                    ? "bg-green-500"
+                    : "bg-gray-600"
+                }`}
+              />
+            ))}
+          </div>
+          
+          <button onClick={handleClose} className="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         <div className="p-6 pb-20">
-          {/* Add Method Selection */}
-          <div className="flex space-x-2 mb-6">
-            <button
-              onClick={() => setAddMethod("photo")}
-              className={`flex-1 p-3 rounded-lg flex items-center justify-center space-x-2 ${
-                addMethod === "photo" 
-                  ? "bg-[hsl(9,85%,67%)] text-white" 
-                  : "bg-[hsl(216,46%,13%)] text-[hsl(212,23%,69%)]"
-              }`}
-            >
-              <Camera className="w-4 h-4" />
-              <span className="font-poppins text-sm">Photo</span>
-            </button>
-            <button
-              onClick={() => setAddMethod("checklist")}
-              className={`flex-1 p-3 rounded-lg flex items-center justify-center space-x-2 ${
-                addMethod === "checklist" 
-                  ? "bg-[hsl(9,85%,67%)] text-white" 
-                  : "bg-[hsl(216,46%,13%)] text-[hsl(212,23%,69%)]"
-              }`}
-            >
-              <Search className="w-4 h-4" />
-              <span className="font-poppins text-sm">Checklist</span>
-            </button>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Collection Selection */}
-            <div>
-              <label className="block text-sm font-medium text-white mb-2 font-poppins">
-                Collection
-              </label>
-              <Select value={collection} onValueChange={setCollection}>
-                <SelectTrigger className="w-full bg-[hsl(216,46%,13%)] border-gray-600 text-white">
-                  <SelectValue placeholder="Sélectionner une collection" />
-                </SelectTrigger>
-                <SelectContent className="bg-[hsl(214,35%,22%)] border-gray-600">
-                  {collections.map((col) => (
-                    <SelectItem key={col.id} value={col.id.toString()} className="text-white">
-                      {col.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Step 1: Import Photo */}
+          {currentStep === "import" && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <p className="text-gray-400">Commencez par importer ou prendre une photo de votre carte</p>
+              </div>
+              
+              <div className="border-2 border-dashed border-gray-600 rounded-lg p-12 text-center">
+                <Camera className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+                <p className="text-gray-400 mb-6 text-lg">Prendre une photo ou importer une image</p>
+                
+                <div className="flex flex-col space-y-4 max-w-xs mx-auto">
+                  <Button
+                    type="button"
+                    onClick={handleCameraCapture}
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
+                  >
+                    <Camera className="w-5 h-5 mr-2" />
+                    Prendre une photo
+                  </Button>
+                  
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  >
+                    <Upload className="w-5 h-5 mr-2" />
+                    Importer de la galerie
+                  </Button>
+                </div>
+              </div>
+              
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
             </div>
+          )}
 
-            {addMethod === "photo" ? (
-              <>
-                {/* Photo Upload */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2 font-poppins">
-                    Photo de la carte
-                  </label>
-                  <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center">
-                    <Camera className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-400 mb-4 font-poppins">
-                      Prenez une photo ou sélectionnez depuis la galerie
-                    </p>
-                    <div className="flex space-x-2">
-                      <Button type="button" className="flex-1 bg-[hsl(9,85%,67%)]">
-                        <Camera className="w-4 h-4 mr-2" />
-                        Appareil photo
-                      </Button>
-                      <Button type="button" variant="outline" className="flex-1">
-                        <Upload className="w-4 h-4 mr-2" />
-                        Galerie
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Auto-detection info */}
-                <div className="bg-[hsl(216,46%,13%)] rounded-lg p-3">
-                  <p className="text-xs text-[hsl(212,23%,69%)] font-poppins">
-                    L'application détectera automatiquement la carte et proposera un recentrage optimal.
-                  </p>
-                </div>
-              </>
-            ) : (
-              <>
-                {/* Manual Card Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-2 font-poppins">
-                    Numéro de carte
-                  </label>
-                  <Input
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    placeholder="Ex: #001"
-                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
+          {/* Step 2: Edit Photo */}
+          {currentStep === "edit" && imagePreview && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <p className="text-gray-400">Ajustez votre photo si nécessaire</p>
+              </div>
+              
+              <div className="bg-[hsl(214,35%,18%)] rounded-lg p-4">
+                <div className="flex justify-center mb-6">
+                  <img
+                    src={editedImage || imagePreview}
+                    alt="Carte"
+                    className="max-w-full max-h-96 object-contain rounded-lg"
+                    style={{
+                      filter: `brightness(${brightness}%) contrast(${contrast}%)`,
+                      transform: `rotate(${rotation}deg)`
+                    }}
                   />
                 </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-white text-sm mb-2">Luminosité</label>
+                    <input
+                      type="range"
+                      min="50"
+                      max="150"
+                      value={brightness}
+                      onChange={(e) => setBrightness(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-white text-sm mb-2">Contraste</label>
+                    <input
+                      type="range"
+                      min="50"
+                      max="150"
+                      value={contrast}
+                      onChange={(e) => setContrast(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  
+                  <div className="flex space-x-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setRotation(rotation - 90)}
+                      className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => setRotation(rotation + 90)}
+                      className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                    >
+                      <RotateCcw className="w-4 h-4 transform scale-x-[-1]" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCurrentStep("import")}
+                  className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                >
+                  Retour
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    applyImageEdits();
+                    setCurrentStep("recognition");
+                  }}
+                  className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
+                >
+                  Continuer
+                </Button>
+              </div>
+            </div>
+          )}
 
+          {/* Step 3: Recognition */}
+          {currentStep === "recognition" && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <p className="text-gray-400">Reconnaissance automatique en cours...</p>
+              </div>
+              
+              <div className="bg-[hsl(214,35%,18%)] rounded-lg p-6 text-center">
+                {isProcessing ? (
+                  <div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[hsl(9,85%,67%)] mx-auto mb-4"></div>
+                    <p className="text-white">Analyse de l'image en cours...</p>
+                    <p className="text-gray-400 text-sm mt-2">Cela peut prendre quelques secondes</p>
+                  </div>
+                ) : (
+                  <div>
+                    <Check className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                    <p className="text-white mb-2">Reconnaissance terminée</p>
+                    {recognitionResult && (
+                      <div className="text-left bg-[hsl(214,35%,15%)] rounded-lg p-4 mt-4">
+                        <p className="text-gray-400 text-sm mb-2">Résultats détectés:</p>
+                        <p className="text-white">Joueur: {recognitionResult.playerName}</p>
+                        <p className="text-white">Équipe: {recognitionResult.teamName}</p>
+                        <p className="text-gray-400 text-sm">Confiance: {Math.round(recognitionResult.confidence * 100)}%</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+              
+              {!isProcessing && (
+                <div className="flex space-x-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setCurrentStep("edit")}
+                    className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                  >
+                    Retour
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setCurrentStep("details")}
+                    className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
+                  >
+                    Continuer
+                  </Button>
+                </div>
+              )}
+              
+              {currentStep === "recognition" && !isProcessing && !recognitionResult && (
+                <div className="mt-6">
+                  <Button
+                    type="button"
+                    onClick={handleRecognition}
+                    className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
+                  >
+                    Démarrer la reconnaissance
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Step 4: Details */}
+          {currentStep === "details" && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <p className="text-gray-400">Complétez les informations de la carte</p>
+              </div>
+              
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2 font-poppins">
-                    Nom du joueur
-                  </label>
+                  <label className="block text-white text-sm mb-2">Collection *</label>
+                  <Select value={selectedCollectionId} onValueChange={setSelectedCollectionId}>
+                    <SelectTrigger className="bg-[hsl(216,46%,13%)] border-gray-600 text-white">
+                      <SelectValue placeholder="Sélectionner une collection" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-600">
+                      {collections.map((coll) => (
+                        <SelectItem key={coll.id} value={coll.id.toString()}>{coll.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <label className="block text-white text-sm mb-2">Nom du joueur *</label>
                   <Input
+                    type="text"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
-                    placeholder="Ex: Mbappé"
+                    placeholder="Ex: Kylian Mbappé"
                     className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
                   />
                 </div>
+                
+                <div>
+                  <label className="block text-white text-sm mb-2">Équipe</label>
+                  <Input
+                    type="text"
+                    value={teamName}
+                    onChange={(e) => setTeamName(e.target.value)}
+                    placeholder="Ex: Paris Saint-Germain"
+                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white text-sm mb-2">Numéro de carte *</label>
+                  <Input
+                    type="text"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
+                    placeholder="Ex: 001"
+                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-white text-sm mb-2">Numérotation</label>
+                  <Input
+                    type="text"
+                    value={numbering}
+                    onChange={(e) => setNumbering(e.target.value)}
+                    placeholder="Ex: /199, /999, etc."
+                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCurrentStep("recognition")}
+                  className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                >
+                  Retour
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setCurrentStep("confirmation")}
+                  disabled={!selectedCollectionId || !playerName || !cardNumber}
+                  className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white disabled:bg-gray-600"
+                >
+                  Continuer
+                </Button>
+              </div>
+            </div>
+          )}
 
-                {/* Search suggestions */}
-                <div className="bg-[hsl(216,46%,13%)] rounded-lg p-3">
-                  <p className="text-xs text-[hsl(212,23%,69%)] mb-2 font-poppins">
-                    Suggestions de la checklist:
-                  </p>
-                  <div className="space-y-1">
-                    <button
-                      type="button"
-                      className="w-full text-left p-2 rounded bg-[hsl(214,35%,22%)] text-white text-sm hover:bg-[hsl(9,85%,67%)] transition-colors"
-                    >
-                      #001 - Mbappé (Paris SG)
-                    </button>
-                    <button
-                      type="button"
-                      className="w-full text-left p-2 rounded bg-[hsl(214,35%,22%)] text-white text-sm hover:bg-[hsl(9,85%,67%)] transition-colors"
-                    >
-                      #002 - Neymar (Paris SG)
-                    </button>
+          {/* Step 5: Confirmation */}
+          {currentStep === "confirmation" && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <p className="text-gray-400">Vérifiez les informations avant d'ajouter la carte</p>
+              </div>
+              
+              <div className="bg-[hsl(214,35%,18%)] rounded-lg p-6">
+                <div className="flex space-x-6">
+                  {editedImage && (
+                    <div className="flex-shrink-0">
+                      <img
+                        src={editedImage}
+                        alt="Carte"
+                        className="w-32 h-44 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                  
+                  <div className="flex-1 space-y-3">
+                    <div>
+                      <p className="text-gray-400 text-sm">Collection</p>
+                      <p className="text-white">{collections.find(c => c.id.toString() === selectedCollectionId)?.name}</p>
+                    </div>
+                    <div>
+                      <p className="text-gray-400 text-sm">Joueur</p>
+                      <p className="text-white">{playerName}</p>
+                    </div>
+                    {teamName && (
+                      <div>
+                        <p className="text-gray-400 text-sm">Équipe</p>
+                        <p className="text-white">{teamName}</p>
+                      </div>
+                    )}
+                    <div>
+                      <p className="text-gray-400 text-sm">Numéro</p>
+                      <p className="text-white">{cardNumber}</p>
+                    </div>
+                    {numbering && (
+                      <div>
+                        <p className="text-gray-400 text-sm">Numérotation</p>
+                        <p className="text-white">{numbering}</p>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </>
-            )}
-
-            {/* Action Buttons */}
-            <div className="flex space-x-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-                className="flex-1"
-              >
-                Annuler
-              </Button>
-              <Button
-                type="submit"
-                className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)]"
-              >
-                Ajouter
-              </Button>
+              </div>
+              
+              <div className="flex space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setCurrentStep("details")}
+                  className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                >
+                  Modifier
+                </Button>
+                <Button
+                  type="button"
+                  onClick={handleFinalSubmit}
+                  disabled={createCardMutation.isPending}
+                  className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white disabled:bg-gray-600"
+                >
+                  {createCardMutation.isPending ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Ajout en cours...
+                    </div>
+                  ) : (
+                    "Ajouter la carte"
+                  )}
+                </Button>
+              </div>
             </div>
-          </form>
+          )}
         </div>
       </div>
     </div>

@@ -560,6 +560,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Card recognition route
+  app.post("/api/cards/recognize", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const { imageData } = req.body;
+      
+      if (!imageData) {
+        return res.status(400).json({ message: "Image data is required" });
+      }
+
+      // Get all cards for recognition
+      const allCards = await storage.getAllCards();
+      const recognitionEngine = new CardRecognitionEngine(allCards);
+      
+      const result = recognitionEngine.recognizeCard(imageData);
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Card recognition error:", error);
+      res.status(500).json({ message: "Recognition failed" });
+    }
+  });
+
   // Update card image
   app.patch("/api/cards/:id/image", async (req, res) => {
     try {
