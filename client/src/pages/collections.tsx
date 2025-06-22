@@ -15,11 +15,7 @@ import cardStackIcon from "@assets/image_1750351528484.png";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { FreeMode, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/free-mode';
-import 'swiper/css/pagination';
+
 
 export default function Collections() {
   const [, setLocation] = useLocation();
@@ -293,240 +289,83 @@ export default function Collections() {
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div>
-            <style>{`
-              .wallet-container {
-                perspective: 1000px;
-              }
-              
-              .collections-scroll {
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                scroll-behavior: smooth;
-                overflow-x: auto;
-                overflow-y: hidden;
-                -webkit-overflow-scrolling: touch;
-              }
-              
-              .collections-scroll::-webkit-scrollbar {
-                display: none;
-              }
-              
-              .collections-swiper {
-                overflow: visible;
-                padding: 0 16px;
-              }
-              
-              .collections-swiper .swiper-slide {
-                height: auto;
-              }
-              
-              .collections-swiper .swiper-pagination {
-                position: static !important;
-                bottom: auto !important;
-                left: auto !important;
-                transform: none !important;
-                width: auto !important;
-                margin-top: 24px;
-                text-align: center;
-                display: flex !important;
-                justify-content: center !important;
-                align-items: center !important;
-                gap: 8px !important;
-              }
-              
-              .collections-swiper .swiper-pagination-bullet {
-                background: rgba(255, 255, 255, 0.25) !important;
-                opacity: 1 !important;
-                width: 12px !important;
-                height: 12px !important;
-                margin: 0 !important;
-                border-radius: 50% !important;
-                transition: all 0.3s ease !important;
-                cursor: pointer !important;
-                border: 2px solid transparent !important;
-              }
-              
-              .collections-swiper .swiper-pagination-bullet-active {
-                background: #F37261 !important;
-                transform: scale(1.3) !important;
-                border-color: rgba(243, 114, 97, 0.3) !important;
-                box-shadow: 0 0 0 4px rgba(243, 114, 97, 0.15) !important;
-              }
-              
-              .collection-wallet-item {
-                transform-style: preserve-3d;
-                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-                min-width: 320px;
-                max-width: 320px;
-                flex-shrink: 0;
-                width: 320px;
-                scroll-snap-align: start;
-              }
-              
-              .collection-wallet-item:hover {
-                transform: translateY(-8px) rotateY(5deg) scale(1.02);
-                box-shadow: 0 12px 40px rgba(243, 114, 97, 0.25);
-              }
-              
-              .collection-wallet-item:nth-child(even):hover {
-                transform: translateY(-8px) rotateY(-5deg) scale(1.02);
-              }
-              
-              .wallet-card-display {
-                position: relative;
-                overflow: hidden;
-                background: linear-gradient(135deg, hsl(216,46%,13%) 0%, hsl(214,35%,15%) 50%, hsl(214,35%,20%) 100%);
-              }
-              
-              .wallet-card-stack {
-                position: relative;
-                transform-style: preserve-3d;
-              }
-              
-              .wallet-card-layer {
-                position: absolute;
-                transition: all 0.3s ease;
-                border-radius: 20px;
-                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-              }
-              
-              .collection-wallet-item:hover .wallet-card-layer:nth-child(1) {
-                transform: translateX(-8px) translateY(-4px) rotateZ(-3deg);
-              }
-              
-              .collection-wallet-item:hover .wallet-card-layer:nth-child(2) {
-                transform: translateX(0px) translateY(-2px) rotateZ(0deg);
-              }
-              
-              .collection-wallet-item:hover .wallet-card-layer:nth-child(3) {
-                transform: translateX(8px) translateY(-6px) rotateZ(3deg);
-              }
-              
-              .collections-swiper {
-                padding-bottom: 40px !important;
-                overflow: visible !important;
-              }
-              
-              .collections-swiper .swiper-wrapper {
-                transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-              }
-              
-              .collections-swiper .swiper-slide {
-                transition: transform 0.3s ease, opacity 0.3s ease !important;
-              }
-              
-              .collections-swiper .swiper-pagination {
-                bottom: 10px !important;
-                position: absolute !important;
-                left: 50% !important;
-                transform: translateX(-50%) !important;
-                width: auto !important;
-                display: flex !important;
-                justify-content: center !important;
-                gap: 8px !important;
-              }
-              
-              .collections-swiper .swiper-pagination-bullet {
-                width: 8px !important;
-                height: 8px !important;
-                border-radius: 50% !important;
-                background: rgba(255, 255, 255, 0.3) !important;
-                opacity: 1 !important;
-                margin: 0 !important;
-                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
-              }
-              
-              .collections-swiper .swiper-pagination-bullet-active {
-                background: #F37261 !important;
-                transform: scale(1.2) !important;
-              }
-              
-              .collections-swiper .swiper-pagination-bullet-active-main {
-                background: #F37261 !important;
-                transform: scale(1.4) !important;
-              }
-            `}</style>
-            
-            <div className="space-y-4">
-                {collections?.map((collection) => {
-                  const completion = getCollectionCompletion(collection);
-                  return (
-                    <div key={collection.id}>
-                      <div 
-                        onClick={() => {
-                          setLocation(`/collection/${collection.id}`);
-                        }}
-                        className="w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02]"
-                      >
-                        {/* Header with title and delete button */}
-                        <div className="p-4 pb-3">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
-                              <p className="text-white/60 text-sm italic">{collection.season || 'Saison non spécifiée'}</p>
-                            </div>
-                            <div className="flex items-center gap-3">
-                              {!collection.name?.includes("SCORE LIGUE 1") && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteCollection(collection);
-                                  }}
-                                  className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
-                                  title="Supprimer la collection"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              )}
-                            </div>
-                          </div>
+          <div className="space-y-4">
+            {collections?.map((collection) => {
+              const completion = getCollectionCompletion(collection);
+              return (
+                <div key={collection.id}>
+                  <div 
+                    onClick={() => {
+                      setLocation(`/collection/${collection.id}`);
+                    }}
+                    className="w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02]"
+                  >
+                    {/* Header with title and delete button */}
+                    <div className="p-4 pb-3">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
+                          <p className="text-white/60 text-sm italic">{collection.season || 'Saison non spécifiée'}</p>
                         </div>
-
-                        {/* Card display area */}
-                        <div className="h-32 relative flex items-center justify-center overflow-hidden px-4 pb-3">
-                          <div className="relative w-full max-w-md h-24 flex items-center justify-center">
-                            {/* Main card with golden cards image */}
-                            <div className="relative w-24 h-24 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-xl p-2 shadow-xl flex items-center justify-center">
-                              <img 
-                                src={goldenCardsIcon}
-                                alt="Golden trading cards"
-                                className="w-20 h-20 object-contain rounded-lg"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Progress bar */}
-                        <div className="px-4 pb-4">
-                          <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
-                            <div 
-                              className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                              style={{ width: `${completion.percentage}%` }}
-                            ></div>
-                          </div>
-                          <div className="flex justify-between text-xs text-white/60 mt-1">
-                            <span>{completion.percentage}% complété</span>
-                            <span>{completion.ownedCards} cartes acquises</span>
-                          </div>
+                        <div className="flex items-center gap-3">
+                          {!collection.name?.includes("SCORE LIGUE 1") && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCollection(collection);
+                              }}
+                              className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
+                              title="Supprimer la collection"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
-                  );
-                })}
 
-                {/* Add Collection Button */}
-                <div 
-                  onClick={() => setShowAddModal(true)}
-                  className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-6 flex flex-col items-center justify-center text-center"
-                >
-                  <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                    <Plus className="w-6 h-6 text-white" />
+                    {/* Card display area */}
+                    <div className="h-32 relative flex items-center justify-center overflow-hidden px-4 pb-3">
+                      <div className="relative w-full max-w-md h-24 flex items-center justify-center">
+                        {/* Main card with golden cards image */}
+                        <div className="relative w-24 h-24 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-xl p-2 shadow-xl flex items-center justify-center">
+                          <img 
+                            src={goldenCardsIcon}
+                            alt="Golden trading cards"
+                            className="w-20 h-20 object-contain rounded-lg"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Progress bar */}
+                    <div className="px-4 pb-4">
+                      <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                        <div 
+                          className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${completion.percentage}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between text-xs text-white/60 mt-1">
+                        <span>{completion.percentage}% complété</span>
+                        <span>{completion.ownedCards} cartes acquises</span>
+                      </div>
+                    </div>
                   </div>
-                  <h3 className="font-bold text-white mb-2 font-poppins text-lg">Nouvelle Collection</h3>
-                  <p className="text-[hsl(212,23%,69%)] text-sm">Ajouter une collection à ta bibliothèque</p>
                 </div>
+              );
+            })}
+
+            {/* Add Collection Button */}
+            <div 
+              onClick={() => setShowAddModal(true)}
+              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-6 flex flex-col items-center justify-center text-center"
+            >
+              <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <Plus className="w-6 h-6 text-white" />
+              </div>
+              <h3 className="font-bold text-white mb-2 font-poppins text-lg">Nouvelle Collection</h3>
+              <p className="text-[hsl(212,23%,69%)] text-sm">Ajouter une collection à ta bibliothèque</p>
             </div>
           </div>
         )}
