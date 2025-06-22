@@ -159,8 +159,8 @@ export default function Social() {
 
   // Filtrer les utilisateurs pour l'autocomplete des tags
   const filteredUsersForTags = users.filter(user =>
-    user.name.toLowerCase().includes(searchPeople.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchPeople.toLowerCase())
+    (user.name || '').toLowerCase().includes(searchPeople.toLowerCase()) ||
+    (user.username || '').toLowerCase().includes(searchPeople.toLowerCase())
   );
 
   // Ajouter une personne aux tags
@@ -625,7 +625,7 @@ export default function Social() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center justify-between mb-1">
                             <h4 className="text-white font-medium text-sm">
-                              {activity.user.name || activity.user.username}
+                              {activity.user?.name || activity.user?.username || 'Utilisateur inconnu'}
                             </h4>
                             <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
                               {formatTimeAgo(activity.createdAt)}
