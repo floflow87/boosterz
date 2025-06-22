@@ -123,7 +123,7 @@ export default function Social() {
   // Delete post mutation
   const deletePostMutation = useMutation({
     mutationFn: async (postId: number) => {
-      return apiRequest(`/api/posts/${postId}`, "DELETE");
+      return apiRequest("DELETE", `/api/posts/${postId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/posts`] });
@@ -447,15 +447,6 @@ export default function Social() {
 
     return (
       <div className="space-y-4">
-        {/* Debug header to confirm we're in the right section */}
-        <div className="bg-yellow-600/20 border border-yellow-600/30 rounded-lg p-3 mb-4">
-          <div className="flex items-center space-x-2">
-            <Star className="w-4 h-4 text-yellow-600" />
-            <span className="text-yellow-600 font-medium text-sm">À la une - Posts des utilisateurs suivis</span>
-          </div>
-          <p className="text-xs text-gray-400 mt-1">Seuls les posts de tes abonnements apparaissent ici</p>
-        </div>
-        
         {feedItems.map((item) => (
           <div key={`${item.itemType}-${item.id}`}>
             {item.itemType === 'post' ? (

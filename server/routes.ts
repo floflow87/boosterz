@@ -226,6 +226,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Only return posts from other users (not the current user)
     res.json([
       {
+        id: 17,
+        userId: 2,
+        content: "Qui a la carte Ronaldo Juventus rare ? Je propose un trade avec ma Messi Barcelona dorée ✨",
+        type: "text", 
+        cardId: null,
+        isVisible: true,
+        createdAt: "2024-06-22T14:15:00Z",
+        updatedAt: "2024-06-22T14:15:00Z",
+        user: {
+          id: 2,
+          name: "Max C.",
+          username: "maxcollector",
+          avatar: null
+        }
+      },
+      {
         id: 16,
         userId: 999,
         content: "🔥 EXCLUSIF ! Je vends ma carte Mbappé PSG autographée ! Prix spécial pour les vrais collectionneurs. Première offre sérieuse 💎⚽",
