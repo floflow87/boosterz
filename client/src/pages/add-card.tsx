@@ -261,12 +261,14 @@ export default function AddCard() {
         {currentStep === "edit" && editedImage && (
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Vérifier l'image</h2>
-            <div className="mb-8">
-              <img
-                src={editedImage}
-                alt="Card preview"
-                className="max-w-md mx-auto rounded-lg border border-zinc-700"
-              />
+            <div className="mb-8 flex justify-center">
+              <div className="w-80 h-96 bg-zinc-800 rounded-lg border border-zinc-700 overflow-hidden flex items-center justify-center">
+                <img
+                  src={editedImage}
+                  alt="Card preview"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
             </div>
             <div className="flex gap-4 justify-center">
               <Button
@@ -487,12 +489,14 @@ export default function AddCard() {
             <div className="bg-zinc-800 rounded-lg p-6 mb-6">
               <div className="grid md:grid-cols-2 gap-6">
                 {editedImage && (
-                  <div>
-                    <img
-                      src={editedImage}
-                      alt="Card preview"
-                      className="w-full max-w-sm rounded-lg border border-zinc-700"
-                    />
+                  <div className="flex justify-center">
+                    <div className="w-64 h-80 bg-zinc-700 rounded-lg border border-zinc-600 overflow-hidden flex items-center justify-center">
+                      <img
+                        src={editedImage}
+                        alt="Card preview"
+                        className="max-w-full max-h-full object-contain"
+                      />
+                    </div>
                   </div>
                 )}
                 
