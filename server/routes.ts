@@ -560,6 +560,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all cards for autocomplete
+  app.get("/api/cards/all", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const allCards = await storage.getAllCards();
+      res.json(allCards);
+    } catch (error) {
+      console.error("Error fetching all cards:", error);
+      res.status(500).json({ error: "Failed to fetch cards" });
+    }
+  });
+
   // Card recognition route
   app.post("/api/cards/recognize", optionalAuth, async (req: AuthRequest, res) => {
     try {

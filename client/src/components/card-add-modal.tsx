@@ -1,12 +1,12 @@
-import { useState, useRef } from "react";
-import { X, Camera, Upload, Search, RotateCcw, Crop, Check, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, Sliders } from "lucide-react";
+import { useState, useRef, useMemo } from "react";
+import { X, Camera, Upload, Search, RotateCcw, Crop, Check, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, Sliders, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { Collection } from "@shared/schema";
+import type { Collection, Card } from "@shared/schema";
 
 interface CardAddModalProps {
   isOpen: boolean;
@@ -46,6 +46,65 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch all cards for autocomplete data
+  const { data: allCards = [] } = useQuery<Card[]>({
+    queryKey: ['/api/cards/all'],
+    enabled: isOpen
+  });
+
+  // Get unique player names and team names for autocomplete
+  const playerNames = useMemo(() => {
+    const names = allCards
+      .map(card => card.playerName)
+      .filter((name): name is string => !!name)
+      .filter((name, index, arr) => arr.indexOf(name) === index)
+      .sort();
+    return names;
+  }, [allCards]);
+
+  const teamNames = useMemo(() => {
+    const names = allCards
+      .map(card => card.teamName)
+      .filter((name): name is string => !!name)
+      .filter((name, index, arr) => arr.indexOf(name) === index)
+      .sort();
+    return names;
+  }, [allCards]);
+
+  // Get card types for selected collection
+  const cardTypes = useMemo(() => {
+    if (!selectedCollectionId) return [];
+    const collectionCards = allCards.filter(card => 
+      card.collectionId === parseInt(selectedCollectionId)
+    );
+    const types = collectionCards
+      .map(card => card.cardType)
+      .filter((type, index, arr) => arr.indexOf(type) === index)
+      .sort();
+    return types;
+  }, [allCards, selectedCollectionId]);
+
+  // Autocomplete states
+  const [playerNameInput, setPlayerNameInput] = useState('');
+  const [teamNameInput, setTeamNameInput] = useState('');
+  const [showPlayerSuggestions, setShowPlayerSuggestions] = useState(false);
+  const [showTeamSuggestions, setShowTeamSuggestions] = useState(false);
+
+  // Filter suggestions based on input
+  const filteredPlayerNames = useMemo(() => {
+    if (!playerNameInput) return [];
+    return playerNames.filter(name => 
+      name.toLowerCase().includes(playerNameInput.toLowerCase())
+    ).slice(0, 5);
+  }, [playerNames, playerNameInput]);
+
+  const filteredTeamNames = useMemo(() => {
+    if (!teamNameInput) return [];
+    return teamNames.filter(name => 
+      name.toLowerCase().includes(teamNameInput.toLowerCase())
+    ).slice(0, 5);
+  }, [teamNames, teamNameInput]);
 
   const resetModal = () => {
     setCurrentStep("import");
@@ -258,27 +317,17 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
               </div>
               
               <div className="border-2 border-dashed border-gray-600 rounded-lg p-12 text-center">
-                <Camera className="w-16 h-16 text-gray-400 mx-auto mb-6" />
-                <p className="text-gray-400 mb-6 text-lg">Prendre une photo ou importer une image</p>
+                <Upload className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+                <p className="text-gray-400 mb-6 text-lg">Importer une photo de votre carte</p>
                 
-                <div className="flex flex-col space-y-4 max-w-xs mx-auto">
+                <div className="max-w-xs mx-auto">
                   <Button
                     type="button"
-                    onClick={handleCameraCapture}
-                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
-                  >
-                    <Camera className="w-5 h-5 mr-2" />
-                    Prendre une photo
-                  </Button>
-                  
-                  <Button
-                    type="button"
-                    variant="outline"
                     onClick={() => fileInputRef.current?.click()}
-                    className="bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white w-full"
                   >
                     <Upload className="w-5 h-5 mr-2" />
-                    Importer de la galerie
+                    Importer
                   </Button>
                 </div>
               </div>
@@ -468,37 +517,90 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                   </Select>
                 </div>
                 
-                <div>
+                <div className="relative">
                   <label className="block text-white text-sm mb-2">Nom du joueur *</label>
                   <Input
                     type="text"
-                    value={playerName}
-                    onChange={(e) => setPlayerName(e.target.value)}
+                    value={playerNameInput || playerName}
+                    onChange={(e) => {
+                      setPlayerNameInput(e.target.value);
+                      setPlayerName(e.target.value);
+                      setShowPlayerSuggestions(e.target.value.length > 0);
+                    }}
+                    onBlur={() => setTimeout(() => setShowPlayerSuggestions(false), 200)}
                     placeholder="Ex: Kylian Mbappé"
                     className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
                   />
+                  {showPlayerSuggestions && filteredPlayerNames.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                      {filteredPlayerNames.map((name, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => {
+                            setPlayerName(name);
+                            setPlayerNameInput(name);
+                            setShowPlayerSuggestions(false);
+                          }}
+                          className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 first:rounded-t-md last:rounded-b-md"
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
-                <div>
+                <div className="relative">
                   <label className="block text-white text-sm mb-2">Équipe</label>
                   <Input
                     type="text"
-                    value={teamName}
-                    onChange={(e) => setTeamName(e.target.value)}
+                    value={teamNameInput || teamName}
+                    onChange={(e) => {
+                      setTeamNameInput(e.target.value);
+                      setTeamName(e.target.value);
+                      setShowTeamSuggestions(e.target.value.length > 0);
+                    }}
+                    onBlur={() => setTimeout(() => setShowTeamSuggestions(false), 200)}
                     placeholder="Ex: Paris Saint-Germain"
                     className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
                   />
+                  {showTeamSuggestions && filteredTeamNames.length > 0 && (
+                    <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                      {filteredTeamNames.map((name, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => {
+                            setTeamName(name);
+                            setTeamNameInput(name);
+                            setShowTeamSuggestions(false);
+                          }}
+                          className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 first:rounded-t-md last:rounded-b-md"
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
                 
                 <div>
-                  <label className="block text-white text-sm mb-2">Numéro de carte *</label>
-                  <Input
-                    type="text"
-                    value={cardNumber}
-                    onChange={(e) => setCardNumber(e.target.value)}
-                    placeholder="Ex: 001"
-                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
-                  />
+                  <label className="block text-white text-sm mb-2">Type de carte *</label>
+                  <Select value={cardNumber} onValueChange={setCardNumber}>
+                    <SelectTrigger className="bg-[hsl(216,46%,13%)] border-gray-600 text-white">
+                      <SelectValue placeholder="Sélectionner un type de carte" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-gray-800 border-gray-600">
+                      {cardTypes.length > 0 ? (
+                        cardTypes.map((type, index) => (
+                          <SelectItem key={index} value={type}>{type}</SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="Base" disabled>Sélectionnez d'abord une collection</SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div>
