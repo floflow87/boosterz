@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingCart, ArrowLeftRight, Plus } from "lucide-react";
+import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingBag, ArrowLeftRight, Plus, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -110,7 +110,7 @@ export default function Social() {
         content, 
         type: "text"
       };
-      return apiRequest("/api/posts", "POST", postData);
+      return apiRequest("POST", "/api/posts", postData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/posts"] });
@@ -342,7 +342,7 @@ export default function Social() {
                 }`}
                 style={activeTab === "forsale" ? { backgroundColor: '#F37261' } : {}}
               >
-                <Star className="w-3 h-3 mr-1 inline" />
+                <ShoppingBag className="w-3 h-3 mr-1 inline" />
                 Sur le marché
               </button>
               <button
@@ -354,7 +354,7 @@ export default function Social() {
                 }`}
                 style={activeTab === "discover" ? { backgroundColor: '#F37261' } : {}}
               >
-                <Users className="w-3 h-3 mr-1 inline" />
+                <Globe className="w-3 h-3 mr-1 inline" />
                 Découvrir
               </button>
               <button
@@ -586,7 +586,7 @@ export default function Social() {
             >
               <div className="flex items-center space-x-3">
                 <div className="flex-1">
-                  <div className="w-full bg-[hsl(214,35%,18%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
+                  <div className="w-full bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,30%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
                     Quoi de neuf ?
                   </div>
                 </div>

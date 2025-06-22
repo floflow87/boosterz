@@ -911,7 +911,7 @@ export default function CollectionDetail() {
                 onClick={() => setViewMode("grid")}
                 className={`p-2 rounded-md transition-all ${
                   viewMode === "grid" 
-                    ? "bg-blue-600 text-white" 
+                    ? "bg-[hsl(9,85%,67%)] text-white" 
                     : "text-gray-400 hover:text-white"
                 }`}
               >
@@ -921,7 +921,7 @@ export default function CollectionDetail() {
                 onClick={() => setViewMode("list")}
                 className={`p-2 rounded-md transition-all ${
                   viewMode === "list" 
-                    ? "bg-blue-600 text-white" 
+                    ? "bg-[hsl(9,85%,67%)] text-white" 
                     : "text-gray-400 hover:text-white"
                 }`}
               >
