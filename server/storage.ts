@@ -1,6 +1,6 @@
 import { users, collections, cards, userCards, conversations, messages, posts, activities, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, or, ilike } from "drizzle-orm";
+import { eq, and, or, ilike, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -378,7 +378,7 @@ export class DatabaseStorage implements IStorage {
 
   // Social network methods
   async getUserPosts(userId: number): Promise<any[]> {
-    const result = await db.select().from(posts).where(eq(posts.userId, userId));
+    const result = await db.select().from(posts).where(eq(posts.userId, userId)).orderBy(desc(posts.createdAt));
     return result;
   }
 
@@ -448,7 +448,7 @@ export class DatabaseStorage implements IStorage {
   async deletePost(id: number): Promise<boolean> {
     try {
       const result = await db.delete(posts).where(eq(posts.id, id));
-      return result.rowCount > 0;
+      return (result.rowCount || 0) > 0;
     } catch (error) {
       console.error('Error deleting post:', error);
       return false;

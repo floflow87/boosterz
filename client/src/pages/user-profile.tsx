@@ -203,8 +203,8 @@ export default function UserProfile() {
                           </div>
                         </div>
                         
-                        {/* Delete button for own profile */}
-                        {userId === "1" && (
+                        {/* Delete button for own posts */}
+                        {user && post.userId === user.id && (
                           <button
                             onClick={() => deletePostMutation.mutate(post.id)}
                             disabled={deletePostMutation.isPending}
