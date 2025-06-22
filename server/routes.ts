@@ -429,13 +429,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/cards/:id/sale-settings", optionalAuth, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);
-      const { salePrice, saleDescription, tradeOnly } = req.body;
+      const { salePrice, saleDescription, tradeOnly, isForTrade, tradePrice, tradeDescription, isSold } = req.body;
       
-      const updatedCard = await storage.updateCard(cardId, { 
-        salePrice, 
-        saleDescription, 
-        tradeOnly 
-      });
+      const updateData: any = {};
+      
+      if (salePrice !== undefined) updateData.salePrice = salePrice;
+      if (saleDescription !== undefined) updateData.saleDescription = saleDescription;
+      if (tradeOnly !== undefined) updateData.tradeOnly = tradeOnly;
+      if (isForTrade !== undefined) updateData.isForTrade = isForTrade;
+      if (tradePrice !== undefined) updateData.tradePrice = tradePrice;
+      if (tradeDescription !== undefined) updateData.tradeDescription = tradeDescription;
+      if (isSold !== undefined) updateData.isSold = isSold;
+      
+      const updatedCard = await storage.updateCard(cardId, updateData);
       
       if (!updatedCard) {
         return res.status(404).json({ message: "Card not found" });

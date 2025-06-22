@@ -27,16 +27,16 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-600">
+    <div className="fixed inset-0 bg-[hsl(214,35%,11%)] z-50 overflow-y-auto">
+      <div className="min-h-screen">
+        <div className="flex items-center justify-between p-6 bg-[hsl(214,35%,22%)] border-b border-gray-600 sticky top-0 z-10">
           <h2 className="text-lg font-bold text-white font-poppins">Ajouter une carte</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">
+          <button onClick={onClose} className="text-gray-400 hover:text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all">
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="p-6">
+        <div className="p-6 pb-20">
           {/* Add Method Selection */}
           <div className="flex space-x-2 mb-6">
             <button
