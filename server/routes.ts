@@ -1185,28 +1185,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get posts from followed users (À la une)
   app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
     try {
+      console.log('Feed API called for user:', req.user?.id);
       const userId = req.user!.id;
       
-      // Pour l'instant, retourner les posts de l'utilisateur
-      // Dans une implémentation complète, on récupérerait les posts des utilisateurs suivis
-      const userPosts = await db.select({
-        id: posts.id,
-        userId: posts.userId,
-        content: posts.content,
-        type: posts.type,
-        cardId: posts.cardId,
-        isVisible: posts.isVisible,
-        createdAt: posts.createdAt,
-        updatedAt: posts.updatedAt
-      })
-      .from(posts)
-      .where(eq(posts.userId, userId))
-      .orderBy(desc(posts.createdAt))
-      .limit(50);
-
+      // Récupérer les posts de l'utilisateur via le storage
+      console.log('Calling getUserPosts with userId:', userId);
+      const userPosts = await storage.getUserPosts(userId);
+      console.log('getUserPosts returned:', userPosts?.length, 'posts');
       res.json(userPosts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
       res.status(500).json({ message: "Internal server error" });
     }
   });
