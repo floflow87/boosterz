@@ -404,7 +404,7 @@ export default function Social() {
 
   // Composant pour le feed des utilisateurs suivis
   const FeedContent = () => {
-    // Pour l'instant, récupérer les posts et activités existants
+    // Récupérer uniquement les posts du feed (pas les posts de l'utilisateur actuel)
     const { data: feedPosts = [] } = useQuery<any[]>({
       queryKey: [`/api/users/feed`],
     });
@@ -413,10 +413,13 @@ export default function Social() {
       queryKey: [`/api/social/activities`],
     });
 
-    // Combiner posts et activités et les trier par date
+    // Filtrer les activités pour exclure celles de l'utilisateur actuel (userId = 1)
+    const filteredActivities = activities.filter(activity => activity.user.id !== 1);
+
+    // Combiner posts et activités filtrées et les trier par date
     const feedItems = [
       ...feedPosts.map(post => ({ ...post, type: 'post', itemType: 'post' })),
-      ...activities.map(activity => ({ ...activity, itemType: 'activity' }))
+      ...filteredActivities.map(activity => ({ ...activity, itemType: 'activity' }))
     ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     if (feedItems.length === 0) {
