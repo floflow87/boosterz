@@ -16,7 +16,6 @@ export interface AuthRequest extends Request {
     email: string;
     name: string;
   };
-  session?: any;
 }
 
 export class AuthService {
@@ -93,9 +92,10 @@ export class AuthService {
 // Authentication middleware
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
   // Check for session-based authentication first
-  if (req.session?.userId) {
+  const sessionUserId = (req as any).session?.userId;
+  if (sessionUserId) {
     try {
-      const user = await storage.getUser(req.session.userId);
+      const user = await storage.getUser(sessionUserId);
       if (user) {
         req.user = {
           id: user.id,

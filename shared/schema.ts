@@ -176,8 +176,11 @@ export const usersRelations = relations(users, ({ many }) => ({
   userCards: many(userCards),
   followers: many(follows, { relationName: "followers" }),
   following: many(follows, { relationName: "following" }),
+  subscriptionFollowers: many(subscriptions, { relationName: "subscriptionFollowers" }),
+  subscriptionFollowing: many(subscriptions, { relationName: "subscriptionFollowing" }),
   notifications: many(notifications),
   activities: many(activities),
+  posts: many(posts),
 }));
 
 export const followsRelations = relations(follows, ({ one }) => ({
@@ -192,6 +195,8 @@ export const followsRelations = relations(follows, ({ one }) => ({
     relationName: "following",
   }),
 }));
+
+
 
 export const notificationsRelations = relations(notifications, ({ one }) => ({
   user: one(users, {
@@ -290,29 +295,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }));
 
-export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
-  follower: one(users, {
-    fields: [subscriptions.followerId],
-    references: [users.id],
-    relationName: "subscriptionFollower",
-  }),
-  following: one(users, {
-    fields: [subscriptions.followingId],
-    references: [users.id],
-    relationName: "subscriptionFollowing",
-  }),
-}));
 
-export const postsRelations = relations(posts, ({ one }) => ({
-  user: one(users, {
-    fields: [posts.userId],
-    references: [users.id],
-  }),
-  card: one(cards, {
-    fields: [posts.cardId],
-    references: [cards.id],
-  }),
-}));
 
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -418,3 +401,23 @@ export type Message = typeof messages.$inferSelect;
 // Session types
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type Session = typeof sessions.$inferSelect;
+
+// Subscription schemas
+export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
+export type Subscription = typeof subscriptions.$inferSelect;
+
+// Post schemas
+export const insertPostSchema = createInsertSchema(posts).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertPost = z.infer<typeof insertPostSchema>;
+export type Post = typeof posts.$inferSelect;
