@@ -926,6 +926,43 @@ export class MemStorage implements IStorage {
   async markMessagesAsRead(conversationId: number, userId: number): Promise<void> {
     // Stub implementation
   }
+
+  // Social network methods for MemStorage
+  async getUserPosts(userId: number): Promise<any[]> {
+    return [];
+  }
+
+  async createPost(post: any): Promise<any> {
+    return { id: Date.now(), ...post, createdAt: new Date() };
+  }
+
+  async getUserFollowers(userId: number): Promise<User[]> {
+    return [];
+  }
+
+  async getUserFollowing(userId: number): Promise<User[]> {
+    return [];
+  }
+
+  async getPendingSubscriptionRequests(userId: number): Promise<any[]> {
+    return [];
+  }
+
+  async createSubscription(subscription: any): Promise<any> {
+    return { id: Date.now(), ...subscription, createdAt: new Date() };
+  }
+
+  async updateSubscription(id: number, updates: any): Promise<any> {
+    return { id, ...updates, updatedAt: new Date() };
+  }
+
+  async getActivityFeed(userId: number): Promise<any[]> {
+    return [];
+  }
+
+  async createActivity(activity: any): Promise<any> {
+    return { id: Date.now(), ...activity, createdAt: new Date() };
+  }
 }
 
 export const storage = new DatabaseStorage();

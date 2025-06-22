@@ -972,6 +972,145 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Social network endpoints
+  
+  // Get user's posts
+  app.get("/api/users/:id/posts", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const posts = await storage.getUserPosts(userId);
+      res.json(posts);
+    } catch (error) {
+      console.error('Error fetching user posts:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Create a new post
+  app.post("/api/posts", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { content, type, cardId } = req.body;
+      const userId = req.user!.id;
+      
+      const post = await storage.createPost({
+        userId,
+        content,
+        type: type || "text",
+        cardId: cardId || null
+      });
+      
+      // Create activity for the post
+      await storage.createActivity({
+        userId,
+        type: "post",
+        postId: post.id,
+        metadata: JSON.stringify({ content: content.substring(0, 100) })
+      });
+      
+      res.json(post);
+    } catch (error) {
+      console.error('Error creating post:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get user's followers
+  app.get("/api/users/:id/followers", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const followers = await storage.getUserFollowers(userId);
+      res.json(followers);
+    } catch (error) {
+      console.error('Error fetching followers:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get user's following
+  app.get("/api/users/:id/following", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const following = await storage.getUserFollowing(userId);
+      res.json(following);
+    } catch (error) {
+      console.error('Error fetching following:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get pending subscription requests
+  app.get("/api/users/:id/subscription-requests", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (userId !== req.user!.id) {
+        return res.status(403).json({ message: "Forbidden" });
+      }
+      
+      const requests = await storage.getPendingSubscriptionRequests(userId);
+      res.json(requests);
+    } catch (error) {
+      console.error('Error fetching subscription requests:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Create subscription request
+  app.post("/api/subscriptions", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { followingId } = req.body;
+      const followerId = req.user!.id;
+      
+      if (followerId === followingId) {
+        return res.status(400).json({ message: "Cannot follow yourself" });
+      }
+      
+      const subscription = await storage.createSubscription({
+        followerId,
+        followingId,
+        status: "pending"
+      });
+      
+      res.json(subscription);
+    } catch (error) {
+      console.error('Error creating subscription:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Update subscription status (accept/reject)
+  app.patch("/api/subscriptions/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const subscriptionId = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!["accepted", "rejected"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      
+      const subscription = await storage.updateSubscription(subscriptionId, { status });
+      if (!subscription) {
+        return res.status(404).json({ message: "Subscription not found" });
+      }
+      
+      res.json(subscription);
+    } catch (error) {
+      console.error('Error updating subscription:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get activity feed for user
+  app.get("/api/users/:id/feed", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const feed = await storage.getActivityFeed(userId);
+      res.json(feed);
+    } catch (error) {
+      console.error('Error fetching activity feed:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
