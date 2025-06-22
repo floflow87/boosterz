@@ -5,7 +5,7 @@ import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, S
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
-import CardAddModal from "@/components/card-add-modal";
+
 import CardDisplay from "../components/card-display";
 import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -22,7 +22,7 @@ export default function Collections() {
   const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
@@ -293,7 +293,7 @@ export default function Collections() {
           <div className="space-y-4">
             {/* Add Collection Button - Moved to top */}
             <div 
-              onClick={() => setShowAddModal(true)}
+              onClick={() => setLocation("/add-card")}
               className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
             >
               <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
@@ -442,7 +442,7 @@ export default function Collections() {
                   }
                 </p>
                 <button
-                  onClick={() => setShowAddModal(true)}
+                  onClick={() => setLocation("/add-card")}
                   className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
                 >
                   <Plus className="w-4 h-4 mr-2 inline" />
@@ -832,12 +832,7 @@ export default function Collections() {
         )}
       </main>
       
-      <CardAddModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        collections={collections || []}
-        selectedCollection={selectedCollection || undefined}
-      />
+
       
       {/* Delete Confirmation Modal */}
       {showDeleteModal && collectionToDelete && (
