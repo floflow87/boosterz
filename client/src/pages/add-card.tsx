@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 interface Collection {
   id: number;
   name: string;
-  cardTypes: Array<{
+  cardTypes?: Array<{
     type: string;
     label: string;
   }>;
@@ -44,20 +44,33 @@ export default function AddCard() {
   
   // UI state
   const [showPlayerSuggestions, setShowPlayerSuggestions] = useState(false);
-  const [playerSuggestions, setPlayerSuggestions] = useState<Player[]>([]);
+  const [showTeamSuggestions, setShowTeamSuggestions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch collections
+  // Fetch collections with card types
   const { data: collections = [] } = useQuery<Collection[]>({
     queryKey: ["/api/users/1/collections"],
+    select: (data: any[]) => {
+      return data.map(collection => ({
+        ...collection,
+        cardTypes: [
+          { type: "base", label: "Base" },
+          { type: "base_numbered", label: "Base Numérotée" },
+          { type: "insert", label: "Insert" },
+          { type: "autograph", label: "Autographe" },
+          { type: "numbered", label: "Numérotée" },
+          { type: "special_1_1", label: "Spéciale 1/1" }
+        ]
+      }));
+    }
   });
 
-  // Fetch all players for suggestions
+  // Fetch all players for suggestions - stable query
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ["/api/cards/all"],
     select: (data: any[]) => {
       const playersMap = new Map();
-      data.forEach(card => {
+      data?.forEach?.(card => {
         if (card.playerName && card.teamName) {
           const key = `${card.playerName}-${card.teamName}`;
           playersMap.set(key, {
@@ -67,24 +80,34 @@ export default function AddCard() {
         }
       });
       return Array.from(playersMap.values());
-    }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    enabled: !!collections.length
   });
 
-  // Filter players based on team and search
-  useEffect(() => {
-    if (!playerName) {
-      setPlayerSuggestions([]);
-      return;
-    }
+  // Get unique teams
+  const teamSet = new Set(allPlayers.map(p => p.teamName));
+  const allTeams = Array.from(teamSet).sort();
 
-    const filtered = allPlayers.filter(player => {
+  // Filter players based on search - no useEffect to avoid loops
+  const getPlayerSuggestions = () => {
+    if (!playerName) return [];
+    
+    return allPlayers.filter(player => {
       const matchesTeam = !teamName || player.teamName.toLowerCase().includes(teamName.toLowerCase());
       const matchesPlayer = player.playerName.toLowerCase().includes(playerName.toLowerCase());
       return matchesTeam && matchesPlayer;
     }).slice(0, 10);
+  };
 
-    setPlayerSuggestions(filtered);
-  }, [playerName, teamName, allPlayers]);
+  // Get team suggestions
+  const getTeamSuggestions = () => {
+    if (!teamName) return allTeams.slice(0, 10);
+    
+    return allTeams.filter(team => 
+      team.toLowerCase().includes(teamName.toLowerCase())
+    ).slice(0, 10);
+  };
 
   // Add card mutation
   const addCardMutation = useMutation({
@@ -315,15 +338,37 @@ export default function AddCard() {
                 </Select>
               </div>
 
-              {/* Team Name */}
-              <div className="space-y-2">
+              {/* Team Name with Suggestions */}
+              <div className="space-y-2 relative">
                 <Label className="text-white">Équipe</Label>
                 <Input
                   value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
+                  onChange={(e) => {
+                    setTeamName(e.target.value);
+                    setShowTeamSuggestions(true);
+                  }}
+                  onFocus={() => setShowTeamSuggestions(true)}
                   placeholder="Ex: Olympique de Marseille"
                   className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                 />
+                
+                {/* Team Suggestions */}
+                {showTeamSuggestions && getTeamSuggestions().length > 0 && (
+                  <div className="absolute top-full left-0 right-0 z-50 bg-gray-800 border border-gray-600 rounded-md mt-1 max-h-60 overflow-y-auto">
+                    {getTeamSuggestions().map((team: string, index: number) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setTeamName(team);
+                          setShowTeamSuggestions(false);
+                        }}
+                        className="w-full text-left px-3 py-2 hover:bg-gray-700 text-white border-b border-gray-700 last:border-b-0"
+                      >
+                        {team}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Player Name with Suggestions */}
@@ -341,9 +386,9 @@ export default function AddCard() {
                 />
                 
                 {/* Player Suggestions */}
-                {showPlayerSuggestions && playerSuggestions.length > 0 && (
+                {showPlayerSuggestions && getPlayerSuggestions().length > 0 && (
                   <div className="absolute top-full left-0 right-0 z-50 bg-gray-800 border border-gray-600 rounded-md mt-1 max-h-60 overflow-y-auto">
-                    {playerSuggestions.map((player, index) => (
+                    {getPlayerSuggestions().map((player: Player, index: number) => (
                       <button
                         key={index}
                         onClick={() => {
@@ -393,10 +438,13 @@ export default function AddCard() {
             </div>
 
             {/* Click outside to close suggestions */}
-            {showPlayerSuggestions && (
+            {(showPlayerSuggestions || showTeamSuggestions) && (
               <div 
                 className="fixed inset-0 z-40" 
-                onClick={() => setShowPlayerSuggestions(false)}
+                onClick={() => {
+                  setShowPlayerSuggestions(false);
+                  setShowTeamSuggestions(false);
+                }}
               />
             )}
 
