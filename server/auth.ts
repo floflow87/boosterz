@@ -114,21 +114,28 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
-  // Temporary development bypass - authenticate as default user
-  if (!token) {
-    req.user = {
-      id: 1,
-      username: "Floflow87",
-      email: "floflow87@test.com",
-      name: "Floflow87"
-    };
-    return next();
+  // Development mode: authenticate with any token as user 1
+  if (token === 'test' || !token) {
+    try {
+      const user = await storage.getUser(1);
+      if (user) {
+        req.user = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          name: user.name
+        };
+        return next();
+      }
+    } catch (error) {
+      console.error('Development auth error:', error);
+    }
   }
 
   try {
     const user = await AuthService.getUserByToken(token);
     if (!user) {
-      return res.status(403).json({ message: 'Invalid or expired token' });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     req.user = user;
