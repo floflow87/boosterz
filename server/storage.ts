@@ -1,6 +1,6 @@
 import { users, collections, cards, userCards, conversations, messages, posts, activities, subscriptions, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, or, ilike, desc } from "drizzle-orm";
+import { eq, and, or, ilike, desc, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -546,48 +546,40 @@ export class DatabaseStorage implements IStorage {
 
   async getFollowedUsersPosts(userId: number): Promise<any[]> {
     try {
-      console.log('Getting posts for user:', userId);
-      
       const followedUsers = await db.select({ followingId: subscriptions.followingId })
         .from(subscriptions)
         .where(eq(subscriptions.followerId, userId));
       
-      console.log('Following users:', followedUsers);
-      
-      if (followedUsers.length === 0) {
-        console.log('No followed users found');
-        return [];
-      }
+      if (followedUsers.length === 0) return [];
       
       const followingIds = followedUsers.map(f => f.followingId);
-      console.log('Following IDs:', followingIds);
       
-      // Simplified query to debug
-      const allPosts = await db.select()
+      // Use IN clause instead of OR for better performance and reliability
+      const postsWithUsers = await db
+        .select({
+          id: posts.id,
+          userId: posts.userId,
+          content: posts.content,
+          type: posts.type,
+          cardId: posts.cardId,
+          isVisible: posts.isVisible,
+          createdAt: posts.createdAt,
+          updatedAt: posts.updatedAt,
+          user: {
+            id: users.id,
+            name: users.name,
+            username: users.username
+          }
+        })
         .from(posts)
         .innerJoin(users, eq(posts.userId, users.id))
+        .where(or(...followingIds.map(id => eq(posts.userId, id))))
         .orderBy(desc(posts.createdAt));
       
-      console.log('All posts count:', allPosts.length);
-      
-      // Filter posts from followed users
-      const filteredPosts = allPosts.filter(item => 
-        followingIds.includes(item.posts.userId)
-      );
-      
-      console.log('Filtered posts count:', filteredPosts.length);
-      
-      return filteredPosts.map(item => ({
-        ...item.posts,
-        user: {
-          id: item.users.id,
-          name: item.users.name,
-          username: item.users.username
-        }
-      }));
+      return postsWithUsers;
     } catch (error) {
       console.error('Error getting followed users posts:', error);
-      throw error;
+      return [];
     }
   }
 }
