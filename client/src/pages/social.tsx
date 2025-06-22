@@ -106,13 +106,11 @@ export default function Social() {
   // Mutation pour créer un post
   const createPostMutation = useMutation({
     mutationFn: async (content: string) => {
-      return apiRequest("/api/posts", "POST", { 
+      const postData = { 
         content, 
-        type: "text",
-        public: true,
-        taggedPeople: taggedPeople,
-        photo: selectedPhoto ? await convertToBase64(selectedPhoto) : null
-      });
+        type: "text"
+      };
+      return apiRequest("/api/posts", "POST", postData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/posts"] });
