@@ -223,23 +223,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Get posts from followed users (À la une) - MUST be before /:id routes
   app.get("/api/users/feed", (req, res) => {
+    // Only return posts from other users (not the current user)
     res.json([
-      {
-        id: 13,
-        userId: 1,
-        content: "Hey les collectionneurs ! Quelqu'un a la carte Mbappé PSG édition limitée ?",
-        type: "text",
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-20T10:30:00Z",
-        updatedAt: "2024-06-20T10:30:00Z",
-        user: {
-          id: 1,
-          name: "Florian F.",
-          username: "Floflow87",
-          avatar: null
-        }
-      },
       {
         id: 14,
         userId: 2,
@@ -253,6 +238,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
           id: 2,
           name: "Max C.",
           username: "maxcollector",
+          avatar: null
+        }
+      },
+      {
+        id: 15,
+        userId: 999,
+        content: "Échange possible contre une carte Haaland ! Contactez-moi en MP 📩",
+        type: "text", 
+        cardId: null,
+        isVisible: true,
+        createdAt: "2024-06-18T14:22:00Z",
+        updatedAt: "2024-06-18T14:22:00Z",
+        user: {
+          id: 999,
+          name: "Max la menace",
+          username: "maxlamenace",
           avatar: null
         }
       }
