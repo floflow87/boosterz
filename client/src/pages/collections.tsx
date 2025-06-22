@@ -579,7 +579,7 @@ export default function Collections() {
                       <Plus className="w-8 h-8 text-white" />
                     </div>
                     <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
-                    <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
+                    <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à ta bibliothèque</p>
                   </div>
                 </SwiperSlide>
               </Swiper>
@@ -654,8 +654,8 @@ export default function Collections() {
                 <div className="text-gray-400 mb-2 text-lg">Aucune carte trouvée</div>
                 <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
                   {selectedCollection 
-                    ? "Cette collection ne contient pas encore de cartes. Ajoutez-en pour commencer votre collection."
-                    : "Vous n'avez pas encore de cartes. Créez une collection et ajoutez vos premières cartes."
+                    ? "Cette collection ne contient pas encore de cartes. Ajoutes-en pour commencer ta collection."
+                    : "Tu n'as pas encore de cartes. Crée une collection et ajoute tes premières cartes."
                   }
                 </p>
                 <button
@@ -777,7 +777,7 @@ export default function Collections() {
                 <TrendingUp className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <div className="text-gray-400 mb-2 text-lg">Aucune carte en vente</div>
                 <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  Mettez vos cartes en vente depuis vos collections pour commencer à trader avec la communauté.
+                  Mets tes cartes en vente depuis tes collections pour commencer à trader avec la communauté.
                 </p>
                 <button 
                   onClick={() => setActiveTab("collections")}
@@ -800,10 +800,10 @@ export default function Collections() {
                 <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               </div>
               <div className="text-gray-400 mb-4 text-lg">
-                Vous n'avez pas créé de deck.
+                Tu n'as pas créé de deck.
               </div>
               <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                Créez votre premier deck de cartes et montrez à votre communauté.
+                Crée ton premier deck de cartes et montre-le à ta communauté.
               </p>
               <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
                 <Plus className="w-4 h-4 mr-2 inline" />
@@ -1069,7 +1069,7 @@ export default function Collections() {
             </h3>
             
             <p className="text-[hsl(212,23%,69%)] text-center mb-6">
-              Êtes-vous sûr de vouloir supprimer la collection "{collectionToDelete.name}" ? 
+              Es-tu sûr de vouloir supprimer la collection "{collectionToDelete.name}" ? 
               Cette action est irréversible et supprimera toutes les cartes associées.
             </p>
             

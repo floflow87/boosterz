@@ -1533,7 +1533,7 @@ export default function CollectionDetail() {
           </div>
           
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
-            <p className="text-sm opacity-75">Bougez votre souris ou doigt pour faire pivoter la carte</p>
+            <p className="text-sm opacity-75">Bouge ta souris ou ton doigt pour faire pivoter la carte</p>
           </div>
         </div>
       )}
@@ -1685,7 +1685,7 @@ export default function CollectionDetail() {
                       toast({
                         title: newFeaturedStatus ? "Mise à la une" : "Retirée de la une",
                         description: newFeaturedStatus 
-                          ? "Cette carte a été mise à la une de votre collection." 
+                          ? "Cette carte a été mise à la une de ta collection." 
                           : "Cette carte a été retirée de la une.",
                         className: "bg-yellow-900 border-yellow-700 text-yellow-100",
                       });
