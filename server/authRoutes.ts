@@ -39,6 +39,9 @@ router.post('/register', async (req, res) => {
 
     // Create session
     const token = await AuthService.createSession(user.id);
+    
+    // Store user ID in session
+    (req as any).session.userId = user.id;
 
     res.status(201).json({
       message: 'Compte créé avec succès',
@@ -83,6 +86,9 @@ router.post('/login', async (req, res) => {
 
     // Create session
     const token = await AuthService.createSession(user.id);
+    
+    // Store user ID in session
+    (req as any).session.userId = user.id;
 
     res.json({
       message: 'Connexion réussie',
