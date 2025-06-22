@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Heart, MessageCircle, Share2, MoreHorizontal } from "lucide-react";
-import Header from "@/components/Header";
-import Navigation from "@/components/Navigation";
-import HaloBlur from "@/components/HaloBlur";
+import Header from "@/components/header";
+import Navigation from "@/components/navigation";
+import HaloBlur from "@/components/halo-blur";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
