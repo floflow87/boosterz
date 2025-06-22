@@ -307,6 +307,38 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount || 0) > 0;
   }
 
+  // Personal Cards methods
+  async getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]> {
+    return await db.select().from(personalCards).where(eq(personalCards.userId, userId)).orderBy(desc(personalCards.createdAt));
+  }
+
+  async getPersonalCard(id: number): Promise<PersonalCard | undefined> {
+    const [personalCard] = await db.select().from(personalCards).where(eq(personalCards.id, id));
+    return personalCard || undefined;
+  }
+
+  async createPersonalCard(insertPersonalCard: InsertPersonalCard): Promise<PersonalCard> {
+    const [personalCard] = await db
+      .insert(personalCards)
+      .values(insertPersonalCard)
+      .returning();
+    return personalCard;
+  }
+
+  async updatePersonalCard(id: number, updates: Partial<PersonalCard>): Promise<PersonalCard | undefined> {
+    const [personalCard] = await db
+      .update(personalCards)
+      .set(updates)
+      .where(eq(personalCards.id, id))
+      .returning();
+    return personalCard || undefined;
+  }
+
+  async deletePersonalCard(id: number): Promise<boolean> {
+    const result = await db.delete(personalCards).where(eq(personalCards.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
   async updateCardTrade(id: number, tradeData: { tradeDescription?: string; tradePrice?: string; tradeOnly: boolean; isForTrade: boolean }): Promise<Card | undefined> {
     const updateData: any = {
       isForTrade: tradeData.isForTrade,

@@ -6,9 +6,9 @@ import chatRoutes from "./chatRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
-import type { Card } from "@shared/schema";
+import type { Card, PersonalCard, InsertPersonalCard } from "@shared/schema";
 import { db } from "./db";
-import { cards, posts, users } from "@shared/schema";
+import { cards, posts, users, personalCards, insertPersonalCardSchema } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
 // Initialize sample data in database
@@ -48,6 +48,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.use('/api/auth', authRoutes);
   
+  // Routes pour les cartes personnelles (Mes cartes)
+  app.get("/api/personal-cards", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const personalCards = await storage.getPersonalCardsByUserId(userId);
+      res.json(personalCards);
+    } catch (error) {
+      console.error("Error fetching personal cards:", error);
+      res.status(500).json({ error: "Failed to fetch personal cards" });
+    }
+  });
+
+  app.post("/api/personal-cards", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      
+      // Valider les données avec le schéma Zod
+      const validatedData = insertPersonalCardSchema.parse({
+        ...req.body,
+        userId
+      });
+
+      const personalCard = await storage.createPersonalCard(validatedData);
+      res.status(201).json(personalCard);
+    } catch (error) {
+      console.error("Error creating personal card:", error);
+      res.status(500).json({ error: "Failed to create personal card" });
+    }
+  });
+
   // Chat routes (commented out to avoid conflicts)
   // app.use('/api/chat', chatRoutes);
 
