@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import { db } from './db';
 import { users, sessions } from '@shared/schema';
 import { eq, and, gt } from 'drizzle-orm';
+import { storage } from './storage';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 const SALT_ROUNDS = 12;
@@ -15,6 +16,7 @@ export interface AuthRequest extends Request {
     email: string;
     name: string;
   };
+  session?: any;
 }
 
 export class AuthService {
@@ -90,6 +92,25 @@ export class AuthService {
 
 // Authentication middleware
 export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  // Check for session-based authentication first
+  if (req.session?.userId) {
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (user) {
+        req.user = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          name: user.name
+        };
+        return next();
+      }
+    } catch (error) {
+      console.error('Session auth error:', error);
+    }
+  }
+
+  // Fallback to Bearer token authentication
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
@@ -112,6 +133,25 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
 
 // Optional authentication middleware (doesn't fail if no token)
 export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  // Check for session-based authentication first
+  if (req.session?.userId) {
+    try {
+      const user = await storage.getUser(req.session.userId);
+      if (user) {
+        req.user = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          name: user.name
+        };
+        return next();
+      }
+    } catch (error) {
+      // Ignore session errors for optional auth
+    }
+  }
+
+  // Fallback to Bearer token authentication
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
 

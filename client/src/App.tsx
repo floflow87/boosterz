@@ -17,6 +17,7 @@ import Community from "@/pages/community";
 import Shop from "@/pages/shop";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
+import UserProfile from "@/pages/user-profile";
 import Welcome from "@/pages/welcome";
 import Landing from "@/pages/landing";
 import CardExamples from "@/pages/card-examples";
