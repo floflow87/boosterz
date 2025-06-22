@@ -1,13 +1,17 @@
 import { useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
   ArrowLeft,
   Star,
   TrendingUp,
   Grid3X3,
   List,
-  Search
+  Search,
+  Heart,
+  MessageCircle,
+  Trash2,
+  MoreHorizontal
 } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,7 +20,9 @@ import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
-import type { User, Collection, Card } from "@shared/schema";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import type { User, Collection, Card, Post } from "@shared/schema";
 
 export default function UserProfile() {
   const [match, params] = useRoute("/user/:userId");
@@ -25,6 +31,8 @@ export default function UserProfile() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState("");
   const [saleFilter, setSaleFilter] = useState<"all" | "available" | "sold">("all");
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
@@ -41,6 +49,52 @@ export default function UserProfile() {
   const { data: featuredCards = [] } = useQuery<Card[]>({
     queryKey: [`/api/users/${userId}/featured`],
   });
+
+  const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
+    queryKey: [`/api/users/${userId}/posts`],
+  });
+
+  // Delete post mutation
+  const deletePostMutation = useMutation({
+    mutationFn: async (postId: number) => {
+      return apiRequest(`/api/posts/${postId}`, "DELETE");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/posts`] });
+      toast({
+        title: "Post supprimé",
+        description: "Le post a été supprimé avec succès",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer le post",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Format timestamp helper
+  const formatPostDate = (date: string | Date) => {
+    const postDate = new Date(date);
+    const now = new Date();
+    const diffInHours = Math.floor((now.getTime() - postDate.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) {
+      const diffInMinutes = Math.floor((now.getTime() - postDate.getTime()) / (1000 * 60));
+      return diffInMinutes < 1 ? "À l'instant" : `Il y a ${diffInMinutes}min`;
+    } else if (diffInHours < 24) {
+      return `Il y a ${diffInHours}h`;
+    } else {
+      return postDate.toLocaleDateString('fr-FR', { 
+        day: 'numeric', 
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+  };
 
   // Filter cards based on search and sale status
   const filteredMarketplaceCards = marketplaceCards.filter(card => {
@@ -114,13 +168,159 @@ export default function UserProfile() {
           </div>
         </div>
 
-        <Tabs defaultValue="collections" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-[hsl(214,35%,22%)] mb-6">
+        <Tabs defaultValue="posts" className="w-full">
+          <TabsList className="grid w-full grid-cols-5 bg-[hsl(214,35%,22%)] mb-6">
+            <TabsTrigger value="posts" className="text-xs">Posts</TabsTrigger>
             <TabsTrigger value="collections" className="text-xs">Collections</TabsTrigger>
             <TabsTrigger value="featured" className="text-xs">À la une</TabsTrigger>
             <TabsTrigger value="marketplace" className="text-xs">Marché</TabsTrigger>
             <TabsTrigger value="sold" className="text-xs">Vendues</TabsTrigger>
           </TabsList>
+
+          {/* Posts Tab Content */}
+          <TabsContent value="posts" className="space-y-4">
+            {postsLoading ? (
+              <div className="text-center py-8">
+                <div className="text-gray-400">Chargement des posts...</div>
+              </div>
+            ) : posts.length > 0 ? (
+              <div className="space-y-4">
+                {posts.map((post) => (
+                  <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
+                    {/* Post Header */}
+                    <div className="p-4 border-b border-[hsl(214,35%,30%)]">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-bold text-white">{user?.name.charAt(0)}</span>
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h4 className="text-white font-medium text-sm">{user?.name}</h4>
+                              <span className="text-xs text-gray-400">@{user?.username}</span>
+                            </div>
+                            <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
+                          </div>
+                        </div>
+                        
+                        {/* Delete button for own profile */}
+                        {userId === "1" && (
+                          <button
+                            onClick={() => deletePostMutation.mutate(post.id)}
+                            disabled={deletePostMutation.isPending}
+                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Post Content */}
+                    <div className="p-4">
+                      {/* Post Text */}
+                      {post.content && (
+                        <div className="text-white text-sm mb-3 leading-relaxed">
+                          {post.content}
+                        </div>
+                      )}
+
+                      {/* Tagged People */}
+                      {post.taggedUsers && post.taggedUsers.length > 0 && (
+                        <div className="mb-3">
+                          <div className="text-xs text-gray-400 mb-1">Avec :</div>
+                          <div className="flex flex-wrap gap-1">
+                            {post.taggedUsers.map((taggedUser, index) => (
+                              <span key={index} className="text-xs bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded">
+                                @{taggedUser}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Post Images */}
+                      {post.images && post.images.length > 0 && (
+                        <div className="mb-3">
+                          {post.images.length === 1 ? (
+                            <img 
+                              src={post.images[0]} 
+                              alt="Post image" 
+                              className="w-full max-h-96 object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="grid grid-cols-2 gap-2">
+                              {post.images.slice(0, 4).map((image, index) => (
+                                <div key={index} className="relative">
+                                  <img 
+                                    src={image} 
+                                    alt={`Post image ${index + 1}`} 
+                                    className="w-full h-32 object-cover rounded-lg"
+                                  />
+                                  {index === 3 && post.images.length > 4 && (
+                                    <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center">
+                                      <span className="text-white font-medium">+{post.images.length - 4}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Post Actions */}
+                    <div className="px-4 pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-6">
+                          {/* Likes */}
+                          <div className="flex items-center space-x-2">
+                            <button className="flex items-center space-x-1 text-gray-400 hover:text-red-400 transition-colors">
+                              <Heart className="w-4 h-4" />
+                              <span className="text-xs">{post.likesCount || 0}</span>
+                            </button>
+                          </div>
+
+                          {/* Comments */}
+                          <div className="flex items-center space-x-2">
+                            <button className="flex items-center space-x-1 text-gray-400 hover:text-blue-400 transition-colors">
+                              <MessageCircle className="w-4 h-4" />
+                              <span className="text-xs">{post.commentsCount || 0}</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Actions Menu */}
+                        <button className="text-gray-400 hover:text-white transition-colors">
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-[hsl(214,35%,30%)]">
+                        <button className="flex items-center space-x-2 text-gray-400 hover:text-red-400 transition-colors text-xs">
+                          <Heart className="w-4 h-4" />
+                          <span>J'aime</span>
+                        </button>
+                        <button className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors text-xs">
+                          <MessageCircle className="w-4 h-4" />
+                          <span>Commenter</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-2">Aucun post pour le moment</div>
+                <p className="text-sm text-gray-500">
+                  Les publications apparaîtront ici
+                </p>
+              </div>
+            )}
+          </TabsContent>
 
           <TabsContent value="collections" className="space-y-4">
             {collections.length > 0 ? (
