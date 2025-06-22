@@ -62,7 +62,7 @@ export default function Collections() {
   };
 
   const { data: cards } = useQuery<Card[]>({
-    queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
+    queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
   });
 

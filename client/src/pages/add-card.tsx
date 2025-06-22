@@ -121,9 +121,9 @@ export default function AddCard() {
       });
       // Clear relevant queries to avoid showing stale data
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards"] });
-      // Navigate back to collections main page to see the updated collection
-      setLocation("/collections");
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}/cards`] });
+      // Navigate to the specific collection to show only cards from that collection
+      setLocation(`/collection/${selectedCollectionId}`);
     },
     onError: (error: any) => {
       toast({
