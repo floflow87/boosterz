@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -272,7 +272,7 @@ export default function Collections() {
     }
   };
 
-  const handleTabChange = (tab: "collections" | "cards") => {
+  const handleTabChange = (tab: "collections" | "cards" | "deck") => {
     setActiveTab(tab);
     if (tab === "collections") {
       setSelectedCollection(null);
@@ -371,7 +371,17 @@ export default function Collections() {
               Collections
             </button>
 
-
+            <button
+              onClick={() => handleTabChange("deck")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "deck" 
+                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <Package className="w-4 h-4" />
+              Decks
+            </button>
 
           </div>
         </div>
@@ -540,7 +550,7 @@ export default function Collections() {
               <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
                 <button
                   onClick={() => setSaleFilter('all')}
-                  className={`px-3 py-2 rounded text-sm transition-all ${
+                  className={`px-3 py-1 rounded text-xs transition-all ${
                     saleFilter === 'all' 
                       ? "bg-primary text-primary-foreground" 
                       : "text-gray-400 hover:text-white"
@@ -550,7 +560,7 @@ export default function Collections() {
                 </button>
                 <button
                   onClick={() => setSaleFilter('available')}
-                  className={`px-3 py-2 rounded text-sm transition-all ${
+                  className={`px-3 py-1 rounded text-xs transition-all ${
                     saleFilter === 'available' 
                       ? "bg-primary text-primary-foreground" 
                       : "text-gray-400 hover:text-white"
@@ -560,7 +570,7 @@ export default function Collections() {
                 </button>
                 <button
                   onClick={() => setSaleFilter('sold')}
-                  className={`px-3 py-2 rounded text-sm transition-all ${
+                  className={`px-3 py-1 rounded text-xs transition-all ${
                     saleFilter === 'sold' 
                       ? "bg-primary text-primary-foreground" 
                       : "text-gray-400 hover:text-white"
