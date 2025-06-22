@@ -1169,32 +1169,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get posts from followed users (À la une)
-  app.get("/api/users/feed", async (req, res) => {
-    console.log('Feed API called');
-    res.json([
-      {
-        id: 13,
-        userId: 1,
-        content: "Hey les collectionneurs ! Quelqu'un a la carte Mbappé PSG édition limitée ?",
-        type: "text",
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-20T10:30:00Z",
-        updatedAt: "2024-06-20T10:30:00Z"
-      },
-      {
-        id: 14,
-        userId: 2,
-        content: "Nouvelle collection SCORE 2023/24 disponible ! 🔥",
-        type: "text", 
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-19T15:45:00Z",
-        updatedAt: "2024-06-19T15:45:00Z"
-      }
-    ]);
-  });
+
 
   // Get user's following
   app.get("/api/users/:id/following", optionalAuth, async (req: AuthRequest, res) => {
