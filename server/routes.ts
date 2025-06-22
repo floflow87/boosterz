@@ -571,6 +571,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new card
+  app.post("/api/cards", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const cardData = req.body;
+      
+      // Validate required fields
+      if (!cardData.collectionId || !cardData.cardType) {
+        return res.status(400).json({ error: "Collection ID and card type are required" });
+      }
+
+      const newCard = await storage.createCard(cardData);
+      res.status(201).json(newCard);
+    } catch (error) {
+      console.error("Error creating card:", error);
+      res.status(500).json({ error: "Failed to create card" });
+    }
+  });
+
   // Card recognition route
   app.post("/api/cards/recognize", optionalAuth, async (req: AuthRequest, res) => {
     try {
