@@ -778,7 +778,11 @@ export class MemStorage implements IStorage {
         isForTrade: false,
         tradeDescription: null,
         tradePrice: null,
-        tradeOnly: false
+        tradeOnly: false,
+        salePrice: null,
+        saleDescription: null,
+        isSold: false,
+        isFeatured: false
       },
       // Variante Red de Mbappé
       {

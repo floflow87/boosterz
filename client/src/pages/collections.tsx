@@ -97,7 +97,7 @@ export default function Collections() {
     const suggestions = generateSuggestions(searchQuery);
     setSearchSuggestions(suggestions);
     setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
-  }, [searchQuery]);
+  }, [searchQuery, personalCards]);
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
   const getCollectionCompletion = (collection: Collection) => {
