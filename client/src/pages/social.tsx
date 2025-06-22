@@ -678,9 +678,7 @@ export default function Social() {
                       <div className="text-xs text-gray-400">Posts</div>
                     </div>
                     <div>
-                      <div className="text-lg font-bold text-white">
-                        {posts.reduce((total, post) => total + (post.commentsCount || 0), 0)}
-                      </div>
+                      <div className="text-lg font-bold text-white">0</div>
                       <div className="text-xs text-gray-400">Commentaires</div>
                     </div>
                   </div>
@@ -710,8 +708,18 @@ export default function Social() {
                             <div className="p-4 border-b border-[hsl(214,35%,30%)] bg-[hsl(214,35%,18%)]">
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center space-x-3">
-                                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                    <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
+                                  <div className="w-10 h-10 rounded-full overflow-hidden">
+                                    {user?.avatar ? (
+                                      <img 
+                                        src={user.avatar} 
+                                        alt={`Avatar de ${user.name}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                        <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
+                                      </div>
+                                    )}
                                   </div>
                                   <div>
                                     <div className="flex items-center space-x-2">
