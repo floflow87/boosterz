@@ -420,11 +420,23 @@ export default function Social() {
     // Filtrer également les posts pour s'assurer qu'aucun post de l'utilisateur actuel n'apparaît
     const filteredFeedPosts = feedPosts.filter(post => post.userId !== 1);
 
-    // Combiner posts et activités filtrées et les trier par date
+    // Combiner posts et activités filtrées et les trier par date décroissante
     const feedItems = [
-      ...filteredFeedPosts.map(post => ({ ...post, type: 'post', itemType: 'post' })),
+      ...filteredFeedPosts.map(post => ({ ...post, itemType: 'post' })),
       ...filteredActivities.map(activity => ({ ...activity, itemType: 'activity' }))
-    ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    ].sort((a, b) => {
+      const dateA = new Date(a.createdAt || a.created_at);
+      const dateB = new Date(b.createdAt || b.created_at);
+      return dateB.getTime() - dateA.getTime(); // Ordre décroissant (plus récent en premier)
+    });
+
+    // Debug: afficher les éléments triés
+    console.log('Feed items sorted:', feedItems.map(item => ({
+      type: item.itemType,
+      date: item.createdAt || item.created_at,
+      content: item.content || item.type,
+      user: item.user?.name
+    })));
 
     if (feedItems.length === 0) {
       return (
