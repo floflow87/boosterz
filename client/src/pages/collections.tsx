@@ -47,7 +47,7 @@ export default function Collections() {
   });
 
   // Query pour les cartes personnelles
-  const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery({
+  const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery<any[]>({
     queryKey: ["/api/personal-cards"],
     staleTime: 5 * 60 * 1000,
     enabled: activeTab === "personal",
@@ -181,7 +181,7 @@ export default function Collections() {
     }
   };
 
-  const handleTabChange = (tab: "collections" | "cards" | "marketplace" | "deck") => {
+  const handleTabChange = (tab: "collections" | "cards" | "personal" | "marketplace" | "deck") => {
     setActiveTab(tab);
     if (tab === "collections") {
       setSelectedCollection(null);
@@ -268,6 +268,17 @@ export default function Collections() {
             >
               <Trophy className="w-4 h-4" />
               Cartes
+            </button>
+            <button
+              onClick={() => handleTabChange("personal")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "personal" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <CardIcon className="w-4 h-4" />
+              Mes cartes
             </button>
             <button
               onClick={() => handleTabChange("collections")}
@@ -386,6 +397,72 @@ export default function Collections() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Personal Cards Tab Content */}
+        {activeTab === "personal" && (
+          <div className="space-y-4">
+            {/* Header with Add Card Button */}
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white font-poppins">Mes cartes</h3>
+              <button
+                onClick={() => setLocation("/add-card")}
+                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter une carte
+              </button>
+            </div>
+
+            {personalCardsLoading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[hsl(9,85%,67%)]"></div>
+              </div>
+            ) : personalCards && personalCards.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {personalCards.map((card: any) => (
+                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors">
+                    {card.imageUrl && (
+                      <img 
+                        src={card.imageUrl} 
+                        alt={`${card.playerName || 'Carte'}`}
+                        className="w-full h-32 object-cover rounded-md mb-2"
+                      />
+                    )}
+                    <div className="space-y-1">
+                      {card.playerName && (
+                        <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
+                      )}
+                      {card.teamName && (
+                        <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
+                      )}
+                      <p className="text-gray-500 text-xs">{card.cardType}</p>
+                      {card.isForSale && card.salePrice && (
+                        <div className="flex items-center gap-1 mt-2">
+                          <DollarSign className="w-3 h-3 text-green-400" />
+                          <span className="text-green-400 text-xs font-medium">{card.salePrice}€</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <CardIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <div className="text-gray-400 mb-2 text-lg">Aucune carte personnelle</div>
+                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                  Ajoute tes cartes personnelles pour les organiser et les mettre en vente.
+                </p>
+                <button 
+                  onClick={() => setLocation("/add-card")}
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Ajouter une carte
+                </button>
+              </div>
+            )}
           </div>
         )}
 
