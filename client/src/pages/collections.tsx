@@ -262,7 +262,7 @@ export default function Collections() {
               onClick={() => handleTabChange("cards")}
               className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                 activeTab === "cards" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
@@ -274,10 +274,9 @@ export default function Collections() {
               onClick={() => handleTabChange("collections")}
               className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                 activeTab === "collections" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
-              style={activeTab === "collections" ? { backgroundColor: '#F37261' } : {}}
             >
               <Layers className="w-4 h-4" />
               Collections
@@ -286,7 +285,7 @@ export default function Collections() {
               onClick={() => handleTabChange("marketplace")}
               className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                 activeTab === "marketplace" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
@@ -298,7 +297,7 @@ export default function Collections() {
               onClick={() => handleTabChange("deck")}
               className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
                 activeTab === "deck" 
-                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
@@ -400,7 +399,7 @@ export default function Collections() {
               
               <button
                 onClick={() => setLocation("/add-card")}
-                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Ajouter une carte
@@ -409,12 +408,16 @@ export default function Collections() {
 
             {personalCardsLoading ? (
               <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[hsl(9,85%,67%)]"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
             ) : personalCards && personalCards.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {personalCards.map((card: any) => (
-                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors">
+                  <div 
+                    key={card.id} 
+                    className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer"
+                    onClick={() => setSelectedCard(card)}
+                  >
                     {card.imageUrl && (
                       <img 
                         src={card.imageUrl} 
@@ -432,8 +435,8 @@ export default function Collections() {
                       <p className="text-gray-500 text-xs">{card.cardType}</p>
                       {card.isForSale && card.salePrice && (
                         <div className="flex items-center gap-1 mt-2">
-                          <DollarSign className="w-3 h-3 text-green-400" />
-                          <span className="text-green-400 text-xs font-medium">{card.salePrice}€</span>
+                          <DollarSign className="w-3 h-3 text-primary" />
+                          <span className="text-primary text-xs font-medium">{card.salePrice}€</span>
                         </div>
                       )}
                     </div>
@@ -447,12 +450,6 @@ export default function Collections() {
                 <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
                   Ajoute tes cartes personnelles pour les organiser et les mettre en vente.
                 </p>
-                <button 
-                  onClick={() => setLocation("/add-card")}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                >
-                  Ajouter une carte
-                </button>
               </div>
             )}
           </div>
