@@ -712,7 +712,7 @@ export default function Collections() {
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
-                    Sur le marché
+                    À la vente
                   </button>
                   <button
                     onClick={() => setSaleFilter('sold')}

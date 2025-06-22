@@ -246,7 +246,7 @@ export default function Social() {
                 style={activeTab === "forsale" ? { backgroundColor: '#F37261' } : {}}
               >
                 <Star className="w-3 h-3 mr-1 inline" />
-                À la vente
+                Sur le marché
               </button>
               <button
                 onClick={() => setActiveTab("discover")}
@@ -259,6 +259,17 @@ export default function Social() {
               >
                 <Users className="w-3 h-3 mr-1 inline" />
                 Découvrir
+              </button>
+              <button
+                onClick={() => setActiveTab("profile")}
+                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                  activeTab === "profile" 
+                    ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                }`}
+              >
+                <Users className="w-3 h-3 mr-1 inline" />
+                Mon Profil
               </button>
               <button
                 onClick={() => setActiveTab("activity")}
@@ -467,6 +478,25 @@ export default function Social() {
                 </div>
                 ))
               )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="profile" className="space-y-4">
+            {/* Mon Profil - Redirect to profile page */}
+            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+              <div className="w-24 h-24 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
+                <Users className="w-12 h-12 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-4 text-white">Mon Profil</h3>
+              <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
+                Gérez vos publications, vos abonnés et vos demandes d'abonnement
+              </p>
+              <button
+                onClick={() => setLocation("/profile")}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors"
+              >
+                Voir mon profil
+              </button>
             </div>
           </TabsContent>
 
