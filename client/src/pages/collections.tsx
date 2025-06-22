@@ -290,6 +290,17 @@ export default function Collections() {
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
           <div className="space-y-4">
+            {/* Add Collection Button - Moved to top */}
+            <div 
+              onClick={() => setShowAddModal(true)}
+              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
+            >
+              <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <Plus className="w-5 h-5 text-white" />
+              </div>
+              <h3 className="font-bold text-white font-poppins text-base">Nouvelle Collection</h3>
+            </div>
+
             {collections?.map((collection) => {
               const completion = getCollectionCompletion(collection);
               return (
@@ -355,18 +366,6 @@ export default function Collections() {
                 </div>
               );
             })}
-
-            {/* Add Collection Button */}
-            <div 
-              onClick={() => setShowAddModal(true)}
-              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-6 flex flex-col items-center justify-center text-center"
-            >
-              <div className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                <Plus className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="font-bold text-white mb-2 font-poppins text-lg">Nouvelle Collection</h3>
-              <p className="text-[hsl(212,23%,69%)] text-sm">Ajouter une collection à ta bibliothèque</p>
-            </div>
           </div>
         )}
 

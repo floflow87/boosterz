@@ -491,17 +491,17 @@ export default function Social() {
                 >
                   <div className="flex items-start space-x-3">
                     <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold">
-                      {activity.user.avatar ? (
-                        <img src={activity.user.avatar} alt={activity.user.name} className="w-full h-full rounded-full object-cover" />
+                      {activity.user?.avatar ? (
+                        <img src={activity.user.avatar} alt={activity.user?.name || 'User'} className="w-full h-full rounded-full object-cover" />
                       ) : (
-                        activity.user.name.charAt(0).toUpperCase()
+                        (activity.user?.name || 'U').charAt(0).toUpperCase()
                       )}
                     </div>
                     
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
                         {getActivityIcon(activity.type)}
-                        <span className="font-semibold text-white">{activity.user.name}</span>
+                        <span className="font-semibold text-white">{activity.user?.name || 'Utilisateur'}</span>
                         <span className="text-gray-400">{getActivityMessage(activity)}</span>
                       </div>
                       
