@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
@@ -32,6 +32,9 @@ export default function Collections() {
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
   const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('available');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -52,6 +55,49 @@ export default function Collections() {
     staleTime: 5 * 60 * 1000,
     enabled: activeTab === "cards",
   });
+
+  // Filtrer et rechercher les cartes personnelles
+  const filteredPersonalCards = personalCards.filter(card => {
+    // Filtre par statut de vente
+    if (saleFilter === 'available' && !card.isForSale) return false;
+    if (saleFilter === 'sold' && !card.isSold) return false;
+    
+    // Filtre par recherche
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const playerMatch = card.playerName?.toLowerCase().includes(query);
+      const teamMatch = card.teamName?.toLowerCase().includes(query);
+      return playerMatch || teamMatch;
+    }
+    
+    return true;
+  });
+
+  // Générer les suggestions d'autocomplétion
+  const generateSuggestions = (query: string) => {
+    if (!query.trim()) return [];
+    
+    const suggestions = new Set<string>();
+    const queryLower = query.toLowerCase();
+    
+    personalCards.forEach(card => {
+      if (card.playerName && card.playerName.toLowerCase().includes(queryLower)) {
+        suggestions.add(card.playerName);
+      }
+      if (card.teamName && card.teamName.toLowerCase().includes(queryLower)) {
+        suggestions.add(card.teamName);
+      }
+    });
+    
+    return Array.from(suggestions).slice(0, 5);
+  };
+
+  // Mettre à jour les suggestions quand la recherche change
+  useEffect(() => {
+    const suggestions = generateSuggestions(searchQuery);
+    setSearchSuggestions(suggestions);
+    setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
+  }, [searchQuery, personalCards]);
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
   const getCollectionCompletion = (collection: Collection) => {
@@ -397,22 +443,119 @@ export default function Collections() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white font-poppins">Mes cartes</h3>
               
-              <button
-                onClick={() => setLocation("/add-card")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Ajouter une carte
-              </button>
+              <div className="flex items-center gap-3">
+                {/* View Mode Buttons */}
+                <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "list" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "grid" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <Grid className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => setLocation("/add-card")}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  Ajouter une carte
+                </button>
+              </div>
+            </div>
+
+            {/* Search Bar with Autocomplete */}
+            <div className="relative mb-6">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <input
+                  type="text"
+                  placeholder="Rechercher par joueur ou équipe..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onFocus={() => setShowSuggestions(searchSuggestions.length > 0)}
+                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                  className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,15%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+              
+              {/* Autocomplete Suggestions */}
+              {showSuggestions && searchSuggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-[hsl(214,35%,18%)] border border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                  {searchSuggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setSearchQuery(suggestion);
+                        setShowSuggestions(false);
+                      }}
+                      className="w-full text-left px-4 py-2 text-white hover:bg-[hsl(214,35%,25%)] transition-colors border-b border-gray-700 last:border-b-0"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Filter Buttons */}
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
+                <button
+                  onClick={() => setSaleFilter('all')}
+                  className={`px-3 py-1 rounded text-xs transition-all ${
+                    saleFilter === 'all' 
+                      ? "bg-primary text-primary-foreground" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Toutes
+                </button>
+                <button
+                  onClick={() => setSaleFilter('available')}
+                  className={`px-3 py-1 rounded text-xs transition-all ${
+                    saleFilter === 'available' 
+                      ? "bg-primary text-primary-foreground" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  À la vente
+                </button>
+                <button
+                  onClick={() => setSaleFilter('sold')}
+                  className={`px-3 py-1 rounded text-xs transition-all ${
+                    saleFilter === 'sold' 
+                      ? "bg-primary text-primary-foreground" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  Vendues
+                </button>
+              </div>
             </div>
 
             {personalCardsLoading ? (
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
               </div>
-            ) : personalCards && personalCards.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {personalCards.map((card: any) => (
+            ) : filteredPersonalCards && filteredPersonalCards.length > 0 ? (
+              viewMode === "grid" ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {filteredPersonalCards.map((card: any) => (
                   <div 
                     key={card.id} 
                     className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer"
@@ -702,14 +845,20 @@ export default function Collections() {
                     )}
 
                     {/* Sale Price */}
-                    {selectedCard.isForSale && selectedCard.salePrice && (
+                    {selectedCard.isForSale && selectedCard.salePrice ? (
                       <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
                         <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
                         <div className="text-green-400 font-bold text-lg">
                           {selectedCard.salePrice}€
                         </div>
                       </div>
-                    )}
+                    ) : !selectedCard.isForSale ? (
+                      <div className="bg-gray-600/10 rounded-lg p-4 border border-gray-600/20">
+                        <div className="text-gray-400 font-medium text-sm">
+                          Pas disponible à la vente
+                        </div>
+                      </div>
+                    ) : null}
                     
                     {/* Trade Info */}
                     {selectedCard.isForTrade && (
