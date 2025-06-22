@@ -712,7 +712,7 @@ export default function Collections() {
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
-                    En vente
+                    Sur le marché
                   </button>
                   <button
                     onClick={() => setSaleFilter('sold')}
@@ -735,7 +735,7 @@ export default function Collections() {
                     .filter(card => {
                       if (saleFilter === 'available') return card.isForTrade && !card.isSold;
                       if (saleFilter === 'sold') return card.isSold;
-                      return card.isForTrade && !card.isSold;
+                      return card.isForTrade;
                     })
                     .map((card) => (
                     <CardDisplay
@@ -756,7 +756,7 @@ export default function Collections() {
                     .filter(card => {
                       if (saleFilter === 'available') return card.isForTrade && !card.isSold;
                       if (saleFilter === 'sold') return card.isSold;
-                      return card.isForTrade && !card.isSold;
+                      return card.isForTrade;
                     })
                     .map((card) => (
                     <CardDisplay
