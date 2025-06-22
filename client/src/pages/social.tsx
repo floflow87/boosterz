@@ -675,9 +675,8 @@ export default function Social() {
                     </div>
                     
                     <div className="flex space-x-4 text-xs text-gray-400">
-                      <span>0 collections</span>
-                      <span>0 cartes</span>
-                      <span>0 abonnés</span>
+                      <span>15 cartes à la vente</span>
+                      <span>142 abonnés</span>
                     </div>
                   </div>
                   

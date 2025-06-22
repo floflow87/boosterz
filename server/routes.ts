@@ -232,7 +232,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cardId: null,
         isVisible: true,
         createdAt: "2024-06-20T10:30:00Z",
-        updatedAt: "2024-06-20T10:30:00Z"
+        updatedAt: "2024-06-20T10:30:00Z",
+        user: {
+          id: 1,
+          name: "Florian F.",
+          username: "Floflow87",
+          avatar: null
+        }
       },
       {
         id: 14,
@@ -242,7 +248,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cardId: null,
         isVisible: true,
         createdAt: "2024-06-19T15:45:00Z",
-        updatedAt: "2024-06-19T15:45:00Z"
+        updatedAt: "2024-06-19T15:45:00Z",
+        user: {
+          id: 2,
+          name: "Max C.",
+          username: "maxcollector",
+          avatar: null
+        }
       }
     ]);
   });
