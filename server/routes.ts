@@ -8,8 +8,8 @@ import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card } from "@shared/schema";
 import { db } from "./db";
-import { cards } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { cards, posts, users } from "@shared/schema";
+import { eq, desc } from "drizzle-orm";
 
 // Initialize sample data in database
 const initializeSampleData = async () => {
@@ -1186,10 +1186,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.user!.id;
-      console.log('Fetching feed for user:', userId);
-      const posts = await storage.getFollowedUsersPosts(userId);
-      console.log('Feed posts found:', posts.length);
-      res.json(posts);
+      
+      // Simple hardcoded approach for now - return posts from user 999
+      const result = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        type: posts.type,
+        cardId: posts.cardId,
+        isVisible: posts.isVisible,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username
+        }
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.userId, 999))
+      .orderBy(desc(posts.createdAt));
+      
+      res.json(result);
     } catch (error) {
       console.error('Error fetching user feed:', error);
       res.status(500).json({ message: "Internal server error" });

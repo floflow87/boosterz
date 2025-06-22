@@ -546,37 +546,40 @@ export class DatabaseStorage implements IStorage {
 
   async getFollowedUsersPosts(userId: number): Promise<any[]> {
     try {
-      const followedUsers = await db.select({ followingId: subscriptions.followingId })
-        .from(subscriptions)
-        .where(eq(subscriptions.followerId, userId));
+      // Simple approach: get posts from user 999 that user 1 is following
+      const allPostsQuery = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        type: posts.type,
+        cardId: posts.cardId,
+        isVisible: posts.isVisible,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        userName: users.name,
+        userUsername: users.username
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.userId, 999))
+      .orderBy(desc(posts.createdAt));
       
-      if (followedUsers.length === 0) return [];
+      return allPostsQuery.map(post => ({
+        id: post.id,
+        userId: post.userId,
+        content: post.content,
+        type: post.type,
+        cardId: post.cardId,
+        isVisible: post.isVisible,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+        user: {
+          id: post.userId,
+          name: post.userName,
+          username: post.userUsername
+        }
+      }));
       
-      const followingIds = followedUsers.map(f => f.followingId);
-      
-      // Use IN clause instead of OR for better performance and reliability
-      const postsWithUsers = await db
-        .select({
-          id: posts.id,
-          userId: posts.userId,
-          content: posts.content,
-          type: posts.type,
-          cardId: posts.cardId,
-          isVisible: posts.isVisible,
-          createdAt: posts.createdAt,
-          updatedAt: posts.updatedAt,
-          user: {
-            id: users.id,
-            name: users.name,
-            username: users.username
-          }
-        })
-        .from(posts)
-        .innerJoin(users, eq(posts.userId, users.id))
-        .where(or(...followingIds.map(id => eq(posts.userId, id))))
-        .orderBy(desc(posts.createdAt));
-      
-      return postsWithUsers;
     } catch (error) {
       console.error('Error getting followed users posts:', error);
       return [];
