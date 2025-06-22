@@ -621,29 +621,15 @@ export default function Social() {
       {/* Modal de création de publication à la Facebook */}
       <Dialog open={isPostModalOpen} onOpenChange={setIsPostModalOpen}>
         <DialogContent className="bg-[hsl(214,35%,11%)] border-[hsl(214,35%,30%)] text-white max-w-lg">
-          <DialogHeader className="flex flex-row items-center justify-between border-b border-[hsl(214,35%,30%)] pb-3 mb-4">
-            <DialogTitle className="text-lg font-semibold text-center flex-1">
-              Créer une publication
-            </DialogTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsPostModalOpen(false)}
-              className="text-gray-400 hover:text-white"
-            >
-              ✕
-            </Button>
-          </DialogHeader>
-          
-          <div className="space-y-4">
+          <div className="space-y-3">
             {/* Profil utilisateur */}
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                 <Users className="w-5 h-5 text-white" />
               </div>
               <div>
-                <div className="font-medium">Floflow87</div>
-                <div className="text-sm text-gray-400">🌍 Public</div>
+                <div className="font-medium text-sm">Floflow87</div>
+                <div className="text-xs text-gray-400">🌍 Public</div>
               </div>
             </div>
 
@@ -652,49 +638,43 @@ export default function Social() {
               placeholder="Quoi de neuf ?"
               value={newPostContent}
               onChange={(e) => setNewPostContent(e.target.value)}
-              className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-lg min-h-[120px] focus:outline-none"
+              className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-sm min-h-[100px] focus:outline-none"
               autoFocus
             />
 
-            {/* Boutons d'options à la Facebook */}
-            <div className="border border-[hsl(214,35%,30%)] rounded-lg p-3">
-              <div className="text-sm text-gray-300 mb-3">Ajouter à ta publication</div>
-              <div className="grid grid-cols-2 gap-2">
-                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
-                  <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                    📷
-                  </div>
-                  <span className="text-sm">Photo/Vidéo</span>
-                </button>
-                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
-                  <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-                    👥
-                  </div>
-                  <span className="text-sm">Identifier des personnes</span>
-                </button>
-                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
-                  <div className="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center">
-                    😀
-                  </div>
-                  <span className="text-sm">Humeur/Activité</span>
-                </button>
-                <button className="flex items-center space-x-2 p-2 rounded-lg hover:bg-[hsl(214,35%,22%)] transition-colors text-left">
-                  <div className="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center">
-                    📍
-                  </div>
-                  <span className="text-sm">Je suis là</span>
-                </button>
-              </div>
+            {/* Boutons d'options simplifiés */}
+            <div className="flex items-center space-x-4">
+              <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                  📷
+                </div>
+                <span className="text-xs">Photo/Vidéo</span>
+              </button>
+              <button className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors">
+                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+                  👥
+                </div>
+                <span className="text-xs">Identifier des personnes</span>
+              </button>
             </div>
 
-            {/* Bouton Publier */}
-            <Button
-              onClick={handleCreatePost}
-              disabled={!newPostContent.trim() || createPostMutation.isPending}
-              className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium py-3"
-            >
-              {createPostMutation.isPending ? "Publication..." : "Publier"}
-            </Button>
+            {/* Boutons Annuler et Publier */}
+            <div className="flex justify-between gap-3">
+              <Button
+                onClick={() => setIsPostModalOpen(false)}
+                variant="outline"
+                className="flex-1 border-gray-600 text-gray-300 hover:text-white hover:border-gray-500"
+              >
+                Annuler
+              </Button>
+              <Button
+                onClick={handleCreatePost}
+                disabled={!newPostContent.trim() || createPostMutation.isPending}
+                className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium"
+              >
+                {createPostMutation.isPending ? "Publication..." : "Publier"}
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
