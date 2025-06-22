@@ -1183,10 +1183,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get posts from followed users (À la une)
-  app.get("/api/users/feed", optionalAuth, async (req: AuthRequest, res) => {
+  app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      // Get posts from followed users using storage
-      const posts = await storage.getUserPosts(999);
+      const userId = req.user!.id;
+      
+      // Get posts from followed users
+      const posts = await storage.getFollowedUsersPosts(userId);
       res.json(posts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
