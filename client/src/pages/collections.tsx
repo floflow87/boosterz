@@ -674,11 +674,28 @@ export default function Collections() {
           </div>
         )}
 
-
-
-
-
-
+        {/* Deck Tab Content */}
+        {activeTab === "deck" && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
+            
+            <div className="text-center py-12">
+              <div className="mb-6">
+                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              </div>
+              <div className="text-gray-400 mb-4 text-lg">
+                Tu n'as pas créé de deck.
+              </div>
+              <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                Crée ton premier deck de cartes et montre-le à ta communauté.
+              </p>
+              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-medium transition-colors">
+                <Plus className="w-4 h-4 mr-2 inline" />
+                Créer mon premier deck
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Card Detail Modal - Fullscreen with slide animation */}
         {selectedCard && (

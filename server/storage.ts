@@ -751,7 +751,11 @@ export class MemStorage implements IStorage {
         variants: null,
         tradeDescription: null,
         tradePrice: null,
-        tradeOnly: false
+        tradeOnly: false,
+        salePrice: null,
+        saleDescription: null,
+        isSold: false,
+        isFeatured: false
       },
       // Variante Gold de Mbappé
       {

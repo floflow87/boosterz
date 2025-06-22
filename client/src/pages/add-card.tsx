@@ -222,7 +222,7 @@ export default function AddCard() {
           {["import", "edit", "details", "confirmation"].map((step, index) => (
             <div key={step} className="flex items-center">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep === step ? "bg-orange-500 text-white" : 
+                currentStep === step ? "bg-[hsl(9,85%,67%)] text-white" : 
                 ["import", "edit", "details", "confirmation"].indexOf(currentStep) > index ? "bg-green-500 text-white" : "bg-zinc-700 text-zinc-400"
               }`}>
                 {index + 1}
@@ -241,7 +241,7 @@ export default function AddCard() {
             <div className="space-y-4">
               <Button
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3"
+                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-8 py-3"
               >
                 <Upload className="h-5 w-5 mr-2" />
                 Choisir une image
@@ -278,7 +278,7 @@ export default function AddCard() {
               </Button>
               <Button
                 onClick={handleNextStep}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
               >
                 Continuer
               </Button>
@@ -472,7 +472,7 @@ export default function AddCard() {
               <Button
                 onClick={handleNextStep}
                 disabled={!cardType}
-                className="bg-orange-500 hover:bg-orange-600 text-white disabled:opacity-50"
+                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white disabled:opacity-50"
               >
                 Continuer
               </Button>
@@ -520,7 +520,7 @@ export default function AddCard() {
               <Button
                 onClick={handleSubmitCard}
                 disabled={addPersonalCardMutation.isPending}
-                className="bg-orange-500 hover:bg-orange-600 text-white"
+                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
               >
                 {addPersonalCardMutation.isPending ? "Ajout en cours..." : "Ajouter la carte"}
               </Button>
