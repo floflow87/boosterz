@@ -130,6 +130,7 @@ export default function Social() {
       toast({
         title: "Post supprimé",
         description: "Le post a été supprimé avec succès",
+        className: "bg-green-600 border-green-600 text-white",
       });
     },
     onError: () => {
@@ -456,22 +457,22 @@ export default function Social() {
                   <div className="flex items-start justify-between">
                     <div className="flex items-start space-x-3">
                       <div className="w-10 h-10 rounded-full overflow-hidden">
-                        {user?.avatar ? (
+                        {item.user?.avatar ? (
                           <img 
-                            src={user.avatar} 
-                            alt={`Avatar de ${user.name}`}
+                            src={item.user.avatar} 
+                            alt={`Avatar de ${item.user.name}`}
                             className="w-full h-full object-cover"
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                            <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
+                            <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
                           </div>
                         )}
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
-                          <h4 className="text-white font-medium text-sm">{user?.name}</h4>
-                          <span className="text-xs text-gray-400">@{user?.username}</span>
+                          <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
+                          <span className="text-xs text-gray-400">@{item.user?.username}</span>
                         </div>
                         <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
                       </div>
