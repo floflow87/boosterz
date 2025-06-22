@@ -1129,6 +1129,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Follow/unfollow user
+  app.post("/api/users/:id/follow", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const followingId = parseInt(req.params.id);
+      const followerId = req.user!.id;
+      
+      if (followerId === followingId) {
+        return res.status(400).json({ message: "Cannot follow yourself" });
+      }
+      
+      const success = await storage.followUser(followerId, followingId);
+      if (success) {
+        res.json({ message: "User followed successfully", isFollowing: true });
+      } else {
+        res.status(500).json({ message: "Failed to follow user" });
+      }
+    } catch (error) {
+      console.error('Error following user:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  app.delete("/api/users/:id/follow", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const followingId = parseInt(req.params.id);
+      const followerId = req.user!.id;
+      
+      const success = await storage.unfollowUser(followerId, followingId);
+      if (success) {
+        res.json({ message: "User unfollowed successfully", isFollowing: false });
+      } else {
+        res.status(500).json({ message: "Failed to unfollow user" });
+      }
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Check if following user
+  app.get("/api/users/:id/following-status", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const followingId = parseInt(req.params.id);
+      const followerId = req.user!.id;
+      
+      const isFollowing = await storage.isFollowing(followerId, followingId);
+      res.json({ isFollowing });
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get posts from followed users (À la une)
+  app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const posts = await storage.getFollowedUsersPosts(userId);
+      res.json(posts);
+    } catch (error) {
+      console.error('Error fetching user feed:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Get user's following
   app.get("/api/users/:id/following", optionalAuth, async (req: AuthRequest, res) => {
     try {

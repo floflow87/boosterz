@@ -1,4 +1,4 @@
-import { users, collections, cards, userCards, conversations, messages, posts, activities, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
+import { users, collections, cards, userCards, conversations, messages, posts, activities, subscriptions, type User, type Collection, type Card, type UserCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ilike, desc } from "drizzle-orm";
 
@@ -502,8 +502,79 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getActivityFeed(userId: number): Promise<any[]> {
-    // Mock implementation for now - would query activities table
     return [];
+  }
+
+  // Follow system implementation
+  async followUser(followerId: number, followingId: number): Promise<boolean> {
+    try {
+      await db.insert(subscriptions).values({
+        followerId,
+        followingId,
+        status: 'accepted'
+      });
+      return true;
+    } catch (error) {
+      console.error('Error following user:', error);
+      return false;
+    }
+  }
+
+  async unfollowUser(followerId: number, followingId: number): Promise<boolean> {
+    try {
+      const result = await db.delete(subscriptions).where(
+        and(eq(subscriptions.followerId, followerId), eq(subscriptions.followingId, followingId))
+      );
+      return (result.rowCount || 0) > 0;
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+      return false;
+    }
+  }
+
+  async isFollowing(followerId: number, followingId: number): Promise<boolean> {
+    try {
+      const [subscription] = await db.select().from(subscriptions).where(
+        and(eq(subscriptions.followerId, followerId), eq(subscriptions.followingId, followingId))
+      );
+      return !!subscription;
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+      return false;
+    }
+  }
+
+  async getFollowedUsersPosts(userId: number): Promise<any[]> {
+    try {
+      const followedUsers = await db.select({ followingId: subscriptions.followingId })
+        .from(subscriptions)
+        .where(eq(subscriptions.followerId, userId));
+      
+      if (followedUsers.length === 0) return [];
+      
+      const followingIds = followedUsers.map(f => f.followingId);
+      
+      const postsWithUsers = await db.select({
+        post: posts,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username
+        }
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(or(...followingIds.map(id => eq(posts.userId, id))))
+      .orderBy(desc(posts.createdAt));
+      
+      return postsWithUsers.map(item => ({
+        ...item.post,
+        user: item.user
+      }));
+    } catch (error) {
+      console.error('Error getting followed users posts:', error);
+      return [];
+    }
   }
 }
 

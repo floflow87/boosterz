@@ -76,6 +76,7 @@ export default function Social() {
   const [saleFilter, setSaleFilter] = useState<"all" | "available" | "sold">("all");
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [postLikes, setPostLikes] = useState<Record<number, number>>({});
+  const [followingStatus, setFollowingStatus] = useState<Record<number, boolean>>({});
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
