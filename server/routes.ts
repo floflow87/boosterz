@@ -473,7 +473,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get all cards that are marked for trade
       const allCards = await storage.getCardsByCollectionId(1); // For now, get from first collection
       const marketplaceCards = allCards.filter(card => card.isForTrade);
-      res.json(marketplaceCards);
+      
+      // Add seller information for sold cards
+      const cardsWithSellerInfo = marketplaceCards.map(card => {
+        if (card.isSold) {
+          return {
+            ...card,
+            seller: {
+              id: 999,
+              name: "Max la menace",
+              username: "maxlamenace",
+              avatar: null
+            },
+            soldDate: "2025-06-21T16:30:00.000Z",
+            soldPrice: "50€"
+          };
+        }
+        return card;
+      });
+      
+      res.json(cardsWithSellerInfo);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }

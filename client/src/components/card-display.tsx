@@ -5,7 +5,16 @@ import type { Card } from "@shared/schema";
 import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
 
 interface CardDisplayProps {
-  card: Card;
+  card: Card & {
+    seller?: {
+      id: number;
+      name: string;
+      username: string;
+      avatar?: string;
+    };
+    soldDate?: string;
+    soldPrice?: string;
+  };
   viewMode?: "grid" | "list";
   isSelected?: boolean;
   isPulledEffect?: boolean;
@@ -390,6 +399,41 @@ export default function CardDisplay({
         <p className="font-mono text-gray-500 text-xs">
           #{card.reference}
         </p>
+        
+        {/* Seller Profile for Sold Cards */}
+        {card.isSold && card.seller && (
+          <div className="mt-2 pt-2 border-t border-gray-600">
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-6 h-6 rounded-full overflow-hidden">
+                {card.seller.avatar ? (
+                  <img 
+                    src={card.seller.avatar} 
+                    alt={card.seller.name}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                    <span className="text-xs font-bold text-white">{card.seller.name.charAt(0)}</span>
+                  </div>
+                )}
+              </div>
+              <div className="text-left">
+                <p className="text-white text-xs font-medium">{card.seller.name}</p>
+                <p className="text-gray-400 text-xs">@{card.seller.username}</p>
+              </div>
+            </div>
+            {card.soldPrice && (
+              <p className="text-green-400 text-xs font-semibold mt-1">
+                Vendue {card.soldPrice}
+              </p>
+            )}
+            {card.soldDate && (
+              <p className="text-gray-500 text-xs">
+                {new Date(card.soldDate).toLocaleDateString('fr-FR')}
+              </p>
+            )}
+          </div>
+        )}
         
         {showStats && (
           <div className="mt-1 flex justify-center gap-2 text-xs">
