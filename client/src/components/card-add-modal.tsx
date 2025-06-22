@@ -119,6 +119,11 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
     setBrightness(100);
     setContrast(100);
     setRotation(0);
+    // Reset autocomplete states
+    setPlayerNameInput("");
+    setTeamNameInput("");
+    setShowPlayerSuggestions(false);
+    setShowTeamSuggestions(false);
   };
 
   const handleClose = () => {
