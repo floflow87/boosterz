@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck" | "sold">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -162,7 +162,7 @@ export default function Collections() {
     }
   };
 
-  const handleTabChange = (tab: "collections" | "cards" | "marketplace" | "deck") => {
+  const handleTabChange = (tab: "collections" | "cards" | "marketplace" | "deck" | "sold") => {
     setActiveTab(tab);
     if (tab === "collections") {
       setSelectedCollection(null);
@@ -603,6 +603,44 @@ export default function Collections() {
                 Créer mon premier deck
               </button>
             </div>
+          </div>
+        )}
+
+        {/* Sold Cards Tab Content */}
+        {activeTab === "sold" && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Cartes Vendues</h3>
+            
+            {marketplaceCards?.filter(card => card.isSold).length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {marketplaceCards.filter(card => card.isSold).map((card) => (
+                  <CardDisplay
+                    key={card.id}
+                    card={card}
+                    viewMode="grid"
+                    showActions={false}
+                    showTradeInfo={true}
+                    variant="detailed"
+                    context="sale"
+                    onCardClick={() => setSelectedCard(card)}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <CheckCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <div className="text-gray-400 mb-2 text-lg">Aucune carte vendue</div>
+                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                  Les cartes que tu as vendues apparaîtront ici.
+                </p>
+                <button 
+                  onClick={() => setActiveTab("marketplace")}
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Voir mes ventes
+                </button>
+              </div>
+            )}
           </div>
         )}
 
