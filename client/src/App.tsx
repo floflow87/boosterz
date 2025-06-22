@@ -50,6 +50,7 @@ function Router() {
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
       <Route path="/profile" component={Profile} />
+      <Route path="/user/:userId" component={UserProfile} />
       <Route path="/card-examples" component={CardExamples} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/landing" component={Landing} />

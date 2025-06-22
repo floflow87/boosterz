@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, useRoute } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { 
   ArrowLeft,
@@ -18,11 +18,9 @@ import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
 import type { User, Collection, Card } from "@shared/schema";
 
-interface UserProfileProps {
-  userId: string;
-}
-
-export default function UserProfile({ userId }: UserProfileProps) {
+export default function UserProfile() {
+  const [match, params] = useRoute("/user/:userId");
+  const userId = params?.userId;
   const [, setLocation] = useLocation();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchTerm, setSearchTerm] = useState("");
@@ -85,11 +83,7 @@ export default function UserProfile({ userId }: UserProfileProps) {
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden">
       <HaloBlur />
       
-      <Header 
-        title={`@${user.username}`}
-        showBack
-        onBack={() => setLocation("/social")}
-      />
+      <Header title={`@${user.username}`} />
 
       <main className="relative z-10 px-4 pb-24">
         {/* User Info */}
