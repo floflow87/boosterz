@@ -663,6 +663,26 @@ export default function Collections() {
                   
                   {/* Card Info */}
                   <div className="space-y-4 text-white">
+                    {/* Collection Info - First */}
+                    {selectedCard.collectionId && (
+                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
+                        <div className="text-primary font-medium text-sm mb-1">Collection</div>
+                        <div className="text-white font-semibold">
+                          {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Collection inconnue'}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Sale Description - If available */}
+                    {selectedCard.saleDescription && (
+                      <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                        <div className="text-primary font-medium text-sm mb-2">Description de la vente</div>
+                        <div className="text-gray-300 text-sm leading-relaxed">
+                          {selectedCard.saleDescription}
+                        </div>
+                      </div>
+                    )}
+
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <div className="text-gray-400">Référence</div>
@@ -680,11 +700,21 @@ export default function Collections() {
                         <div className="text-white">{selectedCard.numbering}</div>
                       </div>
                     )}
+
+                    {/* Sale Price */}
+                    {selectedCard.isForSale && selectedCard.salePrice && (
+                      <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
+                        <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
+                        <div className="text-green-400 font-bold text-lg">
+                          {selectedCard.salePrice}€
+                        </div>
+                      </div>
+                    )}
                     
                     {/* Trade Info */}
                     {selectedCard.isForTrade && (
                       <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4 space-y-2">
-                        <div className="text-[hsl(9,85%,67%)] font-medium text-sm">
+                        <div className="text-primary font-medium text-sm">
                           {selectedCard.tradeOnly ? "Échange uniquement" : "Vente & Échange"}
                         </div>
                         
