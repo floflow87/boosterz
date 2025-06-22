@@ -1187,9 +1187,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Get posts from all users for feed (simplified approach)
-      const posts = await storage.getUserPosts(userId);
-      res.json(posts);
+      // For now, return posts from all users to populate the feed
+      // This will show posts from all users in the community
+      const allPosts = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        type: posts.type,
+        cardId: posts.cardId,
+        isVisible: posts.isVisible,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          avatar: users.avatar
+        }
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.isVisible, true))
+      .orderBy(desc(posts.createdAt))
+      .limit(50);
+
+      res.json(allPosts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
       res.status(500).json({ message: "Internal server error" });
