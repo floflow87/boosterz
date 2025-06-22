@@ -369,6 +369,52 @@ export class DatabaseStorage implements IStorage {
   async getAllUsers(): Promise<User[]> {
     return await db.select().from(users);
   }
+
+  // Social network methods
+  async getUserPosts(userId: number): Promise<any[]> {
+    // Mock implementation for now - would connect to posts table
+    return [];
+  }
+
+  async createPost(post: any): Promise<any> {
+    // Mock implementation for now - would insert into posts table
+    return { id: Date.now(), ...post, createdAt: new Date() };
+  }
+
+  async getUserFollowers(userId: number): Promise<User[]> {
+    // Mock implementation for now - would query subscriptions table
+    return [];
+  }
+
+  async getUserFollowing(userId: number): Promise<User[]> {
+    // Mock implementation for now - would query subscriptions table
+    return [];
+  }
+
+  async getPendingSubscriptionRequests(userId: number): Promise<any[]> {
+    // Mock implementation for now - would query subscriptions table
+    return [];
+  }
+
+  async createSubscription(subscription: any): Promise<any> {
+    // Mock implementation for now - would insert into subscriptions table
+    return { id: Date.now(), ...subscription, createdAt: new Date() };
+  }
+
+  async updateSubscription(id: number, updates: any): Promise<any> {
+    // Mock implementation for now - would update subscriptions table
+    return { id, ...updates, updatedAt: new Date() };
+  }
+
+  async getActivityFeed(userId: number): Promise<any[]> {
+    // Mock implementation for now - would query activities table
+    return [];
+  }
+
+  async createActivity(activity: any): Promise<any> {
+    // Mock implementation for now - would insert into activities table
+    return { id: Date.now(), ...activity, createdAt: new Date() };
+  }
 }
 
 export class MemStorage implements IStorage {

@@ -723,22 +723,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update card trade information
-  app.post("/api/cards/:id/trade", async (req, res) => {
+  // Update card trade information with automatic post creation
+  app.post("/api/cards/:id/trade", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);
       const { tradeDescription, tradePrice, tradeOnly, isForTrade } = req.body;
+      const userId = req.user!.id;
       
-      // For now, just update the basic card properties we can handle
-      const card = await storage.updateCard(cardId, {
-        isForTrade: isForTrade || false
+      const updatedCard = await storage.updateCardTrade(cardId, {
+        tradeDescription,
+        tradePrice,
+        tradeOnly,
+        isForTrade
       });
       
-      if (!card) {
+      if (!updatedCard) {
         return res.status(404).json({ message: "Card not found" });
       }
+
+      // Auto-create post when card is put for trade or sale
+      if (isForTrade && updatedCard.playerName) {
+        const content = tradeOnly 
+          ? `Je cherche à échanger ma carte ${updatedCard.playerName} !`
+          : `Je mets ma carte ${updatedCard.playerName} sur le marché !`;
+        
+        const postType = tradeOnly ? "card_trade" : "card_sale";
+        
+        // Create post
+        const post = await storage.createPost({
+          userId,
+          content,
+          type: postType,
+          cardId
+        });
+        
+        // Create activity
+        await storage.createActivity({
+          userId,
+          type: postType,
+          cardId,
+          postId: post.id,
+          metadata: JSON.stringify({ 
+            cardName: updatedCard.playerName, 
+            teamName: updatedCard.teamName,
+            price: tradePrice 
+          })
+        });
+      }
       
-      res.json(card);
+      res.json(updatedCard);
     } catch (error) {
       console.error("Error updating card trade info:", error);
       res.status(500).json({ message: "Failed to update card trade info" });

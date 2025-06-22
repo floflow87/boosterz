@@ -20,7 +20,7 @@ import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import type { User, Post, Subscription } from "@shared/schema";
+import type { User } from "@shared/schema";
 
 export default function Profile() {
   const [, setLocation] = useLocation();
@@ -35,7 +35,7 @@ export default function Profile() {
     queryKey: ["/api/users/1"],
   });
 
-  const { data: posts, isLoading: postsLoading } = useQuery<Post[]>({
+  const { data: posts, isLoading: postsLoading } = useQuery<any[]>({
     queryKey: ["/api/users/1/posts"],
   });
 
@@ -47,7 +47,7 @@ export default function Profile() {
     queryKey: ["/api/users/1/following"],
   });
 
-  const { data: pendingRequests, isLoading: requestsLoading } = useQuery<Subscription[]>({
+  const { data: pendingRequests, isLoading: requestsLoading } = useQuery<any[]>({
     queryKey: ["/api/users/1/subscription-requests"],
   });
 
