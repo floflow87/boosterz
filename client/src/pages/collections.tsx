@@ -61,13 +61,22 @@ export default function Collections() {
     return { totalCards: 0, ownedCards: 0, percentage: 0 };
   };
 
+  // Query for all user cards when no collection is selected
+  const { data: allUserCardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
+    queryKey: ["/api/cards/all"],
+    enabled: !selectedCollection && activeTab === "cards",
+  });
+
+  // Query for specific collection cards
   const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
   });
 
-  // Extract cards from response
-  const cards = cardsResponse?.cards || [];
+  // Extract cards from response - use all user cards if no collection selected
+  const cards = selectedCollection 
+    ? (cardsResponse?.cards || [])
+    : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
 
   const { data: marketplaceCards } = useQuery<Card[]>({
     queryKey: ["/api/cards/marketplace"],
@@ -378,31 +387,44 @@ export default function Collections() {
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-bold text-white font-poppins">
-                {selectedCollection ? `Collection` : "Toutes mes cartes"}
+                {selectedCollection ? `Collection` : "Mes cartes"}
               </h3>
               
-              {/* View Mode Toggle */}
               <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "list" 
-                      ? "bg-[hsl(9,85%,67%)] text-white" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "grid" 
-                      ? "bg-[hsl(9,85%,67%)] text-white" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
+                {/* Add Card Button for "Mes cartes" */}
+                {!selectedCollection && (
+                  <button
+                    onClick={() => setLocation("/add-card")}
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Ajouter une carte
+                  </button>
+                )}
+                
+                {/* View Mode Toggle */}
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "list" 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "grid" 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <Grid className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
             

@@ -119,11 +119,12 @@ export default function AddCard() {
         title: "Carte ajoutée",
         description: "La carte a été ajoutée avec succès à ta collection",
       });
-      // Clear relevant queries to avoid showing stale data
+      // Clear relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}/cards`] });
-      // Navigate to the specific collection to show only cards from that collection
-      setLocation(`/collection/${selectedCollectionId}`);
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      // Navigate back to collections page to see the card in "Mes cartes"
+      setLocation("/collections");
     },
     onError: (error: any) => {
       toast({
