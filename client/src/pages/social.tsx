@@ -706,15 +706,8 @@ export default function Social() {
                       className="bg-[hsl(214,35%,22%)] rounded-lg p-4 mb-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors w-full"
                       onClick={handleOpenPostModal}
                     >
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                          <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
-                        </div>
-                        <div className="flex-1">
-                          <div className="w-full bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,30%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
-                            Quoi de neuf ?
-                          </div>
-                        </div>
+                      <div className="w-full bg-[hsl(214,35%,18%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
+                        Quoi de neuf ?
                       </div>
                     </div>
 
