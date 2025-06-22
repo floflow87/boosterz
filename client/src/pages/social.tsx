@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle } from "lucide-react";
+import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingCart, ArrowLeftRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -79,6 +79,11 @@ export default function Social() {
   // Récupérer les notifications
   const { data: notifications = [], isLoading: notificationsLoading } = useQuery<NotificationItem[]>({
     queryKey: ["/api/social/notifications"],
+  });
+
+  // Récupérer les activités de l'utilisateur actuel
+  const { data: userActivities = [] } = useQuery<Activity[]>({
+    queryKey: ["/api/users/1/posts"],
   });
 
   // Mutation pour suivre/arrêter de suivre un utilisateur
@@ -482,21 +487,64 @@ export default function Social() {
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
-            {/* Mon Profil - Redirect to profile page */}
-            <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-              <div className="w-24 h-24 bg-blue-600/20 rounded-full flex items-center justify-center mb-6">
-                <Users className="w-12 h-12 text-blue-600" />
+            {/* Mon Profil - Activities Display */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Mes Activités</h3>
+                <div className="text-sm text-gray-400">
+                  {userActivities.length} activités
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-4 text-white">Mon Profil</h3>
-              <p className="text-gray-400 mb-6 max-w-md leading-relaxed">
-                Gérez vos publications, vos abonnés et vos demandes d'abonnement
-              </p>
-              <button
-                onClick={() => setLocation("/profile")}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors"
-              >
-                Voir mon profil
-              </button>
+
+              {userActivities.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                  <div className="w-16 h-16 bg-gray-600/20 rounded-full flex items-center justify-center mb-4">
+                    <TrendingUp className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <p className="text-gray-400 mb-2">Aucune activité récente</p>
+                  <p className="text-sm text-gray-500">
+                    Vos actions de vente et échange apparaîtront ici
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {userActivities.map((activity) => (
+                    <div key={activity.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+                      <div className="flex items-start space-x-3">
+                        <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center flex-shrink-0">
+                          {activity.type === 'marked_for_sale' && <Star className="w-4 h-4 text-white" />}
+                          {activity.type === 'marked_for_trade' && <Users className="w-4 h-4 text-white" />}
+                          {activity.type === 'added_card' && <Plus className="w-4 h-4 text-white" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="text-white font-medium text-sm">
+                              {activity.user.name || activity.user.username}
+                            </h4>
+                            <span className="text-xs text-gray-400 whitespace-nowrap ml-2">
+                              {formatTimeAgo(activity.createdAt)}
+                            </span>
+                          </div>
+                          <p className="text-gray-400 text-sm">
+                            {getActivityDescription(activity)}
+                          </p>
+                          {activity.card && (
+                            <div className="mt-2 text-xs text-[hsl(9,85%,67%)]">
+                              Carte: {activity.card.playerName} - {activity.card.teamName}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {userActivities.length > 5 && (
+                    <button className="w-full text-center py-3 text-sm text-gray-400 hover:text-white transition-colors">
+                      Voir plus d'activités
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </TabsContent>
 
