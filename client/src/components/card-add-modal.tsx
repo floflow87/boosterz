@@ -47,8 +47,6 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  if (!isOpen) return null;
-
   const resetModal = () => {
     setCurrentStep("import");
     setSelectedImage(null);
@@ -192,6 +190,9 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
 
     createCardMutation.mutate(cardData);
   };
+
+  // Return early if modal is closed (after all hooks are declared)
+  if (!isOpen) return null;
 
   const getStepTitle = () => {
     switch (currentStep) {
