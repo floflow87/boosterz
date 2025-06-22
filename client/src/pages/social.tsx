@@ -96,12 +96,21 @@ export default function Social() {
   // Mutation pour créer un post
   const createPostMutation = useMutation({
     mutationFn: async (content: string) => {
-      return apiRequest("/api/posts", "POST", { content, type: "text" });
+      return apiRequest("/api/posts", "POST", { 
+        content, 
+        type: "text",
+        public: true,
+        taggedPeople: taggedPeople,
+        photo: selectedPhoto ? await convertToBase64(selectedPhoto) : null
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/posts"] });
       queryClient.invalidateQueries({ queryKey: ["/api/social/activities"] });
       setNewPostContent("");
+      setSelectedPhoto(null);
+      setTaggedPeople([]);
+      setSearchPeople("");
       toast({
         title: "Publication créée avec succès",
       });
@@ -669,22 +678,16 @@ export default function Social() {
               <div className="w-16"></div>
             </div>
 
-            {/* Profil utilisateur */}
-            <div className="flex items-center space-x-3 mb-4">
-              <div>
-                <div className="font-medium text-sm text-white">Floflow87</div>
-                <div className="text-xs text-gray-400">🌍 Public</div>
-              </div>
+            {/* Zone de texte avec bordure */}
+            <div className="border border-[hsl(214,35%,30%)] rounded-lg p-4 mb-4">
+              <Textarea
+                placeholder="Quoi de neuf ?"
+                value={newPostContent}
+                onChange={(e) => setNewPostContent(e.target.value)}
+                className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-sm min-h-[150px] focus:outline-none w-full"
+                autoFocus
+              />
             </div>
-
-            {/* Zone de texte */}
-            <Textarea
-              placeholder="Quoi de neuf ?"
-              value={newPostContent}
-              onChange={(e) => setNewPostContent(e.target.value)}
-              className="bg-transparent border-none text-white placeholder-gray-400 resize-none text-sm min-h-[150px] focus:outline-none w-full mb-4"
-              autoFocus
-            />
 
             {/* Photo preview */}
             {selectedPhoto && (
@@ -774,7 +777,7 @@ export default function Social() {
               <Button
                 onClick={handleCreatePost}
                 disabled={!newPostContent.trim() || createPostMutation.isPending}
-                className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium"
+                className="flex-1 bg-[#F37261] hover:bg-[#e5624f] disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium"
               >
                 {createPostMutation.isPending ? "Publication..." : "Publier"}
               </Button>
