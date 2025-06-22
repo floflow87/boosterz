@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Search, MessageCircle, MoreVertical, UserX, UserCheck, Ban } from "lucide-react";
+import { ArrowLeft, Search, MessageCircle, MoreVertical, UserX, UserCheck, Ban, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -205,6 +205,16 @@ export default function Conversations() {
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+                        <DropdownMenuItem 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setLocation(`/profile/${conversation.user.id}`);
+                          }}
+                          className="hover:bg-gray-700 text-white"
+                        >
+                          <Eye className="w-4 h-4 mr-2 text-blue-400" />
+                          <span className="text-white">Voir le profil</span>
+                        </DropdownMenuItem>
                         <DropdownMenuItem 
                           onClick={(e) => {
                             e.stopPropagation();

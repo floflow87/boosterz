@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -272,6 +272,17 @@ export default function Collections() {
             >
               <TrendingUp className="w-4 h-4" />
               Ventes
+            </button>
+            <button
+              onClick={() => handleTabChange("sold")}
+              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+                activeTab === "sold" 
+                  ? "bg-[hsl(9,85%,67%)] text-white shadow-md transform scale-[1.02]" 
+                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              }`}
+            >
+              <CheckCircle className="w-4 h-4" />
+              Vendues
             </button>
             <button
               onClick={() => handleTabChange("deck")}
