@@ -290,6 +290,30 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   }),
 }));
 
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  follower: one(users, {
+    fields: [subscriptions.followerId],
+    references: [users.id],
+    relationName: "subscriptionFollower",
+  }),
+  following: one(users, {
+    fields: [subscriptions.followingId],
+    references: [users.id],
+    relationName: "subscriptionFollowing",
+  }),
+}));
+
+export const postsRelations = relations(posts, ({ one }) => ({
+  user: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+  card: one(cards, {
+    fields: [posts.cardId],
+    references: [cards.id],
+  }),
+}));
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,

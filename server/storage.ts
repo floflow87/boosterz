@@ -43,6 +43,17 @@ export interface IStorage {
   getMessages(conversationId: number): Promise<Message[]>;
   createMessage(message: InsertMessage): Promise<Message>;
   markMessagesAsRead(conversationId: number, userId: number): Promise<void>;
+
+  // Social network system
+  getUserPosts(userId: number): Promise<any[]>;
+  createPost(post: any): Promise<any>;
+  getUserFollowers(userId: number): Promise<User[]>;
+  getUserFollowing(userId: number): Promise<User[]>;
+  getPendingSubscriptionRequests(userId: number): Promise<any[]>;
+  createSubscription(subscription: any): Promise<any>;
+  updateSubscription(id: number, updates: any): Promise<any>;
+  getActivityFeed(userId: number): Promise<any[]>;
+  createActivity(activity: any): Promise<any>;
 }
 
 export class DatabaseStorage implements IStorage {
