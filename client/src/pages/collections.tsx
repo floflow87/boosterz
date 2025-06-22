@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "marketplace" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -272,7 +272,7 @@ export default function Collections() {
     }
   };
 
-  const handleTabChange = (tab: "collections" | "cards" | "marketplace" | "deck") => {
+  const handleTabChange = (tab: "collections" | "cards") => {
     setActiveTab(tab);
     if (tab === "collections") {
       setSelectedCollection(null);
@@ -372,17 +372,7 @@ export default function Collections() {
             </button>
 
 
-            <button
-              onClick={() => handleTabChange("deck")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "deck" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <Package className="w-4 h-4" />
-              Decks
-            </button>
+
           </div>
         </div>
 
@@ -732,65 +722,7 @@ export default function Collections() {
               </div>
             </div>
             
-            {marketplaceCards && marketplaceCards.length > 0 ? (
-              viewMode === "grid" ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                  {marketplaceCards
-                    .filter(card => {
-                      if (saleFilter === 'available') return card.isForTrade && !card.isSold;
-                      if (saleFilter === 'sold') return card.isSold;
-                      return card.isForTrade;
-                    })
-                    .map((card) => (
-                    <CardDisplay
-                      key={card.id}
-                      card={card}
-                      viewMode="grid"
-                      showActions={true}
-                      showTradeInfo={true}
-                      variant="detailed"
-                      context="sale"
-                      onCardClick={() => setSelectedCard(card)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {marketplaceCards
-                    .filter(card => {
-                      if (saleFilter === 'available') return card.isForTrade && !card.isSold;
-                      if (saleFilter === 'sold') return card.isSold;
-                      return card.isForTrade;
-                    })
-                    .map((card) => (
-                    <CardDisplay
-                      key={card.id}
-                      card={card}
-                      viewMode="list"
-                      showActions={true}
-                      showTradeInfo={false}
-                      variant="detailed"
-                      context="sale"
-                      onCardClick={() => setSelectedCard(card)}
-                    />
-                  ))}
-                </div>
-              )
-            ) : (
-              <div className="text-center py-12">
-                <TrendingUp className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <div className="text-gray-400 mb-2 text-lg">Aucune carte en vente</div>
-                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  Mets tes cartes en vente depuis tes collections pour commencer à trader avec la communauté.
-                </p>
-                <button 
-                  onClick={() => setActiveTab("collections")}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
-                >
-                  Voir mes collections
-                </button>
-              </div>
-            )}
+
           </div>
         )}
 
