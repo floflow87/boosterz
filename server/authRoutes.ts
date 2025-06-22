@@ -8,9 +8,16 @@ const router = Router();
 
 // Login schema - accept either email or username
 const loginSchema = z.object({
-  email: z.string().min(1), // Changed to accept username too
+  email: z.string().min(1).optional(),
+  username: z.string().min(1).optional(),
   password: z.string().min(6),
-});
+}).refine(data => data.email || data.username, {
+  message: "Email ou nom d'utilisateur requis",
+}).transform(data => ({
+  email: data.email || data.username, // Use username as email if no email provided
+  username: data.username,
+  password: data.password
+}));
 
 // Register schema
 const registerSchema = insertUserSchema.extend({
@@ -66,12 +73,14 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = loginSchema.parse(req.body);
+    const { email, username, password } = loginSchema.parse(req.body);
     
-    // Try to find user by email first, then by username
-    let user = await storage.getUserByEmail(email);
-    if (!user) {
-      user = await storage.getUserByUsername(email); // Try username if email fails
+    // Try to find user by email or username
+    let user;
+    if (email) {
+      user = await storage.getUserByEmail(email);
+    } else if (username) {
+      user = await storage.getUserByUsername(username);
     }
     
     if (!user || !user.password) {

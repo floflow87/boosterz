@@ -47,7 +47,12 @@ export interface IStorage {
   // Social network system
   getUserPosts(userId: number): Promise<any[]>;
   createPost(post: any): Promise<any>;
+  getPost(id: number): Promise<any>;
+  deletePost(id: number): Promise<boolean>;
   createActivity(activity: any): Promise<any>;
+  getUserSubscriptions(userId: number): Promise<any[]>;
+  deleteSubscription(followingId: number): Promise<boolean>;
+  getUserSubscribers(userId: number): Promise<any[]>;
   getUserFollowers(userId: number): Promise<User[]>;
   getUserFollowing(userId: number): Promise<User[]>;
   getPendingSubscriptionRequests(userId: number): Promise<any[]>;
@@ -430,12 +435,47 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getPost(id: number): Promise<any> {
+    try {
+      const [post] = await db.select().from(posts).where(eq(posts.id, id));
+      return post;
+    } catch (error) {
+      console.error('Error getting post:', error);
+      return undefined;
+    }
+  }
+
+  async deletePost(id: number): Promise<boolean> {
+    try {
+      const result = await db.delete(posts).where(eq(posts.id, id));
+      return result.rowCount > 0;
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      return false;
+    }
+  }
+
   async getUserFollowers(userId: number): Promise<User[]> {
     // Mock implementation for now - would query subscriptions table
     return [];
   }
 
   async getUserFollowing(userId: number): Promise<User[]> {
+    // Mock implementation for now - would query subscriptions table
+    return [];
+  }
+
+  async getUserSubscriptions(userId: number): Promise<any[]> {
+    // Mock implementation for now - would query subscriptions table
+    return [];
+  }
+
+  async deleteSubscription(followingId: number): Promise<boolean> {
+    // Mock implementation for now - would delete from subscriptions table
+    return true;
+  }
+
+  async getUserSubscribers(userId: number): Promise<any[]> {
     // Mock implementation for now - would query subscriptions table
     return [];
   }
@@ -458,11 +498,6 @@ export class DatabaseStorage implements IStorage {
   async getActivityFeed(userId: number): Promise<any[]> {
     // Mock implementation for now - would query activities table
     return [];
-  }
-
-  async createActivity(activity: any): Promise<any> {
-    // Mock implementation for now - would insert into activities table
-    return { id: Date.now(), ...activity, createdAt: new Date() };
   }
 }
 
