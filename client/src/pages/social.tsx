@@ -430,13 +430,7 @@ export default function Social() {
       return dateB.getTime() - dateA.getTime(); // Ordre décroissant (plus récent en premier)
     });
 
-    // Debug: afficher les éléments triés
-    console.log('Feed items sorted:', feedItems.map(item => ({
-      type: item.itemType,
-      date: item.createdAt || item.created_at,
-      content: item.content || item.type,
-      user: item.user?.name
-    })));
+
 
     if (feedItems.length === 0) {
       return (

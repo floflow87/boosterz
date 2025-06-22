@@ -673,55 +673,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/social/activities', async (req, res) => {
     try {
-      // Mock data for activities
+      // Activity data with only Max la menace sale from yesterday
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      yesterday.setHours(16, 30, 0, 0); // 16h30 hier
+      
       const activities = [
         {
           id: 1,
-          type: "added_card",
+          type: "marked_for_sale",
           user: {
-            id: 2,
-            username: "maxcollector",
-            name: "Max Dubois"
+            id: 999,
+            username: "maxlamenace",
+            name: "Max la menace"
           },
           card: {
-            id: 123,
-            reference: "045",
-            playerName: "Kylian Mbappé",
-            teamName: "Paris Saint-Germain",
+            id: 125,
+            reference: "012",
+            playerName: "Erling Haaland",
+            teamName: "Manchester City",
             imageUrl: null
           },
-          createdAt: new Date(Date.now() - 30 * 60 * 1000).toISOString()
-        },
-        {
-          id: 2,
-          type: "marked_for_trade",
-          user: {
-            id: 3,
-            username: "cardmaster",
-            name: "Julie Martin"
-          },
-          card: {
-            id: 124,
-            reference: "078",
-            playerName: "Neymar Jr",
-            teamName: "Paris Saint-Germain",
-            imageUrl: null
-          },
-          createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          id: 3,
-          type: "completed_collection",
-          user: {
-            id: 4,
-            username: "psgfan",
-            name: "Thomas Leroy"
-          },
-          collection: {
-            id: 1,
-            name: "Score Ligue 1 2023"
-          },
-          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
+          createdAt: yesterday.toISOString()
         }
       ];
       res.json(activities);
