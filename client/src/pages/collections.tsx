@@ -59,8 +59,17 @@ export default function Collections() {
   // Filtrer et rechercher les cartes personnelles
   const filteredPersonalCards = personalCards.filter(card => {
     // Filtre par statut de vente
-    if (saleFilter === 'available' && !card.isForSale) return false;
-    if (saleFilter === 'sold' && !card.isSold) return false;
+    if (saleFilter === 'available') {
+      // En vente : cartes avec isForTrade=true ou salePrice défini, mais pas vendues
+      const isForSale = card.isForTrade || card.salePrice || card.tradePrice;
+      if (!isForSale || card.isSold) return false;
+    } else if (saleFilter === 'sold') {
+      // Vendues : seulement les cartes avec isSold=true
+      if (!card.isSold) return false;
+    } else if (saleFilter === 'all') {
+      // Toutes : toutes les cartes sauf les vendues
+      if (card.isSold) return false;
+    }
     
     // Filtre par recherche
     if (searchQuery.trim()) {
@@ -163,6 +172,7 @@ export default function Collections() {
       toast({
         title: "Paramètres sauvegardés",
         description: "Les paramètres de vente ont été mis à jour.",
+        className: "bg-green-600 text-white border-green-700"
       });
       
       setShowTradePanel(false);
@@ -196,6 +206,7 @@ export default function Collections() {
       toast({
         title: "Carte retirée de la vente",
         description: "La carte n'est plus disponible à la vente.",
+        className: "bg-green-600 text-white border-green-700"
       });
       
       setShowOptionsPanel(false);
@@ -242,12 +253,14 @@ export default function Collections() {
       });
       
       queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       toast({
         title: "Carte marquée comme vendue",
         description: "La carte a été marquée comme vendue avec succès.",
         className: "bg-green-600 text-white border-green-700"
       });
       setShowOptionsPanel(false);
+      setSelectedCard(null);
       setSelectedCard(null);
     } catch (error) {
       toast({
@@ -882,7 +895,7 @@ export default function Collections() {
                       <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                         <Check className="w-4 h-4 text-white" />
                       </div>
-                      Marquer vendue
+                      Marquer comme vendue
                     </button>
                     
                     {(selectedCard.tradePrice || selectedCard.salePrice) ? (
