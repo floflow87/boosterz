@@ -22,6 +22,7 @@ import Feed from "@/pages/feed";
 import Welcome from "@/pages/welcome";
 import Landing from "@/pages/landing";
 import CardExamples from "@/pages/card-examples";
+import AddCard from "@/pages/add-card";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/settings" component={Settings} />
       <Route path="/profile" component={Profile} />
       <Route path="/user/:userId" component={UserProfile} />
+      <Route path="/add-card" component={AddCard} />
       <Route path="/card-examples" component={CardExamples} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/landing" component={Landing} />
