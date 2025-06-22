@@ -546,34 +546,48 @@ export class DatabaseStorage implements IStorage {
 
   async getFollowedUsersPosts(userId: number): Promise<any[]> {
     try {
+      console.log('Getting posts for user:', userId);
+      
       const followedUsers = await db.select({ followingId: subscriptions.followingId })
         .from(subscriptions)
         .where(eq(subscriptions.followerId, userId));
       
-      if (followedUsers.length === 0) return [];
+      console.log('Following users:', followedUsers);
+      
+      if (followedUsers.length === 0) {
+        console.log('No followed users found');
+        return [];
+      }
       
       const followingIds = followedUsers.map(f => f.followingId);
+      console.log('Following IDs:', followingIds);
       
-      const postsWithUsers = await db.select({
-        post: posts,
+      // Simplified query to debug
+      const allPosts = await db.select()
+        .from(posts)
+        .innerJoin(users, eq(posts.userId, users.id))
+        .orderBy(desc(posts.createdAt));
+      
+      console.log('All posts count:', allPosts.length);
+      
+      // Filter posts from followed users
+      const filteredPosts = allPosts.filter(item => 
+        followingIds.includes(item.posts.userId)
+      );
+      
+      console.log('Filtered posts count:', filteredPosts.length);
+      
+      return filteredPosts.map(item => ({
+        ...item.posts,
         user: {
-          id: users.id,
-          name: users.name,
-          username: users.username
+          id: item.users.id,
+          name: item.users.name,
+          username: item.users.username
         }
-      })
-      .from(posts)
-      .innerJoin(users, eq(posts.userId, users.id))
-      .where(or(...followingIds.map(id => eq(posts.userId, id))))
-      .orderBy(desc(posts.createdAt));
-      
-      return postsWithUsers.map(item => ({
-        ...item.post,
-        user: item.user
       }));
     } catch (error) {
       console.error('Error getting followed users posts:', error);
-      return [];
+      throw error;
     }
   }
 }

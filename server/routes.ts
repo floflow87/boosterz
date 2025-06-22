@@ -1186,7 +1186,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.user!.id;
+      console.log('Fetching feed for user:', userId);
       const posts = await storage.getFollowedUsersPosts(userId);
+      console.log('Feed posts found:', posts.length);
       res.json(posts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
