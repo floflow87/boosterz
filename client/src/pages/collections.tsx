@@ -131,12 +131,7 @@ export default function Collections() {
     ? (cardsResponse?.cards || [])
     : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
 
-  const { data: marketplaceCards } = useQuery<Card[]>({
-    queryKey: ["/api/cards/marketplace"],
-    enabled: activeTab === "marketplace",
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
-  });
+
 
   // Mutation pour mettre à jour les paramètres de vente
   const updateSaleSettingsMutation = useMutation({
@@ -375,17 +370,7 @@ export default function Collections() {
               <Layers className="w-4 h-4" />
               Collections
             </button>
-            <button
-              onClick={() => handleTabChange("marketplace")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "marketplace" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <TrendingUp className="w-4 h-4" />
-              Ventes
-            </button>
+
 
             <button
               onClick={() => handleTabChange("deck")}
@@ -537,7 +522,7 @@ export default function Collections() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onFocus={() => setShowSuggestions(searchSuggestions.length > 0)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,15%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,15%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               
@@ -560,12 +545,12 @@ export default function Collections() {
               )}
             </div>
 
-            {/* Filter Buttons */}
-            <div className="flex items-center gap-4 mb-6">
+            {/* Filter Buttons with Add Button */}
+            <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
                 <button
                   onClick={() => setSaleFilter('all')}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
+                  className={`px-3 py-2 rounded text-sm transition-all ${
                     saleFilter === 'all' 
                       ? "bg-primary text-primary-foreground" 
                       : "text-gray-400 hover:text-white"
@@ -575,17 +560,17 @@ export default function Collections() {
                 </button>
                 <button
                   onClick={() => setSaleFilter('available')}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
+                  className={`px-3 py-2 rounded text-sm transition-all ${
                     saleFilter === 'available' 
                       ? "bg-primary text-primary-foreground" 
                       : "text-gray-400 hover:text-white"
                   }`}
                 >
-                  À la vente
+                  En vente
                 </button>
                 <button
                   onClick={() => setSaleFilter('sold')}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
+                  className={`px-3 py-2 rounded text-sm transition-all ${
                     saleFilter === 'sold' 
                       ? "bg-primary text-primary-foreground" 
                       : "text-gray-400 hover:text-white"
@@ -594,6 +579,14 @@ export default function Collections() {
                   Vendues
                 </button>
               </div>
+              
+              <button
+                onClick={() => setLocation("/add-card")}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter
+              </button>
             </div>
 
             {personalCardsLoading ? (
