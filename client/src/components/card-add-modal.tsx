@@ -191,9 +191,14 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
       });
       
       setRecognitionResult(response);
-      setPlayerName(response.playerName || "");
-      setTeamName(response.teamName || "");
-      setCurrentStep("details");
+      if (response.playerName) {
+        setPlayerName(response.playerName);
+        setPlayerNameInput(response.playerName);
+      }
+      if (response.teamName) {
+        setTeamName(response.teamName);
+        setTeamNameInput(response.teamName);
+      }
     } catch (error) {
       console.error("Recognition failed:", error);
       toast({
@@ -201,7 +206,6 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
         description: "Impossible de reconnaître la carte automatiquement",
         variant: "destructive",
       });
-      setCurrentStep("details");
     } finally {
       setIsProcessing(false);
     }
@@ -244,12 +248,25 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
 
     const cardData = {
       collectionId: parseInt(selectedCollectionId),
-      playerName,
-      teamName,
-      reference: cardNumber,
-      numbering,
-      imageUrl: editedImage,
-      isOwned: true
+      playerName: playerName || null,
+      teamName: teamName || null,
+      cardType: cardNumber, // This is now the card type, not number
+      reference: `${cardNumber}-${Date.now()}`, // Generate unique reference
+      numbering: numbering || null,
+      imageUrl: editedImage || null,
+      isOwned: true,
+      isForTrade: false,
+      cardSubType: null,
+      isRookieCard: false,
+      rarity: null,
+      condition: null,
+      tradeDescription: null,
+      tradePrice: null,
+      tradeOnly: false,
+      salePrice: null,
+      saleDescription: null,
+      isSold: false,
+      isFeatured: false
     };
 
     createCardMutation.mutate(cardData);
@@ -440,7 +457,10 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
           {currentStep === "recognition" && (
             <div className="space-y-6">
               <div className="text-center mb-6">
-                <p className="text-gray-400">Reconnaissance automatique en cours...</p>
+                <p className="text-gray-400">
+                  {isProcessing ? "Reconnaissance automatique en cours..." : 
+                   recognitionResult ? "Reconnaissance terminée" : "Prêt pour la reconnaissance"}
+                </p>
               </div>
               
               <div className="bg-[hsl(214,35%,18%)] rounded-lg p-6 text-center">
@@ -450,18 +470,22 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                     <p className="text-white">Analyse de l'image en cours...</p>
                     <p className="text-gray-400 text-sm mt-2">Cela peut prendre quelques secondes</p>
                   </div>
-                ) : (
+                ) : recognitionResult ? (
                   <div>
                     <Check className="w-16 h-16 text-green-500 mx-auto mb-4" />
                     <p className="text-white mb-2">Reconnaissance terminée</p>
-                    {recognitionResult && (
-                      <div className="text-left bg-[hsl(214,35%,15%)] rounded-lg p-4 mt-4">
-                        <p className="text-gray-400 text-sm mb-2">Résultats détectés:</p>
-                        <p className="text-white">Joueur: {recognitionResult.playerName}</p>
-                        <p className="text-white">Équipe: {recognitionResult.teamName}</p>
-                        <p className="text-gray-400 text-sm">Confiance: {Math.round(recognitionResult.confidence * 100)}%</p>
-                      </div>
-                    )}
+                    <div className="text-left bg-[hsl(214,35%,15%)] rounded-lg p-4 mt-4">
+                      <p className="text-gray-400 text-sm mb-2">Résultats détectés:</p>
+                      <p className="text-white">Joueur: {recognitionResult.playerName}</p>
+                      <p className="text-white">Équipe: {recognitionResult.teamName}</p>
+                      <p className="text-gray-400 text-sm">Confiance: {Math.round(recognitionResult.confidence * 100)}%</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <p className="text-white mb-2">Cliquez pour démarrer la reconnaissance</p>
+                    <p className="text-gray-400 text-sm">L'IA analysera votre carte pour identifier le joueur et l'équipe</p>
                   </div>
                 )}
               </div>
@@ -596,13 +620,13 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                     <SelectTrigger className="bg-[hsl(216,46%,13%)] border-gray-600 text-white">
                       <SelectValue placeholder="Sélectionner un type de carte" />
                     </SelectTrigger>
-                    <SelectContent className="bg-gray-800 border-gray-600">
+                    <SelectContent className="bg-gray-800 border-gray-600 text-white">
                       {cardTypes.length > 0 ? (
                         cardTypes.map((type, index) => (
-                          <SelectItem key={index} value={type}>{type}</SelectItem>
+                          <SelectItem key={index} value={type} className="text-white">{type}</SelectItem>
                         ))
                       ) : (
-                        <SelectItem value="Base" disabled>Sélectionnez d'abord une collection</SelectItem>
+                        <SelectItem value="Base" disabled className="text-gray-400">Sélectionnez d'abord une collection</SelectItem>
                       )}
                     </SelectContent>
                   </Select>
