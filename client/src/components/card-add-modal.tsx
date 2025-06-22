@@ -1,8 +1,11 @@
-import { useState } from "react";
-import { X, Camera, Upload, Search } from "lucide-react";
+import { useState, useRef } from "react";
+import { X, Camera, Upload, Search, RotateCcw, Crop, Check, ArrowLeft, ArrowRight, ZoomIn, ZoomOut, Sliders } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Collection } from "@shared/schema";
 
 interface CardAddModalProps {
@@ -12,18 +15,182 @@ interface CardAddModalProps {
   selectedCollection?: number;
 }
 
+type Step = "import" | "edit" | "recognition" | "details" | "confirmation";
+
+interface RecognitionResult {
+  playerName: string;
+  teamName: string;
+  confidence: number;
+}
+
 export default function CardAddModal({ isOpen, onClose, collections, selectedCollection }: CardAddModalProps) {
-  const [addMethod, setAddMethod] = useState<"photo" | "checklist">("photo");
-  const [collection, setCollection] = useState<string>(selectedCollection?.toString() || "");
-  const [cardNumber, setCardNumber] = useState("");
+  const [currentStep, setCurrentStep] = useState<Step>("import");
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [editedImage, setEditedImage] = useState<string>("");
+  const [recognitionResult, setRecognitionResult] = useState<RecognitionResult | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Form data
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>(selectedCollection?.toString() || "");
   const [playerName, setPlayerName] = useState("");
+  const [teamName, setTeamName] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [numbering, setNumbering] = useState("");
+  
+  // Image editing states
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [rotation, setRotation] = useState(0);
+  
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle card addition logic here
+  const resetModal = () => {
+    setCurrentStep("import");
+    setSelectedImage(null);
+    setImagePreview("");
+    setEditedImage("");
+    setRecognitionResult(null);
+    setPlayerName("");
+    setTeamName("");
+    setCardNumber("");
+    setNumbering("");
+    setBrightness(100);
+    setContrast(100);
+    setRotation(0);
+  };
+
+  const handleClose = () => {
+    resetModal();
     onClose();
+  };
+
+  // Image import handlers
+  const handleImageSelect = (file: File) => {
+    setSelectedImage(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const result = e.target?.result as string;
+      setImagePreview(result);
+      setEditedImage(result);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageSelect(file);
+      setCurrentStep("edit");
+    }
+  };
+
+  const handleCameraCapture = () => {
+    // Simulate camera capture for demo
+    fileInputRef.current?.click();
+  };
+
+  // Image editing handlers
+  const applyImageEdits = () => {
+    // Apply brightness, contrast, and rotation to the image
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    
+    img.onload = () => {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      
+      if (ctx) {
+        ctx.filter = `brightness(${brightness}%) contrast(${contrast}%)`;
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((rotation * Math.PI) / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        
+        const editedDataUrl = canvas.toDataURL();
+        setEditedImage(editedDataUrl);
+      }
+    };
+    img.src = imagePreview;
+  };
+
+  // Card recognition handler
+  const handleRecognition = async () => {
+    if (!editedImage) return;
+    
+    setIsProcessing(true);
+    try {
+      const response = await apiRequest("POST", "/api/cards/recognize", {
+        imageData: editedImage
+      });
+      
+      setRecognitionResult(response);
+      setPlayerName(response.playerName || "");
+      setTeamName(response.teamName || "");
+      setCurrentStep("details");
+    } catch (error) {
+      console.error("Recognition failed:", error);
+      toast({
+        title: "Erreur de reconnaissance",
+        description: "Impossible de reconnaître la carte automatiquement",
+        variant: "destructive",
+      });
+      setCurrentStep("details");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  // Final card creation
+  const createCardMutation = useMutation({
+    mutationFn: async (cardData: any) => {
+      return apiRequest("POST", "/api/cards", cardData);
+    },
+    onSuccess: () => {
+      toast({
+        title: "Carte ajoutée avec succès",
+        description: "La carte a été ajoutée à votre collection",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      if (selectedCollectionId) {
+        queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}/cards`] });
+      }
+      handleClose();
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la carte",
+        variant: "destructive",
+      });
+    }
+  });
+
+  const handleFinalSubmit = () => {
+    if (!selectedCollectionId || !playerName || !cardNumber) {
+      toast({
+        title: "Informations manquantes",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const cardData = {
+      collectionId: parseInt(selectedCollectionId),
+      playerName,
+      teamName,
+      reference: cardNumber,
+      numbering,
+      imageUrl: editedImage,
+      isOwned: true
+    };
+
+    createCardMutation.mutate(cardData);
   };
 
   return (
