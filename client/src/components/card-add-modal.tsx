@@ -250,8 +250,8 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
       collectionId: parseInt(selectedCollectionId),
       playerName: playerName || null,
       teamName: teamName || null,
-      cardType: cardNumber, // This is now the card type, not number
-      reference: `${cardNumber}-${Date.now()}`, // Generate unique reference
+      cardType: cardNumber,
+      reference: `${cardNumber}-${Date.now()}`,
       numbering: numbering || null,
       imageUrl: editedImage || null,
       isOwned: true,
@@ -279,7 +279,6 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
     switch (currentStep) {
       case "import": return "Importer une photo";
       case "edit": return "Retoucher la photo";
-      case "recognition": return "Reconnaissance automatique";
       case "details": return "Détails de la carte";
       case "confirmation": return "Confirmation";
       default: return "Ajouter une carte";
@@ -311,13 +310,13 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
           
           {/* Step Progress */}
           <div className="flex space-x-2">
-            {["import", "edit", "recognition", "details", "confirmation"].map((step, index) => (
+            {["import", "edit", "details", "confirmation"].map((step, index) => (
               <div
                 key={step}
                 className={`w-3 h-3 rounded-full ${
                   step === currentStep
                     ? "bg-[hsl(9,85%,67%)]"
-                    : ["import", "edit", "recognition", "details", "confirmation"].indexOf(currentStep) > index
+                    : ["import", "edit", "details", "confirmation"].indexOf(currentStep) > index
                     ? "bg-green-500"
                     : "bg-gray-600"
                 }`}
@@ -443,7 +442,7 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                   type="button"
                   onClick={() => {
                     applyImageEdits();
-                    setCurrentStep("recognition");
+                    setCurrentStep("details");
                   }}
                   className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
                 >
@@ -453,76 +452,7 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
             </div>
           )}
 
-          {/* Step 3: Recognition */}
-          {currentStep === "recognition" && (
-            <div className="space-y-6">
-              <div className="text-center mb-6">
-                <p className="text-gray-400">
-                  {isProcessing ? "Reconnaissance automatique en cours..." : 
-                   recognitionResult ? "Reconnaissance terminée" : "Prêt pour la reconnaissance"}
-                </p>
-              </div>
-              
-              <div className="bg-[hsl(214,35%,18%)] rounded-lg p-6 text-center">
-                {isProcessing ? (
-                  <div>
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[hsl(9,85%,67%)] mx-auto mb-4"></div>
-                    <p className="text-white">Analyse de l'image en cours...</p>
-                    <p className="text-gray-400 text-sm mt-2">Cela peut prendre quelques secondes</p>
-                  </div>
-                ) : recognitionResult ? (
-                  <div>
-                    <Check className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <p className="text-white mb-2">Reconnaissance terminée</p>
-                    <div className="text-left bg-[hsl(214,35%,15%)] rounded-lg p-4 mt-4">
-                      <p className="text-gray-400 text-sm mb-2">Résultats détectés:</p>
-                      <p className="text-white">Joueur: {recognitionResult.playerName}</p>
-                      <p className="text-white">Équipe: {recognitionResult.teamName}</p>
-                      <p className="text-gray-400 text-sm">Confiance: {Math.round(recognitionResult.confidence * 100)}%</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <Search className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <p className="text-white mb-2">Cliquez pour démarrer la reconnaissance</p>
-                    <p className="text-gray-400 text-sm">L'IA analysera votre carte pour identifier le joueur et l'équipe</p>
-                  </div>
-                )}
-              </div>
-              
-              {!isProcessing && (
-                <div className="flex space-x-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setCurrentStep("edit")}
-                    className="flex-1 bg-gray-800 border-gray-600 text-white hover:bg-gray-700"
-                  >
-                    Retour
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => setCurrentStep("details")}
-                    className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
-                  >
-                    Continuer
-                  </Button>
-                </div>
-              )}
-              
-              {currentStep === "recognition" && !isProcessing && !recognitionResult && (
-                <div className="mt-6">
-                  <Button
-                    type="button"
-                    onClick={handleRecognition}
-                    className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,57%)] text-white"
-                  >
-                    Démarrer la reconnaissance
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
+
 
           {/* Step 4: Details */}
           {currentStep === "details" && (
@@ -544,40 +474,6 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-                
-                <div className="relative">
-                  <label className="block text-white text-sm mb-2">Nom du joueur *</label>
-                  <Input
-                    type="text"
-                    value={playerNameInput || playerName}
-                    onChange={(e) => {
-                      setPlayerNameInput(e.target.value);
-                      setPlayerName(e.target.value);
-                      setShowPlayerSuggestions(e.target.value.length > 0);
-                    }}
-                    onBlur={() => setTimeout(() => setShowPlayerSuggestions(false), 200)}
-                    placeholder="Ex: Kylian Mbappé"
-                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
-                  />
-                  {showPlayerSuggestions && filteredPlayerNames.length > 0 && (
-                    <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                      {filteredPlayerNames.map((name, index) => (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => {
-                            setPlayerName(name);
-                            setPlayerNameInput(name);
-                            setShowPlayerSuggestions(false);
-                          }}
-                          className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 first:rounded-t-md last:rounded-b-md"
-                        >
-                          {name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
                 </div>
                 
                 <div className="relative">
@@ -604,6 +500,54 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                             setTeamName(name);
                             setTeamNameInput(name);
                             setShowTeamSuggestions(false);
+                          }}
+                          className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 first:rounded-t-md last:rounded-b-md"
+                        >
+                          {name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                <div className="relative">
+                  <label className="block text-white text-sm mb-2">Nom du joueur *</label>
+                  <Input
+                    type="text"
+                    value={playerNameInput || playerName}
+                    onChange={(e) => {
+                      setPlayerNameInput(e.target.value);
+                      setPlayerName(e.target.value);
+                      setShowPlayerSuggestions(true); // Toujours montrer les suggestions
+                    }}
+                    onBlur={() => setTimeout(() => setShowPlayerSuggestions(false), 200)}
+                    onFocus={() => setShowPlayerSuggestions(true)}
+                    placeholder="Ex: Kylian Mbappé"
+                    className="bg-[hsl(216,46%,13%)] border-gray-600 text-white"
+                  />
+                  {showPlayerSuggestions && (
+                    <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-600 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                      {filteredPlayerNames.length > 0 ? filteredPlayerNames.map((name, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => {
+                            setPlayerName(name);
+                            setPlayerNameInput(name);
+                            setShowPlayerSuggestions(false);
+                          }}
+                          className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 first:rounded-t-md last:rounded-b-md"
+                        >
+                          {name}
+                        </button>
+                      )) : playerNames.slice(0, 10).map((name, index) => (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => {
+                            setPlayerName(name);
+                            setPlayerNameInput(name);
+                            setShowPlayerSuggestions(false);
                           }}
                           className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 first:rounded-t-md last:rounded-b-md"
                         >
