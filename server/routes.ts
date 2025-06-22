@@ -1187,8 +1187,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
-      // Get user's own posts for the feed
-      const userPosts = await storage.getUserPosts(userId);
+      // Pour l'instant, retourner les posts de l'utilisateur
+      // Dans une implémentation complète, on récupérerait les posts des utilisateurs suivis
+      const userPosts = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        type: posts.type,
+        cardId: posts.cardId,
+        isVisible: posts.isVisible,
+        createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt
+      })
+      .from(posts)
+      .where(eq(posts.userId, userId))
+      .orderBy(desc(posts.createdAt))
+      .limit(50);
+
       res.json(userPosts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
