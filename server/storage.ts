@@ -185,7 +185,7 @@ export class DatabaseStorage implements IStorage {
     
     try {
       // Try with smaller chunks first in production
-      const chunkSize = process.env.NODE_ENV === 'production' ? 1000 : 5000;
+      const chunkSize = process.env.NODE_ENV === 'production' ? 500 : 1000;
       const result = await db
         .select()
         .from(cards)
@@ -224,7 +224,7 @@ export class DatabaseStorage implements IStorage {
 
   async getAllCards(): Promise<Card[]> {
     try {
-      const allCards = await db.select().from(cards).limit(5000);
+      const allCards = await db.select().from(cards).limit(1000);
       return allCards;
     } catch (error) {
       console.error("DatabaseStorage: Error loading all cards:", error);

@@ -469,7 +469,7 @@ export default function Collections() {
         {activeTab === "collections" && (
           <div className="space-y-4">
             {/* Title */}
-            <h2 className="text-3xl font-bold text-white mb-6">Mes Collections</h2>
+            <h2 className="text-2xl font-bold text-white mb-6">Mes Collections</h2>
             
             {/* Add Collection Button - Moved to top */}
             <div 
@@ -748,7 +748,7 @@ export default function Collections() {
         {/* Deck Tab Content */}
         {activeTab === "deck" && (
           <div className="space-y-4">
-            <h3 className="text-3xl font-bold text-white mb-4">Mes Decks</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">Mes Decks</h3>
             
             <div className="text-center py-12">
               <div className="mb-6">
