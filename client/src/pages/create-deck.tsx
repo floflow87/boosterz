@@ -69,6 +69,12 @@ export default function CreateDeck() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // Vérifier les paramètres URL pour le mode ajout
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  const deckId = urlParams.get('deckId');
+  const isAddMode = mode === 'add' && deckId;
+
   const [deckName, setDeckName] = useState("");
   const [selectedTheme, setSelectedTheme] = useState("main+background");
   const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -89,28 +95,51 @@ export default function CreateDeck() {
   // Create deck mutation
   const createDeckMutation = useMutation({
     mutationFn: async (deckData: any) => {
-      const response = await fetch("/api/decks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(deckData),
-      });
-      if (!response.ok) throw new Error("Failed to create deck");
-      return response.json();
+      if (isAddMode) {
+        // Mode ajout - ajouter les cartes au deck existant
+        const response = await fetch(`/api/decks/${deckId}/cards`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ cards: deckData.cards }),
+        });
+        if (!response.ok) throw new Error("Failed to add cards to deck");
+        return response.json();
+      } else {
+        // Mode création - créer un nouveau deck
+        const response = await fetch("/api/decks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(deckData),
+        });
+        if (!response.ok) throw new Error("Failed to create deck");
+        return response.json();
+      }
     },
-    onSuccess: (newDeck) => {
-      toast({
-        title: "Deck créé avec succès !",
-        description: `Ton deck "${deckName}" a été créé.`,
-      });
+    onSuccess: (result) => {
+      if (isAddMode) {
+        toast({
+          title: "Cartes ajoutées !",
+          description: `${selectedCards.length} carte${selectedCards.length > 1 ? 's' : ''} ajoutée${selectedCards.length > 1 ? 's' : ''} au deck.`,
+        });
+        setLocation(`/deck/${deckId}`);
+      } else {
+        toast({
+          title: "Deck créé avec succès !",
+          description: `Ton deck "${deckName}" a été créé.`,
+        });
+        setLocation("/collections");
+      }
       queryClient.invalidateQueries({ queryKey: ["/api/decks"] });
-      setLocation("/collections");
+      queryClient.invalidateQueries({ queryKey: [`/api/decks/${deckId}`] });
     },
     onError: (error) => {
       toast({
         title: "Erreur",
-        description: "Impossible de créer le deck. Réessaie plus tard.",
+        description: isAddMode ? "Impossible d'ajouter les cartes. Réessaie plus tard." : "Impossible de créer le deck. Réessaie plus tard.",
         variant: "destructive",
       });
     },

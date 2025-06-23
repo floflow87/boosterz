@@ -408,7 +408,7 @@ export default function DeckDetail() {
                       <div
                         key={`empty-${i}`}
                         className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center hover:border-gray-400 transition-colors cursor-pointer group"
-                        onClick={() => setLocation('/create-deck')}
+                        onClick={() => setLocation(`/create-deck?mode=add&deckId=${id}`)}
                       >
                         <div className="text-gray-500 group-hover:text-gray-300 transition-colors">
                           <Plus className="w-8 h-8 mx-auto mb-1" />

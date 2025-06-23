@@ -1638,6 +1638,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Add cards to existing deck
+  app.post("/api/decks/:id/cards", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      const { cards } = req.body;
+
+      // Check if deck belongs to user
+      const [existingDeck] = await db.select().from(decks).where(eq(decks.id, deckId));
+      if (!existingDeck || existingDeck.userId !== userId) {
+        return res.status(404).json({ message: "Deck non trouvé" });
+      }
+
+      // Get current card count
+      const currentCards = await db.select().from(deckCards).where(eq(deckCards.deckId, deckId));
+      
+      if (currentCards.length + cards.length > 12) {
+        return res.status(400).json({ message: "Un deck ne peut contenir que 12 cartes maximum" });
+      }
+
+      // Add new cards
+      if (cards && cards.length > 0) {
+        const newDeckCards = cards.map((card: any, index: number) => ({
+          deckId: deckId,
+          cardId: card.cardId,
+          personalCardId: card.personalCardId,
+          position: currentCards.length + index
+        }));
+        
+        await db.insert(deckCards).values(newDeckCards);
+        
+        // Update deck card count
+        await db.update(decks)
+          .set({ cardCount: currentCards.length + cards.length })
+          .where(eq(decks.id, deckId));
+      }
+
+      res.json({ message: "Cartes ajoutées avec succès", cardCount: currentCards.length + cards.length });
+    } catch (error) {
+      console.error("Error adding cards to deck:", error);
+      res.status(500).json({ message: "Erreur lors de l'ajout des cartes" });
+    }
+  });
+
   // Reorder deck cards
   app.patch("/api/decks/:id/reorder", authenticateToken, async (req: AuthRequest, res) => {
     try {
