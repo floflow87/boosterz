@@ -382,10 +382,24 @@ export default function CreateDeck() {
                           variant="compact"
                         />
                       ) : deckCard.personalCard ? (
-                        <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2">
-                          <div>
-                            <div className="font-bold">{deckCard.personalCard.playerName}</div>
-                            <div className="text-xs opacity-80">{deckCard.personalCard.teamName}</div>
+                        <div className="w-full h-full relative overflow-hidden">
+                          {deckCard.personalCard.imageUrl ? (
+                            <img
+                              src={deckCard.personalCard.imageUrl}
+                              alt={deckCard.personalCard.playerName}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2">
+                              <div>
+                                <div className="font-bold">{deckCard.personalCard.playerName}</div>
+                                <div className="text-xs opacity-80">{deckCard.personalCard.teamName}</div>
+                              </div>
+                            </div>
+                          )}
+                          {/* Overlay avec nom du joueur */}
+                          <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white text-xs p-1 text-center">
+                            <div className="font-bold truncate">{deckCard.personalCard.playerName}</div>
                           </div>
                         </div>
                       ) : null}
@@ -448,10 +462,24 @@ export default function CreateDeck() {
                         variant="compact"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2">
-                        <div>
-                          <div className="font-bold">{(item.card as PersonalCard).playerName}</div>
-                          <div className="text-xs opacity-80">{(item.card as PersonalCard).teamName}</div>
+                      <div className="w-full h-full relative overflow-hidden">
+                        {(item.card as PersonalCard).imageUrl ? (
+                          <img
+                            src={(item.card as PersonalCard).imageUrl}
+                            alt={(item.card as PersonalCard).playerName}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2">
+                            <div>
+                              <div className="font-bold">{(item.card as PersonalCard).playerName}</div>
+                              <div className="text-xs opacity-80">{(item.card as PersonalCard).teamName}</div>
+                            </div>
+                          </div>
+                        )}
+                        {/* Overlay avec nom du joueur */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white text-xs p-1 text-center">
+                          <div className="font-bold truncate">{(item.card as PersonalCard).playerName}</div>
                         </div>
                       </div>
                     )}
