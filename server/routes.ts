@@ -362,7 +362,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user profile
-  app.get("/api/users/:id", async (req, res) => {
+  app.get("/api/users/:id", optionalAuth, async (req: AuthRequest, res) => {
     try {
       const userId = parseInt(req.params.id);
       const user = await storage.getUser(userId);
@@ -371,7 +371,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      res.json(user);
+      // If there's a current user and they're looking at someone else's profile, include follow status
+      let isFollowing = false;
+      if (req.user && req.user.id !== userId) {
+        isFollowing = await storage.isFollowing(req.user.id, userId);
+      }
+      
+      res.json({
+        ...user,
+        isFollowing
+      });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
