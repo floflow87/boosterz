@@ -222,7 +222,7 @@ export default function CollectionDetail() {
 
   // Calculate category counts - Only count Base cards (600)
   const basesCount = cards?.filter(card => 
-    card.cardType === "Base"
+    card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl"
   ).length || 0;
   
   const numberedBasesCount = cards?.filter(card => 

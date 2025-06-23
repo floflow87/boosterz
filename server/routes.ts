@@ -52,14 +52,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Load all cards without pagination to show complete collection
       const cards = await storage.getCardsByCollectionId(collectionId);
-      const totalCount = cards.length;
+      
+      // Get personal cards for the user to merge images
+      const userPersonalCards = await db
+        .select()
+        .from(personalCards)
+        .where(eq(personalCards.userId, 1)); // Assuming user ID 1
+      
+      // Create a map of personal cards by player name for quick lookup
+      const personalCardMap = new Map();
+      userPersonalCards.forEach(personalCard => {
+        const key = `${personalCard.playerName?.trim()}-${personalCard.teamName?.trim()}`;
+        personalCardMap.set(key, personalCard);
+      });
+      
+      // Merge personal card images with collection cards
+      const cardsWithImages = cards.map(card => {
+        const key = `${card.playerName?.trim()}-${card.teamName?.trim()}`;
+        const personalCard = personalCardMap.get(key);
+        
+        if (personalCard && personalCard.imageUrl) {
+          return {
+            ...card,
+            imageUrl: personalCard.imageUrl,
+            isOwned: true // Mark as owned if we have a personal card with image
+          };
+        }
+        
+        return card;
+      });
+      
+      const totalCount = cardsWithImages.length;
       
       const endTime = Date.now();
-      console.log(`API: Loaded ${cards.length} cards in ${endTime - startTime}ms`);
+      console.log(`API: Loaded ${cardsWithImages.length} cards in ${endTime - startTime}ms`);
       
       // Return cards in the expected format
       res.json({
-        cards,
+        cards: cardsWithImages,
         pagination: {
           total: totalCount,
           page: 1,
