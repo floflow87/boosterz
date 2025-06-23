@@ -220,9 +220,9 @@ export default function CollectionDetail() {
 
   const filteredCards = getFilteredCards();
 
-  // Calculate category counts
+  // Calculate category counts - Only count Base cards (600)
   const basesCount = cards?.filter(card => 
-    card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl"
+    card.cardType === "Base"
   ).length || 0;
   
   const numberedBasesCount = cards?.filter(card => 
@@ -1027,7 +1027,7 @@ export default function CollectionDetail() {
             
             return (
               <div 
-                key={playerKey}
+                key={`${card.id}-${playerKey}`}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden transition-all duration-200 ${
                   isAnyVariantSelected 
                     ? `border-4 ${getCardBorderColor(currentVariant)} shadow-lg ring-2 ring-opacity-50 ${
@@ -1190,16 +1190,17 @@ export default function CollectionDetail() {
         ) : (
           // List View
           <div className="space-y-2">
-            {filteredCards?.map((card) => {
+            {filteredCards?.map((card, index) => {
               const variants = getCardVariants(card);
               const playerKey = `${card.playerName}-${card.teamName}`;
               const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
               const currentVariant = variants[currentVariantIdx] || card;
               const isAnyVariantSelected = variants.some(variant => selectedCards.has(variant.id));
+              const uniqueKey = `${card.id}-${index}-${playerKey}`;
 
               return (
                 <div 
-                  key={playerKey}
+                  key={uniqueKey}
                   className={`bg-gray-800 rounded-lg p-3 flex items-center gap-3 transition-all duration-200 cursor-pointer hover:bg-gray-700 ${
                     isAnyVariantSelected ? 'border-2 border-blue-500' : 'border border-gray-600'
                   }`}
