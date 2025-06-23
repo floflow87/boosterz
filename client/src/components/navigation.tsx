@@ -5,7 +5,7 @@ import LoadingScreen from "@/components/LoadingScreen";
 
 const navItems = [
   { id: "community", icon: Users, label: "Communauté", path: "/social" },
-  { id: "collections", icon: BookOpen, label: "Mes cartes", path: "/collections" },
+  { id: "collections", icon: BookOpen, label: "Cartes", path: "/collections" },
   { id: "messages", icon: MessageCircle, label: "Messages", path: "/conversations" },
   { id: "shop", icon: ShoppingCart, label: "Boutique", path: "/shop" },
 ];
