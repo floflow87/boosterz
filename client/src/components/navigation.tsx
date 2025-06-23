@@ -33,8 +33,6 @@ export default function Navigation() {
   };
 
   const isActive = (path: string) => {
-    console.log(`Checking if ${path} is active for location: ${location}`);
-    
     switch (path) {
       case "/social":
         return location === "/" || location === "/community" || location === "/social";
@@ -46,9 +44,7 @@ export default function Navigation() {
                location.startsWith("/deck");
       
       case "/conversations":
-        const isConvActive = location === "/conversations" || location.startsWith("/chat");
-        console.log(`Conversations active: ${isConvActive} for location: ${location}`);
-        return isConvActive;
+        return location === "/conversations" || location.startsWith("/chat");
       
       case "/shop":
         return false; // External link, never active
@@ -73,19 +69,32 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => handleNavigation(item)}
-              className={`nav-item flex flex-col items-center p-2 transition-all duration-300 h-14 justify-center ${
+              className={`nav-item flex flex-col items-center transition-all duration-500 ease-in-out h-14 justify-center relative ${
                 active 
-                  ? "text-[#F37261] rounded-full" 
-                  : "text-white hover:bg-gray-700 rounded-lg"
+                  ? "text-white" 
+                  : "text-white hover:text-[#F37261] p-2"
               }`}
-              style={active ? {
-                boxShadow: '0 0 0 6px rgba(243, 114, 97, 0.15)'
-              } : {}}
             >
-              <Icon className={`w-5 h-5 ${active ? 'scale-105' : ''} transition-transform`} />
-              {!active && (
-                <span className="text-xs mt-1 text-gray-400">{item.label}</span>
-              )}
+              {/* Cercle de fond animé pour l'état actif */}
+              <div className={`absolute inset-0 rounded-full transition-all duration-500 ease-in-out ${
+                active 
+                  ? "bg-[#F37261] scale-100 opacity-100 shadow-lg shadow-[#F37261]/30" 
+                  : "bg-transparent scale-75 opacity-0"
+              }`} />
+              
+              {/* Icône */}
+              <Icon className={`w-5 h-5 relative z-10 transition-all duration-300 ${
+                active ? 'scale-110' : 'scale-100 hover:scale-105'
+              }`} />
+              
+              {/* Label avec animation de fade */}
+              <span className={`text-xs mt-1 text-gray-400 relative z-10 transition-all duration-300 ${
+                active 
+                  ? 'opacity-0 translate-y-1' 
+                  : 'opacity-100 translate-y-0'
+              }`}>
+                {item.label}
+              </span>
             </button>
           );
         })}
