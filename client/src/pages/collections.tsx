@@ -25,6 +25,8 @@ export default function Collections() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
+  const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
+  const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
@@ -242,6 +244,37 @@ export default function Collections() {
     }
   });
 
+  // Mutation pour supprimer une carte
+  const deleteCardMutation = useMutation({
+    mutationFn: async (cardId: number) => {
+      return apiRequest("DELETE", `/api/personal-cards/${cardId}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
+      
+      toast({
+        title: "Carte supprimée",
+        description: "La carte a été supprimée avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      setShowDeleteCardModal(false);
+      setCardToDelete(null);
+      setShowOptionsPanel(false);
+      setSelectedCard(null);
+    },
+    onError: () => {
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la carte.",
+        variant: "destructive"
+      });
+    }
+  });
+
   const handleMarkAsSold = async () => {
     if (!selectedCard) return;
     
@@ -285,6 +318,18 @@ export default function Collections() {
   const confirmDeleteCollection = () => {
     if (collectionToDelete) {
       deleteCollectionMutation.mutate(collectionToDelete.id);
+    }
+  };
+
+  const handleDeleteCard = (card: Card) => {
+    setCardToDelete(card);
+    setShowDeleteCardModal(true);
+    setShowOptionsPanel(false);
+  };
+
+  const confirmDeleteCard = () => {
+    if (cardToDelete) {
+      deleteCardMutation.mutate(cardToDelete.id);
     }
   };
 
@@ -630,12 +675,7 @@ export default function Collections() {
                           <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
                         )}
                         <p className="text-gray-500 text-xs">{card.cardType}</p>
-                        {card.isSold ? (
-                          <div className="flex items-center gap-1 mt-2">
-                            <CheckCircle className="w-3 h-3 text-yellow-500" />
-                            <span className="text-yellow-500 text-xs font-medium">Vendue</span>
-                          </div>
-                        ) : card.isForTrade && card.tradePrice && (
+                        {!card.isSold && card.isForTrade && card.tradePrice && (
                           <div className="flex items-center gap-1 mt-2">
                             <DollarSign className="w-3 h-3 text-primary" />
                             <span className="text-primary text-xs font-medium">{card.tradePrice}€</span>
@@ -675,12 +715,7 @@ export default function Collections() {
                         )}
                         <p className="text-gray-500 text-sm">{card.cardType}</p>
                       </div>
-                      {card.isSold ? (
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-yellow-500" />
-                          <span className="text-yellow-500 font-medium">Vendue</span>
-                        </div>
-                      ) : card.isForTrade && card.tradePrice && (
+                      {!card.isSold && card.isForTrade && card.tradePrice && (
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-4 h-4 text-primary" />
                           <span className="text-primary font-medium">{card.tradePrice}€</span>
@@ -948,14 +983,36 @@ export default function Collections() {
                             Mettre en vente
                           </button>
                         )}
+                        
+                        <button 
+                          onClick={() => handleDeleteCard(selectedCard)}
+                          className="w-full p-4 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                        >
+                          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                            <Trash2 className="w-4 h-4 text-white" />
+                          </div>
+                          Supprimer la carte
+                        </button>
                       </>
                     )}
                     
                     {selectedCard.isSold && (
-                      <div className="w-full p-4 text-gray-400 rounded-lg font-medium text-center">
-                        <div className="text-yellow-400 font-bold mb-2">✓ Carte vendue</div>
-                        <div className="text-sm">Aucune action disponible</div>
-                      </div>
+                      <>
+                        <div className="w-full p-4 text-gray-400 rounded-lg font-medium text-center">
+                          <div className="text-yellow-400 font-bold mb-2">✓ Carte vendue</div>
+                          <div className="text-sm">Aucune action disponible</div>
+                        </div>
+                        
+                        <button 
+                          onClick={() => handleDeleteCard(selectedCard)}
+                          className="w-full p-4 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                        >
+                          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                            <Trash2 className="w-4 h-4 text-white" />
+                          </div>
+                          Supprimer la carte
+                        </button>
+                      </>
                     )}
                     
                     <button 
