@@ -29,6 +29,7 @@ export default function Collections() {
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
+  const [isCardRotated, setIsCardRotated] = useState(false);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [salePrice, setSalePrice] = useState('');
@@ -967,7 +968,10 @@ export default function Collections() {
                           transformStyle: 'preserve-3d',
                           filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
                         }}
-                        onClick={() => setShowCardFullscreen(true)}
+                        onClick={() => {
+                          setShowCardFullscreen(true);
+                          setIsCardRotated(false);
+                        }}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -1342,7 +1346,10 @@ export default function Collections() {
       {showCardFullscreen && selectedCard && selectedCard.imageUrl && (
         <div 
           className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4"
-          onClick={() => setShowCardFullscreen(false)}
+          onClick={() => {
+            setShowCardFullscreen(false);
+            setIsCardRotated(false);
+          }}
         >
           <div 
             className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center"
@@ -1363,7 +1370,9 @@ export default function Collections() {
               className="max-w-full max-h-full object-contain rounded-lg shadow-2xl cursor-pointer transition-all duration-700 hover:scale-105"
               style={{
                 filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
-                transform: 'perspective(1000px) rotateY(-15deg) rotateX(5deg)',
+                transform: isCardRotated 
+                  ? 'perspective(1000px) rotateY(45deg) rotateX(10deg) scale(1.05)'
+                  : 'perspective(1000px) rotateY(-15deg) rotateX(5deg)',
                 transformStyle: 'preserve-3d',
                 background: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.1) 100%)',
                 boxShadow: `
@@ -1376,11 +1385,7 @@ export default function Collections() {
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                const img = e.target as HTMLImageElement;
-                const isRotated = img.style.transform.includes('rotateY(45deg)');
-                img.style.transform = isRotated 
-                  ? 'perspective(1000px) rotateY(-15deg) rotateX(5deg)'
-                  : 'perspective(1000px) rotateY(45deg) rotateX(10deg) scale(1.05)';
+                setIsCardRotated(!isCardRotated);
               }}
             />
           </div>

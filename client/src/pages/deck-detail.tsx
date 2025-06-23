@@ -32,8 +32,8 @@ import {
 } from '@dnd-kit/utilities';
 import { apiRequest } from "@/lib/queryClient";
 
-interface DeckWithCards extends Deck {
-  bannerPosition?: number;
+interface DeckWithCards extends Omit<Deck, 'bannerPosition'> {
+  bannerPosition?: number | null;
   cards: Array<{
     type: 'collection' | 'personal';
     card: Card | PersonalCard;
