@@ -261,7 +261,7 @@ export default function Profile() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 text-center">
+        <div className="grid grid-cols-3 gap-4 text-center">
           <div>
             <div className="text-lg font-bold text-white">{profileUser.totalCards}</div>
             <div className="text-xs text-gray-400">Cartes</div>
@@ -269,10 +269,6 @@ export default function Profile() {
           <div>
             <div className="text-lg font-bold text-white">{profileUser.collectionsCount}</div>
             <div className="text-xs text-gray-400">Collections</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold text-white">{Math.round(profileUser.completionPercentage)}%</div>
-            <div className="text-xs text-gray-400">Complété</div>
           </div>
           <div>
             <div className="text-lg font-bold text-white">{profileUser.followersCount}</div>
