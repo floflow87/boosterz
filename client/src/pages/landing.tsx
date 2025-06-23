@@ -75,8 +75,8 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 items-center">
           {/* Left side - Branding */}
           <div className="text-center md:text-left">
-            <h1 className="text-4xl md:text-5xl font-bold font-luckiest mb-4">
-              <span className="text-[hsl(9,85%,67%)]">Card</span>Collector
+            <h1 className="text-4xl md:text-5xl font-bold font-luckiest mb-4 text-white">
+              BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
             </h1>
           </div>
 

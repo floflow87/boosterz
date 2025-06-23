@@ -106,10 +106,10 @@ export default function Settings() {
               localStorage.removeItem('onboarding_completed');
               window.location.reload();
             }}
-            className="w-full bg-red-600 hover:bg-red-700 rounded-lg p-4 flex items-center justify-center space-x-2 transition-colors"
+            className="w-full bg-transparent border-2 border-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,67%)]/10 rounded-lg p-4 flex items-center justify-center space-x-2 transition-colors"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="font-bold font-poppins">Se déconnecter</span>
+            <LogOut className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+            <span className="font-bold font-poppins text-[hsl(9,85%,67%)]">Se déconnecter</span>
           </button>
         </div>
       </div>

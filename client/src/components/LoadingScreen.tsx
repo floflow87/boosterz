@@ -101,7 +101,7 @@ export default function LoadingScreen({ message, progress }: LoadingScreenProps)
       {/* Boosterz Text at bottom */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
         <h1 className="text-4xl font-luckiest text-white animate-pulse">
-          BOOSTE<span className="text-[hsl(9,85%,67%)]">R</span><span className="text-[hsl(9,85%,67%)]">Z</span>
+          BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
         </h1>
       </div>
     </div>
