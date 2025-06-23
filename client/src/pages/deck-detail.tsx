@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical } from "lucide-react";
+import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus } from "lucide-react";
 import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   DndContext,
@@ -89,8 +91,8 @@ function SortableCard({ id, cardData, index }: SortableCardProps) {
         (cardData.card as Card).imageUrl ? (
           <div className="aspect-[2.5/3.5] rounded-lg overflow-hidden shadow-lg">
             <img 
-              src={(cardData.card as Card).imageUrl} 
-              alt={(cardData.card as Card).playerName}
+              src={(cardData.card as Card).imageUrl ?? ''} 
+              alt={(cardData.card as Card).playerName ?? 'Card'}
               className="w-full h-full object-cover"
             />
           </div>
@@ -164,6 +166,10 @@ export default function DeckDetail() {
   });
 
   const [localCards, setLocalCards] = useState<DeckWithCards['cards']>([]);
+  const [showEditPanel, setShowEditPanel] = useState(false);
+  const [showSharePanel, setShowSharePanel] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editTheme, setEditTheme] = useState('');
 
   // useEffect pour synchroniser les cartes locales
   useEffect(() => {
@@ -289,6 +295,7 @@ export default function DeckDetail() {
                   variant="ghost"
                   size="sm"
                   className="text-white hover:bg-white/10 p-2"
+                  onClick={() => setShowSharePanel(true)}
                 >
                   <Share2 className="w-5 h-5" />
                 </Button>
@@ -296,6 +303,7 @@ export default function DeckDetail() {
                   variant="ghost"
                   size="sm"
                   className="text-white hover:bg-white/10 p-2"
+                  onClick={() => setShowEditPanel(true)}
                 >
                   <Edit3 className="w-5 h-5" />
                 </Button>
@@ -316,11 +324,6 @@ export default function DeckDetail() {
 
           {/* Cards Grid */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">
-                Cartes du deck ({deck.cardCount}/12)
-              </h2>
-            </div>
 
             {localCards.length === 0 ? (
               <div className="text-center py-12">
@@ -358,10 +361,14 @@ export default function DeckDetail() {
                     {Array.from({ length: 12 - localCards.length }, (_, i) => (
                       <div
                         key={`empty-${i}`}
-                        className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center"
+                        className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center hover:border-gray-400 transition-colors cursor-pointer group"
+                        onClick={() => setLocation('/create-deck')}
                       >
-                        <div className="text-gray-500 text-xs text-center">
-                          Emplacement<br />libre
+                        <div className="text-gray-500 group-hover:text-gray-300 transition-colors">
+                          <Plus className="w-8 h-8 mx-auto mb-1" />
+                          <div className="text-xs text-center">
+                            Ajouter
+                          </div>
                         </div>
                       </div>
                     ))}
