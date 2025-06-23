@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, CreditCard, Star, Zap, Award, Users, TrendingUp, BookOpen, Trash2, AlertTriangle, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -373,7 +373,7 @@ export default function Collections() {
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
-              <Trophy className="w-4 h-4" />
+              <CreditCard className="w-4 h-4" />
               Cartes
             </button>
 
@@ -397,7 +397,7 @@ export default function Collections() {
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
-              <Package className="w-4 h-4" />
+              <BookOpen className="w-4 h-4" />
               Decks
             </button>
 
@@ -408,7 +408,7 @@ export default function Collections() {
         {activeTab === "collections" && (
           <div className="space-y-4">
             {/* Title */}
-            <h2 className="text-2xl font-bold text-white mb-6 font-luckiest">Mes Collections</h2>
+            <h2 className="text-3xl font-bold text-white mb-6">Mes Collections</h2>
             
             {/* Add Collection Button - Moved to top */}
             <div 
@@ -687,11 +687,11 @@ export default function Collections() {
         {/* Deck Tab Content */}
         {activeTab === "deck" && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
+            <h3 className="text-3xl font-bold text-white mb-4">Mes Decks</h3>
             
             <div className="text-center py-12">
               <div className="mb-6">
-                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               </div>
               <div className="text-gray-400 mb-4 text-lg">
                 Tu n'as pas créé de deck.
