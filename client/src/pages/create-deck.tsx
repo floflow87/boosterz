@@ -49,11 +49,11 @@ const themeOptions = [
     preview: "bg-navy-800 border-yellow-500"
   },
   {
-    id: "white+touch",
-    name: "Blanc & Touche",
-    backgroundColor: "#FFFFFF",
-    accentColor: "#FF6B6B",
-    preview: "bg-white border-red-400"
+    id: "red",
+    name: "Rouge",
+    backgroundColor: "#DC2626",
+    accentColor: "#FFFFFF",
+    preview: "bg-red-600 border-white"
   },
   {
     id: "white+blue",

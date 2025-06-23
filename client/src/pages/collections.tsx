@@ -814,13 +814,17 @@ export default function Collections() {
             ) : (
               <div className="grid grid-cols-1 gap-4">
                 {userDecks.map((deck) => (
-                  <div key={deck.id} className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all">
+                  <div 
+                    key={deck.id} 
+                    onClick={() => setLocation(`/deck/${deck.id}`)}
+                    className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform"
+                  >
                     <div className="flex items-center justify-between mb-3">
                       <h4 className="font-bold text-white text-lg">{deck.name}</h4>
                       <span className="text-xs text-gray-400">{deck.cardCount}/12 cartes</span>
                     </div>
                     <div className="h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold">Deck Preview</span>
+                      <span className="text-white font-bold">Voir le deck</span>
                     </div>
                   </div>
                 ))}
