@@ -497,14 +497,28 @@ export default function Collections() {
 
                     {/* Card display area */}
                     <div className="h-32 relative flex items-center justify-center overflow-hidden px-4 pb-3">
-                      <div className="relative w-full max-w-md h-24 flex items-center justify-center">
-                        {/* Main card with golden cards image */}
-                        <div className="relative w-24 h-24 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-xl p-2 shadow-xl flex items-center justify-center">
+                      <div className="relative w-full max-w-md h-32 flex items-center justify-center">
+                        {/* Main card with golden cards image and effects */}
+                        <div className="relative w-32 h-32 bg-gradient-to-br from-yellow-900/30 via-yellow-800/40 to-amber-900/50 rounded-2xl p-3 shadow-2xl flex items-center justify-center border border-yellow-500/20 group hover:scale-105 transition-all duration-300">
+                          {/* Golden glow effect */}
+                          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-amber-500/5 to-yellow-600/10 rounded-2xl animate-pulse"></div>
+                          
+                          {/* Shimmer effect */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent rounded-2xl transform -skew-x-12 animate-shimmer"></div>
+                          
                           <img 
                             src={goldenCardsIcon}
                             alt="Golden trading cards"
-                            className="w-20 h-20 object-contain rounded-lg"
+                            className="w-24 h-24 object-contain rounded-lg relative z-10 filter drop-shadow-lg group-hover:drop-shadow-2xl transition-all duration-300"
+                            style={{
+                              filter: 'drop-shadow(0 0 20px rgba(251, 191, 36, 0.3)) brightness(1.1) contrast(1.1)'
+                            }}
                           />
+                          
+                          {/* Sparkle effects */}
+                          <div className="absolute top-2 right-2 w-2 h-2 bg-yellow-400 rounded-full animate-ping opacity-75"></div>
+                          <div className="absolute bottom-3 left-3 w-1.5 h-1.5 bg-amber-300 rounded-full animate-pulse delay-300"></div>
+                          <div className="absolute top-1/2 left-2 w-1 h-1 bg-yellow-500 rounded-full animate-pulse delay-700"></div>
                         </div>
                       </div>
                     </div>
