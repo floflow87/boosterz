@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus } from "lucide-react";
+import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload } from "lucide-react";
 import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
@@ -187,6 +187,8 @@ export default function DeckDetail() {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [editName, setEditName] = useState('');
   const [editTheme, setEditTheme] = useState('');
+  const [editCoverImage, setEditCoverImage] = useState<string | null>(null);
+  const [bannerPosition, setBannerPosition] = useState(50); // Position verticale en %
 
   // useEffect pour synchroniser les cartes locales et initialiser l'édition
   useEffect(() => {
@@ -196,6 +198,7 @@ export default function DeckDetail() {
     if (deck) {
       setEditName(deck.name);
       setEditTheme(deck.themeColors);
+      setEditCoverImage(deck.coverImage);
     }
   }, [deck]);
 
@@ -225,11 +228,16 @@ export default function DeckDetail() {
 
   // Mutation pour sauvegarder les modifications du deck
   const updateDeckMutation = useMutation({
-    mutationFn: async ({ name, themeColors }: { name: string; themeColors: string }) => {
+    mutationFn: async ({ name, themeColors, coverImage, bannerPosition }: { 
+      name: string; 
+      themeColors: string; 
+      coverImage?: string | null; 
+      bannerPosition?: number; 
+    }) => {
       const response = await fetch(`/api/decks/${id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, themeColors })
+        body: JSON.stringify({ name, themeColors, coverImage, bannerPosition })
       });
       if (!response.ok) throw new Error('Failed to update deck');
       return response.json();
@@ -408,11 +416,11 @@ export default function DeckDetail() {
         </div>
       </main>
 
-      {/* Panel d'édition */}
+      {/* Panel d'édition avec fond fixe */}
       {showEditPanel && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-          <div className="bg-[hsl(214,35%,22%)] rounded-t-2xl w-full max-w-md mx-auto p-6 animate-in slide-in-from-bottom-full">
-            <div className="flex items-center justify-between mb-6">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-hidden">
+          <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-in fade-in slide-in-from-bottom-4">
+            <div className="sticky top-0 bg-[hsl(214,35%,22%)] p-6 border-b border-gray-700 flex items-center justify-between">
               <h3 className="text-xl font-bold text-white">Modifier le deck</h3>
               <Button
                 variant="ghost"
@@ -420,11 +428,11 @@ export default function DeckDetail() {
                 className="text-white hover:bg-white/10"
                 onClick={() => setShowEditPanel(false)}
               >
-                ✕
+                <X className="w-5 h-5" />
               </Button>
             </div>
 
-            <div className="space-y-4">
+            <div className="p-6 space-y-6">
               <div>
                 <Label htmlFor="deck-name" className="text-white mb-2 block">
                   Nom du deck
@@ -436,6 +444,84 @@ export default function DeckDetail() {
                   className="bg-[hsl(214,35%,15%)] border-gray-600 text-white"
                   placeholder="Nom du deck"
                 />
+              </div>
+
+              {/* Banner Section */}
+              <div>
+                <Label className="text-white mb-3 block">
+                  <Upload className="w-4 h-4 inline mr-2" />
+                  Bannière du deck
+                </Label>
+                
+                {/* Banner Preview and Upload */}
+                <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4 mb-4">
+                  {editCoverImage ? (
+                    <div className="relative">
+                      <div 
+                        className="w-full h-32 rounded-lg overflow-hidden relative bg-gray-800"
+                        style={{
+                          backgroundImage: `url(${editCoverImage})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: `center ${bannerPosition}%`
+                        }}
+                      >
+                        <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                          <span className="text-white text-sm bg-black/50 px-2 py-1 rounded">
+                            Aperçu
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {/* Position Control */}
+                      <div className="mt-3">
+                        <Label className="text-white text-sm mb-2 block">
+                          Position verticale: {bannerPosition}%
+                        </Label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={bannerPosition}
+                          onChange={(e) => setBannerPosition(Number(e.target.value))}
+                          className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                      </div>
+                      
+                      <button
+                        onClick={() => setEditCoverImage(null)}
+                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              setEditCoverImage(event.target?.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="hidden"
+                        id="bannerUpload"
+                      />
+                      <label
+                        htmlFor="bannerUpload"
+                        className="cursor-pointer border-2 border-dashed border-gray-600 rounded-lg p-6 flex flex-col items-center justify-center text-gray-400 hover:border-gray-500 hover:text-gray-300 transition-colors"
+                      >
+                        <Upload className="w-8 h-8 mb-2" />
+                        <span className="text-sm">Ajouter une bannière</span>
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -478,7 +564,12 @@ export default function DeckDetail() {
                 </Button>
                 <Button
                   className="flex-1 bg-primary hover:bg-primary/90"
-                  onClick={() => updateDeckMutation.mutate({ name: editName, themeColors: editTheme })}
+                  onClick={() => updateDeckMutation.mutate({ 
+                    name: editName, 
+                    themeColors: editTheme,
+                    coverImage: editCoverImage,
+                    bannerPosition 
+                  })}
                   disabled={updateDeckMutation.isPending}
                 >
                   {updateDeckMutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
