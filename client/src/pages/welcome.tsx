@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Star, Gift, Trophy, Users } from "lucide-react";
+import { Star, Gift, Trophy, Users, ArrowLeft } from "lucide-react";
 import HaloBlur from "@/components/halo-blur";
+import boosterzLogoPath from "@/assets/boosterz-logo.svg";
 
 export default function Welcome() {
   const [, setLocation] = useLocation();
@@ -10,7 +11,7 @@ export default function Welcome() {
   const steps = [
     {
       icon: Star,
-      title: "Collectionne",
+      title: "Bienvenue !",
       description: "Quand le digital se met au service de tes collections de cartes : Agrémente ton catalogue grâce à des centaines de collections disponibles !",
       buttonText: "Continuer"
     },
@@ -45,13 +46,31 @@ export default function Welcome() {
     }
   };
 
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   const step = steps[currentStep];
 
   return (
-    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden flex flex-col items-center justify-center">
       <HaloBlur />
       
-      <div className="relative z-10 max-w-md mx-auto px-6 text-center">
+      {/* Back arrow - only show from second slide onwards */}
+      {currentStep > 0 && (
+        <div className="absolute top-6 left-6 z-20">
+          <button
+            onClick={handleBack}
+            className="p-3 rounded-full bg-gray-800/50 hover:bg-gray-700/70 transition-colors"
+          >
+            <ArrowLeft className="w-6 h-6 text-white" />
+          </button>
+        </div>
+      )}
+      
+      <div className="relative z-10 max-w-md mx-auto px-6 text-center flex-1 flex flex-col justify-center">
         {/* Progress indicators */}
         <div className="flex justify-center space-x-2 mb-8">
           {steps.map((_, index) => (
@@ -78,9 +97,21 @@ export default function Welcome() {
           {step.description}
         </p>
 
-        {/* Special gift animation for first step */}
-        {currentStep === 0 && (
+        {/* Badge for last step */}
+        {currentStep === steps.length - 1 && (
           <div className="mb-8">
+            <div className="w-20 h-28 mx-auto mb-4 relative">
+              <div className="w-full h-full bg-gradient-to-br from-yellow-500 to-amber-600 rounded-lg shadow-lg transform rotate-3 animate-pulse">
+                <div className="absolute inset-1 bg-gradient-to-br from-yellow-400 to-amber-500 rounded-lg flex flex-col items-center justify-center text-center">
+                  <div className="text-xs font-bold text-black">SCORE</div>
+                  <div className="text-xs font-bold text-black">LIGUE 1</div>
+                  <div className="text-xs text-black">23/24</div>
+                  <div className="w-6 h-6 bg-white rounded-full mt-1 flex items-center justify-center">
+                    <span className="text-xs font-bold text-black">⚽</span>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-4 py-2 rounded-full text-sm font-semibold inline-block animate-pulse">
               🎁 Checklist de la collection Score Ligue 1 2023/24 disponible
             </div>
@@ -107,6 +138,15 @@ export default function Welcome() {
             Passer l'introduction
           </button>
         )}
+      </div>
+      
+      {/* Boosterz Logo at bottom */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
+        <img 
+          src={boosterzLogoPath}
+          alt="Boosterz"
+          className="w-48 h-auto opacity-80"
+        />
       </div>
     </div>
   );
