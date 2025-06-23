@@ -28,7 +28,7 @@ export default function Collections() {
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
-
+  const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [salePrice, setSalePrice] = useState('');

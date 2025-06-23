@@ -250,77 +250,81 @@ export default function CreateDeck() {
             />
           </div>
 
-          {/* Theme Selection */}
-          <div>
-            <Label className="text-white mb-3 block">
-              <Palette className="w-4 h-4 inline mr-2" />
-              Thème de couleur
-            </Label>
-            <div className="grid grid-cols-2 gap-3">
-              {themeOptions.map((theme) => (
-                <button
-                  key={theme.id}
-                  onClick={() => setSelectedTheme(theme.id)}
-                  className={cn(
-                    "p-3 rounded-lg border-2 transition-all text-left",
-                    selectedTheme === theme.id
-                      ? "border-primary bg-primary/10"
-                      : "border-gray-600 hover:border-gray-500"
-                  )}
-                >
-                  <div className={cn(
-                    "w-full h-8 rounded mb-2 border-2",
-                    theme.preview
-                  )} />
-                  <div className="text-white text-sm font-medium">
-                    {theme.name}
-                  </div>
-                  {selectedTheme === theme.id && (
-                    <Check className="w-4 h-4 text-primary ml-auto" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Cover Image */}
-          <div>
-            <Label className="text-white mb-2 block">
-              <Upload className="w-4 h-4 inline mr-2" />
-              Image de couverture (optionnel)
-            </Label>
-            <div className="flex items-center gap-3">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-                id="coverImageInput"
-              />
-              <label
-                htmlFor="coverImageInput"
-                className="cursor-pointer bg-[hsl(214,35%,22%)] border-2 border-dashed border-[hsl(214,35%,30%)] rounded-lg p-4 flex items-center justify-center text-gray-400 hover:border-primary transition-colors"
-              >
-                <Upload className="w-5 h-5 mr-2" />
-                Choisir une image
-              </label>
-              {coverImage && (
-                <div className="relative">
-                  <img
-                    src={coverImage}
-                    alt="Cover preview"
-                    className="w-16 h-16 object-cover rounded-lg"
-                  />
+          {/* Theme Selection - Hidden in add mode */}
+          {!isAddMode && (
+            <div>
+              <Label className="text-white mb-3 block">
+                <Palette className="w-4 h-4 inline mr-2" />
+                Thème de couleur
+              </Label>
+              <div className="grid grid-cols-2 gap-3">
+                {themeOptions.map((theme) => (
                   <button
-                    onClick={() => setCoverImage(null)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                    key={theme.id}
+                    onClick={() => setSelectedTheme(theme.id)}
+                    className={cn(
+                      "p-3 rounded-lg border-2 transition-all text-left",
+                      selectedTheme === theme.id
+                        ? "border-primary bg-primary/10"
+                        : "border-gray-600 hover:border-gray-500"
+                    )}
                   >
-                    <X className="w-3 h-3" />
+                    <div className={cn(
+                      "w-full h-8 rounded mb-2 border-2",
+                      theme.preview
+                    )} />
+                    <div className="text-white text-sm font-medium">
+                      {theme.name}
+                    </div>
+                    {selectedTheme === theme.id && (
+                      <Check className="w-4 h-4 text-primary ml-auto" />
+                    )}
                   </button>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Cover Image - Hidden in add mode */}
+          {!isAddMode && (
+            <div>
+              <Label className="text-white mb-2 block">
+                <Upload className="w-4 h-4 inline mr-2" />
+                Image de couverture (optionnel)
+              </Label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="coverImageInput"
+                />
+                <label
+                  htmlFor="coverImageInput"
+                  className="cursor-pointer bg-[hsl(214,35%,22%)] border-2 border-dashed border-[hsl(214,35%,30%)] rounded-lg p-4 flex items-center justify-center text-gray-400 hover:border-primary transition-colors"
+                >
+                  <Upload className="w-5 h-5 mr-2" />
+                  Choisir une image
+                </label>
+                {coverImage && (
+                  <div className="relative">
+                    <img
+                      src={coverImage}
+                      alt="Cover preview"
+                      className="w-16 h-16 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={() => setCoverImage(null)}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Selected Cards */}
           <div>

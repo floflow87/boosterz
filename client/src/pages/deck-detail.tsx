@@ -6,6 +6,7 @@ import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
+import LoadingScreen from "@/components/LoadingScreen";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -272,15 +273,7 @@ export default function DeckDetail() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
-        <HaloBlur />
-        <Header title="Deck" showBackButton />
-        <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white">Chargement...</div>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (!deck) {
