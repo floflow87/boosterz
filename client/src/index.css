@@ -159,33 +159,7 @@
   }
 }
 
-/* Card 3D Relief Effects */
-@keyframes cardFloat {
-  0% { 
-    transform: translateZ(40px) rotateY(5deg) rotateX(-2deg) translateY(0px); 
-  }
-  100% { 
-    transform: translateZ(40px) rotateY(5deg) rotateX(-2deg) translateY(-10px); 
-  }
-}
 
-@keyframes holographicShine {
-  0% { 
-    transform: translateX(-100%) rotateZ(45deg); 
-  }
-  100% { 
-    transform: translateX(100%) rotateZ(45deg); 
-  }
-}
-
-@keyframes goldGlow {
-  0% { 
-    opacity: 0.2; 
-  }
-  100% { 
-    opacity: 0.4; 
-  }
-}
 
 @keyframes shimmer {
   0% {

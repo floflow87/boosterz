@@ -243,84 +243,21 @@ export default function CardDisplay({
     <div
       ref={cardRef}
       className={cn(
-        "relative group cursor-pointer transition-all duration-500 hover:scale-105",
+        "relative group cursor-pointer transition-all duration-300 hover:scale-105 hover:rotate-y-10",
         isSelected && "ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-900",
         isPulledEffect && "animate-pulse scale-110 shadow-2xl shadow-yellow-400/50",
         isStarEffect && "animate-bounce"
       )}
       onClick={handleCardClick}
-      style={{
-        transformStyle: 'preserve-3d',
-        perspective: '1000px'
-      }}
     >
-      {/* Card 3D Container with Relief Effect */}
-      <div 
-        className={cn(
-          "relative aspect-[2.5/5] rounded-lg overflow-hidden transition-all duration-500",
-          card.isOwned 
-            ? "ring-2 ring-green-500/50" 
-            : "ring-2 ring-red-500/50"
-        )}
-        style={{
-          background: 'linear-gradient(145deg, #2a2a2a, #1a1a1a)',
-          boxShadow: `
-            0 8px 32px rgba(0,0,0,0.4),
-            inset 0 1px 0 rgba(255,255,255,0.1),
-            inset 0 -1px 0 rgba(0,0,0,0.2),
-            0 0 0 1px rgba(255,255,255,0.05)
-          `,
-          transform: 'translateZ(0)',
-          transformStyle: 'preserve-3d'
-        }}
-        onMouseEnter={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const rotateX = (y - centerY) / 10;
-          const rotateY = (centerX - x) / 10;
-          
-          e.currentTarget.style.transform = `
-            translateZ(20px) 
-            rotateX(${rotateX}deg) 
-            rotateY(${rotateY}deg)
-            scale(1.05)
-          `;
-          e.currentTarget.style.boxShadow = `
-            0 25px 50px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.2),
-            inset 0 -1px 0 rgba(0,0,0,0.3),
-            0 0 0 1px rgba(255,255,255,0.1)
-          `;
-        }}
-        onMouseMove={(e) => {
-          const rect = e.currentTarget.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-          const centerX = rect.width / 2;
-          const centerY = rect.height / 2;
-          const rotateX = (y - centerY) / 10;
-          const rotateY = (centerX - x) / 10;
-          
-          e.currentTarget.style.transform = `
-            translateZ(20px) 
-            rotateX(${rotateX}deg) 
-            rotateY(${rotateY}deg)
-            scale(1.05)
-          `;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateZ(0) rotateX(0deg) rotateY(0deg) scale(1)';
-          e.currentTarget.style.boxShadow = `
-            0 8px 32px rgba(0,0,0,0.4),
-            inset 0 1px 0 rgba(255,255,255,0.1),
-            inset 0 -1px 0 rgba(0,0,0,0.2),
-            0 0 0 1px rgba(255,255,255,0.05)
-          `;
-        }}
-      >
+      {/* Card Container */}
+      <div className={cn(
+        "relative aspect-[2.5/5] rounded-lg overflow-hidden shadow-lg transition-all duration-300",
+        card.isOwned 
+          ? "ring-2 ring-green-500/50 shadow-green-500/20" 
+          : "ring-2 ring-red-500/50 shadow-red-500/20",
+        "hover:shadow-xl hover:shadow-white/10"
+      )}>
         {/* Image */}
         {!isImageLoaded && (
           <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900 animate-pulse" />

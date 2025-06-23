@@ -7,7 +7,6 @@ import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 
 import CardDisplay from "../components/card-display";
-import CardFullscreenModal from "@/components/card-fullscreen-modal";
 import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -29,7 +28,7 @@ export default function Collections() {
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
-  const [fullscreenCard, setFullscreenCard] = useState<Card | null>(null);
+
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [salePrice, setSalePrice] = useState('');
@@ -710,7 +709,7 @@ export default function Collections() {
                     <div 
                       key={card.id} 
                       className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer relative ${card.isSold ? 'opacity-75' : ''}`}
-                      onClick={() => setFullscreenCard(card)}
+                      onClick={() => setSelectedCard(card)}
                     >
                       {card.isSold && (
                         <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center z-10">
@@ -751,7 +750,7 @@ export default function Collections() {
                     <div 
                       key={card.id} 
                       className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer flex items-center gap-4 relative ${card.isSold ? 'opacity-75' : ''}`}
-                      onClick={() => setFullscreenCard(card)}
+                      onClick={() => setSelectedCard(card)}
                     >
                       {card.isSold && (
                         <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded-full font-bold text-xs z-10">
@@ -1338,14 +1337,7 @@ export default function Collections() {
         </div>
       )}
 
-      {/* Card Fullscreen Modal with 3D Relief Effect */}
-      {fullscreenCard && (
-        <CardFullscreenModal
-          card={fullscreenCard}
-          isOpen={!!fullscreenCard}
-          onClose={() => setFullscreenCard(null)}
-        />
-      )}
+
       
       <Navigation />
     </div>
