@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake, MoreVertical, Star } from "lucide-react";
@@ -256,26 +256,35 @@ export default function CollectionDetail() {
 
   const filteredCards = getFilteredCards();
 
-  // Calculate category counts - Only count Base cards (600)
-  const basesCount = cards?.filter(card => 
+  // Calculate category counts - Count unique players, not all variants
+  const getUniquePlayerCount = (filterFn: (card: any) => boolean) => {
+    if (!cards) return 0;
+    const uniquePlayers = new Set();
+    cards.filter(filterFn).forEach(card => {
+      uniquePlayers.add(`${card.playerName}-${card.teamName}`);
+    });
+    return uniquePlayers.size;
+  };
+
+  const basesCount = getUniquePlayerCount(card => 
     card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl"
-  ).length || 0;
+  );
   
-  const numberedBasesCount = cards?.filter(card => 
+  const numberedBasesCount = getUniquePlayerCount(card => 
     card.cardType === "Parallel Numbered"
-  ).length || 0;
+  );
   
-  const hitsCount = cards?.filter(card => 
+  const hitsCount = getUniquePlayerCount(card => 
     card.cardType?.includes("Insert")
-  ).length || 0;
+  );
   
-  const autographsCount = cards?.filter(card => 
+  const autographsCount = getUniquePlayerCount(card => 
     card.cardType === "Autograph"
-  ).length || 0;
+  );
   
-  const specialCount = cards?.filter(card => 
+  const specialCount = getUniquePlayerCount(card => 
     card.numbering === "1/1"
-  ).length || 0;
+  );
 
   // Debug logging pour la production
   useEffect(() => {
