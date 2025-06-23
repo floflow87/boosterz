@@ -71,7 +71,7 @@ export default function Navigation() {
               onClick={() => handleNavigation(item)}
               className={`nav-item flex flex-col items-center transition-all duration-300 h-14 relative ${
                 active 
-                  ? "text-[#F37261] pt-4" 
+                  ? "text-[#F37261] justify-start pt-2" 
                   : "text-white hover:text-[#F37261] justify-center p-2"
               }`}
             >
