@@ -151,9 +151,9 @@ export default function Collections() {
     }) => {
       console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
       return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
-        salePrice: price,
-        saleDescription: description,
-        isForSale: true,
+        isForTrade: true,
+        tradePrice: price,
+        tradeDescription: description,
         tradeOnly
       });
     },
@@ -161,11 +161,8 @@ export default function Collections() {
       // Mettre à jour les cartes personnelles
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      
-      // Mettre à jour la carte sélectionnée avec les nouvelles données
-      if (selectedCard && updatedCard) {
-        setSelectedCard(updatedCard);
-      }
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
       
       toast({
         title: "Paramètres sauvegardés",
@@ -175,6 +172,7 @@ export default function Collections() {
       
       setShowTradePanel(false);
       setShowOptionsPanel(false);
+      setSelectedCard(null);
     },
     onError: (error) => {
       toast({
@@ -374,7 +372,7 @@ export default function Collections() {
               }`}
             >
               <CardIcon className="w-4 h-4" />
-              Mes Cartes
+              Cartes
             </button>
 
             <button
