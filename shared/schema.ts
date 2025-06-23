@@ -200,6 +200,7 @@ export const decks = pgTable("decks", {
   userId: integer("user_id").notNull(),
   name: text("name").notNull(),
   coverImage: text("cover_image"), // URL or base64 for custom cover
+  bannerPosition: integer("banner_position").default(50), // Position verticale de la bannière en %
   themeColors: text("theme_colors").notNull().default("main+background"), // "main+background", "white+sky", "red+navy", "navy+gold", "white+touch", "white+blue"
   backgroundColor: text("background_color").default("#1A2332").notNull(),
   accentColor: text("accent_color").default("#F37261").notNull(),

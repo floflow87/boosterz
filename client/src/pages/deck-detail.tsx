@@ -33,6 +33,7 @@ import {
 import { apiRequest } from "@/lib/queryClient";
 
 interface DeckWithCards extends Deck {
+  bannerPosition?: number;
   cards: Array<{
     type: 'collection' | 'personal';
     card: Card | PersonalCard;
@@ -370,10 +371,13 @@ export default function DeckDetail() {
             {/* Cover Image */}
             {deck.coverImage && (
               <div className="w-full h-32 rounded-lg overflow-hidden mb-4">
-                <img 
-                  src={deck.coverImage} 
-                  alt={`Couverture de ${deck.name}`}
-                  className="w-full h-full object-cover"
+                <div
+                  className="w-full h-full"
+                  style={{
+                    backgroundImage: `url(${deck.coverImage})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: `center ${deck.bannerPosition || 50}%`
+                  }}
                 />
               </div>
             )}
