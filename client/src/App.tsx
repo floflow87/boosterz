@@ -24,6 +24,7 @@ import Welcome from "@/pages/welcome";
 import Landing from "@/pages/landing";
 import CardExamples from "@/pages/card-examples";
 import AddCard from "@/pages/add-card";
+import CreateDeck from "@/pages/create-deck";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/user/:userId" component={UserProfile} />
       <Route path="/add-card" component={AddCard} />
+      <Route path="/create-deck" component={CreateDeck} />
       <Route path="/card-examples" component={CardExamples} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/landing" component={Landing} />

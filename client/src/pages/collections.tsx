@@ -58,6 +58,13 @@ export default function Collections() {
     enabled: activeTab === "cards",
   });
 
+  // Query pour les decks de l'utilisateur
+  const { data: userDecks = [], isLoading: decksLoading } = useQuery<any[]>({
+    queryKey: ["/api/decks"],
+    staleTime: 5 * 60 * 1000,
+    enabled: activeTab === "deck",
+  });
+
   // Filtrer et rechercher les cartes personnelles
   const filteredPersonalCards = personalCards.filter(card => {
     // Filtre par statut de vente
@@ -764,21 +771,61 @@ export default function Collections() {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
             
-            <div className="text-center py-12">
-              <div className="mb-6">
-                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            {/* Add Deck Button */}
+            <div 
+              onClick={() => setLocation("/create-deck")}
+              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
+            >
+              <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+                <Plus className="w-5 h-5 text-white" />
               </div>
-              <div className="text-gray-400 mb-4 text-lg">
-                Tu n'as pas créé de deck.
-              </div>
-              <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                Crée ton premier deck de cartes et montre-le à ta communauté.
-              </p>
-              <button className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-medium transition-colors">
-                <Plus className="w-4 h-4 mr-2 inline" />
-                Créer mon premier deck
-              </button>
+              <h3 className="font-bold text-white font-poppins text-base">Nouveau Deck</h3>
             </div>
+
+            {/* Decks List */}
+            {decksLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 animate-pulse">
+                    <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                    <div className="h-20 bg-gray-700 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            ) : userDecks.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="mb-6">
+                  <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                </div>
+                <div className="text-gray-400 mb-4 text-lg">
+                  Tu n'as pas encore créé de deck.
+                </div>
+                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                  Crée ton premier deck de cartes et montre-le à ta communauté.
+                </p>
+                <button 
+                  onClick={() => setLocation("/create-deck")}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  <Plus className="w-4 h-4 mr-2 inline" />
+                  Créer mon premier deck
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {userDecks.map((deck) => (
+                  <div key={deck.id} className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-white text-lg">{deck.name}</h4>
+                      <span className="text-xs text-gray-400">{deck.cardCount}/12 cartes</span>
+                    </div>
+                    <div className="h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                      <span className="text-white font-bold">Deck Preview</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
