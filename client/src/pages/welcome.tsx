@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Star, Gift, Trophy, Users, ArrowLeft } from "lucide-react";
 import HaloBlur from "@/components/halo-blur";
-import boosterzLogoPath from "@/assets/boosterz-logo.svg";
 
 export default function Welcome() {
   const [, setLocation] = useLocation();
@@ -140,14 +139,7 @@ export default function Welcome() {
         )}
       </div>
       
-      {/* Boosterz Logo at bottom */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10">
-        <img 
-          src={boosterzLogoPath}
-          alt="Boosterz"
-          className="w-48 h-auto opacity-80"
-        />
-      </div>
+
     </div>
   );
 }
