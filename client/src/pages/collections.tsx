@@ -65,6 +65,34 @@ export default function Collections() {
     enabled: activeTab === "deck",
   });
 
+  // Query pour obtenir les détails complets des decks avec cartes pour prévisualisation
+  const { data: deckPreviews = [] } = useQuery({
+    queryKey: ['/api/decks/previews'],
+    queryFn: async () => {
+      if (!userDecks?.length) return [];
+      
+      const previews = await Promise.all(
+        userDecks.map(async (deck: any) => {
+          try {
+            const response = await fetch(`/api/decks/${deck.id}`);
+            if (response.ok) {
+              const deckWithCards = await response.json();
+              return {
+                ...deck,
+                previewCards: deckWithCards.cards.slice(0, 3)
+              };
+            }
+            return { ...deck, previewCards: [] };
+          } catch {
+            return { ...deck, previewCards: [] };
+          }
+        })
+      );
+      return previews;
+    },
+    enabled: activeTab === "deck" && !!userDecks?.length,
+  });
+
   // Filtrer et rechercher les cartes personnelles
   const filteredPersonalCards = personalCards.filter(card => {
     // Filtre par statut de vente
@@ -813,7 +841,7 @@ export default function Collections() {
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-4">
-                {userDecks.map((deck) => (
+                {(deckPreviews.length > 0 ? deckPreviews : userDecks).map((deck: any) => (
                   <div 
                     key={deck.id} 
                     onClick={() => setLocation(`/deck/${deck.id}`)}
@@ -823,8 +851,38 @@ export default function Collections() {
                       <h4 className="font-bold text-white text-lg">{deck.name}</h4>
                       <span className="text-xs text-gray-400">{deck.cardCount}/12 cartes</span>
                     </div>
-                    <div className="h-20 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
-                      <span className="text-white font-bold">Voir le deck</span>
+                    
+                    {/* Preview des 3 premières cartes */}
+                    <div className="h-20 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-2">
+                      {deck.previewCards && deck.previewCards.length > 0 ? (
+                        <div className="flex space-x-2 w-full">
+                          {deck.previewCards.map((cardData: any, index: number) => (
+                            <div key={index} className="flex-1 h-16 rounded bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-1">
+                              {cardData.type === 'collection' ? (
+                                <div>
+                                  <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
+                                  <div className="text-xs opacity-80">{cardData.card.teamName}</div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
+                                  <div className="text-xs opacity-80">{cardData.card.teamName}</div>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                          {/* Emplacements vides pour compléter jusqu'à 3 */}
+                          {Array.from({ length: 3 - deck.previewCards.length }, (_, i) => (
+                            <div key={`empty-${i}`} className="flex-1 h-16 rounded border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-xs">
+                              Vide
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center w-full text-white font-bold">
+                          Deck vide - Voir le deck
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

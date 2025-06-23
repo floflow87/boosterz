@@ -1,13 +1,33 @@
 import { useState } from "react";
 import { useLocation, useParams } from "wouter";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical } from "lucide-react";
 import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
+import {
+  CSS,
+} from '@dnd-kit/utilities';
+import { apiRequest } from "@/lib/queryClient";
 
 interface DeckWithCards extends Deck {
   cards: Array<{
@@ -15,6 +35,79 @@ interface DeckWithCards extends Deck {
     card: Card | PersonalCard;
     position: number;
   }>;
+}
+
+// Composant pour les cartes triables
+interface SortableCardProps {
+  id: string;
+  cardData: {
+    type: 'collection' | 'personal';
+    card: Card | PersonalCard;
+    position: number;
+  };
+  index: number;
+}
+
+function SortableCard({ id, cardData, index }: SortableCardProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "relative group",
+        isDragging && "opacity-50 z-50"
+      )}
+      {...attributes}
+    >
+      <div className="absolute top-2 left-2 bg-black/70 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center z-10">
+        {index + 1}
+      </div>
+      
+      {/* Handle de drag */}
+      <div 
+        className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing z-10"
+        {...listeners}
+      >
+        <GripVertical className="w-4 h-4" />
+      </div>
+      
+      {cardData.type === 'collection' ? (
+        <CardDisplay
+          card={cardData.card as Card}
+          viewMode="grid"
+          variant="compact"
+        />
+      ) : (
+        <div className="aspect-[2.5/3.5] bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white text-xs text-center p-2">
+          <div>
+            <div className="font-bold text-sm mb-1">
+              {(cardData.card as PersonalCard).playerName}
+            </div>
+            <div className="text-xs opacity-80">
+              {(cardData.card as PersonalCard).teamName}
+            </div>
+            <div className="text-xs opacity-60 mt-1">
+              {(cardData.card as PersonalCard).cardType}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 const themeStyles = {
