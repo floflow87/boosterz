@@ -478,7 +478,7 @@ export default function Collections() {
                     onClick={() => {
                       setLocation(`/collection/${collection.id}`);
                     }}
-                    className="w-full bg-gradient-radial from-[hsl(214,35%,22%)] from-0% to-[hsl(216,46%,13%)] to-100% rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02]"
+                    className="w-full bg-gradient-radial from-[hsl(214,35%,22%)] from-0% to-[hsl(216,46%,13%)] to-100% rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02] border-2 border-yellow-500/50 hover:border-yellow-400/70"
                   >
                     {/* Header with title and delete button */}
                     <div className="p-4 pb-3">
