@@ -49,11 +49,11 @@ const themeOptions = [
     preview: "bg-navy-800 border-yellow-500"
   },
   {
-    id: "red",
-    name: "Rouge",
-    backgroundColor: "#DC2626",
-    accentColor: "#FFFFFF",
-    preview: "bg-red-600 border-white"
+    id: "white+red",
+    name: "Blanc & Rouge",
+    backgroundColor: "#FFFFFF",
+    accentColor: "#DC2626",
+    preview: "bg-white border-red-600"
   },
   {
     id: "white+blue",

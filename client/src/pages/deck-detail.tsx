@@ -143,10 +143,10 @@ const themeStyles = {
     accentColor: "#FFD700",
     gradientClass: "bg-gradient-radial from-blue-900 via-blue-900 to-yellow-500"
   },
-  "red": {
-    backgroundColor: "#DC2626",
-    accentColor: "#FFFFFF",
-    gradientClass: "bg-gradient-radial from-red-600 via-red-600 to-white"
+  "white+red": {
+    backgroundColor: "#FFFFFF",
+    accentColor: "#DC2626",
+    gradientClass: "bg-gradient-radial from-white via-white to-red-600"
   },
   "white+blue": {
     backgroundColor: "#FFFFFF",
@@ -301,11 +301,20 @@ export default function DeckDetail() {
           >
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-white font-luckiest mb-2">
+                <h1 className={cn(
+                  "text-2xl font-bold font-luckiest mb-2",
+                  ["white+sky", "white+red", "white+blue"].includes(deck.themeColors) 
+                    ? "text-black" 
+                    : "text-white"
+                )}>
                   {deck.name}
                 </h1>
                 <div className="text-sm">
-                  <span className="text-white/80">
+                  <span className={cn(
+                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors) 
+                      ? "text-black/80" 
+                      : "text-white/80"
+                  )}>
                     {deck.cardCount} carte{deck.cardCount > 1 ? 's' : ''}
                   </span>
                 </div>
@@ -455,7 +464,7 @@ export default function DeckDetail() {
                         {key === "white+sky" && "Blanc & Ciel"}
                         {key === "red+navy" && "Rouge & Marine"}
                         {key === "navy+gold" && "Marine & Or"}
-                        {key === "red" && "Rouge"}
+                        {key === "white+red" && "Blanc & Rouge"}
                         {key === "white+blue" && "Blanc & Bleu"}
                       </div>
                     </button>
@@ -466,7 +475,7 @@ export default function DeckDetail() {
               <div className="flex gap-3 pt-4">
                 <Button
                   variant="outline"
-                  className="flex-1 border-gray-600 text-white hover:bg-white/10"
+                  className="flex-1 border-gray-600 text-black hover:bg-white/10"
                   onClick={() => setShowEditPanel(false)}
                 >
                   Annuler
