@@ -80,46 +80,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/personal-cards/:id", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const cardId = parseInt(req.params.id);
+      const personalCardId = parseInt(req.params.id);
       const userId = req.user!.id;
       
-      console.log(`DELETE /api/personal-cards/${cardId} called by user ${userId}`);
+      console.log(`DELETE /api/personal-cards/${personalCardId} called by user ${userId}`);
       
-      if (isNaN(cardId)) {
-        return res.status(400).json({ error: "Invalid card ID" });
+      if (isNaN(personalCardId)) {
+        return res.status(400).json({ error: "Invalid personal card ID" });
       }
 
-      // Vérifier que la carte appartient à l'utilisateur
-      const card = await storage.getCard(cardId);
-      if (!card) {
-        console.log(`Card ${cardId} not found`);
-        return res.status(404).json({ error: "Card not found" });
+      // Vérifier que la carte personnelle appartient à l'utilisateur
+      const personalCard = await storage.getPersonalCard(personalCardId);
+      if (!personalCard) {
+        console.log(`Personal card ${personalCardId} not found`);
+        return res.status(404).json({ error: "Personal card not found" });
       }
 
-      console.log(`Found card: ${card.playerName} (Collection: ${card.collectionId})`);
-
-      // Pour les cartes personnelles, on vérifie simplement que la carte existe
-      // car toutes les cartes dans la collection appartiennent à l'utilisateur
-      const collections = await storage.getCollectionsByUserId(userId);
-      const ownsCard = collections.some(collection => collection.id === card.collectionId);
-      
-      console.log(`User owns card: ${ownsCard}`);
-      
-      if (!ownsCard) {
+      if (personalCard.userId !== userId) {
+        console.log(`Personal card ${personalCardId} does not belong to user ${userId}`);
         return res.status(403).json({ error: "You don't own this card" });
       }
 
-      const deleted = await storage.deleteCard(cardId);
-      console.log(`Card deletion result: ${deleted}`);
+      console.log(`Found personal card: ${personalCard.playerName} (User: ${personalCard.userId})`);
+
+      const deleted = await storage.deletePersonalCard(personalCardId);
+      console.log(`Personal card deletion result: ${deleted}`);
       
       if (deleted) {
-        res.json({ success: true, deletedCardId: cardId });
+        res.json({ success: true, deletedCardId: personalCardId });
       } else {
-        res.status(500).json({ error: "Failed to delete card" });
+        res.status(500).json({ error: "Failed to delete personal card" });
       }
     } catch (error) {
-      console.error("Error deleting card:", error);
-      res.status(500).json({ error: "Failed to delete card" });
+      console.error("Error deleting personal card:", error);
+      res.status(500).json({ error: "Failed to delete personal card" });
     }
   });
 
@@ -590,7 +584,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Update card sale settings
+  // Update card sale settings for personal cards
+  app.patch("/api/personal-cards/:id/sale-settings", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const personalCardId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      const { salePrice, saleDescription, tradeOnly, isForTrade, tradePrice, tradeDescription, isSold } = req.body;
+      
+      console.log(`PATCH /api/personal-cards/${personalCardId}/sale-settings called by user ${userId}`, req.body);
+      
+      // Vérifier que la carte personnelle appartient à l'utilisateur
+      const personalCard = await storage.getPersonalCard(personalCardId);
+      if (!personalCard) {
+        return res.status(404).json({ message: "Personal card not found" });
+      }
+
+      if (personalCard.userId !== userId) {
+        return res.status(403).json({ error: "You don't own this card" });
+      }
+      
+      const updateData: any = {};
+      
+      if (isForTrade !== undefined) updateData.isForTrade = isForTrade;
+      if (tradePrice !== undefined) updateData.tradePrice = tradePrice;
+      if (tradeDescription !== undefined) updateData.tradeDescription = tradeDescription;
+      if (tradeOnly !== undefined) updateData.tradeOnly = tradeOnly;
+      if (isSold !== undefined) updateData.isSold = isSold;
+      
+      console.log('Updating personal card with data:', updateData);
+      
+      const updatedCard = await storage.updatePersonalCard(personalCardId, updateData);
+      
+      if (!updatedCard) {
+        return res.status(404).json({ message: "Personal card not found after update" });
+      }
+      
+      console.log('Personal card updated successfully:', updatedCard.id, updatedCard.isForTrade, updatedCard.tradePrice);
+      
+      res.json(updatedCard);
+    } catch (error) {
+      console.error('Error updating personal card sale settings:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Update card sale settings for collection cards
   app.patch("/api/cards/:id/sale-settings", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);

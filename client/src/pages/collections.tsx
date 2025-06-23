@@ -152,7 +152,8 @@ export default function Collections() {
       tradeOnly: boolean;
     }) => {
       console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
-      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
+      // Utiliser la route pour cartes personnelles
+      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
         isForTrade: true,
         tradePrice: price,
         tradeDescription: description,
@@ -936,22 +937,10 @@ export default function Collections() {
                     
                     {!selectedCard.isSold && (
                       <>
-                        <button 
-                          onClick={() => {
-                            setShowOptionsPanel(false);
-                            setShowTradePanel(true);
-                          }}
-                          className="w-full p-4 text-white hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                        >
-                          <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
-                            <Edit className="w-4 h-4 text-white" />
-                          </div>
-                          Paramètres de vente
-                        </button>
-                        
+
                         <button 
                           onClick={handleMarkAsSold}
-                          className="w-full p-4 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                         >
                           <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                             <Check className="w-4 h-4 text-white" />
@@ -962,7 +951,7 @@ export default function Collections() {
                         {(selectedCard.tradePrice || selectedCard.salePrice) ? (
                           <button 
                             onClick={handleRemoveFromSale}
-                            className="w-full p-4 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                            className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                           >
                             <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                               <X className="w-4 h-4 text-white" />
@@ -975,7 +964,7 @@ export default function Collections() {
                               setShowOptionsPanel(false);
                               setShowTradePanel(true);
                             }}
-                            className="w-full p-4 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                            className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                           >
                             <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                               <DollarSign className="w-4 h-4 text-white" />
@@ -986,7 +975,7 @@ export default function Collections() {
                         
                         <button 
                           onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-4 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                         >
                           <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                             <Trash2 className="w-4 h-4 text-white" />
@@ -998,14 +987,14 @@ export default function Collections() {
                     
                     {selectedCard.isSold && (
                       <>
-                        <div className="w-full p-4 text-gray-400 rounded-lg font-medium text-center">
+                        <div className="w-full p-2 text-gray-400 rounded-lg font-medium text-center">
                           <div className="text-yellow-400 font-bold mb-2">✓ Carte vendue</div>
                           <div className="text-sm">Aucune action disponible</div>
                         </div>
                         
                         <button 
                           onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-4 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                         >
                           <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
                             <Trash2 className="w-4 h-4 text-white" />
