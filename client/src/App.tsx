@@ -44,7 +44,7 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Community} />
+      <Route path="/" component={Social} />
       <Route path="/home" component={Home} />
       <Route path="/collections" component={Collections} />
       <Route path="/collection/:id" component={CollectionDetail} />

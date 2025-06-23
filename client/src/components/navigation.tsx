@@ -34,7 +34,7 @@ export default function Navigation() {
 
   const isActive = (path: string) => {
     if (path === "/community") {
-      return location === "/" || location === "/community";
+      return location === "/" || location === "/community" || location === "/social";
     }
     if (path === "/collections") {
       return location === "/collections" || location.startsWith("/collection") || location === "/all-cards" || location.startsWith("/deck");
