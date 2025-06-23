@@ -241,11 +241,15 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateCard(id: number, updates: Partial<Card>): Promise<Card | undefined> {
+    console.log(`DatabaseStorage: Updating card ${id} with:`, updates);
+    
     const [card] = await db
       .update(cards)
       .set(updates)
       .where(eq(cards.id, id))
       .returning();
+    
+    console.log(`DatabaseStorage: Card after update:`, card);
     return card || undefined;
   }
 
@@ -272,11 +276,27 @@ export class DatabaseStorage implements IStorage {
 
   async deleteCard(id: number): Promise<boolean> {
     try {
-      // Delete the card itself - cascade will handle related data
+      console.log(`DatabaseStorage: Attempting to delete card ${id}`);
+      
+      // Check if card exists first
+      const existingCard = await db.select().from(cards).where(eq(cards.id, id));
+      console.log(`DatabaseStorage: Card exists check - found ${existingCard.length} cards`);
+      
+      if (existingCard.length === 0) {
+        console.log(`DatabaseStorage: Card ${id} not found`);
+        return false;
+      }
+      
+      // Delete the card
       const result = await db.delete(cards).where(eq(cards.id, id));
-      return result.rowCount ? result.rowCount > 0 : false;
+      console.log(`DatabaseStorage: Delete result:`, result);
+      
+      const success = result.rowCount ? result.rowCount > 0 : false;
+      console.log(`DatabaseStorage: Delete success: ${success}`);
+      
+      return success;
     } catch (error) {
-      console.error("Error deleting card:", error);
+      console.error("DatabaseStorage: Error deleting card:", error);
       return false;
     }
   }

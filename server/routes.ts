@@ -83,6 +83,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cardId = parseInt(req.params.id);
       const userId = req.user!.id;
       
+      console.log(`DELETE /api/personal-cards/${cardId} called by user ${userId}`);
+      
       if (isNaN(cardId)) {
         return res.status(400).json({ error: "Invalid card ID" });
       }
@@ -90,21 +92,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Vérifier que la carte appartient à l'utilisateur
       const card = await storage.getCard(cardId);
       if (!card) {
+        console.log(`Card ${cardId} not found`);
         return res.status(404).json({ error: "Card not found" });
       }
+
+      console.log(`Found card: ${card.playerName} (Collection: ${card.collectionId})`);
 
       // Pour les cartes personnelles, on vérifie simplement que la carte existe
       // car toutes les cartes dans la collection appartiennent à l'utilisateur
       const collections = await storage.getCollectionsByUserId(userId);
       const ownsCard = collections.some(collection => collection.id === card.collectionId);
       
+      console.log(`User owns card: ${ownsCard}`);
+      
       if (!ownsCard) {
         return res.status(403).json({ error: "You don't own this card" });
       }
 
       const deleted = await storage.deleteCard(cardId);
+      console.log(`Card deletion result: ${deleted}`);
+      
       if (deleted) {
-        res.json({ success: true });
+        res.json({ success: true, deletedCardId: cardId });
       } else {
         res.status(500).json({ error: "Failed to delete card" });
       }
@@ -585,7 +594,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.patch("/api/cards/:id/sale-settings", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);
+      const userId = req.user!.id;
       const { salePrice, saleDescription, tradeOnly, isForTrade, tradePrice, tradeDescription, isSold } = req.body;
+      
+      console.log(`PATCH /api/cards/${cardId}/sale-settings called by user ${userId}`, req.body);
+      
+      // Vérifier que la carte appartient à l'utilisateur
+      const card = await storage.getCard(cardId);
+      if (!card) {
+        return res.status(404).json({ message: "Card not found" });
+      }
+
+      const collections = await storage.getCollectionsByUserId(userId);
+      const ownsCard = collections.some(collection => collection.id === card.collectionId);
+      
+      if (!ownsCard) {
+        return res.status(403).json({ error: "You don't own this card" });
+      }
       
       const updateData: any = {};
       
@@ -597,11 +622,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (tradeDescription !== undefined) updateData.tradeDescription = tradeDescription;
       if (isSold !== undefined) updateData.isSold = isSold;
       
+      console.log('Updating card with data:', updateData);
+      
       const updatedCard = await storage.updateCard(cardId, updateData);
       
       if (!updatedCard) {
-        return res.status(404).json({ message: "Card not found" });
+        return res.status(404).json({ message: "Card not found after update" });
       }
+      
+      console.log('Card updated successfully:', updatedCard.id, updatedCard.isForTrade, updatedCard.tradePrice);
       
       res.json(updatedCard);
     } catch (error) {
