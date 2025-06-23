@@ -129,12 +129,16 @@ export default function Collections() {
   const { data: allUserCardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: ["/api/cards/all"],
     enabled: !selectedCollection && activeTab === "cards",
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Query for specific collection cards
   const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
+    staleTime: 3 * 60 * 1000, // Cache for 3 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Extract cards from response - use all user cards if no collection selected
