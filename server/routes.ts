@@ -631,13 +631,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/cards", optionalAuth, async (req: AuthRequest, res) => {
     try {
       const cardData = req.body;
+      console.log("Creating card with data:", cardData);
       
       // Validate required fields
       if (!cardData.collectionId || !cardData.cardType) {
         return res.status(400).json({ error: "Collection ID and card type are required" });
       }
 
-      const newCard = await storage.createCard(cardData);
+      // Ensure all required fields are present with proper defaults
+      const completeCardData = {
+        ...cardData,
+        isOwned: cardData.isOwned ?? false,
+        isRookieCard: cardData.isRookieCard ?? false,
+        isForTrade: cardData.isForTrade ?? false,
+        tradeOnly: cardData.tradeOnly ?? false,
+        salePrice: cardData.salePrice ?? null,
+        saleDescription: cardData.saleDescription ?? null,
+        isSold: cardData.isSold ?? false,
+        isFeatured: cardData.isFeatured ?? false,
+        tradeDescription: cardData.tradeDescription ?? null,
+        tradePrice: cardData.tradePrice ?? null,
+        rarity: cardData.rarity ?? null,
+        numbering: cardData.numbering ?? null,
+        variants: cardData.variants ?? null
+      };
+
+      const newCard = await storage.createCard(completeCardData);
+      console.log("Card created successfully:", newCard);
       res.status(201).json(newCard);
     } catch (error) {
       console.error("Error creating card:", error);
