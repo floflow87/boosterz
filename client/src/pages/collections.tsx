@@ -967,6 +967,7 @@ export default function Collections() {
                           transformStyle: 'preserve-3d',
                           filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
                         }}
+                        onClick={() => setShowCardFullscreen(true)}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -1337,8 +1338,37 @@ export default function Collections() {
         </div>
       )}
 
+      {/* Card Fullscreen Modal */}
+      {showCardFullscreen && selectedCard && selectedCard.imageUrl && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4"
+          onClick={() => setShowCardFullscreen(false)}
+        >
+          <div 
+            className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowCardFullscreen(false)}
+              className="absolute top-4 right-4 z-10 w-12 h-12 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white transition-all duration-300"
+            >
+              <X className="w-6 h-6" />
+            </button>
 
-      
+            {/* Card Image */}
+            <img
+              src={selectedCard.imageUrl}
+              alt={selectedCard.playerName || "Card"}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              style={{
+                filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))'
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       <Navigation />
     </div>
   );
