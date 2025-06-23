@@ -153,11 +153,10 @@ export default function Collections() {
       tradeOnly: boolean;
     }) => {
       console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
-      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
+      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
         salePrice: price,
         saleDescription: description,
-        isForSale: true,
-        tradeOnly
+        isForSale: true
       });
     },
     onSuccess: (updatedCard) => {
@@ -191,7 +190,7 @@ export default function Collections() {
   // Mutation pour retirer de la vente
   const removeFromSaleMutation = useMutation({
     mutationFn: async (cardId: number) => {
-      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
+      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
         isForSale: false,
         salePrice: null,
         saleDescription: null
@@ -250,14 +249,13 @@ export default function Collections() {
     if (!selectedCard) return;
     
     try {
-      await apiRequest("PATCH", `/api/cards/${selectedCard.id}/sale-settings`, {
+      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}/sale-settings`, {
         isSold: true,
-        isForTrade: false
+        isForSale: false
       });
       
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
       
       toast({
