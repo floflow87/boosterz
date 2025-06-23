@@ -115,7 +115,7 @@ export default function CardDisplay({
   };
 
   const getRarityIndicator = () => {
-    if (card.cardType === 'Autograph') return '✍️';
+    if (card.cardType === 'Autographe') return '✍️';
     if (card.cardType.includes('Insert')) return '💎';
     if (card.cardType.includes('Numbered')) return '🔢';
     if (card.cardType.includes('Parallel')) return '🌟';

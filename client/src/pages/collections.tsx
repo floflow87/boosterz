@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("collections");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -33,7 +33,7 @@ export default function Collections() {
   const [salePrice, setSalePrice] = useState('');
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
-  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('available');
+  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -386,10 +386,18 @@ export default function Collections() {
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
               <div className="flex items-center space-x-1">
                 <span className="font-medium text-white">
-                  {collections?.reduce((total, collection) => {
-                    const completion = getCollectionCompletion(collection);
-                    return total + completion.ownedCards;
-                  }, 0) || 0}
+                  {(() => {
+                    // Compter les cartes des collections
+                    const collectionCards = collections?.reduce((total, collection) => {
+                      const completion = getCollectionCompletion(collection);
+                      return total + completion.ownedCards;
+                    }, 0) || 0;
+                    
+                    // Compter les cartes personnelles (excepté les vendues)
+                    const personalCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
+                    
+                    return collectionCards + personalCardsCount;
+                  })()}
                 </span>
                 <span>cartes</span>
               </div>
