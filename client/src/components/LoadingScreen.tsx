@@ -1,5 +1,4 @@
 import captainTsubasaPath from "@assets/b2585610-b824-4549-bf16-f1fd4a8f0da0_1750364780097.png";
-import boosterzLogoPath from "@/assets/boosterz-logo.svg";
 
 interface LoadingScreenProps {
   message?: string;
@@ -99,13 +98,11 @@ export default function LoadingScreen({ message, progress }: LoadingScreenProps)
         </div>
       </div>
       
-      {/* Boosterz Logo at bottom */}
+      {/* Boosterz Text at bottom */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-        <img 
-          src={boosterzLogoPath}
-          alt="Boosterz"
-          className="w-48 h-auto opacity-80 animate-pulse"
-        />
+        <h1 className="text-4xl font-luckiest text-white animate-pulse">
+          BOOSTE<span className="text-[hsl(9,85%,67%)]">R</span><span className="text-[hsl(9,85%,67%)]">Z</span>
+        </h1>
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ import type { User, Collection, Card } from "@shared/schema";
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("collections");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 

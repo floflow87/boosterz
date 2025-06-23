@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import Splash from "@/pages/splash";
+import Home from "@/pages/home";
 import Collections from "@/pages/collections";
 import CollectionDetail from "@/pages/collection-detail";
 import AllCards from "@/pages/all-cards";
