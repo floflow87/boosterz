@@ -60,9 +60,8 @@ export default function Collections() {
   const filteredPersonalCards = personalCards.filter(card => {
     // Filtre par statut de vente
     if (saleFilter === 'available') {
-      // En vente : cartes avec isForTrade=true ou salePrice défini, mais pas vendues
-      const isForSale = card.isForTrade || card.salePrice || card.tradePrice;
-      if (!isForSale || card.isSold) return false;
+      // En vente : cartes avec isForTrade=true, mais pas vendues
+      if (!card.isForTrade || card.isSold) return false;
     } else if (saleFilter === 'sold') {
       // Vendues : seulement les cartes avec isSold=true
       if (!card.isSold) return false;
@@ -190,19 +189,19 @@ export default function Collections() {
   const removeFromSaleMutation = useMutation({
     mutationFn: async (cardId: number) => {
       return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
-        isForSale: false,
+        isForTrade: false,
         salePrice: null,
-        saleDescription: null
+        saleDescription: null,
+        tradePrice: null,
+        tradeDescription: null,
+        tradeOnly: false
       });
     },
     onSuccess: (updatedCard) => {
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
-      if (selectedCard && updatedCard) {
-        setSelectedCard(updatedCard);
-      }
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
       
       toast({
         title: "Carte retirée de la vente",
@@ -211,6 +210,7 @@ export default function Collections() {
       });
       
       setShowOptionsPanel(false);
+      setSelectedCard(null);
     },
     onError: (error) => {
       toast({
