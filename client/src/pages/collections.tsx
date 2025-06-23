@@ -1360,9 +1360,27 @@ export default function Collections() {
             <img
               src={selectedCard.imageUrl}
               alt={selectedCard.playerName || "Card"}
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl cursor-pointer transition-all duration-700 hover:scale-105"
               style={{
-                filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))'
+                filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
+                transform: 'perspective(1000px) rotateY(-15deg) rotateX(5deg)',
+                transformStyle: 'preserve-3d',
+                background: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.1) 100%)',
+                boxShadow: `
+                  0 0 0 8px rgba(255,215,0,0.3),
+                  0 0 0 16px rgba(255,215,0,0.1),
+                  20px 20px 60px rgba(0,0,0,0.8),
+                  inset -5px -5px 15px rgba(0,0,0,0.3),
+                  inset 5px 5px 15px rgba(255,255,255,0.1)
+                `
+              }}
+              onClick={(e) => {
+                e.stopPropagation();
+                const img = e.target as HTMLImageElement;
+                const isRotated = img.style.transform.includes('rotateY(45deg)');
+                img.style.transform = isRotated 
+                  ? 'perspective(1000px) rotateY(-15deg) rotateX(5deg)'
+                  : 'perspective(1000px) rotateY(45deg) rotateX(10deg) scale(1.05)';
               }}
             />
           </div>

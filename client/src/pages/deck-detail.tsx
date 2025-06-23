@@ -324,7 +324,7 @@ export default function DeckDetail() {
                       ? "text-black/80" 
                       : "text-white/80"
                   )}>
-                    {deck.cardCount} carte{deck.cardCount > 1 ? 's' : ''}
+                    {localCards.length}/12 cartes
                   </span>
                 </div>
               </div>
@@ -364,57 +364,44 @@ export default function DeckDetail() {
           {/* Cards Grid */}
           <div className="space-y-4">
 
-            {localCards.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="text-gray-400 mb-4">
-                  Ce deck ne contient pas encore de cartes.
-                </div>
-                <Button
-                  onClick={() => setLocation(`/create-deck`)}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  Ajouter des cartes
-                </Button>
-              </div>
-            ) : (
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
+            {/* Grille des cartes avec emplacements vides */}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={localCards.map(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}`)}
+                strategy={rectSortingStrategy}
               >
-                <SortableContext
-                  items={localCards.map(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}`)}
-                  strategy={rectSortingStrategy}
-                >
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    {localCards.map((deckCard, index) => (
-                      <SortableCard
-                        key={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
-                        id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
-                        cardData={deckCard}
-                        index={index}
-                      />
-                    ))}
-                    
-                    {/* Empty slots */}
-                    {Array.from({ length: 12 - localCards.length }, (_, i) => (
-                      <div
-                        key={`empty-${i}`}
-                        className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center hover:border-gray-400 transition-colors cursor-pointer group"
-                        onClick={() => setLocation(`/create-deck?mode=add&deckId=${id}`)}
-                      >
-                        <div className="text-gray-500 group-hover:text-gray-300 transition-colors">
-                          <Plus className="w-8 h-8 mx-auto mb-1" />
-                          <div className="text-xs text-center">
-                            Ajouter
-                          </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  {localCards.map((deckCard, index) => (
+                    <SortableCard
+                      key={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
+                      id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
+                      cardData={deckCard}
+                      index={index}
+                    />
+                  ))}
+                  
+                  {/* Empty slots */}
+                  {Array.from({ length: 12 - localCards.length }, (_, i) => (
+                    <div
+                      key={`empty-${i}`}
+                      className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center hover:border-gray-400 transition-colors cursor-pointer group"
+                      onClick={() => setLocation(`/create-deck?mode=add&deckId=${id}`)}
+                    >
+                      <div className="text-gray-500 group-hover:text-gray-300 transition-colors">
+                        <Plus className="w-8 h-8 mx-auto mb-1" />
+                        <div className="text-xs text-center">
+                          + ajouter
                         </div>
                       </div>
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )}
+                    </div>
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           </div>
 
 
