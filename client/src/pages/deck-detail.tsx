@@ -104,19 +104,35 @@ function SortableCard({ id, cardData, index }: SortableCardProps) {
           />
         )
       ) : (
-        <div className="aspect-[2.5/3.5] bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white text-xs text-center p-2">
-          <div>
-            <div className="font-bold text-sm mb-1">
-              {(cardData.card as PersonalCard).playerName}
-            </div>
-            <div className="text-xs opacity-80">
-              {(cardData.card as PersonalCard).teamName}
-            </div>
-            <div className="text-xs opacity-60 mt-1">
-              {(cardData.card as PersonalCard).cardType}
+        (cardData.card as PersonalCard).imageUrl ? (
+          <div className="aspect-[2.5/3.5] rounded-lg overflow-hidden shadow-lg relative">
+            <img 
+              src={(cardData.card as PersonalCard).imageUrl ?? ''} 
+              alt={(cardData.card as PersonalCard).playerName ?? 'Card'}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+              <div className="text-white text-xs">
+                <div className="font-bold">{(cardData.card as PersonalCard).playerName}</div>
+                <div className="opacity-80">{(cardData.card as PersonalCard).teamName}</div>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          <div className="aspect-[2.5/3.5] bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white text-xs text-center p-2">
+            <div>
+              <div className="font-bold text-sm mb-1">
+                {(cardData.card as PersonalCard).playerName}
+              </div>
+              <div className="text-xs opacity-80">
+                {(cardData.card as PersonalCard).teamName}
+              </div>
+              <div className="text-xs opacity-60 mt-1">
+                {(cardData.card as PersonalCard).cardType}
+              </div>
+            </div>
+          </div>
+        )
       )}
     </div>
   );

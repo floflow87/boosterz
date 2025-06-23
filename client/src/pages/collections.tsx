@@ -865,13 +865,19 @@ export default function Collections() {
                                 transformStyle: 'preserve-3d'
                               }}
                             >
-                              {cardData.type === 'collection' && cardData.card.imageUrl ? (
-                                <div className="w-full h-full rounded-lg overflow-hidden shadow-lg border-2 border-white/20">
+                              {cardData.card.imageUrl ? (
+                                <div className="w-full h-full rounded-lg overflow-hidden shadow-lg border-2 border-white/20 relative">
                                   <img 
                                     src={cardData.card.imageUrl} 
                                     alt={cardData.card.playerName}
                                     className="w-full h-full object-cover"
                                   />
+                                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-1">
+                                    <div className="text-white text-xs">
+                                      <div className="font-bold text-xs">{cardData.card.playerName}</div>
+                                      <div className="opacity-80 text-xs">{cardData.card.teamName}</div>
+                                    </div>
+                                  </div>
                                 </div>
                               ) : (
                                 <div className="w-full h-full rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2 shadow-lg border-2 border-white/20">
