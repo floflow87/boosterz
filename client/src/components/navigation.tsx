@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Users, BookOpen, MessageCircle, ShoppingCart } from "lucide-react";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import LoadingScreen from "@/components/LoadingScreen";
 
 const navItems = [
@@ -13,6 +14,16 @@ const navItems = [
 export default function Navigation() {
   const [location, setLocation] = useLocation();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Récupérer le nombre de messages non lus
+  const { data: conversationsData } = useQuery({
+    queryKey: ['/api/chat/conversations'],
+    refetchInterval: 5000, // Actualiser toutes les 5 secondes
+  });
+
+  // Calculer le nombre total de messages non lus
+  const conversations = Array.isArray(conversationsData) ? conversationsData : [];
+  const unreadCount = conversations.reduce((total: number, conv: any) => total + (conv.unreadCount || 0), 0);
 
   const handleNavigation = (item: any) => {
     if (item.id === "shop") {
@@ -81,7 +92,17 @@ export default function Navigation() {
                      style={{ backgroundColor: 'rgba(243, 114, 97, 0.5)' }} />
               )}
               
-              <Icon className={`w-5 h-5 ${active ? 'scale-105' : ''} transition-transform duration-200`} />
+              <div className="relative">
+                <Icon className={`w-5 h-5 ${active ? 'scale-105' : ''} transition-transform duration-200`} />
+                {/* Pastille de notification pour les messages */}
+                {item.id === "messages" && unreadCount > 0 && (
+                  <div className="absolute -top-2 -right-2 w-5 h-5 bg-[#F37261] rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-white">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
+                  </div>
+                )}
+              </div>
               {!active && (
                 <span className="text-xs mt-1 text-gray-400">{item.label}</span>
               )}
