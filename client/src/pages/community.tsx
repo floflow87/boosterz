@@ -9,7 +9,7 @@ export default function Community() {
   const [, setLocation] = useLocation();
 
   const handleUserClick = (userId: number) => {
-    setLocation(`/user/${userId}`);
+    setLocation(`/profile/${userId}`);
   };
 
   return (

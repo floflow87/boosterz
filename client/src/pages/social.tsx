@@ -275,11 +275,11 @@ export default function Social() {
 
   // Fonctions pour le menu vertical
   const handleViewProfile = (userId: number) => {
-    setLocation(`/user/${userId}`);
+    setLocation(`/profile/${userId}`);
   };
 
   const handleUserClick = (userId: number) => {
-    setLocation(`/user/${userId}`);
+    setLocation(`/profile/${userId}`);
   };
 
   const handleFollowUser = (userId: number) => {
