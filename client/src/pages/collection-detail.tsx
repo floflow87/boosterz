@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useParams, useLocation } from "wouter";
 import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake, MoreVertical, Star } from "lucide-react";
@@ -125,44 +125,8 @@ export default function CollectionDetail() {
     refetchIntervalInBackground: false,
   });
 
-  // Get personal cards with images
-  const { data: personalCards } = useQuery<any[]>({
-    queryKey: ["/api/personal-cards"],
-    staleTime: 5 * 60 * 1000,
-  });
-
-  // Extract cards from response and merge with personal cards images
-  const rawCards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
-  
-  // Create a map of personal cards by player name for quick lookup
-  const personalCardMap = useMemo(() => {
-    const map = new Map();
-    if (personalCards) {
-      personalCards.forEach(personalCard => {
-        const key = `${personalCard.playerName?.trim()}-${personalCard.teamName?.trim()}`;
-        map.set(key, personalCard);
-      });
-    }
-    return map;
-  }, [personalCards]);
-  
-  // Merge personal card images with collection cards
-  const cards = useMemo(() => {
-    return rawCards.map(card => {
-      const key = `${card.playerName?.trim()}-${card.teamName?.trim()}`;
-      const personalCard = personalCardMap.get(key);
-      
-      if (personalCard && personalCard.imageUrl) {
-        return {
-          ...card,
-          imageUrl: personalCard.imageUrl,
-          isOwned: true // Mark as owned if we have a personal card with image
-        };
-      }
-      
-      return card;
-    });
-  }, [rawCards, personalCardMap]);
+  // Extract cards from response (handle both old array format and new paginated format)
+  const cards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
 
   // Scroll to top when page loads
   useEffect(() => {
@@ -170,28 +134,21 @@ export default function CollectionDetail() {
   }, [collectionId]);
 
   // Group cards by player and show only one card per player
-  const getFilteredCards = () => {
+  const getUniquePlayerCards = () => {
     if (!cards) return [];
     
-    let filteredCardsList = cards.filter(card => {
+    const playerGroups = new Map();
+    
+    cards.forEach(card => {
       const matchesSearch = !searchTerm || 
         card.playerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         card.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         card.reference.toLowerCase().includes(searchTerm.toLowerCase());
 
-      if (!matchesSearch) return false;
+      if (!matchesSearch) return;
 
       let includeCard = false;
       switch (filter) {
-        case "all":
-          includeCard = true;
-          break;
-        case "owned":
-          includeCard = card.isOwned;
-          break;
-        case "missing":
-          includeCard = !card.isOwned;
-          break;
         case "bases": 
           includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
           break;
@@ -205,16 +162,22 @@ export default function CollectionDetail() {
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          includeCard = card.numbering === "1/1";
+          includeCard = card.cardType === "special_1_1" || card.numbering === "1/1";
           break;
+
         default: 
           includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
       }
 
-      return includeCard;
+      if (includeCard) {
+        const playerKey = `${card.playerName}-${card.teamName}`;
+        if (!playerGroups.has(playerKey)) {
+          playerGroups.set(playerKey, card);
+        }
+      }
     });
     
-    let sortedCards = filteredCardsList;
+    let sortedCards = Array.from(playerGroups.values());
     
     // Pour les hits, trier par type de carte puis par joueur
     if (filter === "hits") {
@@ -254,37 +217,13 @@ export default function CollectionDetail() {
     return sortedCards;
   };
 
-  const filteredCards = getFilteredCards();
+  const filteredCards = getUniquePlayerCards();
 
-  // Calculate category counts - Count unique players, not all variants
-  const getUniquePlayerCount = (filterFn: (card: any) => boolean) => {
-    if (!cards) return 0;
-    const uniquePlayers = new Set();
-    cards.filter(filterFn).forEach(card => {
-      uniquePlayers.add(`${card.playerName}-${card.teamName}`);
-    });
-    return uniquePlayers.size;
-  };
-
-  const basesCount = getUniquePlayerCount(card => 
-    card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl"
-  );
-  
-  const numberedBasesCount = getUniquePlayerCount(card => 
-    card.cardType === "Parallel Numbered"
-  );
-  
-  const hitsCount = getUniquePlayerCount(card => 
-    card.cardType?.includes("Insert")
-  );
-  
-  const autographsCount = getUniquePlayerCount(card => 
-    card.cardType === "Autograph"
-  );
-  
-  const specialCount = getUniquePlayerCount(card => 
-    card.numbering === "1/1"
-  );
+  // Calculate numbered bases count (excluding 1/1 cards)
+  const numberedBasesCount = cards?.filter(card => 
+    card.cardType === "Parallel Numbered" && 
+    card.numbering !== "1/1"
+  ).length || 0;
 
   // Debug logging pour la production
   useEffect(() => {
@@ -315,7 +254,7 @@ export default function CollectionDetail() {
           <p className="text-gray-400 mb-4">Impossible de charger les cartes de la collection</p>
           <button 
             onClick={() => queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] })}
-            className="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg"
+            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
           >
             Réessayer
           </button>
@@ -842,7 +781,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
           >
-            Bases ({basesCount})
+            Bases
           </button>
           <button
             onClick={() => setFilter("bases_numbered")}
@@ -864,7 +803,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "hits" ? { backgroundColor: '#F37261' } : {}}
           >
-            Hits ({hitsCount})
+            Hits
           </button>
           <button
             onClick={() => setFilter("autographs")}
@@ -875,7 +814,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "autographs" ? { backgroundColor: '#F37261' } : {}}
           >
-            Autographes ({autographsCount})
+            Autographes
           </button>
 
           <button
@@ -886,7 +825,7 @@ export default function CollectionDetail() {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Spéciales ({specialCount})
+            Spéciales
           </button>
           </div>
         </div>
@@ -1012,6 +951,12 @@ export default function CollectionDetail() {
               {searchTerm ? "Aucune carte trouvée pour cette recherche" : 
                "Aucune carte dans cette catégorie"}
             </div>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
+            >
+              Recharger la page
+            </button>
           </div>
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-2 gap-3">
@@ -1072,7 +1017,7 @@ export default function CollectionDetail() {
             
             return (
               <div 
-                key={`${card.id}-${playerKey}`}
+                key={playerKey}
                 className={`relative bg-gray-800 rounded-xl overflow-hidden transition-all duration-200 ${
                   isAnyVariantSelected 
                     ? `border-4 ${getCardBorderColor(currentVariant)} shadow-lg ring-2 ring-opacity-50 ${
@@ -1235,17 +1180,16 @@ export default function CollectionDetail() {
         ) : (
           // List View
           <div className="space-y-2">
-            {filteredCards?.map((card, index) => {
+            {filteredCards?.map((card) => {
               const variants = getCardVariants(card);
               const playerKey = `${card.playerName}-${card.teamName}`;
               const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
               const currentVariant = variants[currentVariantIdx] || card;
               const isAnyVariantSelected = variants.some(variant => selectedCards.has(variant.id));
-              const uniqueKey = `${card.id}-${index}-${playerKey}`;
 
               return (
                 <div 
-                  key={uniqueKey}
+                  key={playerKey}
                   className={`bg-gray-800 rounded-lg p-3 flex items-center gap-3 transition-all duration-200 cursor-pointer hover:bg-gray-700 ${
                     isAnyVariantSelected ? 'border-2 border-blue-500' : 'border border-gray-600'
                   }`}

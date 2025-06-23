@@ -221,13 +221,9 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
         title: "Carte ajoutée avec succès",
         description: "La carte a été ajoutée à votre collection",
       });
-      // Invalidate all relevant queries to refresh the display
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       if (selectedCollectionId) {
         queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}/cards`] });
-        queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}`] });
       }
       handleClose();
     },
@@ -473,10 +469,8 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                       <SelectValue placeholder="Sélectionner une collection" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-gray-600">
-                      {collections.filter(coll => coll.id && coll.name).map((coll) => (
-                        <SelectItem key={coll.id} value={coll.id.toString()} className="text-white hover:bg-gray-700">
-                          {coll.name}
-                        </SelectItem>
+                      {collections.map((coll) => (
+                        <SelectItem key={coll.id} value={coll.id.toString()}>{coll.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

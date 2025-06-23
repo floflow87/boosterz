@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, CreditCard, Star, Zap, Award, Users, TrendingUp, BookOpen, Trash2, AlertTriangle, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -129,16 +129,12 @@ export default function Collections() {
   const { data: allUserCardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: ["/api/cards/all"],
     enabled: !selectedCollection && activeTab === "cards",
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
-    refetchOnWindowFocus: false,
   });
 
   // Query for specific collection cards
   const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
-    staleTime: 3 * 60 * 1000, // Cache for 3 minutes
-    refetchOnWindowFocus: false,
   });
 
   // Extract cards from response - use all user cards if no collection selected
@@ -157,10 +153,11 @@ export default function Collections() {
       tradeOnly: boolean;
     }) => {
       console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
-      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
+      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
         salePrice: price,
         saleDescription: description,
-        isForSale: true
+        isForSale: true,
+        tradeOnly
       });
     },
     onSuccess: (updatedCard) => {
@@ -194,7 +191,7 @@ export default function Collections() {
   // Mutation pour retirer de la vente
   const removeFromSaleMutation = useMutation({
     mutationFn: async (cardId: number) => {
-      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
+      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
         isForSale: false,
         salePrice: null,
         saleDescription: null
@@ -253,13 +250,14 @@ export default function Collections() {
     if (!selectedCard) return;
     
     try {
-      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}/sale-settings`, {
+      await apiRequest("PATCH", `/api/cards/${selectedCard.id}/sale-settings`, {
         isSold: true,
-        isForSale: false
+        isForTrade: false
       });
       
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
       
       toast({
@@ -269,6 +267,7 @@ export default function Collections() {
       });
       setShowOptionsPanel(false);
       setSelectedCard(null);
+      setSelectedCard(null);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -276,6 +275,11 @@ export default function Collections() {
         variant: "destructive"
       });
     }
+  };
+
+  const handleRemoveFromSale = () => {
+    if (!selectedCard) return;
+    removeFromSaleMutation.mutate(selectedCard.id);
   };
 
   const handleDeleteCollection = (collection: Collection) => {
@@ -309,72 +313,6 @@ export default function Collections() {
     setSalePrice('');
     setSaleDescription('');
     setTradeOnly(false);
-  };
-
-  const handleRemoveFromSale = () => {
-    if (!selectedCard) return;
-    removeFromSaleMutation.mutate(selectedCard.id);
-  };
-
-  const handleAddToCollection = async () => {
-    if (!selectedCard) return;
-    
-    try {
-      // Détecter la collection appropriée basée sur le contexte
-      const targetCollectionId = selectedCollection || collections?.[0]?.id;
-      
-      if (!targetCollectionId) {
-        toast({
-          title: "Aucune collection disponible",
-          description: "Vous devez d'abord créer une collection.",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Ajouter la carte à la collection avec le bon type
-      const cardData = {
-        collectionId: targetCollectionId,
-        playerName: selectedCard.playerName,
-        teamName: selectedCard.teamName,
-        cardType: selectedCard.cardType || 'base',
-        reference: selectedCard.reference || `${Date.now()}`,
-        numbering: selectedCard.numbering,
-        imageUrl: selectedCard.imageUrl,
-        isOwned: true,
-        isForTrade: false,
-        cardSubType: selectedCard.cardSubType,
-        isRookieCard: selectedCard.isRookieCard || false,
-        rarity: selectedCard.rarity,
-        tradeDescription: null,
-        tradePrice: null,
-        tradeOnly: false,
-        salePrice: null,
-        saleDescription: null,
-        isSold: false,
-        isFeatured: false
-      };
-
-      await apiRequest("POST", "/api/cards", cardData);
-      
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: [`/api/collections/${targetCollectionId}/cards`] });
-      
-      toast({
-        title: "Carte ajoutée avec succès",
-        description: `La carte a été ajoutée à votre collection.`,
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la carte à la collection.",
-        variant: "destructive"
-      });
-    }
   };
 
   if (userLoading || collectionsLoading) {
@@ -438,7 +376,7 @@ export default function Collections() {
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
-              <CreditCard className="w-4 h-4" />
+              <Trophy className="w-4 h-4" />
               Cartes
             </button>
 
@@ -462,7 +400,7 @@ export default function Collections() {
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
-              <BookOpen className="w-4 h-4" />
+              <Package className="w-4 h-4" />
               Decks
             </button>
 
@@ -472,9 +410,6 @@ export default function Collections() {
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
           <div className="space-y-4">
-            {/* Title */}
-            <h2 className="text-2xl font-bold text-white mb-6">Mes Collections</h2>
-            
             {/* Add Collection Button - Moved to top */}
             <div 
               onClick={() => setLocation("/add-card")}
@@ -752,11 +687,11 @@ export default function Collections() {
         {/* Deck Tab Content */}
         {activeTab === "deck" && (
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-white mb-4">Mes Decks</h3>
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
             
             <div className="text-center py-12">
               <div className="mb-6">
-                <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               </div>
               <div className="text-gray-400 mb-4 text-lg">
                 Tu n'as pas créé de deck.
@@ -1006,7 +941,7 @@ export default function Collections() {
                     )}
                     
                     <button 
-                      onClick={handleAddToCollection}
+                      onClick={() => setShowOptionsPanel(false)}
                       className="w-full p-4 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
                       <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
