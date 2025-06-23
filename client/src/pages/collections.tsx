@@ -702,7 +702,7 @@ export default function Collections() {
                         <img 
                           src={card.imageUrl} 
                           alt={`${card.playerName || 'Carte'}`}
-                          className={`w-16 h-16 object-cover rounded-md flex-shrink-0 ${card.isSold ? 'grayscale' : ''}`}
+                          className={`w-20 h-28 object-cover rounded-md flex-shrink-0 ${card.isSold ? 'grayscale' : ''}`}
                         />
                       )}
                       <div className="flex-1 space-y-1">
@@ -801,7 +801,7 @@ export default function Collections() {
                 {/* Card Container avec marges augmentées */}
                 <div className="max-w-lg mx-auto min-h-full pb-20">
                   {/* Card Image avec effet 3D */}
-                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
+                  <div className="aspect-[3/4.5] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
                     {selectedCard.imageUrl ? (
                       <img 
                         src={selectedCard.imageUrl} 
@@ -1004,12 +1004,12 @@ export default function Collections() {
                     
                     <button 
                       onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-4 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
                       <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                         <Plus className="w-4 h-4 text-white" />
                       </div>
-                      Ajouter à la collection
+                      Ajouter à la sélection
                     </button>
                     
                     <button 
