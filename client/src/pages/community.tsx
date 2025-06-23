@@ -6,6 +6,11 @@ import { Users, MessageCircle, Trophy, Star, Activity, Hash } from "lucide-react
 
 export default function Community() {
   const [activeTab, setActiveTab] = useState<"feed" | "forums" | "leaderboard">("feed");
+  const [, setLocation] = useLocation();
+
+  const handleUserClick = (userId: number) => {
+    setLocation(`/user/${userId}`);
+  };
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20">
@@ -57,6 +62,7 @@ export default function Community() {
             <div className="space-y-3">
               {[
                 { 
+                  userId: 1,
                   user: "Alexandre M.", 
                   action: "a ajouté une nouvelle carte",
                   card: "Kylian Mbappé Rookie",
@@ -64,6 +70,7 @@ export default function Community() {
                   type: "add"
                 },
                 { 
+                  userId: 2,
                   user: "Sophie L.", 
                   action: "a mis sur le marché",
                   card: "Lionel Messi Parallel",
@@ -71,6 +78,7 @@ export default function Community() {
                   type: "sale"
                 },
                 { 
+                  userId: 3,
                   user: "Thomas R.", 
                   action: "a complété la collection",
                   card: "SCORE Ligue 1 2024",
@@ -78,6 +86,7 @@ export default function Community() {
                   type: "complete"
                 },
                 { 
+                  userId: 4,
                   user: "Marie C.", 
                   action: "cherche à échanger",
                   card: "Neymar Insert Gold",
@@ -94,7 +103,12 @@ export default function Community() {
                     </div>
                     <div className="flex-1">
                       <div className="text-sm">
-                        <span className="font-bold font-poppins">{activity.user}</span>
+                        <button 
+                          onClick={() => handleUserClick(activity.userId)}
+                          className="font-bold font-poppins text-white hover:text-[hsl(9,85%,67%)] transition-colors"
+                        >
+                          {activity.user}
+                        </button>
                         <span className="text-gray-300"> {activity.action} </span>
                         <span className="font-semibold text-[hsl(9,85%,67%)]">{activity.card}</span>
                       </div>

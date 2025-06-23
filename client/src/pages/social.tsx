@@ -275,7 +275,11 @@ export default function Social() {
 
   // Fonctions pour le menu vertical
   const handleViewProfile = (userId: number) => {
-    setLocation(`/profile/${userId}`);
+    setLocation(`/user/${userId}`);
+  };
+
+  const handleUserClick = (userId: number) => {
+    setLocation(`/user/${userId}`);
   };
 
   const handleFollowUser = (userId: number) => {
@@ -838,7 +842,12 @@ export default function Social() {
                           M
                         </div>
                         <div>
-                          <h3 className="font-semibold text-white">Max la menace</h3>
+                          <button 
+                            onClick={() => handleUserClick(999)}
+                            className="font-semibold text-white hover:text-[hsl(9,85%,67%)] transition-colors text-left"
+                          >
+                            Max la menace
+                          </button>
                           <p className="text-sm text-gray-400">@maxlamenace</p>
                         </div>
                       </div>
