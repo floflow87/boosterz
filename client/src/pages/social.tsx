@@ -248,6 +248,9 @@ export default function Social() {
       };
       
       createPostMutation.mutate(postData);
+      setNewPostContent('');
+      setSelectedPhoto(null);
+      setTaggedPeople([]);
       setIsPostModalOpen(false);
     }
   };
@@ -1011,6 +1014,17 @@ export default function Social() {
                               {post.content && (
                                 <div className="text-white text-sm mb-3 leading-relaxed">
                                   {post.content}
+                                </div>
+                              )}
+                              
+                              {/* Post Image */}
+                              {post.imageUrl && (
+                                <div className="mt-3 mb-3">
+                                  <img 
+                                    src={post.imageUrl} 
+                                    alt="Image du post"
+                                    className="w-full max-h-96 object-cover rounded-lg border border-[hsl(214,35%,30%)]"
+                                  />
                                 </div>
                               )}
                             </div>

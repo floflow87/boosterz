@@ -186,8 +186,9 @@ export const posts = pgTable("posts", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
   content: text("content").notNull(),
-  type: text("type").notNull().default("text"), // "text", "card_sale", "card_trade", "card_add"
+  type: text("type").notNull().default("text"), // "text", "image", "card_sale", "card_trade", "card_add"
   cardId: integer("card_id"), // Reference to card if post is about a card
+  imageUrl: text("image_url"), // URL or base64 data for images
   isVisible: boolean("is_visible").default(true).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

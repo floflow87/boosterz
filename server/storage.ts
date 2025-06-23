@@ -510,23 +510,14 @@ export class DatabaseStorage implements IStorage {
           content: post.content,
           type: post.type || "text",
           cardId: post.cardId || null,
+          imageUrl: post.imageUrl || null,
           isVisible: true
         })
         .returning();
       return newPost;
     } catch (error) {
       console.error('Error creating post:', error);
-      // Return a mock post for now to ensure the UI works
-      return {
-        id: Date.now(),
-        userId: post.userId,
-        content: post.content,
-        type: post.type || "text",
-        cardId: post.cardId || null,
-        isVisible: true,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
+      throw error;
     }
   }
 
