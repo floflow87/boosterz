@@ -274,11 +274,6 @@ export default function Collections() {
     }
   };
 
-  const handleRemoveFromSale = () => {
-    if (!selectedCard) return;
-    removeFromSaleMutation.mutate(selectedCard.id);
-  };
-
   const handleDeleteCollection = (collection: Collection) => {
     setCollectionToDelete(collection);
     setShowDeleteModal(true);
@@ -310,6 +305,67 @@ export default function Collections() {
     setSalePrice('');
     setSaleDescription('');
     setTradeOnly(false);
+  };
+
+  const handleAddToCollection = async () => {
+    if (!selectedCard) return;
+    
+    try {
+      // Détecter la collection appropriée basée sur le contexte
+      const targetCollectionId = selectedCollection || collections?.[0]?.id;
+      
+      if (!targetCollectionId) {
+        toast({
+          title: "Aucune collection disponible",
+          description: "Vous devez d'abord créer une collection.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      // Ajouter la carte à la collection avec le bon type
+      const cardData = {
+        collectionId: targetCollectionId,
+        playerName: selectedCard.playerName,
+        teamName: selectedCard.teamName,
+        cardType: selectedCard.cardType || 'base',
+        reference: selectedCard.reference || `${Date.now()}`,
+        numbering: selectedCard.numbering,
+        imageUrl: selectedCard.imageUrl,
+        isOwned: true,
+        isForTrade: false,
+        cardSubType: selectedCard.cardSubType,
+        isRookieCard: selectedCard.isRookieCard || false,
+        rarity: selectedCard.rarity,
+        tradeDescription: null,
+        tradePrice: null,
+        tradeOnly: false,
+        salePrice: null,
+        saleDescription: null,
+        isSold: false,
+        isFeatured: false
+      };
+
+      await apiRequest("POST", "/api/cards", cardData);
+      
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${targetCollectionId}/cards`] });
+      
+      toast({
+        title: "Carte ajoutée avec succès",
+        description: `La carte a été ajoutée à votre collection.`,
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      setShowOptionsPanel(false);
+      setSelectedCard(null);
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'ajouter la carte à la collection.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (userLoading || collectionsLoading) {
@@ -941,7 +997,7 @@ export default function Collections() {
                     )}
                     
                     <button 
-                      onClick={() => setShowOptionsPanel(false)}
+                      onClick={handleAddToCollection}
                       className="w-full p-4 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
                       <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
