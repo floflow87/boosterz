@@ -259,9 +259,10 @@ export default function Collections() {
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
       toast({
         title: "Carte marquée comme vendue",
-        description: "La carte a été marquée comme vendue avec succès.",
+        description: "La carte est maintenant disponible dans l'onglet 'Vendues'.",
         className: "bg-green-600 text-white border-green-700"
       });
       setShowOptionsPanel(false);
