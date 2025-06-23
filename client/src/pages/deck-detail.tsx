@@ -341,7 +341,12 @@ export default function DeckDetail() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white hover:bg-white/10 p-2"
+                  className={cn(
+                    "p-2",
+                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors)
+                      ? "text-black hover:bg-black/10"
+                      : "text-white hover:bg-white/10"
+                  )}
                   onClick={() => setShowSharePanel(true)}
                 >
                   <Share2 className="w-5 h-5" />
@@ -349,7 +354,12 @@ export default function DeckDetail() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-white hover:bg-white/10 p-2"
+                  className={cn(
+                    "p-2",
+                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors)
+                      ? "text-black hover:bg-black/10"
+                      : "text-white hover:bg-white/10"
+                  )}
                   onClick={() => setShowEditPanel(true)}
                 >
                   <Edit3 className="w-5 h-5" />
