@@ -1,4 +1,5 @@
 import captainTsubasaPath from "@assets/b2585610-b824-4549-bf16-f1fd4a8f0da0_1750364780097.png";
+import boosterzLogoPath from "@/assets/boosterz-logo.svg";
 
 interface LoadingScreenProps {
   message?: string;
@@ -7,7 +8,7 @@ interface LoadingScreenProps {
 
 export default function LoadingScreen({ message, progress }: LoadingScreenProps) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-blue-900 via-blue-800 to-green-800">
+    <div className="fixed inset-0 flex flex-col items-center justify-center z-50 bg-gradient-to-br from-[hsl(214,35%,11%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,18%)]">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         {/* Football field lines */}
@@ -96,6 +97,15 @@ export default function LoadingScreen({ message, progress }: LoadingScreenProps)
         <div className="mt-4 text-blue-300 text-sm animate-pulse">
           ⚡ Préparation de ta collection ⚡
         </div>
+      </div>
+      
+      {/* Boosterz Logo at bottom */}
+      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        <img 
+          src={boosterzLogoPath}
+          alt="Boosterz"
+          className="w-48 h-auto opacity-80 animate-pulse"
+        />
       </div>
     </div>
   );
