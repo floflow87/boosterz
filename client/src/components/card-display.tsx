@@ -164,7 +164,7 @@ export default function CardDisplay({
           <div className="flex items-center justify-between mb-1">
             <h3 className="font-semibold text-white truncate">{card.playerName}</h3>
             <span className={cn(
-              "px-2 py-1 rounded-full text-xs border",
+              "px-2 py-1 rounded-full text-xs border whitespace-nowrap flex-shrink-0",
               getCardTypeColor(card.cardType)
             )}>
               {getRarityIndicator()} {card.cardType}
@@ -299,7 +299,7 @@ export default function CardDisplay({
 
         {/* Card Type Badge - Move to right for sale context */}
         <div className={cn(
-          "absolute top-2 px-2 py-1 rounded-full text-xs border font-medium",
+          "absolute top-2 px-2 py-1 rounded-full text-xs border font-medium whitespace-nowrap",
           context === "sale" ? "right-2" : "left-1/2 transform -translate-x-1/2",
           getCardTypeColor(card.cardType)
         )}>
