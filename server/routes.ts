@@ -78,6 +78,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update personal card sale settings
+  app.patch("/api/personal-cards/:id/sale-settings", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const { salePrice, saleDescription, isForSale, isSold } = req.body;
+      
+      const updateData: any = {};
+      
+      if (salePrice !== undefined) updateData.salePrice = salePrice;
+      if (saleDescription !== undefined) updateData.saleDescription = saleDescription;
+      if (isForSale !== undefined) updateData.isForSale = isForSale;
+      if (isSold !== undefined) updateData.isSold = isSold;
+      
+      const updatedCard = await storage.updatePersonalCard(cardId, updateData);
+      
+      if (!updatedCard) {
+        return res.status(404).json({ message: "Personal card not found" });
+      }
+      
+      res.json(updatedCard);
+    } catch (error) {
+      console.error('Error updating personal card sale settings:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Chat routes (commented out to avoid conflicts)
   // app.use('/api/chat', chatRoutes);
 

@@ -267,7 +267,6 @@ export default function Collections() {
       });
       setShowOptionsPanel(false);
       setSelectedCard(null);
-      setSelectedCard(null);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -410,6 +409,9 @@ export default function Collections() {
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
           <div className="space-y-4">
+            {/* Title */}
+            <h2 className="text-2xl font-bold text-white mb-6 font-luckiest">Mes Collections</h2>
+            
             {/* Add Collection Button - Moved to top */}
             <div 
               onClick={() => setLocation("/add-card")}
