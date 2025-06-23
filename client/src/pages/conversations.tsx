@@ -108,6 +108,9 @@ export default function Conversations() {
 
       {/* Search Bar */}
       <div className="relative z-10 px-4 pb-4">
+        <div className="text-xs text-gray-400 mb-2">
+          {filteredConversations.length} conversation{filteredConversations.length !== 1 ? 's' : ''}
+        </div>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
@@ -116,9 +119,6 @@ export default function Conversations() {
             placeholder="Rechercher une conversation..."
             className="pl-10 bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white placeholder:text-sm"
           />
-        </div>
-        <div className="text-xs text-gray-400 mt-2 text-center">
-          {filteredConversations.length} conversation{filteredConversations.length !== 1 ? 's' : ''}
         </div>
       </div>
 

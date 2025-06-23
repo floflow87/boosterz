@@ -42,7 +42,7 @@ export default function Navigation() {
     if (path === "/conversations") {
       return location === "/conversations" || location.startsWith("/chat");
     }
-    return location.startsWith(path);
+    return location === path;
   };
 
   if (isLoggingOut) {
