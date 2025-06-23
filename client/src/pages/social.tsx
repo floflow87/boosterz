@@ -1080,15 +1080,20 @@ export default function Social() {
 
             {/* Photo preview */}
             {selectedPhoto && (
-              <div className="relative mb-4">
-                <img
-                  src={URL.createObjectURL(selectedPhoto)}
-                  alt="Photo sélectionnée"
-                  className="w-full max-h-64 object-cover rounded-lg"
-                />
+              <div className="relative mb-4 border border-[hsl(214,35%,30%)] rounded-lg overflow-hidden">
+                <div className="aspect-video bg-gray-800 flex items-center justify-center">
+                  <img
+                    src={URL.createObjectURL(selectedPhoto)}
+                    alt="Photo sélectionnée"
+                    className="max-w-full max-h-full object-contain rounded-lg"
+                  />
+                </div>
+                <div className="absolute top-2 left-2 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-xs">
+                  {selectedPhoto.name}
+                </div>
                 <button
                   onClick={removePhoto}
-                  className="absolute top-2 right-2 bg-black bg-opacity-50 text-white rounded-full w-8 h-8 flex items-center justify-center"
+                  className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold transition-colors"
                 >
                   ×
                 </button>

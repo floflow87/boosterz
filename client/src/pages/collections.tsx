@@ -62,8 +62,8 @@ export default function Collections() {
   const filteredPersonalCards = personalCards.filter(card => {
     // Filtre par statut de vente
     if (saleFilter === 'available') {
-      // En vente : cartes avec isForTrade=true, mais pas vendues
-      if (!card.isForTrade || card.isSold) return false;
+      // En vente : cartes avec isForTrade=true ET un prix, mais pas vendues
+      if (!card.isForTrade || !card.tradePrice || card.isSold) return false;
     } else if (saleFilter === 'sold') {
       // Vendues : seulement les cartes avec isSold=true
       if (!card.isSold) return false;
