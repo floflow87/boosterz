@@ -125,8 +125,44 @@ export default function CollectionDetail() {
     refetchIntervalInBackground: false,
   });
 
-  // Extract cards from response (handle both old array format and new paginated format)
-  const cards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
+  // Get personal cards with images
+  const { data: personalCards } = useQuery<any[]>({
+    queryKey: ["/api/personal-cards"],
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Extract cards from response and merge with personal cards images
+  const rawCards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
+  
+  // Create a map of personal cards by player name for quick lookup
+  const personalCardMap = useMemo(() => {
+    const map = new Map();
+    if (personalCards) {
+      personalCards.forEach(personalCard => {
+        const key = `${personalCard.playerName?.trim()}-${personalCard.teamName?.trim()}`;
+        map.set(key, personalCard);
+      });
+    }
+    return map;
+  }, [personalCards]);
+  
+  // Merge personal card images with collection cards
+  const cards = useMemo(() => {
+    return rawCards.map(card => {
+      const key = `${card.playerName?.trim()}-${card.teamName?.trim()}`;
+      const personalCard = personalCardMap.get(key);
+      
+      if (personalCard && personalCard.imageUrl) {
+        return {
+          ...card,
+          imageUrl: personalCard.imageUrl,
+          isOwned: true // Mark as owned if we have a personal card with image
+        };
+      }
+      
+      return card;
+    });
+  }, [rawCards, personalCardMap]);
 
   // Scroll to top when page loads
   useEffect(() => {
