@@ -189,10 +189,8 @@ export default function Collections() {
   // Mutation pour retirer de la vente
   const removeFromSaleMutation = useMutation({
     mutationFn: async (cardId: number) => {
-      return apiRequest("PATCH", `/api/cards/${cardId}/sale-settings`, {
+      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
         isForTrade: false,
-        salePrice: null,
-        saleDescription: null,
         tradePrice: null,
         tradeDescription: null,
         tradeOnly: false
@@ -280,7 +278,7 @@ export default function Collections() {
     if (!selectedCard) return;
     
     try {
-      await apiRequest("PATCH", `/api/cards/${selectedCard.id}/sale-settings`, {
+      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}/sale-settings`, {
         isSold: true,
         isForTrade: false
       });
