@@ -194,6 +194,31 @@ export const posts = pgTable("posts", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Decks table
+export const decks = pgTable("decks", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  name: text("name").notNull(),
+  coverImage: text("cover_image"), // URL or base64 for custom cover
+  themeColors: text("theme_colors").notNull().default("main+background"), // "main+background", "white+sky", "red+navy", "navy+gold", "white+touch", "white+blue"
+  backgroundColor: text("background_color").default("#1A2332").notNull(),
+  accentColor: text("accent_color").default("#F37261").notNull(),
+  isPublic: boolean("is_public").default(true).notNull(),
+  cardCount: integer("card_count").default(0).notNull(), // max 12
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Deck cards junction table
+export const deckCards = pgTable("deck_cards", {
+  id: serial("id").primaryKey(),
+  deckId: integer("deck_id").notNull(),
+  cardId: integer("card_id"), // Reference to card from collections
+  personalCardId: integer("personal_card_id"), // Reference to personal card
+  position: integer("position").notNull(), // 0-11 for ordering
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   collections: many(collections),
@@ -206,6 +231,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   notifications: many(notifications),
   activities: many(activities),
   posts: many(posts),
+  decks: many(decks),
 }));
 
 export const followsRelations = relations(follows, ({ one }) => ({
@@ -324,6 +350,29 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.userId],
     references: [users.id],
+  }),
+}));
+
+export const decksRelations = relations(decks, ({ one, many }) => ({
+  user: one(users, {
+    fields: [decks.userId],
+    references: [users.id],
+  }),
+  deckCards: many(deckCards),
+}));
+
+export const deckCardsRelations = relations(deckCards, ({ one }) => ({
+  deck: one(decks, {
+    fields: [deckCards.deckId],
+    references: [decks.id],
+  }),
+  card: one(cards, {
+    fields: [deckCards.cardId],
+    references: [cards.id],
+  }),
+  personalCard: one(personalCards, {
+    fields: [deckCards.personalCardId],
+    references: [personalCards.id],
   }),
 }));
 
@@ -469,3 +518,20 @@ export const insertPostSchema = createInsertSchema(posts).omit({
 
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type Post = typeof posts.$inferSelect;
+
+// Deck schemas
+export const insertDeckSchema = createInsertSchema(decks).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertDeckCardSchema = createInsertSchema(deckCards).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertDeck = z.infer<typeof insertDeckSchema>;
+export type Deck = typeof decks.$inferSelect;
+export type InsertDeckCard = z.infer<typeof insertDeckCardSchema>;
+export type DeckCard = typeof deckCards.$inferSelect;
