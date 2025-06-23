@@ -33,6 +33,7 @@ export default function Navigation() {
   };
 
   const isActive = (path: string) => {
+    // Exact matching for each specific route
     if (path === "/social") {
       return location === "/" || location === "/community" || location === "/social";
     }
@@ -42,7 +43,10 @@ export default function Navigation() {
     if (path === "/conversations") {
       return location === "/conversations" || location.startsWith("/chat");
     }
-    return location === path;
+    if (path === "/shop") {
+      return false; // Shop is external, never active
+    }
+    return false; // Default to false to prevent cross-activation
   };
 
   if (isLoggingOut) {
