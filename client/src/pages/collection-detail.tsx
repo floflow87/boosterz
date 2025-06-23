@@ -254,7 +254,7 @@ export default function CollectionDetail() {
           <p className="text-gray-400 mb-4">Impossible de charger les cartes de la collection</p>
           <button 
             onClick={() => queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] })}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            className="bg-primary hover:bg-primary/80 text-white px-4 py-2 rounded-lg"
           >
             Réessayer
           </button>
@@ -951,12 +951,6 @@ export default function CollectionDetail() {
               {searchTerm ? "Aucune carte trouvée pour cette recherche" : 
                "Aucune carte dans cette catégorie"}
             </div>
-            <button 
-              onClick={() => window.location.reload()}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
-            >
-              Recharger la page
-            </button>
           </div>
         ) : viewMode === "grid" ? (
           <div className="grid grid-cols-2 gap-3">

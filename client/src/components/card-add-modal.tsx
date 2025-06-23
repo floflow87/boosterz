@@ -221,9 +221,13 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
         title: "Carte ajoutée avec succès",
         description: "La carte a été ajoutée à votre collection",
       });
+      // Invalidate all relevant queries to refresh the display
       queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       if (selectedCollectionId) {
         queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}/cards`] });
+        queryClient.invalidateQueries({ queryKey: [`/api/collections/${selectedCollectionId}`] });
       }
       handleClose();
     },
