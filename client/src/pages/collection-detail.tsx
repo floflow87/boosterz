@@ -134,21 +134,28 @@ export default function CollectionDetail() {
   }, [collectionId]);
 
   // Group cards by player and show only one card per player
-  const getUniquePlayerCards = () => {
+  const getFilteredCards = () => {
     if (!cards) return [];
     
-    const playerGroups = new Map();
-    
-    cards.forEach(card => {
+    let filteredCardsList = cards.filter(card => {
       const matchesSearch = !searchTerm || 
         card.playerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         card.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         card.reference.toLowerCase().includes(searchTerm.toLowerCase());
 
-      if (!matchesSearch) return;
+      if (!matchesSearch) return false;
 
       let includeCard = false;
       switch (filter) {
+        case "all":
+          includeCard = true;
+          break;
+        case "owned":
+          includeCard = card.isOwned;
+          break;
+        case "missing":
+          includeCard = !card.isOwned;
+          break;
         case "bases": 
           includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
           break;
@@ -156,28 +163,22 @@ export default function CollectionDetail() {
           includeCard = card.cardType === "Parallel Numbered";
           break;
         case "autographs": 
-          includeCard = card.cardType === "Autograph" || card.cardType === "autograph";
+          includeCard = card.cardType === "Autograph";
           break;
         case "hits": 
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          includeCard = card.cardType === "special_1_1" || card.numbering === "1/1";
+          includeCard = card.numbering === "1/1";
           break;
-
         default: 
           includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
       }
 
-      if (includeCard) {
-        const playerKey = `${card.playerName}-${card.teamName}`;
-        if (!playerGroups.has(playerKey)) {
-          playerGroups.set(playerKey, card);
-        }
-      }
+      return includeCard;
     });
     
-    let sortedCards = Array.from(playerGroups.values());
+    let sortedCards = filteredCardsList;
     
     // Pour les hits, trier par type de carte puis par joueur
     if (filter === "hits") {
@@ -217,12 +218,27 @@ export default function CollectionDetail() {
     return sortedCards;
   };
 
-  const filteredCards = getUniquePlayerCards();
+  const filteredCards = getFilteredCards();
 
-  // Calculate numbered bases count (excluding 1/1 cards)
+  // Calculate category counts
+  const basesCount = cards?.filter(card => 
+    card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl"
+  ).length || 0;
+  
   const numberedBasesCount = cards?.filter(card => 
-    card.cardType === "Parallel Numbered" && 
-    card.numbering !== "1/1"
+    card.cardType === "Parallel Numbered"
+  ).length || 0;
+  
+  const hitsCount = cards?.filter(card => 
+    card.cardType?.includes("Insert")
+  ).length || 0;
+  
+  const autographsCount = cards?.filter(card => 
+    card.cardType === "Autograph"
+  ).length || 0;
+  
+  const specialCount = cards?.filter(card => 
+    card.numbering === "1/1"
   ).length || 0;
 
   // Debug logging pour la production
@@ -781,7 +797,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
           >
-            Bases
+            Bases ({basesCount})
           </button>
           <button
             onClick={() => setFilter("bases_numbered")}
@@ -803,7 +819,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "hits" ? { backgroundColor: '#F37261' } : {}}
           >
-            Hits
+            Hits ({hitsCount})
           </button>
           <button
             onClick={() => setFilter("autographs")}
@@ -814,7 +830,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "autographs" ? { backgroundColor: '#F37261' } : {}}
           >
-            Autographes
+            Autographes ({autographsCount})
           </button>
 
           <button
@@ -825,7 +841,7 @@ export default function CollectionDetail() {
                 : "bg-gray-700 text-gray-300 hover:bg-gray-600"
             }`}
           >
-            Spéciales
+            Spéciales ({specialCount})
           </button>
           </div>
         </div>
