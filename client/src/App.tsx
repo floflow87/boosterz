@@ -42,7 +42,8 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={Collections} />
+      <Route path="/" component={Home} />
+      <Route path="/home" component={Home} />
       <Route path="/collections" component={Collections} />
       <Route path="/collection/:id" component={CollectionDetail} />
       <Route path="/all-cards" component={AllCards} />

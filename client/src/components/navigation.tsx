@@ -35,7 +35,7 @@ export default function Navigation() {
 
   const isActive = (path: string) => {
     if (path === "/") {
-      return location === "/" || location === "/splash";
+      return location === "/" || location === "/home";
     }
     if (path === "/collections") {
       return location === "/collections" || location.startsWith("/collection") || location === "/all-cards";

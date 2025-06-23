@@ -48,7 +48,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
       <HaloBlur />
-      <Header />
+      <Header title="Accueil" />
       
       <div className="flex-1 pt-16 pb-20">
         <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
