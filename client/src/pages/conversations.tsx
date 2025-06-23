@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { ArrowLeft, Search, MessageCircle, MoreVertical, UserX, UserCheck, Ban, Eye } from "lucide-react";
+import { Search, MoreVertical, UserX, UserCheck, Ban, Eye, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import LoadingScreen from "@/components/LoadingScreen";
 import Navigation from "@/components/navigation";
+import Header from "@/components/header";
+import HaloBlur from "@/components/halo-blur";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { User } from "@shared/schema";
@@ -100,50 +102,37 @@ export default function Conversations() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
-      {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-800 bg-gray-900">
-        <div className="flex items-center space-x-3">
-          <button
-            onClick={() => setLocation("/social")}
-            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div className="flex items-center space-x-2">
-            <MessageCircle className="w-6 h-6 text-[hsl(9,85%,67%)]" />
-            <h1 className="text-xl font-bold">Messages</h1>
-          </div>
-        </div>
-        <div className="text-sm text-gray-400">
-          {filteredConversations.length} conversation{filteredConversations.length !== 1 ? 's' : ''}
-        </div>
-      </div>
+    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20 relative overflow-hidden">
+      <HaloBlur />
+      <Header title="Messages" />
 
       {/* Search Bar */}
-      <div className="p-4 border-b border-gray-800">
+      <div className="relative z-10 px-4 pb-4">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Rechercher une conversation..."
-            className="pl-10 bg-gray-800 border-gray-700 text-white"
+            className="pl-10 bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white placeholder:text-sm"
           />
+        </div>
+        <div className="text-xs text-gray-400 mt-2 text-center">
+          {filteredConversations.length} conversation{filteredConversations.length !== 1 ? 's' : ''}
         </div>
       </div>
 
       {/* Conversations List */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="relative z-10 px-4 flex-1 overflow-y-auto">
         {isLoading ? (
           <LoadingScreen />
         ) : filteredConversations.length > 0 ? (
-          <div className="divide-y divide-gray-800">
+          <div className="space-y-3">
             {filteredConversations.map((conversation) => (
               <div
                 key={conversation.id}
                 onClick={() => handleConversationClick(conversation.user.id)}
-                className="p-4 hover:bg-gray-900 cursor-pointer transition-colors"
+                className="bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] cursor-pointer transition-colors"
               >
                 <div className="flex items-center space-x-3">
                   {/* Avatar */}
