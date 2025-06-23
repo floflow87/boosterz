@@ -156,7 +156,7 @@ export default function CollectionDetail() {
           includeCard = card.cardType === "Parallel Numbered";
           break;
         case "autographs": 
-          includeCard = card.cardType === "Autograph";
+          includeCard = card.cardType === "Autograph" || card.cardType === "autograph";
           break;
         case "hits": 
           includeCard = card.cardType.includes("Insert");
