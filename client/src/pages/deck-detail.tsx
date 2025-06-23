@@ -268,33 +268,27 @@ export default function DeckDetail() {
                 <h1 className="text-2xl font-bold text-white font-luckiest mb-2">
                   {deck.name}
                 </h1>
-                <div className="flex items-center gap-4 text-sm">
+                <div className="text-sm">
                   <span className="text-white/80">
                     {deck.cardCount} carte{deck.cardCount > 1 ? 's' : ''}
-                  </span>
-                  <span className="flex items-center gap-1 text-white/80">
-                    {deck.isPublic ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                    {deck.isPublic ? 'Public' : 'Privé'}
                   </span>
                 </div>
               </div>
               
               <div className="flex gap-2">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="text-white border-white/30 hover:bg-white/10"
+                  className="text-white hover:bg-white/10 p-2"
                 >
-                  <Share2 className="w-4 h-4 mr-2" />
-                  Partager
+                  <Share2 className="w-5 h-5" />
                 </Button>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  className="text-white border-white/30 hover:bg-white/10"
+                  className="text-white hover:bg-white/10 p-2"
                 >
-                  <Edit3 className="w-4 h-4 mr-2" />
-                  Modifier
+                  <Edit3 className="w-5 h-5" />
                 </Button>
               </div>
             </div>
@@ -368,36 +362,7 @@ export default function DeckDetail() {
             )}
           </div>
 
-          {/* Statistics */}
-          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {deck.cards.filter(c => c.type === 'collection').length}
-              </div>
-              <div className="text-gray-400 text-sm">Cartes collection</div>
-            </div>
-            
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {deck.cards.filter(c => c.type === 'personal').length}
-              </div>
-              <div className="text-gray-400 text-sm">Cartes perso</div>
-            </div>
-            
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {deck.cards.filter(c => c.type === 'collection' && (c.card as Card).cardType === 'Autographe').length}
-              </div>
-              <div className="text-gray-400 text-sm">Autographes</div>
-            </div>
-            
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 text-center">
-              <div className="text-2xl font-bold text-white mb-1">
-                {Math.round((deck.cardCount / 12) * 100)}%
-              </div>
-              <div className="text-gray-400 text-sm">Complet</div>
-            </div>
-          </div>
+
         </div>
       </main>
     </div>

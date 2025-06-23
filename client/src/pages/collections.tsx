@@ -853,19 +853,19 @@ export default function Collections() {
                     </div>
                     
                     {/* Preview des 3 premières cartes */}
-                    <div className="h-20 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-2">
+                    <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-3">
                       {deck.previewCards && deck.previewCards.length > 0 ? (
-                        <div className="flex space-x-2 w-full">
+                        <div className="flex space-x-3 w-full">
                           {deck.previewCards.map((cardData: any, index: number) => (
-                            <div key={index} className="flex-1 h-16 rounded bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-1">
+                            <div key={index} className="flex-1 h-26 rounded bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-sm text-center p-2">
                               {cardData.type === 'collection' ? (
                                 <div>
-                                  <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
+                                  <div className="font-bold text-sm mb-1">{cardData.card.playerName}</div>
                                   <div className="text-xs opacity-80">{cardData.card.teamName}</div>
                                 </div>
                               ) : (
                                 <div>
-                                  <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
+                                  <div className="font-bold text-sm mb-1">{cardData.card.playerName}</div>
                                   <div className="text-xs opacity-80">{cardData.card.teamName}</div>
                                 </div>
                               )}
@@ -873,7 +873,7 @@ export default function Collections() {
                           ))}
                           {/* Emplacements vides pour compléter jusqu'à 3 */}
                           {Array.from({ length: 3 - deck.previewCards.length }, (_, i) => (
-                            <div key={`empty-${i}`} className="flex-1 h-16 rounded border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-xs">
+                            <div key={`empty-${i}`} className="flex-1 h-26 rounded border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-xs">
                               Vide
                             </div>
                           ))}
