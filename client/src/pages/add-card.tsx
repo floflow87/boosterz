@@ -218,9 +218,10 @@ export default function AddCard() {
       numbering: numbering || null,
       imageUrl: editedImage || null,
       condition: condition || null,
-      salePrice: salePrice || null,
-      saleDescription: saleDescription || null,
-      isForSale: isForSale,
+      tradePrice: isForSale ? salePrice : null,
+      tradeDescription: isForSale ? saleDescription : null,
+      isForTrade: isForSale,
+      tradeOnly: false,
     };
 
     addPersonalCardMutation.mutate(cardData);
