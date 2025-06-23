@@ -566,11 +566,11 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-gray-600 text-white">
                       {cardTypes.length > 0 ? (
-                        cardTypes.map((type, index) => (
+                        cardTypes.filter(type => type && type.trim() !== '').map((type, index) => (
                           <SelectItem key={index} value={type} className="text-white">{type}</SelectItem>
                         ))
                       ) : (
-                        <SelectItem value="Base" disabled className="text-gray-400">Sélectionnez d'abord une collection</SelectItem>
+                        <SelectItem value="placeholder" disabled className="text-gray-400">Sélectionnez d'abord une collection</SelectItem>
                       )}
                     </SelectContent>
                   </Select>

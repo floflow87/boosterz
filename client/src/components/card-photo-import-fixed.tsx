@@ -668,7 +668,7 @@ export default function CardPhotoImportFixed({ isOpen, onClose, onImageUploaded,
                           <SelectValue placeholder="Sélectionner une carte" />
                         </SelectTrigger>
                         <SelectContent className="bg-gray-800 border-gray-600">
-                          {playerCards.map((card) => (
+                          {playerCards.filter(card => card.id && card.id.toString().trim() !== '').map((card) => (
                             <SelectItem key={card.id} value={card.id.toString()} className="text-white hover:bg-gray-700">
                               #{card.reference} - {card.playerName || 'Nom inconnu'} ({card.teamName || 'Équipe inconnue'}) - {card.cardType}
                             </SelectItem>
