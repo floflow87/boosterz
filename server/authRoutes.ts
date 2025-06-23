@@ -78,8 +78,16 @@ router.post('/login', async (req, res) => {
     // Try to find user by email or username
     let user;
     if (email) {
+      // First try by email
       user = await storage.getUserByEmail(email);
-    } else if (username) {
+      
+      // If not found and email looks like a username, try by username
+      if (!user && !email.includes('@')) {
+        user = await storage.getUserByUsername(email);
+      }
+    }
+    
+    if (username) {
       user = await storage.getUserByUsername(username);
     }
     
