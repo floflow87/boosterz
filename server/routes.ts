@@ -78,6 +78,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/personal-cards/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const cardId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      if (isNaN(cardId)) {
+        return res.status(400).json({ error: "Invalid card ID" });
+      }
+
+      // Vérifier que la carte appartient à l'utilisateur
+      const card = await storage.getCard(cardId);
+      if (!card) {
+        return res.status(404).json({ error: "Card not found" });
+      }
+
+      // Pour les cartes personnelles, on vérifie simplement que la carte existe
+      // car toutes les cartes dans la collection appartiennent à l'utilisateur
+      const collections = await storage.getCollectionsByUserId(userId);
+      const ownsCard = collections.some(collection => collection.id === card.collectionId);
+      
+      if (!ownsCard) {
+        return res.status(403).json({ error: "You don't own this card" });
+      }
+
+      const deleted = await storage.deleteCard(cardId);
+      if (deleted) {
+        res.json({ success: true });
+      } else {
+        res.status(500).json({ error: "Failed to delete card" });
+      }
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      res.status(500).json({ error: "Failed to delete card" });
+    }
+  });
+
   // Chat routes (commented out to avoid conflicts)
   // app.use('/api/chat', chatRoutes);
 

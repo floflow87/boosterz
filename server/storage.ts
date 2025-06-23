@@ -270,6 +270,17 @@ export class DatabaseStorage implements IStorage {
     return card || undefined;
   }
 
+  async deleteCard(id: number): Promise<boolean> {
+    try {
+      // Delete the card itself - cascade will handle related data
+      const result = await db.delete(cards).where(eq(cards.id, id));
+      return result.rowCount ? result.rowCount > 0 : false;
+    } catch (error) {
+      console.error("Error deleting card:", error);
+      return false;
+    }
+  }
+
   async getUserCardsByUserId(userId: number): Promise<UserCard[]> {
     return await db.select().from(userCards).where(eq(userCards.userId, userId));
   }
