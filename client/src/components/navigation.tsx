@@ -4,7 +4,7 @@ import { useLocation } from "wouter";
 import LoadingScreen from "@/components/LoadingScreen";
 
 const navItems = [
-  { id: "community", icon: Users, label: "Communauté", path: "/community" },
+  { id: "community", icon: Users, label: "Communauté", path: "/social" },
   { id: "collections", icon: BookOpen, label: "Collections", path: "/collections" },
   { id: "messages", icon: MessageCircle, label: "Messages", path: "/conversations" },
   { id: "shop", icon: ShoppingCart, label: "Boutique", path: "/shop" },
@@ -33,7 +33,7 @@ export default function Navigation() {
   };
 
   const isActive = (path: string) => {
-    if (path === "/community") {
+    if (path === "/social") {
       return location === "/" || location === "/community" || location === "/social";
     }
     if (path === "/collections") {
