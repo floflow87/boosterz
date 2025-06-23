@@ -267,7 +267,6 @@ export default function Collections() {
       });
       setShowOptionsPanel(false);
       setSelectedCard(null);
-      setSelectedCard(null);
     } catch (error) {
       toast({
         title: "Erreur",
