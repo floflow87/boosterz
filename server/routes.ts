@@ -1296,14 +1296,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create a new post
   app.post("/api/posts", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const { content, type, cardId } = req.body;
+      const { content, type, cardId, imageUrl } = req.body;
       const userId = req.user!.id;
       
       const post = await storage.createPost({
         userId,
         content,
         type: type || "text",
-        cardId: cardId || null
+        cardId: cardId || null,
+        imageUrl: imageUrl || null
       });
       
       // Create activity for the post

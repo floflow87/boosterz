@@ -198,11 +198,7 @@ export default function Social() {
 
   // Mutation pour créer un post
   const createPostMutation = useMutation({
-    mutationFn: async (content: string) => {
-      const postData = { 
-        content, 
-        type: "text"
-      };
+    mutationFn: async (postData: { content: string; type: string; imageUrl?: string }) => {
       return apiRequest("POST", "/api/posts", postData);
     },
     onSuccess: () => {
@@ -214,6 +210,7 @@ export default function Social() {
       setSearchPeople("");
       toast({
         title: "Publication créée avec succès",
+        className: "bg-green-600 text-white border-green-700"
       });
     },
     onError: () => {
@@ -225,9 +222,32 @@ export default function Social() {
   });
 
   // Fonction pour créer un post
-  const handleCreatePost = () => {
+  const handleCreatePost = async () => {
     if (newPostContent.trim()) {
-      createPostMutation.mutate(newPostContent);
+      let imageUrl: string | undefined = undefined;
+      
+      // Si une photo est sélectionnée, la convertir en base64
+      if (selectedPhoto) {
+        try {
+          imageUrl = await convertToBase64(selectedPhoto);
+        } catch (error) {
+          console.error('Erreur lors de la conversion de l\'image:', error);
+          toast({
+            title: "Erreur",
+            description: "Impossible de traiter l'image",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+      
+      const postData = {
+        content: newPostContent,
+        type: selectedPhoto ? "image" : "text",
+        ...(imageUrl && { imageUrl })
+      };
+      
+      createPostMutation.mutate(postData);
       setIsPostModalOpen(false);
     }
   };
@@ -559,6 +579,17 @@ export default function Social() {
                   {item.content && (
                     <div className="text-white text-sm mb-3 leading-relaxed mt-3">
                       {item.content}
+                    </div>
+                  )}
+                  
+                  {/* Post Image */}
+                  {item.imageUrl && (
+                    <div className="mt-3 mb-3">
+                      <img 
+                        src={item.imageUrl} 
+                        alt="Image du post"
+                        className="w-full max-h-96 object-cover rounded-lg border border-[hsl(214,35%,30%)]"
+                      />
                     </div>
                   )}
                 </div>
