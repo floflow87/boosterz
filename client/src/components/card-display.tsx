@@ -252,7 +252,7 @@ export default function CardDisplay({
     >
       {/* Card Container */}
       <div className={cn(
-        "relative aspect-[2.5/4.5] rounded-lg overflow-hidden shadow-lg transition-all duration-300",
+        "relative aspect-[2.5/5] rounded-lg overflow-hidden shadow-lg transition-all duration-300",
         card.isOwned 
           ? "ring-2 ring-green-500/50 shadow-green-500/20" 
           : "ring-2 ring-red-500/50 shadow-red-500/20",
