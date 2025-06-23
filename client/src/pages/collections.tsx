@@ -352,6 +352,7 @@ export default function Collections() {
     setSalePrice('');
     setSaleDescription('');
     setTradeOnly(false);
+    setShowTradePanel(false);
   };
 
   if (userLoading || collectionsLoading) {
@@ -960,7 +961,7 @@ export default function Collections() {
                           Marquer comme vendue
                         </button>
                         
-                        {(selectedCard.isForTrade || selectedCard.tradePrice || selectedCard.salePrice) ? (
+                        {selectedCard.isForTrade ? (
                           <button 
                             onClick={handleRemoveFromSale}
                             className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
