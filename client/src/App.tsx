@@ -46,6 +46,7 @@ function Router() {
       <Route path="/collection/:id" component={CollectionDetail} />
       <Route path="/all-cards" component={AllCards} />
       <Route path="/social" component={Social} />
+      <Route path="/profile/:userId" component={Profile} />
       <Route path="/feed" component={Feed} />
       <Route path="/conversations" component={Conversations} />
       <Route path="/chat/:userId" component={Chat} />

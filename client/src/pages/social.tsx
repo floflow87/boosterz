@@ -275,8 +275,7 @@ export default function Social() {
 
   // Fonctions pour le menu vertical
   const handleViewProfile = (userId: number) => {
-    // Navigation vers le profil de l'utilisateur
-    console.log(`Voir profil utilisateur ${userId}`);
+    setLocation(`/profile/${userId}`);
   };
 
   const handleFollowUser = (userId: number) => {
