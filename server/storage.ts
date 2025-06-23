@@ -184,32 +184,44 @@ export class DatabaseStorage implements IStorage {
     const startTime = Date.now();
     
     try {
-      // Try with smaller chunks first in production
-      const chunkSize = process.env.NODE_ENV === 'production' ? 500 : 1000;
+      // Load all cards without limit to show complete collection
       const result = await db
         .select()
         .from(cards)
-        .where(eq(cards.collectionId, collectionId))
-        .limit(chunkSize);
+        .where(eq(cards.collectionId, collectionId));
       
       const endTime = Date.now();
-      console.log(`DatabaseStorage: Loaded ${result.length} cards in ${endTime - startTime}ms (chunk size: ${chunkSize})`);
+      console.log(`DatabaseStorage: Loaded ${result.length} cards in ${endTime - startTime}ms`);
       
       return result;
     } catch (error) {
       console.error(`DatabaseStorage: Error loading cards for collection ${collectionId}:`, error);
       
-      // Fallback: try with even smaller limit
+      // Fallback: try with chunked loading
       try {
-        console.log(`DatabaseStorage: Attempting fallback with smaller limit`);
-        const fallbackResult = await db
-          .select()
-          .from(cards)
-          .where(eq(cards.collectionId, collectionId))
-          .limit(500);
+        console.log(`DatabaseStorage: Attempting chunked loading fallback`);
+        const CHUNK_SIZE = 2000;
+        let allCards: Card[] = [];
+        let offset = 0;
         
-        console.log(`DatabaseStorage: Fallback loaded ${fallbackResult.length} cards`);
-        return fallbackResult;
+        while (true) {
+          const chunk = await db
+            .select()
+            .from(cards)
+            .where(eq(cards.collectionId, collectionId))
+            .limit(CHUNK_SIZE)
+            .offset(offset);
+          
+          if (chunk.length === 0) break;
+          
+          allCards = allCards.concat(chunk);
+          offset += CHUNK_SIZE;
+          
+          if (chunk.length < CHUNK_SIZE) break;
+        }
+        
+        console.log(`DatabaseStorage: Chunked loading completed with ${allCards.length} cards`);
+        return allCards;
       } catch (fallbackError) {
         console.error(`DatabaseStorage: Fallback also failed:`, fallbackError);
         throw fallbackError;
