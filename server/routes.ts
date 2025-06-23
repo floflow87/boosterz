@@ -1609,6 +1609,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update deck information
+  app.patch("/api/decks/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      const { name, themeColors } = req.body;
+
+      // Check if deck belongs to user
+      const [existingDeck] = await db.select().from(decks).where(eq(decks.id, deckId));
+      if (!existingDeck || existingDeck.userId !== userId) {
+        return res.status(404).json({ message: "Deck non trouvé" });
+      }
+
+      // Update deck
+      const [updatedDeck] = await db.update(decks)
+        .set({ 
+          name: name || existingDeck.name,
+          themeColors: themeColors || existingDeck.themeColors
+        })
+        .where(eq(decks.id, deckId))
+        .returning();
+
+      res.json(updatedDeck);
+    } catch (error) {
+      console.error("Error updating deck:", error);
+      res.status(500).json({ message: "Erreur lors de la mise à jour du deck" });
+    }
+  });
+
   // Reorder deck cards
   app.patch("/api/decks/:id/reorder", authenticateToken, async (req: AuthRequest, res) => {
     try {

@@ -171,12 +171,16 @@ export default function DeckDetail() {
   const [editName, setEditName] = useState('');
   const [editTheme, setEditTheme] = useState('');
 
-  // useEffect pour synchroniser les cartes locales
+  // useEffect pour synchroniser les cartes locales et initialiser l'édition
   useEffect(() => {
     if (deck?.cards) {
       setLocalCards([...deck.cards]);
     }
-  }, [deck?.cards]);
+    if (deck) {
+      setEditName(deck.name);
+      setEditTheme(deck.themeColors);
+    }
+  }, [deck]);
 
   // Configuration des capteurs pour le drag and drop
   const sensors = useSensors(
@@ -199,6 +203,23 @@ export default function DeckDetail() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+    }
+  });
+
+  // Mutation pour sauvegarder les modifications du deck
+  const updateDeckMutation = useMutation({
+    mutationFn: async ({ name, themeColors }: { name: string; themeColors: string }) => {
+      const response = await fetch(`/api/decks/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, themeColors })
+      });
+      if (!response.ok) throw new Error('Failed to update deck');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+      setShowEditPanel(false);
     }
   });
 
@@ -381,6 +402,146 @@ export default function DeckDetail() {
 
         </div>
       </main>
+
+      {/* Panel d'édition */}
+      {showEditPanel && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
+          <div className="bg-[hsl(214,35%,22%)] rounded-t-2xl w-full max-w-md mx-auto p-6 animate-in slide-in-from-bottom-full">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Modifier le deck</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10"
+                onClick={() => setShowEditPanel(false)}
+              >
+                ✕
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="deck-name" className="text-white mb-2 block">
+                  Nom du deck
+                </Label>
+                <Input
+                  id="deck-name"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="bg-[hsl(214,35%,15%)] border-gray-600 text-white"
+                  placeholder="Nom du deck"
+                />
+              </div>
+
+              <div>
+                <Label className="text-white mb-2 block">Thème</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {Object.entries(themeStyles).map(([key, theme]) => (
+                    <button
+                      key={key}
+                      onClick={() => setEditTheme(key)}
+                      className={cn(
+                        "p-3 rounded-lg border-2 transition-all",
+                        editTheme === key
+                          ? "border-white"
+                          : "border-gray-600 hover:border-gray-400"
+                      )}
+                    >
+                      <div
+                        className={cn("w-full h-8 rounded", theme.gradientClass)}
+                      />
+                      <div className="text-white text-xs mt-1 text-center">
+                        {key === "main+background" && "Défaut"}
+                        {key === "white+sky" && "Blanc & Ciel"}
+                        {key === "red+navy" && "Rouge & Marine"}
+                        {key === "navy+gold" && "Marine & Or"}
+                        {key === "red" && "Rouge"}
+                        {key === "white+blue" && "Blanc & Bleu"}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  className="flex-1 border-gray-600 text-white hover:bg-white/10"
+                  onClick={() => setShowEditPanel(false)}
+                >
+                  Annuler
+                </Button>
+                <Button
+                  className="flex-1 bg-primary hover:bg-primary/90"
+                  onClick={() => updateDeckMutation.mutate({ name: editName, themeColors: editTheme })}
+                  disabled={updateDeckMutation.isPending}
+                >
+                  {updateDeckMutation.isPending ? "Sauvegarde..." : "Sauvegarder"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Panel de partage */}
+      {showSharePanel && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
+          <div className="bg-[hsl(214,35%,22%)] rounded-t-2xl w-full max-w-md mx-auto p-6 animate-in slide-in-from-bottom-full">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-bold text-white">Partager le deck</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white/10"
+                onClick={() => setShowSharePanel(false)}
+              >
+                ✕
+              </Button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="text-gray-300 mb-4">
+                  Partage ton deck avec la communauté !
+                </div>
+                
+                <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4 mb-4">
+                  <div className="text-sm text-gray-400 mb-2">Lien de partage :</div>
+                  <div className="text-white text-sm font-mono bg-black/30 rounded p-2 break-all">
+                    {window.location.href}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    variant="outline"
+                    className="border-gray-600 text-white hover:bg-white/10"
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.href);
+                      // Toast notification could be added here
+                    }}
+                  >
+                    Copier le lien
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="border-gray-600 text-white hover:bg-white/10"
+                    onClick={() => {
+                      const text = `Découvre mon deck "${deck?.name}" sur BOOSTERZ ! ${window.location.href}`;
+                      if (navigator.share) {
+                        navigator.share({ title: deck?.name, text, url: window.location.href });
+                      }
+                    }}
+                  >
+                    Partager
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
