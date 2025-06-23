@@ -335,7 +335,7 @@ export default function AddCard() {
                     <SelectValue placeholder="Choisir une collection (optionnel)" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-800 border-zinc-700">
-                    <SelectItem value="" className="text-white hover:bg-zinc-700">
+                    <SelectItem value="all" className="text-white hover:bg-zinc-700">
                       Toutes les collections
                     </SelectItem>
                     {collections.map((collection) => (

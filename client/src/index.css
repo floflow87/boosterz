@@ -177,6 +177,10 @@
   animation: shimmer 3s ease-in-out infinite;
 }
 
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, var(--tw-gradient-stops));
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(216, 46%, 20%);
