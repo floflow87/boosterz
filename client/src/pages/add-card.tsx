@@ -330,15 +330,15 @@ export default function AddCard() {
               {/* Collection pour l'autocomplétion */}
               <div>
                 <Label htmlFor="collection" className="text-white mb-2 block">Collection (pour l'autocomplétion des joueurs)</Label>
-                <Select value={selectedCollectionId?.toString() || ""} onValueChange={(value) => setSelectedCollectionId(value ? parseInt(value) : null)}>
+                <Select value={selectedCollectionId?.toString() || "all"} onValueChange={(value) => setSelectedCollectionId(value === "all" ? null : parseInt(value))}>
                   <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
                     <SelectValue placeholder="Choisir une collection (optionnel)" />
                   </SelectTrigger>
                   <SelectContent className="bg-zinc-800 border-zinc-700">
-                    <SelectItem value="" className="text-white hover:bg-zinc-700">
+                    <SelectItem value="all" className="text-white hover:bg-zinc-700">
                       Toutes les collections
                     </SelectItem>
-                    {collections.map((collection) => (
+                    {collections.filter(collection => collection.id && collection.name).map((collection) => (
                       <SelectItem 
                         key={collection.id} 
                         value={collection.id.toString()}

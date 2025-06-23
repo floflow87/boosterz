@@ -469,8 +469,10 @@ export default function CardAddModal({ isOpen, onClose, collections, selectedCol
                       <SelectValue placeholder="Sélectionner une collection" />
                     </SelectTrigger>
                     <SelectContent className="bg-gray-800 border-gray-600">
-                      {collections.map((coll) => (
-                        <SelectItem key={coll.id} value={coll.id.toString()}>{coll.name}</SelectItem>
+                      {collections.filter(coll => coll.id && coll.name).map((coll) => (
+                        <SelectItem key={coll.id} value={coll.id.toString()} className="text-white hover:bg-gray-700">
+                          {coll.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
