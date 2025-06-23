@@ -477,64 +477,11 @@ export default function Profile() {
             )}
           </TabsContent>
 
-          <TabsContent value="deck" className="px-4 pt-4">
-            {isOwnProfile ? (
-              <div className="text-center py-12 text-gray-400">
-                Fonctionnalité Deck à implémenter
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">Cartes en vente</h3>
-                {saleCards.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-3">
-                    {saleCards.map((card) => (
-                      <div
-                        key={card.id}
-                        className="relative overflow-hidden rounded-lg border border-green-500/30 bg-green-500/5"
-                      >
-                        <div className="aspect-[3/4]">
-                          <img
-                            src={card.imageUrl}
-                            alt={`${card.playerName} - ${card.teamName}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        
-                        <div className="p-3">
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="min-w-0 flex-1">
-                              <p className="font-medium text-white text-sm leading-tight truncate">
-                                {card.playerName}
-                              </p>
-                              <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
-                            </div>
-                          </div>
-                          
-                          <div className="flex items-center justify-between mb-2">
-                            <Badge 
-                              variant="outline" 
-                              className="text-xs border-gray-600 text-gray-400"
-                            >
-                              {card.reference}
-                            </Badge>
-                          </div>
-                          
-                          {card.salePrice && (
-                            <div className="text-sm font-semibold text-green-400">
-                              {card.salePrice}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12 text-gray-400">
-                    Aucune carte en vente
-                  </div>
-                )}
-              </div>
-            )}
+          {/* Onglet Decks */}
+          <TabsContent value="decks" className="px-4 pt-4 space-y-4">
+            <div className="text-center py-8">
+              <div className="text-gray-400">Fonctionnalité Decks à venir</div>
+            </div>
           </TabsContent>
         </Tabs>
       </main>
