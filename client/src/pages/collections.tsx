@@ -307,6 +307,11 @@ export default function Collections() {
     setTradeOnly(false);
   };
 
+  const handleRemoveFromSale = () => {
+    if (!selectedCard) return;
+    removeFromSaleMutation.mutate(selectedCard.id);
+  };
+
   const handleAddToCollection = async () => {
     if (!selectedCard) return;
     
