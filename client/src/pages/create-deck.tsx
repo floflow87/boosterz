@@ -5,8 +5,8 @@ import { Plus, X, Upload, Palette, Check } from "lucide-react";
 import { Card, PersonalCard, Deck } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import Header from "@/components/Header";
-import HaloBlur from "@/components/HaloBlur";
+import Header from "@/components/header";
+import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -89,10 +89,15 @@ export default function CreateDeck() {
   // Create deck mutation
   const createDeckMutation = useMutation({
     mutationFn: async (deckData: any) => {
-      return await apiRequest("/api/decks", {
+      const response = await fetch("/api/decks", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(deckData),
       });
+      if (!response.ok) throw new Error("Failed to create deck");
+      return response.json();
     },
     onSuccess: (newDeck) => {
       toast({

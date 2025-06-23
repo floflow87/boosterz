@@ -6,9 +6,9 @@ import chatRoutes from "./chatRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
 import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
-import type { Card, PersonalCard, InsertPersonalCard } from "@shared/schema";
+import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
 import { db } from "./db";
-import { cards, posts, users, personalCards, insertPersonalCardSchema } from "@shared/schema";
+import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 
 // Initialize sample data in database
@@ -1502,6 +1502,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
+
+  // Deck routes
+  
+  // Get user's decks
+  app.get("/api/decks", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const userDecks = await db.select().from(decks).where(eq(decks.userId, userId));
+      res.json(userDecks);
+    } catch (error) {
+      console.error("Error fetching decks:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Create new deck
+  app.post("/api/decks", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const { name, themeColors, backgroundColor, accentColor, coverImage, cards } = req.body;
+      
+      if (!name?.trim()) {
+        return res.status(400).json({ message: "Le nom du deck est requis" });
+      }
+      
+      if (cards && cards.length > 12) {
+        return res.status(400).json({ message: "Un deck ne peut contenir que 12 cartes maximum" });
+      }
+
+      // Create deck
+      const [newDeck] = await db.insert(decks).values({
+        userId,
+        name: name.trim(),
+        themeColors: themeColors || "main+background",
+        backgroundColor: backgroundColor || "#1A2332",
+        accentColor: accentColor || "#F37261",
+        coverImage,
+        cardCount: cards?.length || 0,
+        isPublic: true
+      }).returning();
+
+      // Add cards to deck if provided
+      if (cards && cards.length > 0) {
+        const deckCardData = cards.map((card: any) => ({
+          deckId: newDeck.id,
+          cardId: card.cardId,
+          personalCardId: card.personalCardId,
+          position: card.position
+        }));
+        
+        await db.insert(deckCards).values(deckCardData);
+      }
+
+      res.json(newDeck);
+    } catch (error) {
+      console.error("Error creating deck:", error);
+      res.status(500).json({ message: "Erreur lors de la création du deck" });
+    }
+  });
+
+  // Get deck details with cards
+  app.get("/api/decks/:id", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      
+      // Get deck
+      const [deck] = await db.select().from(decks).where(eq(decks.id, deckId));
+      if (!deck) {
+        return res.status(404).json({ message: "Deck non trouvé" });
+      }
+
+      // Get deck cards with associated card/personal card data
+      const deckCardsList = await db.select().from(deckCards).where(eq(deckCards.deckId, deckId));
+      
+      const cardsWithData = [];
+      for (const deckCard of deckCardsList) {
+        let cardData = null;
+        
+        if (deckCard.cardId) {
+          const [card] = await db.select().from(cards).where(eq(cards.id, deckCard.cardId));
+          if (card) cardData = { type: 'collection', card };
+        } else if (deckCard.personalCardId) {
+          const [personalCard] = await db.select().from(personalCards).where(eq(personalCards.id, deckCard.personalCardId));
+          if (personalCard) cardData = { type: 'personal', card: personalCard };
+        }
+        
+        if (cardData) {
+          cardsWithData.push({
+            ...cardData,
+            position: deckCard.position
+          });
+        }
+      }
+
+      // Sort by position
+      cardsWithData.sort((a, b) => a.position - b.position);
+
+      res.json({
+        ...deck,
+        cards: cardsWithData
+      });
+    } catch (error) {
+      console.error("Error fetching deck:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Delete deck
+  app.delete("/api/decks/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      const userId = req.user!.id;
+
+      // Check if deck belongs to user
+      const [existingDeck] = await db.select().from(decks).where(eq(decks.id, deckId));
+      if (!existingDeck || existingDeck.userId !== userId) {
+        return res.status(404).json({ message: "Deck non trouvé" });
+      }
+
+      // Delete deck cards first
+      await db.delete(deckCards).where(eq(deckCards.deckId, deckId));
+      
+      // Delete deck
+      await db.delete(decks).where(eq(decks.id, deckId));
+
+      res.json({ message: "Deck supprimé avec succès" });
+    } catch (error) {
+      console.error("Error deleting deck:", error);
+      res.status(500).json({ message: "Erreur lors de la suppression du deck" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
