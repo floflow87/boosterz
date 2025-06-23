@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -373,8 +373,8 @@ export default function Collections() {
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
-              <Trophy className="w-4 h-4" />
-              Cartes
+              <CardIcon className="w-4 h-4" />
+              Mes Cartes
             </button>
 
             <button
@@ -397,7 +397,7 @@ export default function Collections() {
                   : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
               }`}
             >
-              <Package className="w-4 h-4" />
+              <BookOpen className="w-4 h-4" />
               Decks
             </button>
 
@@ -407,6 +407,7 @@ export default function Collections() {
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
           <div className="space-y-4">
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Collections</h3>
             {/* Add Collection Button - Moved to top */}
             <div 
               onClick={() => setLocation("/add-card")}

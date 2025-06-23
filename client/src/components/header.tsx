@@ -50,7 +50,10 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
             <ArrowLeft className="w-5 h-5 text-[hsl(212,23%,69%)]" />
           </button>
         ) : null}
-        <h1 className="text-lg font-semibold">{title}</h1>
+        <h1 className="text-lg font-semibold text-white font-luckiest">
+          <span className="text-white">Booster</span>
+          <span className="text-[hsl(9,85%,67%)]">z</span>
+        </h1>
       </div>
       
       <div className="flex items-center space-x-3">
