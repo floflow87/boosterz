@@ -69,15 +69,16 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => handleNavigation(item)}
-              className={`nav-item flex flex-col items-center p-2 transition-all duration-300 h-14 justify-center relative ${
+              className={`nav-item flex flex-col items-center p-2 transition-all duration-300 h-14 relative ${
                 active 
-                  ? "text-[#F37261]" 
-                  : "text-white hover:text-[#F37261]"
+                  ? "text-[#F37261] justify-start pt-3" 
+                  : "text-white hover:text-[#F37261] justify-center"
               }`}
             >
               {/* Border bottom pour l'onglet actif */}
               {active && (
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-[#F37261] rounded-t-full transition-all duration-300" />
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-8 h-1 rounded-t-full transition-all duration-300" 
+                     style={{ backgroundColor: 'rgba(243, 114, 97, 0.7)' }} />
               )}
               
               <Icon className={`w-5 h-5 ${active ? 'scale-105' : ''} transition-transform duration-200`} />
