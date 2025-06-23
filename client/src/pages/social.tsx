@@ -530,7 +530,12 @@ export default function Social() {
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
-                          <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
+                          <button 
+                            onClick={() => handleUserClick(item.user?.id || 0)}
+                            className="text-white font-medium text-sm hover:text-[hsl(9,85%,67%)] transition-colors"
+                          >
+                            {item.user?.name}
+                          </button>
                           <span className="text-xs text-gray-400">@{item.user?.username}</span>
                         </div>
                         <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>
@@ -648,7 +653,12 @@ export default function Social() {
                       </div>
                       <div>
                         <div className="flex items-center space-x-2">
-                          <h4 className="text-white font-medium text-sm">{item.user?.name}</h4>
+                          <button 
+                            onClick={() => handleUserClick(item.user?.id || 0)}
+                            className="text-white font-medium text-sm hover:text-[hsl(9,85%,67%)] transition-colors"
+                          >
+                            {item.user?.name}
+                          </button>
                           <span className="text-xs text-gray-400">@{item.user?.username}</span>
                         </div>
                         <div className="text-xs text-gray-400">{formatPostDate(item.createdAt)}</div>

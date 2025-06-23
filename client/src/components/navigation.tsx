@@ -60,7 +60,7 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => handleNavigation(item)}
-              className={`nav-item flex flex-col items-center p-2 transition-all duration-300 ${
+              className={`nav-item flex flex-col items-center p-2 transition-all duration-300 h-14 justify-center ${
                 active 
                   ? "text-[#F37261] rounded-full" 
                   : "text-white hover:bg-gray-700 rounded-lg"

@@ -1,4 +1,4 @@
-import { ArrowLeft, Settings, MessageCircle } from "lucide-react";
+import { ArrowLeft, Settings, Bell } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 
@@ -58,10 +58,10 @@ export default function Header({ title, showBackButton = false }: HeaderProps) {
       
       <div className="flex items-center space-x-3">
         <button 
-          onClick={() => setLocation('/conversations')}
+          onClick={() => setLocation('/notifications')}
           className="relative w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
         >
-          <MessageCircle className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+          <Bell className="w-5 h-5 text-[hsl(212,23%,69%)]" />
           {totalUnreadCount > 0 && (
             <div className="absolute -top-1 -right-1 w-4 h-4 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center">
               <span className="text-white text-xs font-bold">{totalUnreadCount}</span>
