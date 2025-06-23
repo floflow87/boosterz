@@ -33,20 +33,29 @@ export default function Navigation() {
   };
 
   const isActive = (path: string) => {
-    // Exact matching for each specific route
-    if (path === "/social") {
-      return location === "/" || location === "/community" || location === "/social";
+    console.log(`Checking if ${path} is active for location: ${location}`);
+    
+    switch (path) {
+      case "/social":
+        return location === "/" || location === "/community" || location === "/social";
+      
+      case "/collections":
+        return location === "/collections" || 
+               location.startsWith("/collection") || 
+               location === "/all-cards" || 
+               location.startsWith("/deck");
+      
+      case "/conversations":
+        const isConvActive = location === "/conversations" || location.startsWith("/chat");
+        console.log(`Conversations active: ${isConvActive} for location: ${location}`);
+        return isConvActive;
+      
+      case "/shop":
+        return false; // External link, never active
+      
+      default:
+        return false;
     }
-    if (path === "/collections") {
-      return location === "/collections" || location.startsWith("/collection") || location === "/all-cards" || location.startsWith("/deck");
-    }
-    if (path === "/conversations") {
-      return location === "/conversations" || location.startsWith("/chat");
-    }
-    if (path === "/shop") {
-      return false; // Shop is external, never active
-    }
-    return false; // Default to false to prevent cross-activation
   };
 
   if (isLoggingOut) {
