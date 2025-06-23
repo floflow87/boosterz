@@ -9,7 +9,7 @@ import { CardRecognitionEngine } from "./cardRecognition";
 import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
 import { db } from "./db";
 import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and, inArray } from "drizzle-orm";
 
 // Initialize sample data in database
 const initializeSampleData = async () => {
@@ -1606,6 +1606,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching deck:", error);
       res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Reorder deck cards
+  app.patch("/api/decks/:id/reorder", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      const { positions } = req.body;
+
+      // Check if deck belongs to user
+      const [existingDeck] = await db.select().from(decks).where(eq(decks.id, deckId));
+      if (!existingDeck || existingDeck.userId !== userId) {
+        return res.status(404).json({ message: "Deck non trouvé" });
+      }
+
+      // Update positions
+      for (const pos of positions) {
+        if (pos.cardId) {
+          await db.update(deckCards)
+            .set({ position: pos.position })
+            .where(and(eq(deckCards.deckId, deckId), eq(deckCards.cardId, pos.cardId)));
+        } else if (pos.personalCardId) {
+          await db.update(deckCards)
+            .set({ position: pos.position })
+            .where(and(eq(deckCards.deckId, deckId), eq(deckCards.personalCardId, pos.personalCardId)));
+        }
+      }
+
+      res.json({ message: "Positions mises à jour avec succès" });
+    } catch (error) {
+      console.error("Error reordering deck cards:", error);
+      res.status(500).json({ message: "Erreur lors de la réorganisation des cartes" });
     }
   });
 

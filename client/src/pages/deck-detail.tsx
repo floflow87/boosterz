@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical } from "lucide-react";
@@ -146,11 +146,77 @@ const themeStyles = {
 export default function DeckDetail() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
   
   const { data: deck, isLoading } = useQuery<DeckWithCards>({
     queryKey: [`/api/decks/${id}`],
     enabled: !!id,
   });
+
+  const [localCards, setLocalCards] = useState<DeckWithCards['cards']>([]);
+
+  // useEffect pour synchroniser les cartes locales
+  useEffect(() => {
+    if (deck?.cards) {
+      setLocalCards([...deck.cards]);
+    }
+  }, [deck?.cards]);
+
+  // Configuration des capteurs pour le drag and drop
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Mutation pour sauvegarder les nouvelles positions
+  const updatePositionsMutation = useMutation({
+    mutationFn: async (newPositions: Array<{ cardId?: number; personalCardId?: number; position: number }>) => {
+      const response = await fetch(`/api/decks/${id}/reorder`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ positions: newPositions })
+      });
+      if (!response.ok) throw new Error('Failed to update positions');
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+    }
+  });
+
+  // Gestionnaire de fin de drag
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) return;
+
+    const oldIndex = localCards.findIndex(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}` === active.id);
+    const newIndex = localCards.findIndex(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}` === over.id);
+
+    if (oldIndex !== -1 && newIndex !== -1) {
+      const newCards = arrayMove(localCards, oldIndex, newIndex);
+      
+      // Mettre à jour les positions
+      const updatedCards = newCards.map((card, index) => ({
+        ...card,
+        position: index
+      }));
+
+      setLocalCards(updatedCards);
+
+      // Préparer les données pour l'API
+      const newPositions = updatedCards.map((card, index) => ({
+        cardId: card.type === 'collection' ? (card.card as Card).id : undefined,
+        personalCardId: card.type === 'personal' ? (card.card as PersonalCard).id : undefined,
+        position: index
+      }));
+
+      // Sauvegarder les nouvelles positions
+      updatePositionsMutation.mutate(newPositions);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -253,7 +319,7 @@ export default function DeckDetail() {
               </h2>
             </div>
 
-            {deck.cards.length === 0 ? (
+            {localCards.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">
                   Ce deck ne contient pas encore de cartes.
@@ -266,49 +332,39 @@ export default function DeckDetail() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                {deck.cards.map((deckCard, index) => (
-                  <div key={index} className="relative">
-                    <div className="absolute top-2 left-2 bg-black/70 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center z-10">
-                      {deckCard.position + 1}
-                    </div>
-                    
-                    {deckCard.type === 'collection' ? (
-                      <CardDisplay
-                        card={deckCard.card as Card}
-                        viewMode="grid"
-                        variant="compact"
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={localCards.map(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}`)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {localCards.map((deckCard, index) => (
+                      <SortableCard
+                        key={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
+                        id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
+                        cardData={deckCard}
+                        index={index}
                       />
-                    ) : (
-                      <div className="aspect-[2.5/3.5] bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white text-xs text-center p-2">
-                        <div>
-                          <div className="font-bold text-sm mb-1">
-                            {(deckCard.card as PersonalCard).playerName}
-                          </div>
-                          <div className="text-xs opacity-80">
-                            {(deckCard.card as PersonalCard).teamName}
-                          </div>
-                          <div className="text-xs opacity-60 mt-1">
-                            {(deckCard.card as PersonalCard).cardType}
-                          </div>
+                    ))}
+                    
+                    {/* Empty slots */}
+                    {Array.from({ length: 12 - localCards.length }, (_, i) => (
+                      <div
+                        key={`empty-${i}`}
+                        className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center"
+                      >
+                        <div className="text-gray-500 text-xs text-center">
+                          Emplacement<br />libre
                         </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                ))}
-                
-                {/* Empty slots */}
-                {Array.from({ length: 12 - deck.cards.length }, (_, i) => (
-                  <div
-                    key={`empty-${i}`}
-                    className="aspect-[2.5/3.5] border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center"
-                  >
-                    <div className="text-gray-500 text-xs text-center">
-                      Emplacement<br />libre
-                    </div>
-                  </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             )}
           </div>
 
