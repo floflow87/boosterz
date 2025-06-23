@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "wouter";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import { Users, MessageCircle, Trophy, Star, Activity, Hash } from "lucide-react";

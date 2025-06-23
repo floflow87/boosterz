@@ -1,14 +1,13 @@
 import { useState } from "react";
-import { Home, Users, BookOpen, ShoppingCart, Settings, LogOut } from "lucide-react";
+import { Users, BookOpen, MessageCircle, ShoppingCart } from "lucide-react";
 import { useLocation } from "wouter";
 import LoadingScreen from "@/components/LoadingScreen";
 
 const navItems = [
-  { id: "home", icon: Home, label: "Accueil", path: "/" },
-  { id: "social", icon: Users, label: "Social", path: "/social" },
-  { id: "book", icon: BookOpen, label: "Book", path: "/collections" },
+  { id: "community", icon: Users, label: "Communauté", path: "/community" },
+  { id: "collections", icon: BookOpen, label: "Collections", path: "/collections" },
+  { id: "messages", icon: MessageCircle, label: "Messages", path: "/conversations" },
   { id: "shop", icon: ShoppingCart, label: "Boutique", path: "/shop" },
-  { id: "settings", icon: Settings, label: "Réglages", path: "/settings" },
 ];
 
 export default function Navigation() {
@@ -34,11 +33,14 @@ export default function Navigation() {
   };
 
   const isActive = (path: string) => {
-    if (path === "/") {
-      return location === "/" || location === "/home";
+    if (path === "/community") {
+      return location === "/" || location === "/community";
     }
     if (path === "/collections") {
-      return location === "/collections" || location.startsWith("/collection") || location === "/all-cards";
+      return location === "/collections" || location.startsWith("/collection") || location === "/all-cards" || location.startsWith("/deck");
+    }
+    if (path === "/conversations") {
+      return location === "/conversations" || location.startsWith("/chat");
     }
     return location.startsWith(path);
   };
@@ -68,6 +70,9 @@ export default function Navigation() {
               } : {}}
             >
               <Icon className={`w-5 h-5 ${active ? 'scale-105' : ''} transition-transform`} />
+              {!active && (
+                <span className="text-xs mt-1 text-gray-400">{item.label}</span>
+              )}
             </button>
           );
         })}
