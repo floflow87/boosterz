@@ -66,10 +66,8 @@ export default function Collections() {
     } else if (saleFilter === 'sold') {
       // Vendues : seulement les cartes avec isSold=true
       if (!card.isSold) return false;
-    } else if (saleFilter === 'all') {
-      // Toutes : toutes les cartes sauf les vendues
-      if (card.isSold) return false;
-    }
+    } 
+    // Pour 'all', on affiche toutes les cartes sans filtrage par statut de vente
     
     // Filtre par recherche
     if (searchQuery.trim()) {
@@ -608,14 +606,21 @@ export default function Collections() {
                   {filteredPersonalCards.map((card: any) => (
                     <div 
                       key={card.id} 
-                      className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer"
+                      className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer relative ${card.isSold ? 'opacity-75' : ''}`}
                       onClick={() => setSelectedCard(card)}
                     >
+                      {card.isSold && (
+                        <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center z-10">
+                          <div className="bg-yellow-500 text-black px-3 py-1 rounded-full font-bold text-sm">
+                            VENDUE
+                          </div>
+                        </div>
+                      )}
                       {card.imageUrl && (
                         <img 
                           src={card.imageUrl} 
                           alt={`${card.playerName || 'Carte'}`}
-                          className="w-full h-32 object-cover rounded-md mb-2"
+                          className={`w-full h-32 object-cover rounded-md mb-2 ${card.isSold ? 'grayscale' : ''}`}
                         />
                       )}
                       <div className="space-y-1">
@@ -626,7 +631,12 @@ export default function Collections() {
                           <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
                         )}
                         <p className="text-gray-500 text-xs">{card.cardType}</p>
-                        {card.isForTrade && card.tradePrice && (
+                        {card.isSold ? (
+                          <div className="flex items-center gap-1 mt-2">
+                            <CheckCircle className="w-3 h-3 text-yellow-500" />
+                            <span className="text-yellow-500 text-xs font-medium">Vendue</span>
+                          </div>
+                        ) : card.isForTrade && card.tradePrice && (
                           <div className="flex items-center gap-1 mt-2">
                             <DollarSign className="w-3 h-3 text-primary" />
                             <span className="text-primary text-xs font-medium">{card.tradePrice}€</span>
@@ -642,14 +652,19 @@ export default function Collections() {
                   {filteredPersonalCards.map((card: any) => (
                     <div 
                       key={card.id} 
-                      className="bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer flex items-center gap-4"
+                      className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer flex items-center gap-4 relative ${card.isSold ? 'opacity-75' : ''}`}
                       onClick={() => setSelectedCard(card)}
                     >
+                      {card.isSold && (
+                        <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded-full font-bold text-xs z-10">
+                          VENDUE
+                        </div>
+                      )}
                       {card.imageUrl && (
                         <img 
                           src={card.imageUrl} 
                           alt={`${card.playerName || 'Carte'}`}
-                          className="w-16 h-16 object-cover rounded-md flex-shrink-0"
+                          className={`w-16 h-16 object-cover rounded-md flex-shrink-0 ${card.isSold ? 'grayscale' : ''}`}
                         />
                       )}
                       <div className="flex-1 space-y-1">
@@ -661,7 +676,12 @@ export default function Collections() {
                         )}
                         <p className="text-gray-500 text-sm">{card.cardType}</p>
                       </div>
-                      {card.isForTrade && card.tradePrice && (
+                      {card.isSold ? (
+                        <div className="flex items-center gap-2">
+                          <CheckCircle className="w-4 h-4 text-yellow-500" />
+                          <span className="text-yellow-500 font-medium">Vendue</span>
+                        </div>
+                      ) : card.isForTrade && card.tradePrice && (
                         <div className="flex items-center gap-2">
                           <DollarSign className="w-4 h-4 text-primary" />
                           <span className="text-primary font-medium">{card.tradePrice}€</span>
