@@ -7,6 +7,7 @@ import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 
 import CardDisplay from "../components/card-display";
+import CardFullscreenModal from "@/components/card-fullscreen-modal";
 import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +29,7 @@ export default function Collections() {
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [fullscreenCard, setFullscreenCard] = useState<Card | null>(null);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [salePrice, setSalePrice] = useState('');
