@@ -92,6 +92,13 @@ export default function CreateDeck() {
     staleTime: 5 * 60 * 1000,
   });
 
+  // Fetch existing deck data when in add mode
+  const { data: existingDeck } = useQuery({
+    queryKey: [`/api/decks/${deckId}`],
+    enabled: Boolean(deckId && isAddMode),
+    staleTime: 5 * 60 * 1000,
+  }) as { data?: { id: number; name: string; cards: any[] } };
+
   // Create deck mutation
   const createDeckMutation = useMutation({
     mutationFn: async (deckData: any) => {
@@ -231,24 +238,32 @@ export default function CreateDeck() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
       <HaloBlur />
-      <Header title="Créer un deck" showBackButton />
+      <Header 
+        title={isAddMode && existingDeck 
+          ? `${existingDeck.name} - ${(existingDeck.cards?.length || 0) + selectedCards.length}/12`
+          : "Créer un deck"
+        } 
+        showBackButton 
+      />
       
       <main className="relative z-10 px-4 pb-24 pt-4">
         <div className="max-w-lg mx-auto space-y-6">
           
-          {/* Deck Name */}
-          <div>
-            <Label htmlFor="deckName" className="text-white mb-2 block">
-              Nom du deck *
-            </Label>
-            <Input
-              id="deckName"
-              value={deckName}
-              onChange={(e) => setDeckName(e.target.value)}
-              placeholder="Mon super deck"
-              className="bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white"
-            />
-          </div>
+          {/* Deck Name - Hidden in add mode */}
+          {!isAddMode && (
+            <div>
+              <Label htmlFor="deckName" className="text-white mb-2 block">
+                Nom du deck *
+              </Label>
+              <Input
+                id="deckName"
+                value={deckName}
+                onChange={(e) => setDeckName(e.target.value)}
+                placeholder="Mon super deck"
+                className="bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white"
+              />
+            </div>
+          )}
 
           {/* Theme Selection - Hidden in add mode */}
           {!isAddMode && (
@@ -345,13 +360,15 @@ export default function CreateDeck() {
             {selectedCards.length === 0 ? (
               <div className="bg-[hsl(214,35%,22%)] border-2 border-dashed border-[hsl(214,35%,30%)] rounded-lg p-8 text-center">
                 <div className="text-gray-400 mb-2">Aucune carte sélectionnée</div>
-                <Button
-                  onClick={() => setShowCardSelector(true)}
-                  className="bg-primary hover:bg-primary/90 text-white"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Ajouter ta première carte
-                </Button>
+                {!isAddMode && (
+                  <Button
+                    onClick={() => setShowCardSelector(true)}
+                    className="bg-primary hover:bg-primary/90 text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Ajouter ta première carte
+                  </Button>
+                )}
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
@@ -385,13 +402,16 @@ export default function CreateDeck() {
             )}
           </div>
 
-          {/* Create Button */}
+          {/* Create/Add Button */}
           <Button
             onClick={handleCreateDeck}
-            disabled={createDeckMutation.isPending || !deckName.trim() || selectedCards.length === 0}
+            disabled={createDeckMutation.isPending || (!isAddMode && (!deckName.trim() || selectedCards.length === 0)) || (isAddMode && selectedCards.length === 0)}
             className="w-full bg-primary hover:bg-primary/90 text-white py-3"
           >
-            {createDeckMutation.isPending ? "Création..." : "Créer le deck"}
+            {createDeckMutation.isPending 
+              ? (isAddMode ? "Ajout..." : "Création...") 
+              : (isAddMode ? "Ajouter au deck" : "Créer le deck")
+            }
           </Button>
         </div>
       </main>
