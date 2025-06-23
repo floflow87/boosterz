@@ -553,21 +553,21 @@ export default function Social() {
                           Voir le profil
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          className="text-blue-400 hover:bg-gray-700 cursor-pointer"
+                          className="text-white hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleFollowUser(item.user?.id || 0)}
                         >
                           <UserPlus className="mr-2 h-4 w-4" />
                           Suivre
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          className="text-green-400 hover:bg-gray-700 cursor-pointer"
+                          className="text-white hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleContactUser(item.user?.id || 0)}
                         >
                           <MessageSquare className="mr-2 h-4 w-4" />
                           Contacter
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          className="text-red-400 hover:bg-gray-700 cursor-pointer"
+                          className="text-white hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleBlockUser(item.user?.id || 0)}
                         >
                           <UserX className="mr-2 h-4 w-4" />
@@ -671,21 +671,21 @@ export default function Social() {
                           Voir le profil
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          className="text-blue-400 hover:bg-gray-700 cursor-pointer"
+                          className="text-white hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleFollowUser(item.user?.id || 0)}
                         >
                           <UserPlus className="mr-2 h-4 w-4" />
                           Suivre
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          className="text-green-400 hover:bg-gray-700 cursor-pointer"
+                          className="text-white hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleContactUser(item.user?.id || 0)}
                         >
                           <MessageSquare className="mr-2 h-4 w-4" />
                           Contacter
                         </DropdownMenuItem>
                         <DropdownMenuItem 
-                          className="text-red-400 hover:bg-gray-700 cursor-pointer"
+                          className="text-white hover:bg-gray-700 cursor-pointer"
                           onClick={() => handleBlockUser(item.user?.id || 0)}
                         >
                           <UserX className="mr-2 h-4 w-4" />

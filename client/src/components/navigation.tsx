@@ -16,7 +16,11 @@ export default function Navigation() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const handleNavigation = (item: any) => {
-    setLocation(item.path);
+    if (item.id === "shop") {
+      window.open("https://www.panini.fr/shp_fra_fr/cartes-stickers.html?skip_default_filters=true", "_blank");
+    } else {
+      setLocation(item.path);
+    }
   };
 
   const handleLogout = async () => {
