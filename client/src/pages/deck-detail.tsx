@@ -86,11 +86,21 @@ function SortableCard({ id, cardData, index }: SortableCardProps) {
       </div>
       
       {cardData.type === 'collection' ? (
-        <CardDisplay
-          card={cardData.card as Card}
-          viewMode="grid"
-          variant="compact"
-        />
+        (cardData.card as Card).imageUrl ? (
+          <div className="aspect-[2.5/3.5] rounded-lg overflow-hidden shadow-lg">
+            <img 
+              src={(cardData.card as Card).imageUrl} 
+              alt={(cardData.card as Card).playerName}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ) : (
+          <CardDisplay
+            card={cardData.card as Card}
+            viewMode="grid"
+            variant="compact"
+          />
+        )
       ) : (
         <div className="aspect-[2.5/3.5] bg-gradient-to-br from-purple-600 to-blue-600 rounded-lg flex items-center justify-center text-white text-xs text-center p-2">
           <div>
@@ -114,32 +124,32 @@ const themeStyles = {
   "main+background": {
     backgroundColor: "#1A2332",
     accentColor: "#F37261",
-    gradientClass: "from-[#1A2332] to-[#F37261]"
+    gradientClass: "bg-gradient-radial from-[#1A2332] via-[#1A2332] to-[#F37261]"
   },
   "white+sky": {
     backgroundColor: "#FFFFFF",
     accentColor: "#87CEEB",
-    gradientClass: "from-white to-sky-400"
+    gradientClass: "bg-gradient-radial from-white via-white to-sky-400"
   },
   "red+navy": {
     backgroundColor: "#FF0000",
     accentColor: "#000080",
-    gradientClass: "from-red-500 to-blue-900"
+    gradientClass: "bg-gradient-radial from-red-500 via-red-500 to-blue-900"
   },
   "navy+gold": {
     backgroundColor: "#000080",
     accentColor: "#FFD700",
-    gradientClass: "from-blue-900 to-yellow-500"
+    gradientClass: "bg-gradient-radial from-blue-900 via-blue-900 to-yellow-500"
   },
   "red": {
     backgroundColor: "#DC2626",
     accentColor: "#FFFFFF",
-    gradientClass: "from-red-600 to-white"
+    gradientClass: "bg-gradient-radial from-red-600 via-red-600 to-white"
   },
   "white+blue": {
     backgroundColor: "#FFFFFF",
     accentColor: "#3B82F6",
-    gradientClass: "from-white to-blue-500"
+    gradientClass: "bg-gradient-radial from-white via-white to-blue-500"
   }
 };
 
@@ -255,11 +265,10 @@ export default function DeckDetail() {
           {/* Deck Header */}
           <div 
             className={cn(
-              "rounded-2xl p-6 mb-6 bg-gradient-to-br",
+              "rounded-2xl p-6 mb-6",
               themeStyle.gradientClass
             )}
             style={{
-              backgroundColor: themeStyle.backgroundColor,
               borderColor: themeStyle.accentColor
             }}
           >

@@ -855,26 +855,47 @@ export default function Collections() {
                     {/* Preview des 3 premières cartes */}
                     <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-3">
                       {deck.previewCards && deck.previewCards.length > 0 ? (
-                        <div className="flex space-x-3 w-full">
+                        <div className="flex space-x-3 w-full perspective-1000">
                           {deck.previewCards.map((cardData: any, index: number) => (
-                            <div key={index} className="flex-1 h-26 rounded bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-sm text-center p-2">
-                              {cardData.type === 'collection' ? (
-                                <div>
-                                  <div className="font-bold text-sm mb-1">{cardData.card.playerName}</div>
-                                  <div className="text-xs opacity-80">{cardData.card.teamName}</div>
+                            <div 
+                              key={index} 
+                              className="flex-1 h-24 relative transform-gpu"
+                              style={{
+                                transform: `rotateY(${-15 + index * 15}deg) rotateX(10deg)`,
+                                transformStyle: 'preserve-3d'
+                              }}
+                            >
+                              {cardData.type === 'collection' && cardData.card.imageUrl ? (
+                                <div className="w-full h-full rounded-lg overflow-hidden shadow-lg border-2 border-white/20">
+                                  <img 
+                                    src={cardData.card.imageUrl} 
+                                    alt={cardData.card.playerName}
+                                    className="w-full h-full object-cover"
+                                  />
                                 </div>
                               ) : (
-                                <div>
-                                  <div className="font-bold text-sm mb-1">{cardData.card.playerName}</div>
-                                  <div className="text-xs opacity-80">{cardData.card.teamName}</div>
+                                <div className="w-full h-full rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2 shadow-lg border-2 border-white/20">
+                                  <div>
+                                    <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
+                                    <div className="text-xs opacity-80">{cardData.card.teamName}</div>
+                                  </div>
                                 </div>
                               )}
                             </div>
                           ))}
                           {/* Emplacements vides pour compléter jusqu'à 3 */}
                           {Array.from({ length: 3 - deck.previewCards.length }, (_, i) => (
-                            <div key={`empty-${i}`} className="flex-1 h-26 rounded border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-xs">
-                              Vide
+                            <div 
+                              key={`empty-${i}`} 
+                              className="flex-1 h-24 relative transform-gpu"
+                              style={{
+                                transform: `rotateY(${-15 + (deck.previewCards.length + i) * 15}deg) rotateX(10deg)`,
+                                transformStyle: 'preserve-3d'
+                              }}
+                            >
+                              <div className="w-full h-full rounded-lg border-2 border-dashed border-gray-600 flex items-center justify-center text-gray-500 text-xs shadow-lg">
+                                Vide
+                              </div>
                             </div>
                           ))}
                         </div>

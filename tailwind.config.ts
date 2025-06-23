@@ -66,6 +66,12 @@ export default {
           ring: "var(--sidebar-ring)",
         },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(circle at 50% 50%, var(--tw-gradient-stops))',
+      },
+      perspective: {
+        '1000': '1000px',
+      },
       keyframes: {
         "accordion-down": {
           from: {
