@@ -60,7 +60,7 @@ export default function Navigation() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 backdrop-blur-lg px-3 py-3 z-20 shadow-lg rounded-t-[20px]" style={{ backgroundColor: '#131B2F', height: '65px' }}>
-      <div className="flex justify-around items-center max-w-sm mx-auto h-full">
+      <div className="flex justify-center items-center max-w-sm mx-auto h-full gap-8">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -69,7 +69,7 @@ export default function Navigation() {
             <button
               key={item.id}
               onClick={() => handleNavigation(item)}
-              className={`nav-item flex flex-col items-center transition-all duration-300 h-14 relative ${
+              className={`nav-item flex flex-col items-center transition-all duration-300 h-14 relative w-16 ${
                 active 
                   ? "text-[#F37261] justify-start pt-2" 
                   : "text-white hover:text-[#F37261] justify-center p-2"
