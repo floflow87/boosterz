@@ -1274,13 +1274,13 @@ export default function Social() {
                       </div>
                     </div>
 
-                    {postsLoading ? (
+                    {myPostsLoading ? (
                       <div className="text-center py-8">
                         <div className="text-gray-400">Chargement des posts...</div>
                       </div>
-                    ) : posts.length > 0 ? (
+                    ) : myPosts.length > 0 ? (
                       <div className="space-y-4">
-                        {posts.map((post) => (
+                        {myPosts.map((post) => (
                           <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
                             {/* Post Header - Darker Background */}
                             <div className="p-4 border-b border-[hsl(214,35%,30%)] bg-[hsl(214,35%,18%)]">
