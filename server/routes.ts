@@ -317,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const followedUserIds = followedUsers.map(f => f.followingId);
       
-      // Get posts from followed users
+      // Get posts from followed users UNIQUEMENT
       const feedPosts = await db.select({
         id: posts.id,
         userId: posts.userId,
@@ -334,7 +334,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       })
       .from(posts)
       .leftJoin(users, eq(posts.userId, users.id))
-      .where(inArray(posts.userId, followedUserIds))
+      .where(
+        and(
+          inArray(posts.userId, followedUserIds),
+          not(eq(posts.userId, userId)) // Exclure les posts de l'utilisateur courant
+        )
+      )
       .orderBy(desc(posts.createdAt))
       .limit(50);
       

@@ -451,7 +451,14 @@ export class DatabaseStorage implements IStorage {
   // Chat system methods
   async getConversations(userId: number): Promise<Conversation[]> {
     try {
-      const result = await db.select().from(conversations).where(
+      const result = await db.select({
+        id: conversations.id,
+        user1Id: conversations.user1Id,
+        user2Id: conversations.user2Id,
+        lastMessageAt: conversations.lastMessageAt,
+        createdAt: conversations.createdAt,
+        updatedAt: conversations.updatedAt
+      }).from(conversations).where(
         or(
           eq(conversations.user1Id, userId),
           eq(conversations.user2Id, userId)
