@@ -1,6 +1,6 @@
 import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, comments, postLikes, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage, type Comment, type InsertComment } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, or, ilike, desc, inArray, sql, not } from "drizzle-orm";
+import { eq, and, or, ilike, desc, asc, inArray, sql, not } from "drizzle-orm";
 import { follows } from "@shared/schema";
 
 export interface IStorage {
