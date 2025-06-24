@@ -33,6 +33,7 @@ export default function AddCard() {
   const [cardType, setCardType] = useState("");
   const [reference, setReference] = useState("");
   const [numbering, setNumbering] = useState("");
+  const [season, setSeason] = useState("");
   const [condition, setCondition] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleDescription, setSaleDescription] = useState("");
@@ -464,6 +465,20 @@ export default function AddCard() {
                   className="bg-zinc-800 border-zinc-700 text-white"
                   placeholder="Ex: 125/199"
                 />
+              </div>
+
+              {/* Saison */}
+              <div>
+                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
+                <Select value={season} onValueChange={setSeason}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Sélectionne la saison" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
+                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* État */}

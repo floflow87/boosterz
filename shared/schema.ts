@@ -46,6 +46,7 @@ export const cards = pgTable("cards", {
   teamName: text("team_name"),
   cardType: text("card_type").notNull(), // "base", "base_numbered", "insert", "autograph", "numbered", "special_1_1"
   cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", "intergalactic_hit", etc.
+  season: text("season"), // "22/23", "23/24", etc.
   imageUrl: text("image_url"),
   isOwned: boolean("is_owned").default(false).notNull(),
   isForTrade: boolean("is_for_trade").default(false).notNull(),
@@ -426,6 +427,7 @@ export const insertCardSchema = createInsertSchema(cards).pick({
   teamName: true,
   cardType: true,
   cardSubType: true,
+  season: true,
   imageUrl: true,
   isOwned: true,
   isRookieCard: true,
