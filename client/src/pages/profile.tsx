@@ -175,7 +175,7 @@ export default function Profile() {
     });
   };
 
-  if (!match || !userId) {
+  if (!match && !matchMe) {
     return <div>Profil non trouvé</div>;
   }
 
