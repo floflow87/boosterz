@@ -170,9 +170,10 @@ export default function UserProfile() {
         </div>
 
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 bg-[hsl(214,35%,22%)] mb-6">
+          <TabsList className="grid w-full grid-cols-6 bg-[hsl(214,35%,22%)] mb-6">
             <TabsTrigger value="posts" className="text-xs">Posts</TabsTrigger>
             <TabsTrigger value="collections" className="text-xs">Collections</TabsTrigger>
+            <TabsTrigger value="decks" className="text-xs">Decks</TabsTrigger>
             <TabsTrigger value="featured" className="text-xs">À la une</TabsTrigger>
             <TabsTrigger value="marketplace" className="text-xs">Marché</TabsTrigger>
             <TabsTrigger value="sold" className="text-xs">Vendues</TabsTrigger>
