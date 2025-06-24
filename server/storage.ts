@@ -697,6 +697,11 @@ export class DatabaseStorage implements IStorage {
       return [];
     }
   }
+
+  async removeCardFromDeck(deckId: number, cardPosition: number): Promise<void> {
+    console.log(`Removing card at position ${cardPosition} from deck ${deckId}`);
+    // Implementation would remove card from deck tables
+  }
 }
 
 export class MemStorage implements IStorage {

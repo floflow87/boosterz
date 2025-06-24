@@ -1478,7 +1478,7 @@ export default function Collections() {
                 setRotationStyle({ rotateX: -rotateX, rotateY });
               }}
               onMouseLeave={() => {
-                setRotationStyle({ rotateX: -5, rotateY: -10 });
+                setRotationStyle({ rotateX: 5, rotateY: -15 });
               }}
               onClick={(e) => {
                 e.stopPropagation();

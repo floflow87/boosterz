@@ -834,6 +834,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Remove card from deck
+  app.delete("/api/decks/:id/cards/:cardPosition", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      const cardPosition = parseInt(req.params.cardPosition);
+      const userId = req.user!.id;
+
+      // Verify deck ownership
+      const deck = await storage.getDeck(deckId);
+      if (!deck || deck.userId !== userId) {
+        return res.status(404).json({ message: "Deck not found" });
+      }
+
+      // Remove card and reorder positions
+      await storage.removeCardFromDeck(deckId, cardPosition);
+      
+      res.json({ message: "Card removed successfully" });
+    } catch (error) {
+      console.error("Error removing card from deck:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Posts endpoints
   app.post("/api/posts", authenticateToken, async (req: AuthRequest, res) => {
     try {
