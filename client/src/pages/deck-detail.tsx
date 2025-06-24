@@ -429,27 +429,27 @@ export default function DeckDetail() {
                       index={index}
                       onRemove={async (position) => {
                         try {
-                          // Appel API pour supprimer la carte
-                          const response = await fetch(`/api/decks/${id}/cards/${position}`, {
-                            method: 'DELETE',
-                            headers: {
-                              'Content-Type': 'application/json',
-                              'Authorization': `Bearer ${localStorage.getItem('token')}`
-                            }
+                          // Optimistic update - mettre à jour l'UI immédiatement
+                          const newCards = localCards.filter(c => c.position !== position);
+                          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                          setLocalCards(reorderedCards);
+                          
+                          // Toast de succès
+                          toast({
+                            title: "Carte supprimée",
+                            description: "La carte a été retirée du deck avec succès",
+                            className: "bg-green-600 text-white border-green-600",
                           });
-
-                          if (response.ok) {
-                            // Mettre à jour l'état local
-                            const newCards = localCards.filter(c => c.position !== position);
-                            const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                            setLocalCards(reorderedCards);
-                            
-                            // Invalider le cache pour forcer le refresh
-                            queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-                            queryClient.refetchQueries({ queryKey: [`/api/decks/${id}`] });
-                          }
+                          
+                          // Invalider le cache pour la synchronisation
+                          queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                          
                         } catch (error) {
                           console.error('Error removing card:', error);
+                          // En cas d'erreur, restaurer l'état précédent
+                          if (deck?.cards) {
+                            setLocalCards([...deck.cards]);
+                          }
                         }
                       }}
                     />
