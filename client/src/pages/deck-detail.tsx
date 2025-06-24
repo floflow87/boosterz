@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
@@ -138,16 +139,7 @@ function SortableCard({ id, cardData, index, onRemove }: SortableCardProps) {
         )
       )}
       
-      {/* Bouton supprimer */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove(cardData.position);
-        }}
-        className="absolute bottom-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-all z-10"
-      >
-        <Trash2 className="w-3 h-3" />
-      </button>
+      {/* Suppression de l'icône poubelle individuelle car elle interfère avec le drag */}
     </div>
   );
 }
@@ -189,6 +181,7 @@ export default function DeckDetail() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const { toast } = useToast();
   
   const { data: deck, isLoading } = useQuery<DeckWithCards>({
     queryKey: [`/api/decks/${id}`],
@@ -198,6 +191,8 @@ export default function DeckDetail() {
   const [localCards, setLocalCards] = useState<DeckWithCards['cards']>([]);
   const [showEditPanel, setShowEditPanel] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
+  const [showDeletePanel, setShowDeletePanel] = useState(false);
+  const [selectedCardToDelete, setSelectedCardToDelete] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
   const [editTheme, setEditTheme] = useState('');
   const [editCoverImage, setEditCoverImage] = useState<string | null>(null);
@@ -372,6 +367,19 @@ export default function DeckDetail() {
                       ? "text-black hover:bg-black/10"
                       : "text-white hover:bg-white/10"
                   )}
+                  onClick={() => setShowDeletePanel(true)}
+                >
+                  <Trash2 className="w-5 h-5" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "p-2",
+                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors)
+                      ? "text-black hover:bg-black/10"
+                      : "text-white hover:bg-white/10"
+                  )}
                   onClick={() => setShowSharePanel(true)}
                 >
                   <Share2 className="w-5 h-5" />
@@ -427,31 +435,7 @@ export default function DeckDetail() {
                       id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
                       cardData={deckCard}
                       index={index}
-                      onRemove={async (position) => {
-                        try {
-                          // Optimistic update - mettre à jour l'UI immédiatement
-                          const newCards = localCards.filter(c => c.position !== position);
-                          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                          setLocalCards(reorderedCards);
-                          
-                          // Toast de succès
-                          toast({
-                            title: "Carte supprimée",
-                            description: "La carte a été retirée du deck avec succès",
-                            className: "bg-green-600 text-white border-green-600",
-                          });
-                          
-                          // Invalider le cache pour la synchronisation
-                          queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-                          
-                        } catch (error) {
-                          console.error('Error removing card:', error);
-                          // En cas d'erreur, restaurer l'état précédent
-                          if (deck?.cards) {
-                            setLocalCards([...deck.cards]);
-                          }
-                        }
-                      }}
+                      onRemove={() => {}} // Fonction vide car on n'utilise plus cette approche
                     />
                   ))}
                   
