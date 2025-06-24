@@ -21,7 +21,7 @@ export default function Settings() {
           
           <div className="space-y-2">
             {[
-              { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile/1" },
+              { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile" },
               { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null },
               { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null },
               { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null }
