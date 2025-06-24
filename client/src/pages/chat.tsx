@@ -32,12 +32,12 @@ export default function Chat() {
   }, [userId]);
 
   // Get current user ID from authentication
-  const { data: currentUser } = useQuery({
+  const { data: authData } = useQuery({
     queryKey: ['/api/auth/me'],
     retry: false,
   });
   
-  const currentUserId = currentUser?.id || 999;
+  const currentUserId = authData?.user?.id;
 
   // Get or create conversation
   const { data: conversation, isLoading: conversationLoading } = useQuery<Conversation>({
@@ -179,13 +179,13 @@ export default function Chat() {
 
   // Mark messages as read when opening conversation
   useEffect(() => {
-    if (userId && messages && messages.length > 0) {
-      const hasUnreadMessages = messages.some(msg => msg.senderId !== 1 && !msg.isRead);
+    if (conversation?.id && messages && messages.length > 0) {
+      const hasUnreadMessages = messages.some(msg => msg.senderId !== currentUserId && !msg.isRead);
       if (hasUnreadMessages) {
-        markAsReadMutation.mutate(userId);
+        markAsReadMutation.mutate(conversation.id);
       }
     }
-  }, [userId, messages]);
+  }, [conversation?.id, messages, currentUserId]);
 
   const isLoading = conversationLoading || messagesLoading || (userLoading && !userError);
   const displayUser = fallbackUser || otherUser;
@@ -279,7 +279,7 @@ export default function Chat() {
                     className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                       isOwn
                         ? "bg-[hsl(9,85%,67%)] text-white"
-                        : "bg-gray-800 text-white"
+                        : "bg-gray-700 text-white"
                     }`}
                   >
                     {message.content.startsWith('[IMAGE:') ? (
