@@ -933,6 +933,12 @@ export default function Collections() {
                   <p className="text-gray-400 text-sm">
                     {selectedCard.teamName || 'Équipe Inconnue'}
                   </p>
+                  <div className="flex gap-2 text-xs text-blue-400 mt-1">
+                    {collections?.find(c => c.id === selectedCard.collectionId)?.name && (
+                      <span>Collection: {collections.find(c => c.id === selectedCard.collectionId)?.name}</span>
+                    )}
+                    {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
