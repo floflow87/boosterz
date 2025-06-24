@@ -155,8 +155,8 @@ export default function CollectionDetail() {
           break;
 
         case "autographs": 
-          // Autographes (avec le bon nom français)
-          includeCard = card.cardType === "Autographe";
+          // Autographes (toutes les variantes)
+          includeCard = card.cardType.includes("Autograph");
           break;
         case "hits": 
           // Toutes les cartes Insert

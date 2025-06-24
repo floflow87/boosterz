@@ -695,19 +695,54 @@ export async function seedDatabase() {
       });
     }
 
-    // 4. Create Autograph cards
-    console.log("✍️ Creating Autograph cards...");
+    // 4. Create Autograph cards with variants
+    console.log("✍️ Creating Autograph cards with variants...");
     for (const autoCard of autographCards) {
+      // Carte autographe de base (sans numérotation)
+      cardsToInsert.push({
+        id: cardId++,
+        collectionId: 1,
+        reference: `AUTO-${autoCard.id.toString().padStart(2, '0')}`,
+        playerName: autoCard.playerName,
+        teamName: autoCard.teamName,
+        cardType: "Autograph",
+        cardSubType: null,
+        rarity: "Autograph",
+        numbering: null,
+        isOwned: false,
+        imageUrl: null
+      });
+
+      // Variantes numérotées d'autographes
       for (const numbering of autoCard.numberings) {
+        const getRarityFromNumbering = (num: string) => {
+          if (num === "/1") return "1 of 1";
+          if (num === "/2" || num === "/3") return "Super Rare";
+          if (num === "/10") return "Ultra Rare";
+          if (num === "/25" || num === "/49") return "Rare";
+          return "Autograph";
+        };
+
+        const getVariantType = (num: string) => {
+          if (num === "/1") return "Autograph 1/1";
+          if (num === "/2") return "Autograph Gold";
+          if (num === "/3") return "Autograph Red";
+          if (num === "/10") return "Autograph Silver";
+          if (num === "/25") return "Autograph Blue";
+          if (num === "/49") return "Autograph Green";
+          if (num === "/99") return "Autograph Bronze";
+          return "Autograph Numbered";
+        };
+
         cardsToInsert.push({
           id: cardId++,
           collectionId: 1,
-          reference: `AUTO-${autoCard.id.toString().padStart(2, '0')}`,
+          reference: `AUTO-${autoCard.id.toString().padStart(2, '0')}-${numbering.replace('/', '')}`,
           playerName: autoCard.playerName,
           teamName: autoCard.teamName,
-          cardType: "Autograph",
-          cardSubType: null,
-          rarity: numbering === "/1" ? "1 of 1" : "Autograph",
+          cardType: getVariantType(numbering),
+          cardSubType: numbering === "/1" ? "1 of 1" : "Numbered",
+          rarity: getRarityFromNumbering(numbering),
           numbering: numbering,
           isOwned: false,
           imageUrl: null
