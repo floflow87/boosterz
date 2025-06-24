@@ -123,8 +123,8 @@ export default function Community() {
           </div>
         </div>
 
-        {/* Mon Feed Tab */}
-        {activeTab === "feed" && (
+        {/* Content based on active sub-tab */}
+        {activeSubTab === "featured" && (
           <div className="space-y-4">
             <h2 className="text-xl font-bold font-luckiest">Mon Feed</h2>
             
