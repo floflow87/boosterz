@@ -1252,7 +1252,7 @@ export default function Social() {
                 <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6 border border-[hsl(214,35%,30%)]">
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div>
-                      <div className="text-lg font-bold text-white">{posts.length}</div>
+                      <div className="text-lg font-bold text-white">{myPosts.length}</div>
                       <div className="text-xs text-gray-400">Posts</div>
                     </div>
                     <div>
@@ -1267,7 +1267,7 @@ export default function Social() {
                     {/* Post Creation Trigger */}
                     <div 
                       className="cursor-pointer hover:opacity-80 transition-opacity w-full"
-                      onClick={handleOpenPostModal}
+                      onClick={() => setIsPostModalOpen(true)}
                     >
                       <div className="w-full bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-lg px-3 py-3 text-gray-400 pointer-events-none">
                         Quoi de neuf ?
