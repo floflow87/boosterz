@@ -295,10 +295,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
+      console.log(`Getting feed for user ${userId}`);
+      
       // Get users that the current user follows
       const followedUsers = await db.select({ followingId: follows.followingId })
         .from(follows)
         .where(eq(follows.followerId, userId));
+      
+      console.log(`User ${userId} follows ${followedUsers.length} users:`, followedUsers);
       
       if (followedUsers.length === 0) {
         return res.json([]);
@@ -327,6 +331,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .orderBy(desc(posts.createdAt))
       .limit(50);
       
+      console.log(`Found ${feedPosts.length} posts from followed users`);
       res.json(feedPosts);
     } catch (error) {
       console.error("Error fetching user feed:", error);
@@ -1417,14 +1422,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const followingId = parseInt(req.params.id);
       const followerId = req.user!.id;
       
+      console.log(`User ${followerId} wants to follow user ${followingId}`);
+      
       if (followerId === followingId) {
         return res.status(400).json({ message: "Cannot follow yourself" });
       }
       
-      const success = await storage.followUser(followerId, followingId);
-      if (success) {
+      // Insert into follows table directly
+      try {
+        await db.insert(follows).values({
+          followerId,
+          followingId,
+          createdAt: new Date().toISOString()
+        });
+        console.log(`Successfully added follow relationship: ${followerId} -> ${followingId}`);
         res.json({ message: "User followed successfully", isFollowing: true });
-      } else {
+      } catch (error) {
+        console.error('Error inserting follow relationship:', error);
         res.status(500).json({ message: "Failed to follow user" });
       }
     } catch (error) {
@@ -1438,10 +1452,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const followingId = parseInt(req.params.id);
       const followerId = req.user!.id;
       
-      const success = await storage.unfollowUser(followerId, followingId);
-      if (success) {
+      console.log(`User ${followerId} wants to unfollow user ${followingId}`);
+      
+      // Remove from follows table directly
+      try {
+        await db.delete(follows).where(
+          and(
+            eq(follows.followerId, followerId),
+            eq(follows.followingId, followingId)
+          )
+        );
+        console.log(`Successfully removed follow relationship: ${followerId} -> ${followingId}`);
         res.json({ message: "User unfollowed successfully", isFollowing: false });
-      } else {
+      } catch (error) {
+        console.error('Error removing follow relationship:', error);
         res.status(500).json({ message: "Failed to unfollow user" });
       }
     } catch (error) {
