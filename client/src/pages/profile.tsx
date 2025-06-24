@@ -85,9 +85,11 @@ export default function Profile() {
   const queryClient = useQueryClient();
 
   // Récupérer les informations de l'utilisateur actuel
-  const { data: currentUser } = useQuery<User>({
+  const { data: authData } = useQuery({
     queryKey: ['/api/auth/me'],
   });
+  
+  const currentUser = authData?.user;
 
   // Utiliser l'ID de l'utilisateur actuel si aucun userId n'est fourni dans l'URL
   const targetUserId = userId || currentUser?.id;
