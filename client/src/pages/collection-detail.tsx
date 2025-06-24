@@ -134,6 +134,26 @@ export default function CollectionDetail() {
   }, [collectionId]);
 
   // Group cards by player and show only one card per player
+  // Fonction pour obtenir toutes les variantes d'un joueur pour les autographes
+  const getPlayerVariants = (playerName: string, teamName: string) => {
+    if (!cards) return [];
+    return cards.filter(card => 
+      card.playerName === playerName && 
+      card.teamName === teamName && 
+      card.cardType.includes("Autograph")
+    ).sort((a, b) => {
+      // Trier par ordre de rareté : base, numérotées par ordre décroissant, puis 1/1
+      if (a.cardType === "Autograph" && !a.numbering) return -1;
+      if (b.cardType === "Autograph" && !b.numbering) return 1;
+      if (a.numbering === "/1") return 1;
+      if (b.numbering === "/1") return -1;
+      
+      const aNum = parseInt(a.numbering?.replace("/", "") || "0");
+      const bNum = parseInt(b.numbering?.replace("/", "") || "0");
+      return bNum - aNum; // Ordre décroissant pour les numérotées
+    });
+  };
+
   const getUniquePlayerCards = () => {
     if (!cards) return [];
     
@@ -175,6 +195,7 @@ export default function CollectionDetail() {
       if (includeCard) {
         const playerKey = `${card.playerName}-${card.teamName}`;
         if (!playerGroups.has(playerKey)) {
+          // Pour les autographes, on stocke la première carte mais on va gérer les variantes
           playerGroups.set(playerKey, card);
         }
       }
@@ -637,7 +658,12 @@ export default function CollectionDetail() {
       });
     }
     
-    // Pour les autres cartes (autographes, inserts spéciaux), une seule version
+    // Pour les autographes, récupérer toutes les variantes du joueur
+    if (card.cardType.includes("Autograph")) {
+      return getPlayerVariants(card.playerName || "", card.teamName || "");
+    }
+    
+    // Pour les autres cartes (inserts spéciaux), une seule version
     return [card];
   };
 
@@ -659,8 +685,8 @@ export default function CollectionDetail() {
       return "border-purple-500 shadow-lg shadow-purple-500/50";
     }
     
-    // Gold brillant pour les autographes
-    if (card.cardType === "Autograph") {
+    // Gold brillant pour tous les autographes
+    if (card.cardType.includes("Autograph")) {
       return "border-yellow-500 shadow-lg shadow-yellow-500/50";
     }
     
@@ -690,8 +716,8 @@ export default function CollectionDetail() {
       return "pulse-shadow-purple";
     }
     
-    // Gold pour les autographes
-    if (card.cardType === "Autograph") {
+    // Gold pour tous les autographes
+    if (card.cardType.includes("Autograph")) {
       return "pulse-shadow-yellow";
     }
     
@@ -1091,6 +1117,15 @@ export default function CollectionDetail() {
                    currentVariant.cardType === "Parallel Swirl" ? "Swirl" : 
                    currentVariant.cardType === "Parallel Numbered" ? 
                      (currentVariant.numbering?.replace("1/", "/") || "Numbered") :
+                   currentVariant.cardType === "Autograph" ? "Auto" :
+                   currentVariant.cardType === "Autograph 1/1" ? "Auto 1/1" :
+                   currentVariant.cardType === "Autograph Gold" ? "Auto Gold" :
+                   currentVariant.cardType === "Autograph Red" ? "Auto Red" :
+                   currentVariant.cardType === "Autograph Silver" ? "Auto Silver" :
+                   currentVariant.cardType === "Autograph Blue" ? "Auto Blue" :
+                   currentVariant.cardType === "Autograph Green" ? "Auto Green" :
+                   currentVariant.cardType === "Autograph Bronze" ? "Auto Bronze" :
+                   currentVariant.cardType.includes("Autograph") ? "Auto" :
                    currentVariant.cardType}
                 </div>
                 
