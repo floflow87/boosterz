@@ -124,9 +124,15 @@ export default function Social() {
     queryKey: [`/api/users/${userId}/posts`],
   });
 
-  // Récupérer les utilisateurs
+  // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
-    queryKey: ["/api/social/users"],
+    queryKey: ["/api/social/users", { limit: 10 }],
+  });
+
+  // Recherche d'utilisateurs
+  const { data: searchResults = [], isLoading: searchLoading } = useQuery<SocialUser[]>({
+    queryKey: ["/api/social/users", { search: searchTerm, limit: 50 }],
+    enabled: searchTerm.length > 0,
   });
 
   // Récupérer les activités

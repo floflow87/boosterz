@@ -291,74 +291,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get posts from followed users (À la une) - MUST be before /:id routes
-  app.get("/api/users/feed", (req, res) => {
-    // Only return posts from other users (not the current user)
-    res.json([
-      {
-        id: 17,
-        userId: 2,
-        content: "Qui a la carte Ronaldo Juventus rare ? Je propose un trade avec ma Messi Barcelona dorée ✨",
-        type: "text", 
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-22T14:15:00Z",
-        updatedAt: "2024-06-22T14:15:00Z",
-        user: {
-          id: 2,
-          name: "Max C.",
-          username: "maxcollector",
-          avatar: null
-        }
-      },
-      {
-        id: 16,
-        userId: 999,
-        content: "🔥 EXCLUSIF ! Je vends ma carte Mbappé PSG autographée ! Prix spécial pour les vrais collectionneurs. Première offre sérieuse 💎⚽",
-        type: "text", 
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-22T12:30:00Z",
-        updatedAt: "2024-06-22T12:30:00Z",
-        user: {
-          id: 999,
-          name: "Max la menace",
-          username: "maxlamenace",
-          avatar: null
-        }
-      },
-      {
-        id: 14,
-        userId: 2,
-        content: "Nouvelle collection SCORE 2023/24 disponible ! 🔥",
-        type: "text", 
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-19T15:45:00Z",
-        updatedAt: "2024-06-19T15:45:00Z",
-        user: {
-          id: 2,
-          name: "Max C.",
-          username: "maxcollector",
-          avatar: null
-        }
-      },
-      {
-        id: 15,
-        userId: 999,
-        content: "Échange possible contre une carte Haaland ! Contactez-moi en MP 📩",
-        type: "text", 
-        cardId: null,
-        isVisible: true,
-        createdAt: "2024-06-18T14:22:00Z",
-        updatedAt: "2024-06-18T14:22:00Z",
-        user: {
-          id: 999,
-          name: "Max la menace",
-          username: "maxlamenace",
-          avatar: null
-        }
+  app.get("/api/users/feed", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const currentUserId = req.user?.id;
+      if (!currentUserId) {
+        return res.json([]);
       }
-    ]);
+
+      const followedPosts = await storage.getFollowedUsersPosts(currentUserId);
+      res.json(followedPosts);
+    } catch (error) {
+      console.error('Error fetching user feed:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
   });
 
   // Get user profile
@@ -879,47 +824,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Social network endpoints
-  app.get('/api/social/users', async (req, res) => {
+  app.get('/api/social/users', optionalAuth, async (req: AuthRequest, res) => {
     try {
-      // Mock data for social users
-      const socialUsers = [
-        {
-          id: 2,
-          username: "maxcollector",
-          name: "Max Dubois",
-          bio: "Passionné de cartes Ligue 1 depuis 2010",
-          totalCards: 1250,
-          collectionsCount: 3,
-          completionPercentage: 78,
-          followersCount: 45,
-          followingCount: 32,
-          isFollowing: false
-        },
-        {
-          id: 3,
-          username: "cardmaster",
-          name: "Julie Martin",
-          bio: "Collectionneuse professionnelle",
-          totalCards: 2100,
-          collectionsCount: 5,
-          completionPercentage: 92,
-          followersCount: 123,
-          followingCount: 67,
-          isFollowing: true
-        },
-        {
-          id: 4,
-          username: "psgfan",
-          name: "Thomas Leroy",
-          bio: "Fan du PSG et des cartes rares",
-          totalCards: 890,
-          collectionsCount: 2,
-          completionPercentage: 65,
-          followersCount: 28,
-          followingCount: 41,
-          isFollowing: false
-        }
-      ];
+      const currentUserId = req.user?.id;
+      const { search, limit } = req.query;
+      
+      let users = await storage.getAllUsers();
+      
+      // Exclude current user from results
+      if (currentUserId) {
+        users = users.filter(user => user.id !== currentUserId);
+      }
+      
+      // Apply search filter if provided
+      if (search && typeof search === 'string') {
+        const searchTerm = search.toLowerCase();
+        users = users.filter(user => 
+          user.username.toLowerCase().includes(searchTerm) ||
+          user.email.toLowerCase().includes(searchTerm) ||
+          user.name.toLowerCase().includes(searchTerm)
+        );
+      }
+      
+      // Apply limit (default 10 for discovery)
+      const maxUsers = limit ? parseInt(limit as string) : 10;
+      users = users.slice(0, maxUsers);
+      
+      // Map to social user format
+      const socialUsers = users.map(user => ({
+        id: user.id,
+        username: user.username,
+        name: user.name,
+        email: user.email,
+        bio: user.bio || "",
+        totalCards: user.totalCards || 0,
+        collectionsCount: user.collectionsCount || 0,
+        completionPercentage: user.completionPercentage || 0,
+        followersCount: 0, // TODO: implement actual counts
+        followingCount: 0, // TODO: implement actual counts
+        isFollowing: false // TODO: check if current user follows this user
+      }));
+      
       res.json(socialUsers);
     } catch (error) {
       console.error("Error fetching social users:", error);
