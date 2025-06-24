@@ -18,7 +18,6 @@ import Community from "@/pages/community";
 import Shop from "@/pages/shop";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
-import ProfileSettings from "@/pages/profile-settings";
 import UserProfile from "@/pages/user-profile";
 import Feed from "@/pages/feed";
 import Welcome from "@/pages/welcome";

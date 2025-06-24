@@ -175,8 +175,12 @@ export default function Profile() {
     });
   };
 
-  if (!match && !matchMe) {
-    return <div>Profil non trouvé</div>;
+  if (!userId) {
+    return (
+      <div className="min-h-screen bg-[hsl(214,35%,11%)] flex items-center justify-center">
+        <div className="text-white">Profil non trouvé</div>
+      </div>
+    );
   }
 
   if (userLoading) {
@@ -272,7 +276,7 @@ export default function Profile() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-full h-full bg-[hsl(9,85%,67%)] flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
                   {profileUser.name.charAt(0).toUpperCase()}
                 </span>
