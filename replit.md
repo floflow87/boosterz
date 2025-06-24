@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Fixed social system logic to match user requirements
+  - "À la une" tab now shows only posts from followed users (empty if not following anyone)
+  - "Marché" tab shows marketplace cards from all users except current user
+  - "Découvrir" tab shows all users except current user with working autocomplete
+  - "Mes posts" tab shows only current user's posts with ability to create new posts
+  - Fixed feed endpoints to properly filter followed users' content
+  - Added marketplace filtering to exclude current user's own cards
 - June 24, 2025. Implemented autocomplete search functionality in discovery section
   - Added real-time user search with dropdown suggestions
   - Fixed useEffect and useRef import issues in social component

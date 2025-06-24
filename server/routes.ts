@@ -500,32 +500,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get marketplace cards (cards for trade/sale)
-  app.get("/api/cards/marketplace", async (req, res) => {
+  app.get("/api/cards/marketplace", optionalAuth, async (req: AuthRequest, res) => {
     try {
-      // Get all cards that are marked for trade
-      const allCards = await storage.getCardsByCollectionId(1); // For now, get from first collection
-      const marketplaceCards = allCards.filter(card => card.isForTrade);
+      const currentUserId = req.user?.id;
       
-      // Add seller information for sold cards
-      const cardsWithSellerInfo = marketplaceCards.map(card => {
-        if (card.isSold) {
-          return {
-            ...card,
-            seller: {
-              id: 999,
-              name: "Max la menace",
-              username: "maxlamenace",
-              avatar: null
-            },
-            soldDate: "2025-06-21T16:30:00.000Z",
-            soldPrice: "50€"
-          };
+      // Get all personal cards that are for sale, excluding current user's cards
+      const marketplaceQuery = db.select({
+        id: personalCards.id,
+        userId: personalCards.userId,
+        playerName: personalCards.playerName,
+        teamName: personalCards.teamName,
+        cardType: personalCards.cardType,
+        imageUrl: personalCards.imageUrl,
+        salePrice: personalCards.salePrice,
+        saleDescription: personalCards.saleDescription,
+        isForSale: personalCards.isForSale,
+        condition: personalCards.condition,
+        createdAt: personalCards.createdAt,
+        seller: {
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          avatar: users.avatar
         }
-        return card;
-      });
+      })
+      .from(personalCards)
+      .leftJoin(users, eq(personalCards.userId, users.id))
+      .where(
+        and(
+          eq(personalCards.isForSale, true),
+          currentUserId ? not(eq(personalCards.userId, currentUserId)) : sql`true`
+        )
+      )
+      .orderBy(desc(personalCards.createdAt));
       
-      res.json(cardsWithSellerInfo);
+      const marketplaceCards = await marketplaceQuery;
+      
+      res.json(marketplaceCards);
     } catch (error) {
+      console.error("Error fetching marketplace cards:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

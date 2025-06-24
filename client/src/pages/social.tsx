@@ -877,7 +877,171 @@ export default function Social() {
 
           <TabsContent value="featured" className="space-y-4">
             {/* Feed des utilisateurs suivis */}
-            <FeedContent />
+            {feedLoading ? (
+              <div className="text-center py-8">
+                <div className="text-gray-400">Chargement du feed...</div>
+              </div>
+            ) : feed.length > 0 ? (
+              <div className="space-y-4">
+                {feed.map((post) => (
+                  <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
+                    {/* Post Header */}
+                    <div className="p-4 border-b border-[hsl(214,35%,30%)]">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-bold text-white">
+                              {post.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                            </span>
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h4 className="text-white font-medium text-sm">{post.user?.name}</h4>
+                              <span className="text-xs text-gray-400">@{post.user?.username}</span>
+                            </div>
+                            <div className="text-xs text-gray-400">
+                              {new Date(post.createdAt).toLocaleDateString('fr-FR', {
+                                day: 'numeric',
+                                month: 'short',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Post Content */}
+                    <div className="p-4">
+                      <p className="text-white text-sm mb-3">{post.content}</p>
+                      
+                      {post.imageUrl && (
+                        <div className="mb-3">
+                          <img 
+                            src={post.imageUrl} 
+                            alt="Post image" 
+                            className="w-full max-w-md rounded-lg"
+                          />
+                        </div>
+                      )}
+
+                      {/* Stats */}
+                      <div className="flex items-center space-x-4 text-sm text-gray-400 mt-3">
+                        <span>{postLikes[post.id] || 0} j'aime</span>
+                        <span>{postComments[post.id]?.length || 0} commentaire{(postComments[post.id]?.length || 0) !== 1 ? 's' : ''}</span>
+                      </div>
+
+                      {/* Interaction Buttons */}
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
+                        <button 
+                          onClick={() => handleLike(post.id)}
+                          className={`flex items-center space-x-2 transition-colors ${
+                            likedPosts.has(post.id) 
+                              ? 'text-red-500' 
+                              : 'text-gray-400 hover:text-red-400'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
+                          <span className="text-sm">J'aime</span>
+                        </button>
+                        <button 
+                          onClick={() => toggleComments(post.id)}
+                          className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          <span className="text-sm">Commenter</span>
+                        </button>
+                        <button className="flex items-center space-x-2 text-gray-400 hover:text-green-400 transition-colors">
+                          <ArrowLeftRight className="w-4 h-4" />
+                          <span className="text-sm">Échanger</span>
+                        </button>
+                      </div>
+
+                      {/* Comments Section */}
+                      {showComments.has(post.id) && (
+                        <div className="mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
+                          {/* Add Comment Input */}
+                          <div className="flex space-x-3 mb-4">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-bold text-white">
+                                {currentUser?.username?.charAt(0)?.toUpperCase() || 'U'}
+                              </span>
+                            </div>
+                            <div className="flex-1 flex space-x-2">
+                              <Input
+                                placeholder="Écrire un commentaire..."
+                                value={commentInputs[post.id] || ''}
+                                onChange={(e) => setCommentInputs(prev => ({ 
+                                  ...prev, 
+                                  [post.id]: e.target.value 
+                                }))}
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter') {
+                                    handleAddComment(post.id);
+                                  }
+                                }}
+                                className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white text-sm"
+                              />
+                              <Button
+                                onClick={() => handleAddComment(post.id)}
+                                disabled={!commentInputs[post.id]?.trim()}
+                                size="sm"
+                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                              >
+                                Publier
+                              </Button>
+                            </div>
+                          </div>
+
+                          {/* Comments List */}
+                          <div className="space-y-3">
+                            {(postComments[post.id] || []).map((comment) => (
+                              <div key={comment.id} className="flex space-x-3">
+                                <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
+                                  <span className="text-xs font-bold text-white">
+                                    {comment.user?.name?.charAt(0) || 'U'}
+                                  </span>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                      <span className="text-white font-medium text-sm">
+                                        {comment.user?.name || 'Utilisateur'}
+                                      </span>
+                                      <span className="text-gray-400 text-xs">
+                                        {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </span>
+                                    </div>
+                                    <p className="text-gray-200 text-sm">{comment.content}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-2">Votre feed est vide</div>
+                <p className="text-sm text-gray-500">Suivez d'autres collectionneurs pour voir leurs posts et activités ici</p>
+                <Button
+                  onClick={() => setActiveTab("discover")}
+                  className="mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  Découvrir des collectionneurs
+                </Button>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="discover" className="space-y-4">
