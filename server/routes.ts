@@ -355,6 +355,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update current user profile
+  app.put("/api/auth/profile", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { name, email, bio, avatar } = req.body;
+      
+      // Update user in database
+      const updatedUser = await storage.updateUser(req.user!.id, {
+        name,
+        email,
+        bio,
+        avatar
+      });
+      
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Get user profile
   app.get("/api/users/:id", optionalAuth, async (req: AuthRequest, res) => {
     try {

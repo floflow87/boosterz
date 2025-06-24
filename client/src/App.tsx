@@ -18,6 +18,7 @@ import Community from "@/pages/community";
 import Shop from "@/pages/shop";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
+import ProfileSettings from "@/pages/profile-settings";
 import UserProfile from "@/pages/user-profile";
 import Feed from "@/pages/feed";
 import Welcome from "@/pages/welcome";
@@ -57,7 +58,7 @@ function Router() {
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
-      <Route path="/profile" component={Profile} />
+      <Route path="/profile" component={ProfileSettings} />
       <Route path="/user/:userId" component={UserProfile} />
       <Route path="/add-card" component={AddCard} />
       <Route path="/create-deck" component={CreateDeck} />
