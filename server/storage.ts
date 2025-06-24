@@ -75,6 +75,12 @@ export interface IStorage {
   unfollowUser(followerId: number, followingId: number): Promise<boolean>;
   isFollowing(followerId: number, followingId: number): Promise<boolean>;
   getFollowedUsersPosts(userId: number): Promise<any[]>;
+  getFollowersByUserId(userId: number): Promise<User[]>;
+  getFollowingByUserId(userId: number): Promise<any[]>;
+  getPostsByUserIds(userIds: number[]): Promise<any[]>;
+  getPostsByUserId(userId: number): Promise<any[]>;
+  getCardsForSaleByUserId(userId: number): Promise<any[]>;
+  getUsers(): Promise<User[]>;
   
   // Deck card management
   removeCardFromDeck(deckId: number, cardPosition: number): Promise<void>;
@@ -1395,6 +1401,223 @@ export class MemStorage implements IStorage {
       ];
     }
     return [];
+  }
+
+  // Follow system methods
+  async followUser(followerId: number, followingId: number): Promise<boolean> {
+    try {
+      await db.insert(follows).values({
+        followerId,
+        followingId,
+        createdAt: new Date().toISOString()
+      });
+      return true;
+    } catch (error) {
+      console.error('Error following user:', error);
+      return false;
+    }
+  }
+
+  async unfollowUser(followerId: number, followingId: number): Promise<boolean> {
+    try {
+      await db.delete(follows).where(
+        and(
+          eq(follows.followerId, followerId),
+          eq(follows.followingId, followingId)
+        )
+      );
+      return true;
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+      return false;
+    }
+  }
+
+  async isFollowing(followerId: number, followingId: number): Promise<boolean> {
+    try {
+      const [follow] = await db.select()
+        .from(follows)
+        .where(
+          and(
+            eq(follows.followerId, followerId),
+            eq(follows.followingId, followingId)
+          )
+        );
+      return !!follow;
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+      return false;
+    }
+  }
+
+  async getFollowersByUserId(userId: number): Promise<User[]> {
+    try {
+      const followers = await db.select({
+        id: users.id,
+        username: users.username,
+        name: users.name,
+        email: users.email,
+        avatar: users.avatar
+      })
+      .from(follows)
+      .innerJoin(users, eq(follows.followerId, users.id))
+      .where(eq(follows.followingId, userId));
+      
+      return followers;
+    } catch (error) {
+      console.error('Error getting followers:', error);
+      return [];
+    }
+  }
+
+  async getFollowingByUserId(userId: number): Promise<any[]> {
+    try {
+      const following = await db.select({
+        followingId: follows.followingId,
+        username: users.username,
+        name: users.name,
+        email: users.email,
+        avatar: users.avatar
+      })
+      .from(follows)
+      .innerJoin(users, eq(follows.followingId, users.id))
+      .where(eq(follows.followerId, userId));
+      
+      return following;
+    } catch (error) {
+      console.error('Error getting following:', error);
+      return [];
+    }
+  }
+
+  async getPostsByUserIds(userIds: number[]): Promise<any[]> {
+    try {
+      if (userIds.length === 0) return [];
+      
+      const feedPosts = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        createdAt: posts.createdAt,
+        userName: users.name,
+        username: users.username,
+        userAvatar: users.avatar
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(inArray(posts.userId, userIds))
+      .orderBy(desc(posts.createdAt));
+      
+      return feedPosts.map(post => ({
+        ...post,
+        user: {
+          id: post.userId,
+          name: post.userName,
+          username: post.username,
+          avatar: post.userAvatar
+        }
+      }));
+    } catch (error) {
+      console.error('Error getting posts by user IDs:', error);
+      return [];
+    }
+  }
+
+  async getPostsByUserId(userId: number): Promise<any[]> {
+    try {
+      const userPosts = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        createdAt: posts.createdAt,
+        userName: users.name,
+        username: users.username,
+        userAvatar: users.avatar
+      })
+      .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
+      .where(eq(posts.userId, userId))
+      .orderBy(desc(posts.createdAt));
+      
+      return userPosts.map(post => ({
+        ...post,
+        user: {
+          id: post.userId,
+          name: post.userName,
+          username: post.username,
+          avatar: post.userAvatar
+        }
+      }));
+    } catch (error) {
+      console.error('Error getting posts by user ID:', error);
+      return [];
+    }
+  }
+
+  async getCardsForSaleByUserId(userId: number): Promise<any[]> {
+    try {
+      // Get personal cards marked for sale
+      const personalCardsForSale = await db.select()
+        .from(personalCards)
+        .where(
+          and(
+            eq(personalCards.userId, userId),
+            eq(personalCards.isForSale, true)
+          )
+        );
+
+      // Get collection cards marked for sale
+      const userCollections = await db.select().from(collections).where(eq(collections.userId, userId));
+      const collectionIds = userCollections.map(c => c.id);
+      
+      let collectionCardsForSale: any[] = [];
+      if (collectionIds.length > 0) {
+        collectionCardsForSale = await db.select()
+          .from(cards)
+          .where(
+            and(
+              inArray(cards.collectionId, collectionIds),
+              eq(cards.isForSale, true)
+            )
+          );
+      }
+
+      // Combine and format cards
+      const allCardsForSale = [
+        ...personalCardsForSale.map(card => ({
+          ...card,
+          source: 'personal',
+          price: card.salePrice || '0€'
+        })),
+        ...collectionCardsForSale.map(card => ({
+          ...card,
+          source: 'collection',
+          price: card.salePrice || '0€'
+        }))
+      ];
+
+      return allCardsForSale;
+    } catch (error) {
+      console.error('Error getting cards for sale:', error);
+      return [];
+    }
+  }
+
+  async getUsers(): Promise<User[]> {
+    return this.getAllUsers();
+  }
+
+  async getFollowedUsersPosts(userId: number): Promise<any[]> {
+    try {
+      const following = await this.getFollowingByUserId(userId);
+      const followingIds = following.map(f => f.followingId);
+      return this.getPostsByUserIds(followingIds);
+    } catch (error) {
+      console.error('Error getting followed users posts:', error);
+      return [];
+    }
   }
 }
 
