@@ -4,8 +4,8 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Camera, Save, User } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowLeft, Camera, Save, User, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/header";
@@ -27,9 +27,10 @@ export default function ProfileEdit() {
   const queryClient = useQueryClient();
   
   // États pour les champs du formulaire
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const [bio, setBio] = useState("");
   const [avatar, setAvatar] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
@@ -43,9 +44,12 @@ export default function ProfileEdit() {
   // Mettre à jour les champs quand les données sont chargées
   useEffect(() => {
     if (currentUser) {
-      setName(currentUser.name || "");
+      const fullName = currentUser.name || "";
+      const nameParts = fullName.split(" ");
+      setFirstName(nameParts[0] || "");
+      setLastName(nameParts.slice(1).join(" ") || "");
+      setUsername(currentUser.username || "");
       setEmail(currentUser.email || "");
-      setBio(currentUser.bio || "");
       setAvatar(currentUser.avatar || "");
     }
   }, [currentUser]);
@@ -78,10 +82,10 @@ export default function ProfileEdit() {
   });
 
   const handleSave = () => {
+    const fullName = `${firstName} ${lastName}`.trim();
     updateProfileMutation.mutate({
-      name,
+      name: fullName,
       email,
-      bio,
       avatar
     });
   };
@@ -120,117 +124,142 @@ export default function ProfileEdit() {
       <HaloBlur />
       <Header title="Mon Profil" showBackButton />
       
-      <div className="relative z-10 p-4 space-y-6 max-w-2xl mx-auto">
-        {/* Photo de profil */}
-        <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-bold font-luckiest flex items-center space-x-2">
-            <User className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-            <span>Photo de profil</span>
-          </h2>
-          
-          <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold text-2xl relative overflow-hidden">
-              {avatar ? (
-                <img 
-                  src={avatar} 
-                  alt="Avatar" 
-                  className="w-full h-full rounded-full object-cover"
-                />
-              ) : (
-                currentUser.name?.charAt(0).toUpperCase() || currentUser.username?.charAt(0).toUpperCase()
-              )}
-              <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
-                <Camera className="w-6 h-6 text-white" />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  className="hidden"
-                />
-              </label>
-            </div>
-            <div>
-              <p className="text-white font-medium">{currentUser.name} @{currentUser.username}</p>
-              <p className="text-gray-400 text-sm">Cliquez sur l'avatar pour changer la photo</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Informations personnelles */}
-        <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-bold font-luckiest">Informations personnelles</h2>
-          
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="name" className="text-white">Nom complet</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => {
-                  setName(e.target.value);
-                  setIsEditing(true);
-                }}
-                className="bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400"
-                placeholder="Votre nom complet"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="email" className="text-white">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  setIsEditing(true);
-                }}
-                className="bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400"
-                placeholder="votre@email.com"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="username" className="text-white">Nom d'utilisateur</Label>
-              <Input
-                id="username"
-                value={currentUser.username}
-                disabled
-                className="bg-[hsl(214,35%,25%)] border-[hsl(214,35%,35%)] text-gray-400"
-              />
-              <p className="text-xs text-gray-500 mt-1">Le nom d'utilisateur ne peut pas être modifié</p>
-            </div>
-
-            <div>
-              <Label htmlFor="bio" className="text-white">Biographie</Label>
-              <Textarea
-                id="bio"
-                value={bio}
-                onChange={(e) => {
-                  setBio(e.target.value);
-                  setIsEditing(true);
-                }}
-                className="bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400"
-                placeholder="Parlez-nous de vous..."
-                rows={3}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Bouton de sauvegarde */}
-        {isEditing && (
-          <div className="flex justify-center">
-            <Button
-              onClick={handleSave}
-              disabled={updateProfileMutation.isPending}
-              className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-8 py-2"
+      <div className="relative z-10 p-4">
+        <Tabs defaultValue="informations" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-[hsl(214,35%,22%)] mb-6">
+            <TabsTrigger 
+              value="informations" 
+              className="data-[state=active]:bg-[hsl(9,85%,67%)] data-[state=active]:text-white text-gray-400"
             >
-              <Save className="w-4 h-4 mr-2" />
-              {updateProfileMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder les modifications'}
-            </Button>
-          </div>
-        )}
+              <User className="w-4 h-4 mr-2" />
+              Informations
+            </TabsTrigger>
+            <TabsTrigger 
+              value="parametres" 
+              className="data-[state=active]:bg-[hsl(9,85%,67%)] data-[state=active]:text-white text-gray-400"
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Paramètres
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="informations" className="space-y-6">
+            {/* Photo de profil */}
+            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 space-y-4">
+              <h2 className="text-lg font-bold font-luckiest">Photo de profil</h2>
+              
+              <div className="flex items-center space-x-4">
+                <div className="w-20 h-20 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold text-2xl relative overflow-hidden">
+                  {avatar ? (
+                    <img 
+                      src={avatar} 
+                      alt="Avatar" 
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  ) : (
+                    (firstName?.charAt(0) || currentUser.username?.charAt(0) || "U").toUpperCase()
+                  )}
+                  <label className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full opacity-0 hover:opacity-100 transition-opacity cursor-pointer">
+                    <Camera className="w-6 h-6 text-white" />
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarChange}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+                <div>
+                  <p className="text-white font-medium">{firstName} {lastName}</p>
+                  <p className="text-gray-400 text-sm">@{username}</p>
+                  <p className="text-gray-500 text-xs mt-1">Cliquez pour modifier</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Informations personnelles */}
+            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 space-y-4">
+              <h2 className="text-lg font-bold font-luckiest">Informations personnelles</h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="firstName" className="text-white">Prénom</Label>
+                  <Input
+                    id="firstName"
+                    value={firstName}
+                    onChange={(e) => {
+                      setFirstName(e.target.value);
+                      setIsEditing(true);
+                    }}
+                    className="bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400"
+                    placeholder="Votre prénom"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="lastName" className="text-white">Nom</Label>
+                  <Input
+                    id="lastName"
+                    value={lastName}
+                    onChange={(e) => {
+                      setLastName(e.target.value);
+                      setIsEditing(true);
+                    }}
+                    className="bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400"
+                    placeholder="Votre nom"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="username" className="text-white">Pseudo</Label>
+                  <Input
+                    id="username"
+                    value={username}
+                    disabled
+                    className="bg-[hsl(214,35%,25%)] border-[hsl(214,35%,35%)] text-gray-400"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Non modifiable</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="email" className="text-white">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setIsEditing(true);
+                    }}
+                    className="bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400"
+                    placeholder="votre@email.com"
+                  />
+                </div>
+              </div>
+
+              {/* Bouton de sauvegarde */}
+              {isEditing && (
+                <div className="flex justify-center mt-6">
+                  <Button
+                    onClick={handleSave}
+                    disabled={updateProfileMutation.isPending}
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-8 py-2"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    {updateProfileMutation.isPending ? 'Sauvegarde...' : 'Sauvegarder'}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="parametres" className="space-y-6">
+            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6">
+              <h2 className="text-lg font-bold font-luckiest mb-4">Paramètres du compte</h2>
+              <p className="text-gray-400">Fonctionnalités à venir...</p>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
       
       <Navigation />
