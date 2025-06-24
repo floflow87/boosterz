@@ -450,39 +450,19 @@ export class DatabaseStorage implements IStorage {
 
   // Chat system methods
   async getConversations(userId: number): Promise<Conversation[]> {
-    const result = await db.select({
-      id: conversations.id,
-      user1Id: conversations.user1Id,
-      user2Id: conversations.user2Id,
-      lastMessageAt: conversations.lastMessageAt,
-      createdAt: conversations.createdAt,
-      updatedAt: conversations.updatedAt
-    }).from(conversations).where(
-      or(
-        eq(conversations.user1Id, userId),
-        eq(conversations.user2Id, userId)
-      )
-    ).orderBy(desc(conversations.lastMessageAt));
+    try {
+      const result = await db.select().from(conversations).where(
+        or(
+          eq(conversations.user1Id, userId),
+          eq(conversations.user2Id, userId)
+        )
+      ).orderBy(desc(conversations.lastMessageAt));
 
-    // Pour chaque conversation, récupérer les infos de l'autre utilisateur
-    const conversationsWithUser = await Promise.all(
-      result.map(async (conv) => {
-        const otherUserId = conv.user1Id === userId ? conv.user2Id : conv.user1Id;
-        const [otherUser] = await db.select({
-          id: users.id,
-          name: users.name,
-          username: users.username,
-          avatar: users.avatar
-        }).from(users).where(eq(users.id, otherUserId));
-
-        return {
-          ...conv,
-          user: otherUser
-        };
-      })
-    );
-
-    return conversationsWithUser;
+      return result;
+    } catch (error) {
+      console.error('Error getting conversations:', error);
+      return [];
+    }
   }
 
   async getConversation(user1Id: number, user2Id: number): Promise<Conversation | undefined> {

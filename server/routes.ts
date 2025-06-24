@@ -120,13 +120,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Chat routes (commented out to avoid conflicts)
   // app.use('/api/chat', chatRoutes);
 
-  // Get conversation between two users
-  app.get("/api/chat/conversations/user/:userId", optionalAuth, async (req: AuthRequest, res) => {
+  // Get conversation between two users - BILATÉRAL  
+  app.get("/api/chat/conversations/user/:userId", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const currentUserId = req.user?.id || 1;
+      const currentUserId = req.user!.id; // Utilisateur authentifié
       const otherUserId = parseInt(req.params.userId);
       
-      const conversation = await storage.getConversation(currentUserId, otherUserId);
+      // Chercher ou créer une conversation
+      let conversation = await storage.getConversation(currentUserId, otherUserId);
+      
+      if (!conversation) {
+        // Créer une nouvelle conversation si elle n'existe pas
+        conversation = await storage.createConversation(currentUserId, otherUserId);
+      }
+      
       res.json(conversation);
     } catch (error) {
       console.error("Error fetching conversation:", error);
@@ -1201,23 +1208,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Generic messages for any conversation
-  app.get("/api/chat/conversations/:conversationId/messages", async (req, res) => {
+  // Messages for any conversation - BILATÉRAL
+  app.get("/api/chat/conversations/:conversationId/messages", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const conversationId = parseInt(req.params.conversationId);
+      const currentUserId = req.user!.id;
       const messages = await storage.getMessages(conversationId);
       
+      // Récupérer les infos des utilisateurs pour les noms
+      const userCache = new Map();
+      for (const msg of messages) {
+        if (!userCache.has(msg.senderId)) {
+          const user = await storage.getUser(msg.senderId);
+          userCache.set(msg.senderId, user);
+        }
+      }
+      
       // Format messages for frontend
-      const formattedMessages = messages.map(msg => ({
-        id: msg.id,
-        conversationId: msg.conversationId,
-        senderId: msg.senderId,
-        senderName: msg.senderId === 1 ? "Floflow87" : "Max la menace",
-        content: msg.content,
-        timestamp: msg.createdAt,
-        createdAt: msg.createdAt,
-        isRead: msg.isRead
-      }));
+      const formattedMessages = messages.map(msg => {
+        const sender = userCache.get(msg.senderId);
+        return {
+          id: msg.id,
+          conversationId: msg.conversationId,
+          senderId: msg.senderId,
+          senderName: sender ? sender.name || sender.username : "Utilisateur",
+          content: msg.content,
+          timestamp: msg.createdAt,
+          createdAt: msg.createdAt,
+          isRead: msg.isRead
+        };
+      });
       
       res.json(formattedMessages);
     } catch (error) {
@@ -1226,10 +1246,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get all conversations with last message
-  app.get("/api/chat/conversations", async (req, res) => {
+  // Get all conversations with last message - BILATÉRAL
+  app.get("/api/chat/conversations", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const currentUserId = 1; // Current user ID
+      const currentUserId = req.user!.id; // Utilisateur authentifié
       const conversations = await storage.getConversations(currentUserId);
       
       const result = [];
@@ -1278,8 +1298,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Send message to specific user
-  app.post("/api/messages/send", async (req, res) => {
+  // Send message to specific user - BILATÉRAL
+  app.post("/api/messages/send", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const { content, recipientId } = req.body;
       
@@ -1291,16 +1311,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Recipient ID is required" });
       }
 
-      const currentUserId = 1; // Current user sending the message
+      const currentUserId = req.user!.id; // Utilisateur authentifié
       
       // Find or create conversation between current user and recipient
       let conversation = await storage.getConversation(currentUserId, recipientId);
       
       if (!conversation) {
-        conversation = await storage.createConversation({
-          user1Id: Math.min(currentUserId, recipientId),
-          user2Id: Math.max(currentUserId, recipientId),
-        });
+        conversation = await storage.createConversation(
+          Math.min(currentUserId, recipientId),
+          Math.max(currentUserId, recipientId)
+        );
       }
 
       // Create the message
@@ -1313,12 +1333,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Update conversation's last message timestamp using storage
       // await storage.updateConversationTimestamp(conversation.id);
 
-      // Format for frontend
+      // Format for frontend avec nom dynamique
+      const sender = await storage.getUser(currentUserId);
       const formattedMessage = {
         id: newMessage.id,
         conversationId: newMessage.conversationId,
         senderId: newMessage.senderId,
-        senderName: "Floflow87",
+        senderName: sender ? sender.name || sender.username : "Utilisateur",
         content: newMessage.content,
         timestamp: newMessage.createdAt,
         createdAt: newMessage.createdAt,
