@@ -450,13 +450,39 @@ export class DatabaseStorage implements IStorage {
 
   // Chat system methods
   async getConversations(userId: number): Promise<Conversation[]> {
-    const result = await db.select().from(conversations).where(
+    const result = await db.select({
+      id: conversations.id,
+      user1Id: conversations.user1Id,
+      user2Id: conversations.user2Id,
+      lastMessageAt: conversations.lastMessageAt,
+      createdAt: conversations.createdAt,
+      updatedAt: conversations.updatedAt
+    }).from(conversations).where(
       or(
         eq(conversations.user1Id, userId),
         eq(conversations.user2Id, userId)
       )
+    ).orderBy(desc(conversations.lastMessageAt));
+
+    // Pour chaque conversation, récupérer les infos de l'autre utilisateur
+    const conversationsWithUser = await Promise.all(
+      result.map(async (conv) => {
+        const otherUserId = conv.user1Id === userId ? conv.user2Id : conv.user1Id;
+        const [otherUser] = await db.select({
+          id: users.id,
+          name: users.name,
+          username: users.username,
+          avatar: users.avatar
+        }).from(users).where(eq(users.id, otherUserId));
+
+        return {
+          ...conv,
+          user: otherUser
+        };
+      })
     );
-    return result;
+
+    return conversationsWithUser;
   }
 
   async getConversation(user1Id: number, user2Id: number): Promise<Conversation | undefined> {
@@ -469,24 +495,49 @@ export class DatabaseStorage implements IStorage {
     return conversation || undefined;
   }
 
-  async createConversation(conversation: InsertConversation): Promise<Conversation> {
+  async createConversation(user1Id: number, user2Id: number): Promise<Conversation> {
     const [newConversation] = await db
       .insert(conversations)
-      .values(conversation)
+      .values({
+        user1Id,
+        user2Id,
+        lastMessageAt: new Date()
+      })
       .returning();
     return newConversation;
   }
 
   async getMessages(conversationId: number): Promise<Message[]> {
-    const result = await db.select().from(messages).where(eq(messages.conversationId, conversationId));
+    const result = await db.select({
+      id: messages.id,
+      conversationId: messages.conversationId,
+      senderId: messages.senderId,
+      content: messages.content,
+      messageType: messages.messageType,
+      isRead: messages.isRead,
+      createdAt: messages.createdAt,
+      updatedAt: messages.updatedAt
+    }).from(messages).where(eq(messages.conversationId, conversationId)).orderBy(asc(messages.createdAt));
     return result;
   }
 
-  async createMessage(message: InsertMessage): Promise<Message> {
+  async createMessage(message: any): Promise<Message> {
     const [newMessage] = await db
       .insert(messages)
-      .values(message)
+      .values({
+        conversationId: message.conversationId,
+        senderId: message.senderId,
+        content: message.content,
+        messageType: message.messageType || 'text',
+        isRead: false
+      })
       .returning();
+
+    // Mettre à jour la conversation avec le timestamp du dernier message
+    await db.update(conversations)
+      .set({ lastMessageAt: new Date() })
+      .where(eq(conversations.id, message.conversationId));
+
     return newMessage;
   }
 
@@ -648,10 +699,9 @@ export class DatabaseStorage implements IStorage {
   // Follow system implementation
   async followUser(followerId: number, followingId: number): Promise<boolean> {
     try {
-      await db.insert(subscriptions).values({
+      await db.insert(follows).values({
         followerId,
-        followingId,
-        status: 'accepted'
+        followingId
       });
       return true;
     } catch (error) {
@@ -662,8 +712,8 @@ export class DatabaseStorage implements IStorage {
 
   async unfollowUser(followerId: number, followingId: number): Promise<boolean> {
     try {
-      const result = await db.delete(subscriptions).where(
-        and(eq(subscriptions.followerId, followerId), eq(subscriptions.followingId, followingId))
+      const result = await db.delete(follows).where(
+        and(eq(follows.followerId, followerId), eq(follows.followingId, followingId))
       );
       return (result.rowCount || 0) > 0;
     } catch (error) {
@@ -674,10 +724,10 @@ export class DatabaseStorage implements IStorage {
 
   async isFollowing(followerId: number, followingId: number): Promise<boolean> {
     try {
-      const [subscription] = await db.select().from(subscriptions).where(
-        and(eq(subscriptions.followerId, followerId), eq(subscriptions.followingId, followingId))
+      const [follow] = await db.select().from(follows).where(
+        and(eq(follows.followerId, followerId), eq(follows.followingId, followingId))
       );
-      return !!subscription;
+      return !!follow;
     } catch (error) {
       console.error('Error checking follow status:', error);
       return false;
