@@ -118,13 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 24, 2025. Enhanced autograph cards system with variants navigation
-  - Added arrow navigation system for autograph variants
-  - Removed base autograph cards (non-numbered)
-  - Excluded 1/1 autographs from autographs tab (moved to special 1/1 tab)
-  - Implemented 7 autograph variant types: Gold(/2), Red(/3), Silver(/10), Blue(/25), Green(/49), Bronze(/99), Numbered(/199)
-  - Updated database to 2862 total cards with proper autograph structure
-  - Added variant navigation with left/right arrows and counter display
+- June 24, 2025. Comprehensive autograph system update based on Excel checklist
+  - Implemented exact autograph variants from official Excel checklist: /199, /99, /49, /25, /10, /5, /3, /2
+  - Added season field (22/23, 23/24) to card addition form and display
+  - Enhanced autocompletion to show all players with AUTO/INSERT badges
+  - Improved drag & drop fluidity in deck management with better visual feedback
+  - Fixed share button colors in deck interface (changed to black text)
+  - Updated autograph players according to exact Excel data: 19 players with specific variant distributions
+  - Added Purple(/5) variant type for autographs according to checklist
 - June 24, 2025. Fixed deployment configuration issues
   - Removed Python dependencies causing virtual environment errors
   - Deleted pyproject.toml and .pythonlibs directory

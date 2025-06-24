@@ -420,6 +420,10 @@ export default function AddCard() {
                       >
                         <div className="font-medium">{player.playerName}</div>
                         <div className="text-sm text-zinc-400">{player.teamName}</div>
+                        <div className="text-xs text-zinc-500 flex gap-2 mt-1">
+                          {player.hasAutograph && <span className="bg-green-600 px-1 rounded">AUTO</span>}
+                          {player.hasInsert && <span className="bg-orange-600 px-1 rounded">INSERT</span>}
+                        </div>
                       </div>
                     ))}
                   </div>

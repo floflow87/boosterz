@@ -89,7 +89,7 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
       
       {/* Handle de drag */}
       <div 
-        className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-grab active:cursor-grabbing z-10"
+        className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-grab active:cursor-grabbing hover:bg-black/90 hover:scale-110 z-10"
         {...listeners}
       >
         <GripVertical className="w-4 h-4" />
