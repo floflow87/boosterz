@@ -118,6 +118,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Updated Score Ligue 1 23/24 checklist structure based on Excel file with 5 tabs (Bases, Bases numérotées, Hits, Autographes, Spéciales)
 - June 23, 2025. Initial setup
 
 ## User Preferences
