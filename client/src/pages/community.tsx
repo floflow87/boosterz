@@ -56,18 +56,36 @@ export default function Community() {
 
         {/* Dynamic Bullets */}
         <div className="grid grid-cols-4 gap-2 mb-6">
-          {[
-            { label: "Membres actifs", value: "1.2k", color: "bg-green-500" },
-            { label: "Cartes échangées", value: "847", color: "bg-blue-500" },
-            { label: "Posts du jour", value: "23", color: "bg-purple-500" },
-            { label: "Nouvelles cartes", value: "156", color: "bg-orange-500" }
-          ].map((bullet, index) => (
-            <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-              <div className={`w-2 h-2 rounded-full ${bullet.color} mx-auto mb-2`}></div>
-              <div className="text-white font-bold text-lg">{bullet.value}</div>
-              <div className="text-gray-400 text-xs">{bullet.label}</div>
-            </div>
-          ))}
+          {(() => {
+            const bullets = {
+              feed: [
+                { label: "Posts du jour", value: "23", color: "bg-purple-500" },
+                { label: "Nouvelles cartes", value: "156", color: "bg-orange-500" },
+                { label: "Échanges actifs", value: "12", color: "bg-blue-500" },
+                { label: "Membres en ligne", value: "48", color: "bg-green-500" }
+              ],
+              forums: [
+                { label: "Messages du jour", value: "142", color: "bg-blue-500" },
+                { label: "Sujets actifs", value: "18", color: "bg-purple-500" },
+                { label: "Nouveaux membres", value: "7", color: "bg-green-500" },
+                { label: "Réponses", value: "89", color: "bg-orange-500" }
+              ],
+              leaderboard: [
+                { label: "Top collecteurs", value: "50", color: "bg-yellow-500" },
+                { label: "Cartes totales", value: "12.5k", color: "bg-blue-500" },
+                { label: "Collections", value: "247", color: "bg-purple-500" },
+                { label: "Échanges", value: "1.2k", color: "bg-green-500" }
+              ]
+            };
+            
+            return bullets[activeTab].map((bullet, index) => (
+              <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+                <div className={`w-2 h-2 rounded-full ${bullet.color} mx-auto mb-2`}></div>
+                <div className="text-white font-bold text-lg">{bullet.value}</div>
+                <div className="text-gray-400 text-xs">{bullet.label}</div>
+              </div>
+            ));
+          })()}
         </div>
 
         {/* Mon Feed Tab */}

@@ -50,9 +50,10 @@ interface SortableCardProps {
     position: number;
   };
   index: number;
+  onRemove: (position: number) => void;
 }
 
-function SortableCard({ id, cardData, index }: SortableCardProps) {
+function SortableCard({ id, cardData, index, onRemove }: SortableCardProps) {
   const {
     attributes,
     listeners,
@@ -141,30 +142,7 @@ function SortableCard({ id, cardData, index }: SortableCardProps) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          // Utiliser une fonction callback pour accéder aux cartes locales
-          setLocalCards((currentCards) => {
-            const newCards = currentCards.filter(c => c.position !== cardData.position);
-            const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-            
-            // Sauvegarder immédiatement les nouvelles positions
-            const newPositions = reorderedCards.map(c => ({
-              cardId: c.type === 'collection' ? (c.card as Card).id : undefined,
-              personalCardId: c.type === 'personal' ? (c.card as PersonalCard).id : undefined,
-              position: c.position
-            }));
-            
-            // Utiliser une fonction asynchrone pour la mutation
-            fetch(`/api/decks/${id}/reorder`, {
-              method: 'PATCH',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ positions: newPositions })
-            }).then(() => {
-              // Rafraîchir les données
-              queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-            });
-            
-            return reorderedCards;
-          });
+          onRemove(cardData.position);
         }}
         className="absolute bottom-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-all z-10"
       >
@@ -449,6 +427,19 @@ export default function DeckDetail() {
                       id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
                       cardData={deckCard}
                       index={index}
+                      onRemove={(position) => {
+                        const newCards = localCards.filter(c => c.position !== position);
+                        const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                        setLocalCards(reorderedCards);
+                        
+                        // Sauvegarder immédiatement
+                        const newPositions = reorderedCards.map(c => ({
+                          cardId: c.type === 'collection' ? (c.card as Card).id : undefined,
+                          personalCardId: c.type === 'personal' ? (c.card as PersonalCard).id : undefined,
+                          position: c.position
+                        }));
+                        updatePositionsMutation.mutate(newPositions);
+                      }}
                     />
                   ))}
                   

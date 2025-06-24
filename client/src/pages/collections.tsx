@@ -30,6 +30,7 @@ export default function Collections() {
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [isCardRotated, setIsCardRotated] = useState(false);
+  const [rotationStyle, setRotationStyle] = useState({ rotateX: 0, rotateY: 0 });
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [showFeaturedPanel, setShowFeaturedPanel] = useState(false);
@@ -1468,6 +1469,17 @@ export default function Collections() {
             <div 
               className="max-w-full max-h-full flex items-center justify-center cursor-pointer select-none"
               style={{ perspective: '1000px' }}
+              onMouseMove={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const rotateX = (e.clientY - centerY) / 10;
+                const rotateY = (e.clientX - centerX) / 10;
+                setRotationStyle({ rotateX: -rotateX, rotateY });
+              }}
+              onMouseLeave={() => {
+                setRotationStyle({ rotateX: 0, rotateY: 0 });
+              }}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsCardRotated(!isCardRotated);
@@ -1484,17 +1496,22 @@ export default function Collections() {
                 style={{
                   filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
                   transform: isCardRotated 
-                    ? 'rotateY(45deg) rotateX(10deg) scale(1.05)'
-                    : 'rotateY(-15deg) rotateX(5deg)',
+                    ? `rotateY(${rotationStyle.rotateY}deg) rotateX(${rotationStyle.rotateX}deg) scale(1.05)`
+                    : `rotateY(${rotationStyle.rotateY / 2}deg) rotateX(${rotationStyle.rotateX / 2}deg)`,
                   transformStyle: 'preserve-3d',
-                  transition: 'transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  background: 'linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.1) 100%)',
+                  transition: 'transform 0.15s ease-out',
+                  background: `linear-gradient(
+                    ${45 + rotationStyle.rotateY}deg, 
+                    rgba(255,255,255,0.1) 0%, 
+                    rgba(255,255,255,0.05) 50%, 
+                    rgba(0,0,0,0.1) 100%
+                  )`,
                   boxShadow: `
                     0 0 0 8px rgba(255,215,0,0.3),
                     0 0 0 16px rgba(255,215,0,0.1),
-                    20px 20px 60px rgba(0,0,0,0.8),
+                    ${20 + rotationStyle.rotateY / 2}px ${20 + rotationStyle.rotateX / 2}px 60px rgba(0,0,0,0.8),
                     inset -5px -5px 15px rgba(0,0,0,0.3),
-                    inset 5px 5px 15px rgba(255,255,255,0.1)
+                    inset 5px 5px 15px rgba(255,255,255,${0.1 + Math.abs(rotationStyle.rotateX) / 1000})
                   `,
                   touchAction: 'manipulation',
                   userSelect: 'none',
