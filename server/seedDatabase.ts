@@ -526,6 +526,7 @@ export async function seedDatabase() {
           cardSubType: variant.subType || (baseCard.isRookie ? "Rookie" : null),
           rarity: variant.rarity,
           numbering: variant.numbering,
+          season: "23/24",
           isOwned: false,
           imageUrl: null
         });
@@ -556,6 +557,7 @@ export async function seedDatabase() {
           cardSubType: card.isRookie ? "Rookie" : null,
           rarity: variant.rarity,
           numbering: variant.numbering,
+          season: "23/24",
           isOwned: false,
           imageUrl: null
         });
@@ -576,6 +578,7 @@ export async function seedDatabase() {
           cardSubType: "Rookie",
           rarity: variant.rarity,
           numbering: variant.numbering,
+          season: "23/24",
           isOwned: false,
           imageUrl: null
         });
@@ -596,6 +599,7 @@ export async function seedDatabase() {
           cardSubType: null,
           rarity: variant.rarity,
           numbering: variant.numbering,
+          season: "23/24",
           isOwned: false,
           imageUrl: null
         });
@@ -616,6 +620,7 @@ export async function seedDatabase() {
           cardSubType: null,
           rarity: variant.rarity,
           numbering: variant.numbering,
+          season: "23/24",
           isOwned: false,
           imageUrl: null
         });
@@ -636,6 +641,7 @@ export async function seedDatabase() {
           cardSubType: null,
           rarity: variant.rarity,
           numbering: variant.numbering,
+          season: "23/24",
           isOwned: false,
           imageUrl: null
         });
