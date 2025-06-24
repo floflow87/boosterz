@@ -1,6 +1,7 @@
 import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ilike, desc, inArray } from "drizzle-orm";
+import { follows } from "@shared/schema";
 
 export interface IStorage {
   // Users
@@ -658,8 +659,21 @@ export class DatabaseStorage implements IStorage {
 
   async getFollowedUsersPosts(userId: number): Promise<any[]> {
     try {
-      // Simple approach: get posts from user 999 that user 1 is following
-      const allPostsQuery = await db.select({
+      // Get users that the current user follows
+      const followedUsersQuery = await db.select({
+        followingId: follows.followingId
+      })
+      .from(follows)
+      .where(eq(follows.followerId, userId));
+
+      const followedUserIds = followedUsersQuery.map(f => f.followingId);
+      
+      if (followedUserIds.length === 0) {
+        return [];
+      }
+
+      // Get posts from followed users
+      const followedPostsQuery = await db.select({
         id: posts.id,
         userId: posts.userId,
         content: posts.content,
@@ -673,10 +687,10 @@ export class DatabaseStorage implements IStorage {
       })
       .from(posts)
       .innerJoin(users, eq(posts.userId, users.id))
-      .where(eq(posts.userId, 999))
+      .where(inArray(posts.userId, followedUserIds))
       .orderBy(desc(posts.createdAt));
       
-      return allPostsQuery.map(post => ({
+      return followedPostsQuery.map(post => ({
         id: post.id,
         userId: post.userId,
         content: post.content,
@@ -1343,9 +1357,42 @@ export class MemStorage implements IStorage {
   }
 
   async getFollowedUsersPosts(userId: number): Promise<any[]> {
-    // Return posts from user 999 if user 1 is requesting (following relationship)
-    if (userId === 1) {
-      return await this.getUserPosts(999);
+    // Mock implementation: return posts from user 2 if Max la menace (999) is requesting
+    if (userId === 999) {
+      return [
+        {
+          id: 17,
+          userId: 2,
+          content: "Qui a la carte Ronaldo Juventus rare ? Je propose un trade avec ma Messi Barcelona dorée ✨",
+          type: "text",
+          cardId: null,
+          isVisible: true,
+          createdAt: new Date("2024-06-22T14:15:00Z"),
+          updatedAt: new Date("2024-06-22T14:15:00Z"),
+          user: {
+            id: 2,
+            name: "Max C.",
+            username: "maxcollector",
+            avatar: null
+          }
+        },
+        {
+          id: 14,
+          userId: 2,
+          content: "Nouvelle collection SCORE 2023/24 disponible ! 🔥",
+          type: "text",
+          cardId: null,
+          isVisible: true,
+          createdAt: new Date("2024-06-19T15:45:00Z"),
+          updatedAt: new Date("2024-06-19T15:45:00Z"),
+          user: {
+            id: 2,
+            name: "Max C.",
+            username: "maxcollector",
+            avatar: null
+          }
+        }
+      ];
     }
     return [];
   }
