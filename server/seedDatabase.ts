@@ -695,18 +695,19 @@ export async function seedDatabase() {
       });
     }
 
-    // 4. Create Autograph cards (only numbered variants, no base and no 1/1)
-    console.log("✍️ Creating Autograph numbered cards...");
+    // 4. Create Autograph cards with player-specific variants (excluding /1)
+    console.log("✍️ Creating player-specific autograph variants...");
     for (const autoCard of autographCards) {
-      // Variantes numérotées d'autographes (excluding /1)
+      // Each player has their own specific numberings from the file
       for (const numbering of autoCard.numberings) {
-        // Skip 1/1 cards
+        // Skip 1/1 cards (they go to special 1/1 tab)
         if (numbering === "/1") continue;
         
         const getRarityFromNumbering = (num: string) => {
           if (num === "/2" || num === "/3") return "Super Rare";
           if (num === "/10") return "Ultra Rare";
           if (num === "/25" || num === "/49") return "Rare";
+          if (num === "/99" || num === "/199") return "Autograph";
           return "Autograph";
         };
 
@@ -717,6 +718,7 @@ export async function seedDatabase() {
           if (num === "/25") return "Autograph Blue";
           if (num === "/49") return "Autograph Green";
           if (num === "/99") return "Autograph Bronze";
+          if (num === "/199") return "Autograph Numbered";
           return "Autograph Numbered";
         };
 
