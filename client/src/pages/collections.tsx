@@ -1239,8 +1239,11 @@ export default function Collections() {
                             if (!featuredDescription.trim() || !selectedCard) return;
                             
                             try {
-                              await apiRequest('/api/posts', {
+                              const response = await fetch('/api/posts', {
                                 method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
                                 body: JSON.stringify({
                                   content: featuredDescription,
                                   cardImage: selectedCard.imageUrl,
@@ -1248,6 +1251,10 @@ export default function Collections() {
                                   type: 'featured'
                                 })
                               });
+                              
+                              if (!response.ok) {
+                                throw new Error('Failed to create post');
+                              }
                               
                               setShowFeaturedPanel(false);
                               setFeaturedDescription("");
