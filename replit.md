@@ -118,8 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Fixed deployment configuration issues
+  - Removed Python dependencies causing virtual environment errors
+  - Deleted pyproject.toml and .pythonlibs directory
+  - Cleaned deployment to use Node.js-only toolchain
+  - Verified build process uses vite and esbuild exclusively
 - June 24, 2025. Fixed collection detail page filtering and navigation
-  - Corrected "Bases num." to show Parallel Laser/Swirl cards (200 players × 9 variants = 1800 cards)
+  - Corrected "Bases num." to show Parallel Laser/Swirl cards (200 players × 9 variants = 1800 cards)  
   - Removed redundant "Parallèles" tab as requested
   - Fixed "Autographes" tab to display 304 autograph cards correctly
   - Verified hits structure: 360 total Insert cards across 8 different types
