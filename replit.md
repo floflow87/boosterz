@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Fixed user authentication bug in social features
+  - Corrected "Mes posts" section to show posts from currently logged-in user
+  - Fixed hardcoded user ID issues in social page and chat
+  - Added proper authentication system to get current user ID
+  - Updated user profile queries to use authenticated user data
 - June 24, 2025. Comprehensive autograph system update based on Excel checklist
   - Implemented exact autograph variants from official Excel checklist: /199, /99, /49, /25, /10, /5, /3, /2
   - Added season field (22/23, 23/24) to card addition form and display

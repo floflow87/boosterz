@@ -31,7 +31,13 @@ export default function Chat() {
     setIsBlocked(blockedUsers.includes(userId));
   }, [userId]);
 
-  const currentUserId = 1; // Current logged-in user
+  // Get current user ID from authentication
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/auth/me'],
+    retry: false,
+  });
+  
+  const currentUserId = currentUser?.id || 999;
 
   // Get or create conversation
   const { data: conversation, isLoading: conversationLoading } = useQuery<Conversation>({

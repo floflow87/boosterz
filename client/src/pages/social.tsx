@@ -21,6 +21,14 @@ import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { User as UserType, Collection, Card, Post } from "@shared/schema";
 import CardDisplay from "@/components/card-display";
 
+interface CurrentUser {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  avatar?: string;
+}
+
 interface SocialUser {
   id: number;
   username: string;
@@ -87,8 +95,13 @@ export default function Social() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Current user data (hardcoded to user 1 for "Mon Profil")
-  const userId = "1";
+  // Get current user ID from authentication
+  const { data: currentUser } = useQuery<CurrentUser>({
+    queryKey: ['/api/auth/me'],
+    retry: false,
+  });
+  
+  const userId = currentUser?.id?.toString() || "999";
 
   // Profile data queries
   const { data: user, isLoading: userLoading } = useQuery<UserType>({
