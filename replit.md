@@ -145,6 +145,6 @@ Preferred communication style: Simple, everyday language.
 ## Access Credentials
 **Compte "Mac la menace" (maxlamenace):**
 - Username: maxlamenace  
-- Password: motdepasse123
+- Password: Test25
 - User ID: 999
 - Email: maxlamenace@yopmail.com
