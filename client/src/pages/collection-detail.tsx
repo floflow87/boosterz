@@ -773,17 +773,6 @@ export default function CollectionDetail() {
         <div className="sticky top-0 z-50 pb-4 mb-2 pt-2 -mx-3 px-3 transition-all duration-300" id="category-tabs">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[52px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
-            onClick={() => setFilter("bases")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-              filter === "bases" 
-                ? "text-white shadow-lg transform scale-105" 
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-            style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
-          >
-            Bases
-          </button>
-          <button
             onClick={() => setFilter("bases_numbered")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
               filter === "bases_numbered" 
@@ -792,7 +781,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "bases_numbered" ? { backgroundColor: '#F37261' } : {}}
           >
-            Bases numérotées ({numberedBasesCount})
+            Bases num ({numberedBasesCount})
           </button>
           <button
             onClick={() => setFilter("hits")}
