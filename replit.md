@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Enhanced autograph cards system with variants navigation
+  - Added arrow navigation system for autograph variants
+  - Removed base autograph cards (non-numbered)
+  - Excluded 1/1 autographs from autographs tab (moved to special 1/1 tab)
+  - Implemented 7 autograph variant types: Gold(/2), Red(/3), Silver(/10), Blue(/25), Green(/49), Bronze(/99), Numbered(/199)
+  - Updated database to 2862 total cards with proper autograph structure
+  - Added variant navigation with left/right arrows and counter display
 - June 24, 2025. Fixed deployment configuration issues
   - Removed Python dependencies causing virtual environment errors
   - Deleted pyproject.toml and .pythonlibs directory
@@ -126,9 +133,9 @@ The application follows a modern full-stack architecture with clear separation b
 - June 24, 2025. Fixed collection detail page filtering and navigation
   - Corrected "Bases num." to show Parallel Laser/Swirl cards (200 players × 9 variants = 1800 cards)  
   - Removed redundant "Parallèles" tab as requested
-  - Fixed "Autographes" tab to display 304 autograph cards correctly
+  - Fixed "Autographes" tab to display autograph cards correctly
   - Verified hits structure: 360 total Insert cards across 8 different types
-  - Updated Score Ligue 1 23/24 checklist structure with 2814 total cards
+  - Updated Score Ligue 1 23/24 checklist structure
 - June 23, 2025. Initial setup
 
 ## User Preferences

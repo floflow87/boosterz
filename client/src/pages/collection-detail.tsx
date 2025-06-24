@@ -140,14 +140,10 @@ export default function CollectionDetail() {
     return cards.filter(card => 
       card.playerName === playerName && 
       card.teamName === teamName && 
-      card.cardType.includes("Autograph")
+      card.cardType.includes("Autograph") &&
+      card.numbering !== "/1" // Exclude 1/1 cards
     ).sort((a, b) => {
-      // Trier par ordre de rareté : base, numérotées par ordre décroissant, puis 1/1
-      if (a.cardType === "Autograph" && !a.numbering) return -1;
-      if (b.cardType === "Autograph" && !b.numbering) return 1;
-      if (a.numbering === "/1") return 1;
-      if (b.numbering === "/1") return -1;
-      
+      // Trier par ordre de rareté : numérotées par ordre décroissant
       const aNum = parseInt(a.numbering?.replace("/", "") || "0");
       const bNum = parseInt(b.numbering?.replace("/", "") || "0");
       return bNum - aNum; // Ordre décroissant pour les numérotées
@@ -183,8 +179,8 @@ export default function CollectionDetail() {
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          // Cartes spéciales 1/1
-          includeCard = card.cardType === "Base 1/1";
+          // Cartes spéciales 1/1 (incluant autographes 1/1)
+          includeCard = card.numbering === "/1" || card.cardType === "Base 1/1";
           break;
 
         default: 

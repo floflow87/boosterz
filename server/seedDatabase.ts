@@ -695,28 +695,15 @@ export async function seedDatabase() {
       });
     }
 
-    // 4. Create Autograph cards with variants
-    console.log("✍️ Creating Autograph cards with variants...");
+    // 4. Create Autograph cards (only numbered variants, no base and no 1/1)
+    console.log("✍️ Creating Autograph numbered cards...");
     for (const autoCard of autographCards) {
-      // Carte autographe de base (sans numérotation)
-      cardsToInsert.push({
-        id: cardId++,
-        collectionId: 1,
-        reference: `AUTO-${autoCard.id.toString().padStart(2, '0')}`,
-        playerName: autoCard.playerName,
-        teamName: autoCard.teamName,
-        cardType: "Autograph",
-        cardSubType: null,
-        rarity: "Autograph",
-        numbering: null,
-        isOwned: false,
-        imageUrl: null
-      });
-
-      // Variantes numérotées d'autographes
+      // Variantes numérotées d'autographes (excluding /1)
       for (const numbering of autoCard.numberings) {
+        // Skip 1/1 cards
+        if (numbering === "/1") continue;
+        
         const getRarityFromNumbering = (num: string) => {
-          if (num === "/1") return "1 of 1";
           if (num === "/2" || num === "/3") return "Super Rare";
           if (num === "/10") return "Ultra Rare";
           if (num === "/25" || num === "/49") return "Rare";
@@ -724,7 +711,6 @@ export async function seedDatabase() {
         };
 
         const getVariantType = (num: string) => {
-          if (num === "/1") return "Autograph 1/1";
           if (num === "/2") return "Autograph Gold";
           if (num === "/3") return "Autograph Red";
           if (num === "/10") return "Autograph Silver";
@@ -741,7 +727,7 @@ export async function seedDatabase() {
           playerName: autoCard.playerName,
           teamName: autoCard.teamName,
           cardType: getVariantType(numbering),
-          cardSubType: numbering === "/1" ? "1 of 1" : "Numbered",
+          cardSubType: "Numbered",
           rarity: getRarityFromNumbering(numbering),
           numbering: numbering,
           isOwned: false,
