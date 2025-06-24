@@ -89,6 +89,27 @@ function SortableCard({ id, cardData, index }: SortableCardProps) {
         <GripVertical className="w-4 h-4" />
       </div>
       
+      {/* Bouton supprimer */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          const newCards = localCards.filter(c => c.position !== cardData.position);
+          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+          setLocalCards(reorderedCards);
+          
+          // Sauvegarder immédiatement les nouvelles positions
+          const newPositions = reorderedCards.map(c => ({
+            cardId: c.type === 'collection' ? (c.card as Card).id : undefined,
+            personalCardId: c.type === 'personal' ? (c.card as PersonalCard).id : undefined,
+            position: c.position
+          }));
+          updatePositionsMutation.mutate(newPositions);
+        }}
+        className="absolute bottom-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-all z-10"
+      >
+        <Trash2 className="w-3 h-3" />
+      </button>
+      
       {cardData.type === 'collection' ? (
         (cardData.card as Card).imageUrl ? (
           <div className="aspect-[2.5/3.5] rounded-lg overflow-hidden shadow-lg">
@@ -200,6 +221,7 @@ export default function DeckDetail() {
       setEditName(deck.name);
       setEditTheme(deck.themeColors);
       setEditCoverImage(deck.coverImage);
+      setBannerPosition(deck.bannerPosition ?? 50);
     }
   }, [deck]);
 
