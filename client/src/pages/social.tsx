@@ -340,13 +340,15 @@ export default function Social() {
   // Mutation pour suivre/arrêter de suivre un utilisateur
   const followMutation = useMutation({
     mutationFn: async ({ userId, action }: { userId: number; action: "follow" | "unfollow" }) => {
-      return apiRequest(`/api/social/users/${userId}/${action}`, "POST");
+      return apiRequest("POST", `/api/social/users/${userId}/${action}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/social/users"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/feed"] });
       toast({
         title: "Succès",
         description: "Action effectuée avec succès",
+        className: "bg-green-600 border-green-600 text-white",
       });
     },
     onError: () => {

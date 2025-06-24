@@ -298,8 +298,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
 
-      const followedPosts = await storage.getFollowedUsersPosts(currentUserId);
-      res.json(followedPosts);
+      // Get users that current user follows
+      const following = await storage.getFollowingByUserId(currentUserId);
+      const followingIds = following.map(f => f.followingId);
+      
+      if (followingIds.length === 0) {
+        return res.json([]);
+      }
+      
+      // Get posts from followed users
+      const posts = await storage.getPostsByUserIds(followingIds);
+      res.json(posts);
     } catch (error) {
       console.error('Error fetching user feed:', error);
       res.status(500).json({ message: "Internal server error" });
@@ -827,47 +836,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/social/users', optionalAuth, async (req: AuthRequest, res) => {
     try {
       const currentUserId = req.user?.id;
-      const { search, limit } = req.query;
+      const searchTerm = req.query.search?.toString().toLowerCase();
+      const limit = parseInt(req.query.limit?.toString() || '10');
       
-      let users = await storage.getAllUsers();
+      let users = await storage.getUsers();
       
-      // Exclude current user from results
+      // Remove current user from results
       if (currentUserId) {
         users = users.filter(user => user.id !== currentUserId);
       }
       
       // Apply search filter if provided
-      if (search && typeof search === 'string') {
-        const searchTerm = search.toLowerCase();
+      if (searchTerm) {
         users = users.filter(user => 
-          user.username.toLowerCase().includes(searchTerm) ||
-          user.email.toLowerCase().includes(searchTerm) ||
-          user.name.toLowerCase().includes(searchTerm)
+          user.name?.toLowerCase().includes(searchTerm) ||
+          user.username?.toLowerCase().includes(searchTerm) ||
+          user.email?.toLowerCase().includes(searchTerm)
         );
       }
       
-      // Apply limit (default 10 for discovery)
-      const maxUsers = limit ? parseInt(limit as string) : 10;
-      users = users.slice(0, maxUsers);
-      
-      // Map to social user format
-      const socialUsers = users.map(user => ({
-        id: user.id,
-        username: user.username,
-        name: user.name,
-        email: user.email,
-        bio: user.bio || "",
-        totalCards: user.totalCards || 0,
-        collectionsCount: user.collectionsCount || 0,
-        completionPercentage: user.completionPercentage || 0,
-        followersCount: 0, // TODO: implement actual counts
-        followingCount: 0, // TODO: implement actual counts
-        isFollowing: false // TODO: check if current user follows this user
+      // Get follow status and counts for each user
+      const socialUsers = await Promise.all(users.map(async user => {
+        const collections = await storage.getCollectionsByUserId(user.id);
+        const followers = await storage.getFollowersByUserId(user.id);
+        const isFollowing = currentUserId ? await storage.isFollowing(currentUserId, user.id) : false;
+        
+        return {
+          id: user.id,
+          username: user.username,
+          name: user.name,
+          email: user.email,
+          avatar: user.avatar,
+          bio: user.bio,
+          followersCount: followers.length,
+          collectionsCount: collections.length,
+          isFollowing
+        };
       }));
       
-      res.json(socialUsers);
+      res.json(socialUsers.slice(0, limit));
     } catch (error) {
-      console.error("Error fetching social users:", error);
+      console.error('Error fetching social users:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
@@ -1006,24 +1015,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  app.post('/api/social/users/:userId/follow', async (req, res) => {
+  // Social follow/unfollow endpoints (for compatibility)
+  app.post("/api/social/users/:userId/:action", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = parseInt(req.params.userId);
-      // Mock follow action
-      res.json({ success: true, message: "User followed successfully" });
-    } catch (error) {
-      console.error("Error following user:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  });
+      const targetUserId = parseInt(req.params.userId);
+      const action = req.params.action;
+      const currentUserId = req.user!.id;
+      
+      if (targetUserId === currentUserId) {
+        return res.status(400).json({ message: "Cannot follow yourself" });
+      }
 
-  app.post('/api/social/users/:userId/unfollow', async (req, res) => {
-    try {
-      const userId = parseInt(req.params.userId);
-      // Mock unfollow action
-      res.json({ success: true, message: "User unfollowed successfully" });
+      if (action === "follow") {
+        await storage.followUser(currentUserId, targetUserId);
+      } else if (action === "unfollow") {
+        await storage.unfollowUser(currentUserId, targetUserId);
+      } else {
+        return res.status(400).json({ message: "Invalid action" });
+      }
+
+      res.json({ message: `User ${action}ed successfully` });
     } catch (error) {
-      console.error("Error unfollowing user:", error);
+      console.error(`Error ${req.params.action}ing user:`, error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
