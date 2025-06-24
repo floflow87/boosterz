@@ -150,23 +150,26 @@ export default function CollectionDetail() {
       let includeCard = false;
       switch (filter) {
         case "bases": 
-          includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+          // Pour "Bases num", on veut juste les cartes "Base" sans les parallèles
+          includeCard = card.cardType === "Base";
           break;
         case "bases_numbered": 
-          includeCard = card.cardType === "Parallel Numbered";
+          // Pour les bases numérotées, on prend les parallèles Laser et Swirl
+          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
           break;
         case "autographs": 
-          includeCard = card.cardType === "Autograph";
+          // Corriger le nom du type d'autographe
+          includeCard = card.cardType === "Autographe";
           break;
         case "hits": 
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          includeCard = card.cardType === "special_1_1" || card.numbering === "1/1";
+          includeCard = card.cardType.includes("1/1");
           break;
 
         default: 
-          includeCard = card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+          includeCard = card.cardType === "Base";
       }
 
       if (includeCard) {
@@ -776,16 +779,27 @@ export default function CollectionDetail() {
         <div className="sticky top-0 z-50 pb-4 mb-2 pt-2 -mx-3 px-3 transition-all duration-300" id="category-tabs">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[52px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
-            onClick={() => setFilter("bases_numbered")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-              filter === "bases_numbered" 
-                ? "text-white shadow-lg transform scale-105" 
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-            style={filter === "bases_numbered" ? { backgroundColor: '#F37261' } : {}}
-          >
-            Bases num.
-          </button>
+              onClick={() => setFilter("bases")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                filter === "bases" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+              style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
+            >
+              Bases num.
+            </button>
+            <button
+              onClick={() => setFilter("bases_numbered")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                filter === "bases_numbered" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+              style={filter === "bases_numbered" ? { backgroundColor: '#F37261' } : {}}
+            >
+              Parallèles
+            </button>
           <button
             onClick={() => setFilter("hits")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
