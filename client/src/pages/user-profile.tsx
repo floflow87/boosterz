@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useRoute } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { 
@@ -14,7 +14,6 @@ import {
   MoreHorizontal,
   Send
 } from "lucide-react";
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/header";
@@ -24,7 +23,18 @@ import CardDisplay from "@/components/card-display";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
-import type { User, Collection, Card, Post, Comment } from "@shared/schema";
+import type { User, Collection, Card, Post } from "@shared/schema";
+
+interface CommentData {
+  id: number;
+  postId: number;
+  userId: number;
+  content: string;
+  userName?: string;
+  userAvatar?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
 
 export default function UserProfile() {
   const [match, params] = useRoute("/user/:userId");
@@ -43,7 +53,7 @@ export default function UserProfile() {
   // Comments state
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
-  const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
+  const [postComments, setPostComments] = useState<Record<number, CommentData[]>>({});
 
   // Get current user for interactions
   const { data: authData } = useQuery({
@@ -84,7 +94,7 @@ export default function UserProfile() {
     const commentText = commentInputs[postId]?.trim();
     if (!commentText || !currentUser) return;
 
-    const newComment: Comment = {
+    const newComment: CommentData = {
       id: Date.now(), // Temporary ID
       postId,
       userId: currentUser.id,
