@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Updated Score Ligue 1 23/24 checklist structure with 2769 cards
+  - Renamed "Bases" tab to "Bases num" with 9 numbered variants per player
+  - Restructured Hits: 5 types with 3 variants each, 3 types with 1 variant
+  - Added complete player names and teams for 200 base references
+  - Maintained autographs (304 cards) and special 1/1 cards (350 cards)
 - June 23, 2025. Initial setup
 
 ## User Preferences
