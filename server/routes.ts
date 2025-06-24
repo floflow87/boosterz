@@ -8,8 +8,8 @@ import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
 import { db } from "./db";
-import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema } from "@shared/schema";
-import { eq, desc, and, inArray } from "drizzle-orm";
+import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema, follows, collections, userCards, conversations, messages, activities, subscriptions } from "@shared/schema";
+import { eq, desc, and, inArray, not, or, ilike, asc, like } from "drizzle-orm";
 
 // Initialize sample data in database
 const initializeSampleData = async () => {

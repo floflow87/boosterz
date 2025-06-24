@@ -570,6 +570,13 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
+  async getFollowersCount(userId: number): Promise<number> {
+    const result = await db.select({ count: sql<number>`count(*)` })
+      .from(follows)
+      .where(eq(follows.followingId, userId));
+    return result[0]?.count || 0;
+  }
+
   async deletePost(id: number): Promise<boolean> {
     try {
       const result = await db.delete(posts).where(eq(posts.id, id));
