@@ -1,0 +1,183 @@
+INSERT / BREAKTHROUGH
+
+1. Myron Boadu (AS Monaco)
+2. Bilal Boutobba (Clermont Foot 63) Rookie Card
+3. Formose Mendy (FC Lorient)
+4. Benjamin Tetteh (FC Metz) Rookie Card
+5. Marquinos (FC Nantes)
+6. Nabil Alioui (Havre AC) Rookie Card
+7. Hákon Arnar Haraldsson (LOSC Lille)
+8. Joris Chotard (Montpellier Hérault SC)
+9. Marcin Bułka (OGC Nice)
+10. Ismaïla Sarr (Olympique de Marseille)
+11. Johann Lepenant (Olympique Lyonnais)
+12. Warren Zaïre-Emery (Paris Saint-Germain)
+13. Morgan Guilavogui (RC Lens) Rookie Card
+14. Dilane Bakwa (RC Strasbourg Alsace) Rookie Card
+15. Mahdi Camara (Stade Brestois 29) Rookie Card
+16. Reda Khadra (Stade de Reims) Rookie Card
+17. Arnaud Kalimuendo (Stade Rennais FC)
+18. Thijs Dallinga (Toulouse FC)
+19. Habib Diarra (RC Strasbourg Alsace)
+20. Maxence Caqueret (Olympique Lyonnais)
+21. Teddy Teuma (Stade de Reims) Rookie Card
+22. Désiré Doué (Stade Rennais FC)
+23. Hugo Magnetti (Stade Brestois 29) Rookie Card
+24. Eliot Matazo (AS Monaco)
+25. Manuel Ugarte (Paris Saint-Germain)
+26. Maghnes Akliouche (AS Monaco)
+27. Gonçalo Ramos (Paris Saint-Germain)
+28. Bradley Locko (Stade Brestois 29)
+29. Matthis Abline (FC Nantes)
+30. Pablo Pagis (FC Lorient)
+
+INSERT / HOT ROOKIES
+
+1. Eliesse Ben Seghir (AS Monaco) Rookie Card
+2. Bafodé Diakité (LOSC Lille) Rookie Card
+3. Joel Mvuka (FC Lorient) Rookie Card
+4. Khalil Fayad (Montpellier Hérault SC) Rookie Card
+5. Yehvann Diouf (Stade de Reims) Rookie Card
+6. Badredine Bouanani (LOSC Lille) Rookie Card
+7. Leny Yoro (LOSC Lille) Rookie Card
+8. Arouna Sangante (Havre AC) Rookie Card
+9. Ethan Mbappé (Paris Saint-Germain) Rookie Card
+10. Adson (FC Nantes) Rookie Card
+11. Vitinha (Olympique de Marseille) Rookie Card
+12. Iliman Ndiaye (Olympique de Marseille) Rookie Card
+13. Bradley Barcola (Paris Saint-Germain) Rookie Card
+14. Saël Kumbedi (Olympique Lyonnais) Rookie Card
+15. Emanuel Emegha (RC Strasbourg Alsace) Rookie Card
+16. Ângelo (RC Strasbourg Alsace) Rookie Card
+17. Andy Diouf (RC Lens) Rookie Card
+18. Óscar Cortés (RC Lens) Rookie Card
+19.  Jeanuël Belocian (Stade Rennais FC) Rookie Card
+20. Eli Junior Kroupi (FC Lorient) Rookie Card
+
+INSERT / INTERGALACTIC HIT RARE
+
+1. Folarin Balogun (AS Monaco)
+2. Kylian Mbappé (Paris Saint-Germain)
+3. Marquinos (FC Nantes)
+4. Elye Wahi (RC Lens)
+5. Ousmane Dembélé (Paris Saint-Germain)
+6. Khéphren Thuram (OGC Nice)
+7. Achraf Hakimi (Paris Saint-Germain)
+8. Rayan Cherki (Olympique Lyonnais)
+9. Mohamed Daramy (Stade de Reims)
+10. Leny Yoro (LOSC Lille) Rookie Card
+11. Jonathan David (LOSC Lille)
+12. Wissam Ben Yedder (AS Monaco)
+13. Takumi Minamino (AS Monaco)
+14. Amine Gouiri (Stade Rennais FC)
+15. Gonçalo Ramos (Paris Saint-Germain)
+16. Randal Kolo Muani (Paris Saint-Germain)
+17. Bradley Barcola (Paris Saint-Germain) Rookie Card
+18. David Beckham (Paris Saint-Germain)
+19. William Saliba (Olympique de Marseille)
+20. Eric Cantona (Olympique de Marseille)
+
+INSERT / KEEPERS
+
+1. Gianluigi Donnarumma (Paris Saint-Germain)
+2. Brice Samba (RC Lens)
+3. Marco Bizot (Stade Brestois 29)
+4. Alban Lafont (FC Nantes)
+5. Lucas Chevalier (LOSC Lille) Rookie Card
+6. Anthony Lopes (Olympique Lyonnais)
+7. Steve Mandanda (Stade Rennais FC)
+8. Philipp Köhn (AS Monaco)
+9. Guillaume Restes (Toulouse FC) Rookie Card
+10. Mory Diaw (Clermont Foot 63)
+
+INSERT / NEXT UP HIT RARE
+
+1. Eliesse Ben Seghir (AS Monaco) Rookie Card
+2. Warren Zaïre-Emery (Paris Saint-Germain)
+3. Martín Satriano (Stade Brestois 29)
+4. Bafodé Diakité (LOSC Lille)
+5. Arnaud Kalimuendo (Stade Rennais FC)
+6. Marquinos (FC Nantes)
+7. Vitinha (Olympique de Marseille)
+8. Lucas Chevalier (LOSC Lille) Rookie Card
+9. Ethan Mbappé (Paris Saint-Germain) Rookie Card
+10. Rayan Cherki (Olympique Lyonnais)
+11. Elye Wahi (RC Lens)
+12. Mohamed Daramy (Stade de Reims)
+13. Bradley Barcola (Paris Saint-Germain) Rookie Card
+14. Saël Kumbedi (Olympique Lyonnais)
+15. Adson (FC Nantes) Rookie Card
+16. Ângelo (RC Strasbourg Alsace)  Rookie Card
+17. Désiré Doué (Stade Rennais FC)
+18. Khéphren Thuram (OGC Nice)
+19. Thijs Dallinga (Toulouse FC)
+20. Leny Yoro (LOSC Lille)
+
+INSERT / PENNANTS HIT RARE
+
+1. Ousmane Dembélé (Paris Saint-Germain)
+2. Habib Diarra (RC Strasbourg Alsace)
+3. Achraf Hakimi (Paris Saint-Germain)
+4. Eliesse Ben Seghir (AS Monaco)
+5. Randal Kolo Muani (Paris Saint-Germain)
+6. Terem Moffi (OGC Nice)
+7. Gonçalo Ramos (Paris Saint-Germain)
+8. Fabián Ruiz (Paris Saint-Germain)
+9. Kylian Mbappé (Paris Saint-Germain)
+10. Jonathan David (LOSC Lille)
+11. Ângelo (RC Strasbourg Alsace)
+12. Folarin Balogun (AS Monaco)
+13. Warren Zaïre-Emery (Paris Saint-Germain)
+14. Marco Asensio (Paris Saint-Germain)
+15. Thijs Dallinga (Toulouse FC)
+16. Alexandre Lacazette (Olympique Lyonnais)
+17. Gianluigi Donnarumma (Paris Saint-Germain)
+18. David Trezeguet (AS Monaco)
+19. Edinson Cavani (Paris Saint-Germain)
+20. William Saliba (OGC Nice) 
+
+INSERT / PURE CLASS
+
+1. Jonathan David (LOSC Lille)
+2. Dante (OGC Nice)
+3. Kylian Mbappé (Paris Saint-Germain)
+4. Wissam Ben Yedder (AS Monaco)
+5. Randal Kolo Muani (Paris Saint-Germain)
+6. Jordan Veretout (Olympique de Marseille)
+7. Khéphren Thuram (OGC Nice)
+8. Alexandre Lacazette (Olympique Lyonnais)
+9. Thomas Foket (Stade de Reims)
+10. Moussa Sissoko (FC Nantes)
+11. Kevin Danso (RC Lens)
+12. Yvon Mvogo (FC Lorient)
+13. Jonathan Clauss (Olympique de Marseille)
+14. Kévin Gameiro (RC Strasbourg Alsace)
+15. Youssouf Fofana (AS Monaco)
+16. Laurent Abergel (FC Lorient)
+17. Rayan Cherki (Olympique Lyonnais)
+18. Arthur Theate (Stade Rennais FC)
+19. Amine Gouiri (Stade Rennais FC)
+20. Rémy Cabella (LOSC Lille)
+
+INSERT / SCORE TEAM
+
+1. Angel Gomes (LOSC Lille)
+2. Matz Sels (RC Strasbourg Alsace)
+3. Achraf Hakimi (Paris Saint-Germain)
+4. Matthieu Udol (FC Metz)
+5. Quentin Merlin (FC Nantes)
+6. Corentin Tolisso (Olympique Lyonnais)
+7. Jean-Clair Todibo (OGC Nice)
+8. Pau López (Olympique de Marseille)
+9. Nemanja Matić (Stade Rennais FC)
+10. Elye Wahi (RC Lens)
+11. Nicolás Tagliafico (Olympique Lyonnais)
+12. Folarin Balogun (AS Monaco)
+13. Montassar Talbi (FC Lorient)
+14. Mohamed Daramy (Stade de Reims)
+15. Ousmane Dembélé (Paris Saint-Germain)
+16. Daler Kuzyaev (Havre AC)
+17. Pierre-Emerick Aubameyang (Olympique de Marseille)
+18. Mostafa Mohamed (FC Nantes)
+19. Takumi Minamino (AS Monaco)
+20. Terem Moffi (OGC Nice)
