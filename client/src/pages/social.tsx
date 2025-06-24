@@ -122,7 +122,8 @@ export default function Social() {
     retry: false,
   });
   
-  const userId = currentUser?.id?.toString() || "999";
+  const currentUserId = currentUser?.id?.toString() || "1";
+  const userId = "999"; // Pour les profils consultés (maxlamenace)
 
   // Profile data queries
   const { data: user, isLoading: userLoading } = useQuery<UserType>({
@@ -146,9 +147,9 @@ export default function Social() {
     queryKey: ["/api/users/feed"],
   });
 
-  // My posts query
+  // My posts query - utilise l'ID de l'utilisateur connecté
   const { data: myPosts = [], isLoading: myPostsLoading } = useQuery<Post[]>({
-    queryKey: [`/api/users/${userId}/posts`],
+    queryKey: [`/api/users/${currentUserId}/posts`],
   });
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
