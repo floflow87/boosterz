@@ -177,6 +177,14 @@ export default function CardDisplay({
               <span className="font-mono">#{card.reference}</span>
             )}
           </div>
+          
+          {card.numbering && (
+            <div className="text-xs text-orange-400 font-bold mt-1">{card.numbering}</div>
+          )}
+          
+          {card.season && (
+            <div className="text-xs text-blue-400 mt-1">Saison {card.season}</div>
+          )}
 
           {/* Trade/Sale Info for List View - Hide for sale context */}
           {showTradeInfo && (card.isForTrade || card.tradePrice) && context !== "sale" && (
