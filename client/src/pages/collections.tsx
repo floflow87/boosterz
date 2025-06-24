@@ -1473,12 +1473,12 @@ export default function Collections() {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
-                const rotateX = (e.clientY - centerY) / 10;
-                const rotateY = (e.clientX - centerX) / 10;
+                const rotateX = (e.clientY - centerY) / 20;
+                const rotateY = (e.clientX - centerX) / 20;
                 setRotationStyle({ rotateX: -rotateX, rotateY });
               }}
               onMouseLeave={() => {
-                setRotationStyle({ rotateX: 0, rotateY: 0 });
+                setRotationStyle({ rotateX: -5, rotateY: -10 });
               }}
               onClick={(e) => {
                 e.stopPropagation();
@@ -1496,10 +1496,10 @@ export default function Collections() {
                 style={{
                   filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
                   transform: isCardRotated 
-                    ? `rotateY(${rotationStyle.rotateY}deg) rotateX(${rotationStyle.rotateX}deg) scale(1.05)`
-                    : `rotateY(${rotationStyle.rotateY / 2}deg) rotateX(${rotationStyle.rotateX / 2}deg)`,
+                    ? `rotateY(45deg) rotateX(15deg) scale(1.05)`
+                    : `rotateY(${rotationStyle.rotateY}deg) rotateX(${rotationStyle.rotateX}deg)`,
                   transformStyle: 'preserve-3d',
-                  transition: 'transform 0.15s ease-out',
+                  transition: isCardRotated ? 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'transform 0.1s ease-out',
                   background: `linear-gradient(
                     ${45 + rotationStyle.rotateY}deg, 
                     rgba(255,255,255,0.1) 0%, 

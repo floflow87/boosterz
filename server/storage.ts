@@ -74,6 +74,9 @@ export interface IStorage {
   unfollowUser(followerId: number, followingId: number): Promise<boolean>;
   isFollowing(followerId: number, followingId: number): Promise<boolean>;
   getFollowedUsersPosts(userId: number): Promise<any[]>;
+  
+  // Deck card management
+  removeCardFromDeck(deckId: number, cardPosition: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {

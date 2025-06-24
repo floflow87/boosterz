@@ -427,18 +427,30 @@ export default function DeckDetail() {
                       id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
                       cardData={deckCard}
                       index={index}
-                      onRemove={(position) => {
-                        const newCards = localCards.filter(c => c.position !== position);
-                        const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                        setLocalCards(reorderedCards);
-                        
-                        // Sauvegarder immédiatement
-                        const newPositions = reorderedCards.map(c => ({
-                          cardId: c.type === 'collection' ? (c.card as Card).id : undefined,
-                          personalCardId: c.type === 'personal' ? (c.card as PersonalCard).id : undefined,
-                          position: c.position
-                        }));
-                        updatePositionsMutation.mutate(newPositions);
+                      onRemove={async (position) => {
+                        try {
+                          // Appel API pour supprimer la carte
+                          const response = await fetch(`/api/decks/${id}/cards/${position}`, {
+                            method: 'DELETE',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${localStorage.getItem('token')}`
+                            }
+                          });
+
+                          if (response.ok) {
+                            // Mettre à jour l'état local
+                            const newCards = localCards.filter(c => c.position !== position);
+                            const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                            setLocalCards(reorderedCards);
+                            
+                            // Invalider le cache pour forcer le refresh
+                            queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                            queryClient.refetchQueries({ queryKey: [`/api/decks/${id}`] });
+                          }
+                        } catch (error) {
+                          console.error('Error removing card:', error);
+                        }
                       }}
                     />
                   ))}
