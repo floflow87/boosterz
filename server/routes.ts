@@ -839,7 +839,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const searchTerm = req.query.search?.toString().toLowerCase();
       const limit = parseInt(req.query.limit?.toString() || '10');
       
-      let users = await storage.getUsers();
+      let users = await storage.getAllUsers();
       
       // Remove current user from results
       if (currentUserId) {

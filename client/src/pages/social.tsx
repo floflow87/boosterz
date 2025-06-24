@@ -129,10 +129,11 @@ export default function Social() {
     queryKey: ["/api/social/users", { limit: 10 }],
   });
 
-  // Recherche d'utilisateurs
+  // Recherche d'utilisateurs avec debounce
   const { data: searchResults = [], isLoading: searchLoading } = useQuery<SocialUser[]>({
     queryKey: ["/api/social/users", { search: searchTerm, limit: 50 }],
-    enabled: searchTerm.length > 0,
+    enabled: searchTerm.length > 1, // Start searching after 2 characters
+    staleTime: 5000, // Cache results for 5 seconds
   });
 
   // Récupérer les activités
@@ -361,7 +362,24 @@ export default function Social() {
   });
 
   // Utiliser les résultats de recherche si on recherche, sinon les utilisateurs de découverte
-  const displayedUsers = searchTerm.length > 0 ? searchResults : users;
+  const displayedUsers = searchTerm.length > 1 ? searchResults : users;
+
+  // Close autocomplete when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchInputRef.current && !searchInputRef.current.contains(event.target as Node)) {
+        setShowAutocomplete(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Show autocomplete when search term changes
+  useEffect(() => {
+    setShowAutocomplete(searchTerm.length > 0);
+  }, [searchTerm]);
 
   // Mock cards for sale data
   const cardsForSale = [
@@ -842,16 +860,70 @@ export default function Social() {
           </TabsContent>
 
           <TabsContent value="discover" className="space-y-4">
-            {/* Barre de recherche */}
+            {/* Barre de recherche avec autocomplete */}
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
               <Input
+                ref={searchInputRef}
                 type="text"
                 placeholder="Rechercher des collectionneurs..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onFocus={() => setShowAutocomplete(searchTerm.length > 0)}
                 className="pl-10 bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400"
+                autoComplete="off"
               />
+              
+              {/* Autocomplete dropdown */}
+              {showAutocomplete && searchTerm.length > 0 && searchResults.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,30%)] rounded-lg mt-1 max-h-64 overflow-y-auto z-20 shadow-xl">
+                  {searchResults.slice(0, 8).map((user) => (
+                    <button
+                      key={user.id}
+                      onClick={() => {
+                        setSearchTerm(user.username);
+                        setShowAutocomplete(false);
+                      }}
+                      className="w-full text-left px-4 py-3 hover:bg-[hsl(214,35%,25%)] transition-colors border-b border-[hsl(214,35%,30%)] last:border-b-0"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                          {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-white font-medium text-sm truncate">
+                              {user.name || user.username}
+                            </span>
+                            <span className="text-gray-400 text-xs">@{user.username}</span>
+                          </div>
+                          {user.email && (
+                            <div className="text-gray-500 text-xs truncate">{user.email}</div>
+                          )}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          {user.followersCount || 0} abonnés
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                  
+                  {searchResults.length > 8 && (
+                    <div className="px-4 py-2 text-center text-gray-400 text-xs bg-[hsl(214,35%,15%)]">
+                      +{searchResults.length - 8} autres résultats
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              {/* No results message */}
+              {showAutocomplete && searchTerm.length > 0 && !searchLoading && searchResults.length === 0 && (
+                <div className="absolute top-full left-0 right-0 bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,30%)] rounded-lg mt-1 px-4 py-3 z-20 shadow-xl">
+                  <div className="text-gray-400 text-sm text-center">
+                    Aucun utilisateur trouvé pour "{searchTerm}"
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Liste des utilisateurs */}
@@ -916,7 +988,7 @@ export default function Social() {
                     </div>
                   </div>
                 ))
-              ) : searchTerm.length > 0 ? (
+              ) : searchTerm.length > 1 ? (
                 <div className="text-center py-8">
                   <div className="text-gray-400">Aucun utilisateur trouvé pour "{searchTerm}"</div>
                 </div>
