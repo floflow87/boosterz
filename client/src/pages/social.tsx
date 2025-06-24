@@ -1291,42 +1291,42 @@ export default function Social() {
                         {myPosts.map((post) => (
                           <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
                             {/* Post Header - Darker Background */}
-                            <div className="p-4">
-                              <div className="flex items-center space-x-3 mb-3">
-                                <div className="w-10 h-10 rounded-full overflow-hidden">
-                                  {currentUser?.avatar ? (
-                                    <img 
-                                      src={currentUser.avatar} 
-                                      alt={`Avatar de ${currentUser.name}`}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                      <span className="text-sm font-bold text-white">{currentUser?.name?.charAt(0) || 'U'}</span>
-                                    </div>
-                                  )}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <div>
-                                      <h4 className="text-white font-bold text-sm">{currentUser?.name?.toUpperCase()}</h4>
+                            <div className="p-4 border-b border-[hsl(214,35%,30%)] bg-[hsl(214,35%,18%)]">
+                              <div className="flex items-center justify-between mb-2">
+                                <div className="flex items-center space-x-3">
+                                  <div className="w-10 h-10 rounded-full overflow-hidden">
+                                    {currentUser?.avatar ? (
+                                      <img 
+                                        src={currentUser.avatar} 
+                                        alt={`Avatar de ${currentUser.name}`}
+                                        className="w-full h-full object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                        <span className="text-sm font-bold text-white">{currentUser?.name?.charAt(0) || currentUser?.username?.charAt(0) || 'U'}</span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div>
+                                    <div className="flex items-center space-x-2">
+                                      <h4 className="text-white font-medium text-sm">{currentUser?.name?.toUpperCase() || currentUser?.username?.toUpperCase()}</h4>
                                       <span className="text-xs text-gray-400">@{currentUser?.username}</span>
                                     </div>
-                                    <div className="flex items-center space-x-3">
-                                      <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
-                                      {/* Delete button for own posts */}
-                                      <button
-                                        onClick={() => deletePostMutation.mutate(post.id)}
-                                        disabled={deletePostMutation.isPending}
-                                        className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                                      >
-                                        <Trash2 className="w-4 h-4" />
-                                      </button>
-                                    </div>
+                                    <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
                                   </div>
                                 </div>
+                                
+                                {/* Delete button for own posts */}
+                                <button
+                                  onClick={() => deletePostMutation.mutate(post.id)}
+                                  disabled={deletePostMutation.isPending}
+                                  className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
                               </div>
-
+                            </div>
+                            
                             {/* Post Content */}
                             <div className="p-4">
                               {/* Post Text */}
@@ -1396,7 +1396,6 @@ export default function Social() {
                                 </button>
                               </div>
                             </div>
-                          </div>
                           </div>
                         ))}
                       </div>
