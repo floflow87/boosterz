@@ -43,6 +43,20 @@ interface SocialUser {
   isFollowing: boolean;
 }
 
+interface Comment {
+  id: number;
+  postId: number;
+  userId: number;
+  content: string;
+  createdAt: string;
+  user?: {
+    id: number;
+    name: string;
+    username: string;
+    avatar?: string;
+  };
+}
+
 interface Activity {
   id: number;
   type: string;
@@ -93,6 +107,11 @@ export default function Social() {
   const [followingStatus, setFollowingStatus] = useState<Record<number, boolean>>({});
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  
+  // Comments state
+  const [showComments, setShowComments] = useState<Set<number>>(new Set());
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+  const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();

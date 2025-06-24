@@ -33,6 +33,15 @@ export default function UserProfile() {
   const [saleFilter, setSaleFilter] = useState<"all" | "available" | "sold">("all");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Like system state
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [postLikes, setPostLikes] = useState<Record<number, number>>({});
+  
+  // Comments state
+  const [showComments, setShowComments] = useState<Set<number>>(new Set());
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+  const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
