@@ -546,6 +546,24 @@ export const insertPostSchema = createInsertSchema(posts).omit({
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type Post = typeof posts.$inferSelect;
 
+// Post likes and comments types
+export type PostLike = typeof postLikes.$inferSelect;
+export type InsertPostLike = typeof postLikes.$inferInsert;
+export type PostComment = typeof postComments.$inferSelect;
+export type InsertPostComment = typeof postComments.$inferInsert;
+
+// Comment type for UI
+export interface Comment {
+  id: number;
+  postId: number;
+  userId: number;
+  content: string;
+  userName?: string;
+  userAvatar?: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
 // Deck schemas
 export const insertDeckSchema = createInsertSchema(decks).omit({
   id: true,
