@@ -6,6 +6,7 @@ import { Users, MessageCircle, Trophy, Star, Activity, Hash } from "lucide-react
 
 export default function Community() {
   const [activeTab, setActiveTab] = useState<"feed" | "forums" | "leaderboard">("feed");
+  const [activeSubTab, setActiveSubTab] = useState<"featured" | "marketplace" | "discover" | "myposts">("featured");
   const [, setLocation] = useLocation();
 
   const handleUserClick = (userId: number) => {
@@ -54,7 +55,49 @@ export default function Community() {
           </button>
         </div>
 
-
+        {/* Sub-navigation tabs */}
+        <div className="flex space-x-1 mb-4 bg-[hsl(214,35%,15%)] rounded-lg p-1">
+          <button
+            onClick={() => setActiveSubTab("featured")}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeSubTab === "featured"
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,20%)]"
+            }`}
+          >
+            À la une
+          </button>
+          <button
+            onClick={() => setActiveSubTab("marketplace")}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeSubTab === "marketplace"
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,20%)]"
+            }`}
+          >
+            Sur le marché
+          </button>
+          <button
+            onClick={() => setActiveSubTab("discover")}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeSubTab === "discover"
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,20%)]"
+            }`}
+          >
+            Découvrir
+          </button>
+          <button
+            onClick={() => setActiveSubTab("myposts")}
+            className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+              activeSubTab === "myposts"
+                ? "bg-blue-600 text-white"
+                : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,20%)]"
+            }`}
+          >
+            Mes posts
+          </button>
+        </div>
 
         {/* Bullets Statistics */}
         <div className="grid grid-cols-4 gap-3 mb-6">
