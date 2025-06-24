@@ -217,6 +217,7 @@ export default function AddCard() {
       cardType: cardType,
       reference: reference || null,
       numbering: numbering || null,
+      season: season || null,
       imageUrl: editedImage || null,
       condition: condition || null,
       tradePrice: isForSale ? salePrice : null,

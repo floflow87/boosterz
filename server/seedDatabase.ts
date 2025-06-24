@@ -662,6 +662,7 @@ export async function seedDatabase() {
         cardSubType: null,
         rarity: "Ultra Rare",
         numbering: null,
+        season: "23/24",
         isOwned: false,
         imageUrl: null
       });
@@ -680,6 +681,7 @@ export async function seedDatabase() {
         cardSubType: "Rookie",
         rarity: "Ultra Rare",
         numbering: null,
+        season: "23/24",
         isOwned: false,
         imageUrl: null
       });
@@ -698,6 +700,7 @@ export async function seedDatabase() {
         cardSubType: null,
         rarity: "Legendary",
         numbering: null,
+        season: "23/24",
         isOwned: false,
         imageUrl: null
       });
