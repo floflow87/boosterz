@@ -507,13 +507,27 @@ export class DatabaseStorage implements IStorage {
 
   // Social network methods
   async getUserPosts(userId: number): Promise<any[]> {
-    const result = await db.select().from(posts).where(eq(posts.userId, userId)).orderBy(desc(posts.createdAt));
-    return result;
-  }
-
-  async createPost(post: any): Promise<any> {
-    const [newPost] = await db.insert(posts).values(post).returning();
-    return newPost;
+    const result = await db.select({
+      id: posts.id,
+      userId: posts.userId,
+      content: posts.content,
+      type: posts.type,
+      cardId: posts.cardId,
+      imageUrl: posts.imageUrl,
+      images: posts.images,
+      taggedUsers: posts.taggedUsers,
+      likesCount: posts.likesCount,
+      commentsCount: posts.commentsCount,
+      isVisible: posts.isVisible,
+      createdAt: posts.createdAt,
+      updatedAt: posts.updatedAt
+    }).from(posts).where(eq(posts.userId, userId)).orderBy(desc(posts.createdAt));
+    
+    return result.map(post => ({
+      ...post,
+      images: post.images ? JSON.parse(post.images) : [],
+      taggedUsers: post.taggedUsers ? JSON.parse(post.taggedUsers) : []
+    }));
   }
 
   async createPost(post: any): Promise<any> {
