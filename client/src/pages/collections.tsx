@@ -1365,9 +1365,13 @@ export default function Collections() {
 
             {/* Card Image */}
             <div 
-              className="max-w-full max-h-full flex items-center justify-center cursor-pointer"
+              className="max-w-full max-h-full flex items-center justify-center cursor-pointer select-none"
               style={{ perspective: '1000px' }}
               onClick={(e) => {
+                e.stopPropagation();
+                setIsCardRotated(!isCardRotated);
+              }}
+              onTouchStart={(e) => {
                 e.stopPropagation();
                 setIsCardRotated(!isCardRotated);
               }}
@@ -1390,8 +1394,13 @@ export default function Collections() {
                     20px 20px 60px rgba(0,0,0,0.8),
                     inset -5px -5px 15px rgba(0,0,0,0.3),
                     inset 5px 5px 15px rgba(255,255,255,0.1)
-                  `
+                  `,
+                  touchAction: 'manipulation',
+                  userSelect: 'none',
+                  WebkitUserSelect: 'none',
+                  WebkitTouchCallout: 'none'
                 }}
+                draggable={false}
               />
             </div>
           </div>

@@ -180,7 +180,8 @@ export default function CreateDeck() {
   };
 
   const handleCreateDeck = () => {
-    if (!deckName.trim()) {
+    // En mode ajout, pas besoin de nom de deck
+    if (!isAddMode && !deckName.trim()) {
       toast({
         title: "Nom requis",
         description: "Donne un nom à ton deck.",
