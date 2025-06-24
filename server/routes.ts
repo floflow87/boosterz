@@ -1399,11 +1399,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Social network endpoints
   
-  // Get user's posts
-  app.get("/api/users/:id/posts", optionalAuth, async (req: AuthRequest, res) => {
+  // Get user's posts - AVEC AUTHENTIFICATION
+  app.get("/api/users/:id/posts", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = parseInt(req.params.id);
-      const posts = await storage.getUserPosts(userId);
+      const requestedUserId = parseInt(req.params.id);
+      const currentUserId = req.user!.id;
+      
+      console.log(`Fetching posts for user ${requestedUserId}, current user: ${currentUserId}`);
+      
+      // Si on demande les posts de l'utilisateur courant, s'assurer qu'on utilise le bon ID
+      const targetUserId = requestedUserId === currentUserId ? currentUserId : requestedUserId;
+      
+      const posts = await storage.getUserPosts(targetUserId);
+      
+      console.log(`Found ${posts.length} posts for user ${targetUserId}`);
       res.json(posts);
     } catch (error) {
       console.error('Error fetching user posts:', error);
@@ -1482,7 +1491,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Follow/unfollow user
+  // Follow user - CORRIGÉ
   app.post("/api/users/:id/follow", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const followingId = parseInt(req.params.id);
@@ -1494,17 +1503,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Cannot follow yourself" });
       }
       
-      // Insert into follows table directly
-      try {
-        await db.insert(follows).values({
-          followerId,
-          followingId,
-          createdAt: new Date().toISOString()
-        });
+      // Vérifier si l'utilisateur cible existe
+      const targetUser = await storage.getUser(followingId);
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Vérifier si déjà suivi
+      const isAlreadyFollowing = await storage.isFollowing(followerId, followingId);
+      if (isAlreadyFollowing) {
+        return res.status(400).json({ message: "Already following this user" });
+      }
+      
+      // Utiliser la méthode storage
+      const success = await storage.followUser(followerId, followingId);
+      
+      if (success) {
         console.log(`Successfully added follow relationship: ${followerId} -> ${followingId}`);
         res.json({ message: "User followed successfully", isFollowing: true });
-      } catch (error) {
-        console.error('Error inserting follow relationship:', error);
+      } else {
         res.status(500).json({ message: "Failed to follow user" });
       }
     } catch (error) {

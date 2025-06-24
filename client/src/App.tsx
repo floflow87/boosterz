@@ -67,6 +67,7 @@ function Router() {
       <Route path="/card-examples" component={CardExamples} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/landing" component={Landing} />
+      <Route path="/logo" component={() => <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white flex items-center justify-center"><div className="text-center"><h1 className="text-3xl font-bold mb-4">Logo Page</h1><p className="text-gray-400">Page logo disponible</p></div></div>} />
       <Route component={NotFound} />
     </Switch>
   );
