@@ -291,26 +291,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get posts from followed users (À la une) - MUST be before /:id routes
-  app.get("/api/users/feed", optionalAuth, async (req: AuthRequest, res) => {
+  app.get("/api/users/feed", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const currentUserId = req.user?.id;
-      if (!currentUserId) {
-        return res.json([]);
-      }
-
-      // Get users that current user follows
-      const following = await storage.getFollowingByUserId(currentUserId);
-      const followingIds = following.map(f => f.followingId);
+      const userId = req.user!.id;
       
-      if (followingIds.length === 0) {
+      // Get users that the current user follows
+      const followedUsers = await db.select({ followingId: follows.followingId })
+        .from(follows)
+        .where(eq(follows.followerId, userId));
+      
+      if (followedUsers.length === 0) {
         return res.json([]);
       }
+      
+      const followedUserIds = followedUsers.map(f => f.followingId);
       
       // Get posts from followed users
-      const posts = await storage.getPostsByUserIds(followingIds);
-      res.json(posts);
+      const feedPosts = await db.select({
+        id: posts.id,
+        userId: posts.userId,
+        content: posts.content,
+        imageUrl: posts.imageUrl,
+        cardId: posts.cardId,
+        createdAt: posts.createdAt,
+        user: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+          avatar: users.avatar
+        }
+      })
+      .from(posts)
+      .leftJoin(users, eq(posts.userId, users.id))
+      .where(inArray(posts.userId, followedUserIds))
+      .orderBy(desc(posts.createdAt))
+      .limit(50);
+      
+      res.json(feedPosts);
     } catch (error) {
-      console.error('Error fetching user feed:', error);
+      console.error("Error fetching user feed:", error);
       res.status(500).json({ message: "Internal server error" });
     }
   });

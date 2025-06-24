@@ -134,14 +134,20 @@ export default function Social() {
   });
 
   const { data: marketplaceCards = [] } = useQuery<Card[]>({
-    queryKey: [`/api/users/${userId}/marketplace`],
+    queryKey: [`/api/cards/marketplace`],
   });
 
   const { data: featuredCards = [] } = useQuery<Card[]>({
     queryKey: [`/api/users/${userId}/featured`],
   });
 
-  const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
+  // Feed query (posts from followed users)
+  const { data: feed = [], isLoading: feedLoading } = useQuery<Post[]>({
+    queryKey: ["/api/users/feed"],
+  });
+
+  // My posts query
+  const { data: myPosts = [], isLoading: myPostsLoading } = useQuery<Post[]>({
     queryKey: [`/api/users/${userId}/posts`],
   });
 
@@ -243,8 +249,9 @@ export default function Social() {
       return apiRequest("POST", "/api/posts", postData);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/posts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/feed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/social/activities"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/posts`] });
       setNewPostContent("");
       setSelectedPhoto(null);
       setTaggedPeople([]);
