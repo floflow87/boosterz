@@ -358,11 +358,8 @@ export default function Social() {
     },
   });
 
-  // Filtrer les utilisateurs selon la recherche
-  const filteredUsers = users.filter(user =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.username.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Utiliser les résultats de recherche si on recherche, sinon les utilisateurs de découverte
+  const displayedUsers = searchTerm.length > 0 ? searchResults : users;
 
   // Mock cards for sale data
   const cardsForSale = [
@@ -857,33 +854,35 @@ export default function Social() {
 
             {/* Liste des utilisateurs */}
             <div className="space-y-3">
-              {usersLoading ? (
+              {(usersLoading || searchLoading) ? (
                 <div className="text-center py-8">
                   <div className="text-gray-400">Chargement...</div>
                 </div>
-              ) : (
-                <>
-                  {/* Max la menace profile */}
-                  <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+              ) : displayedUsers.length > 0 ? (
+                displayedUsers.map((user) => (
+                  <div key={user.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                          M
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                          {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                         <div>
                           <button 
-                            onClick={() => handleUserClick(999)}
+                            onClick={() => handleUserClick(user.id)}
                             className="font-semibold text-white hover:text-[hsl(9,85%,67%)] transition-colors text-left"
                           >
-                            Max la menace
+                            {user.name || user.username}
                           </button>
-                          <p className="text-sm text-gray-400">@maxlamenace</p>
+                          <p className="text-sm text-gray-400">@{user.username}</p>
+                          {searchTerm && user.email && (
+                            <p className="text-xs text-gray-500">{user.email}</p>
+                          )}
                         </div>
                       </div>
                       
                       <div className="flex space-x-2">
                         <Button
-                          onClick={() => setLocation('/chat/999')}
+                          onClick={() => setLocation(`/chat/${user.id}`)}
                           variant="outline"
                           size="sm"
                           className="border-gray-400 text-gray-400 hover:bg-gray-700"
@@ -891,29 +890,38 @@ export default function Social() {
                           <MessageCircle className="w-4 h-4" />
                         </Button>
                         <Button
+                          onClick={() => followMutation.mutate({ userId: user.id, action: user.isFollowing ? "unfollow" : "follow" })}
+                          disabled={followMutation.isPending}
                           size="sm"
-                          className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+                          className={`${
+                            user.isFollowing 
+                              ? "bg-gray-600 hover:bg-gray-700 text-white"
+                              : "bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+                          }`}
                         >
-                          Suivre
+                          {user.isFollowing ? "Suivi" : "Suivre"}
                         </Button>
                       </div>
                     </div>
                     
                     <div className="text-sm text-gray-300 mb-3">
-                      Collectionneur passionné
+                      {user.bio || "Collectionneur passionné"}
                     </div>
                     
-                    <div className="flex space-x-4 text-xs text-gray-400">
-                      <span>15 cartes à la vente</span>
-                      <span>142 abonnés</span>
+                    <div className="flex justify-between text-xs text-gray-400">
+                      <span>{user.followersCount || 0} abonnés</span>
+                      <span>{user.collectionsCount || 0} collections</span>
                     </div>
                   </div>
-                  
-                  <div className="text-center py-8">
-                    <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-400">Aucun autre collectionneur pour le moment</p>
-                  </div>
-                </>
+                ))
+              ) : searchTerm.length > 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-gray-400">Aucun utilisateur trouvé pour "{searchTerm}"</div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <div className="text-gray-400">Aucun utilisateur à découvrir</div>
+                </div>
               )}
             </div>
           </TabsContent>
