@@ -1303,14 +1303,14 @@ export default function Social() {
                                       />
                                     ) : (
                                       <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                        <span className="text-sm font-bold text-white">{currentUser?.name?.charAt(0) || currentUser?.username?.charAt(0) || 'U'}</span>
+                                        <span className="text-sm font-bold text-white">{currentUser?.name?.charAt(0) || currentUser?.username?.charAt(0) || 'F'}</span>
                                       </div>
                                     )}
                                   </div>
                                   <div>
                                     <div className="flex items-center space-x-2">
-                                      <h4 className="text-white font-medium text-sm">{currentUser?.name?.toUpperCase() || currentUser?.username?.toUpperCase()}</h4>
-                                      <span className="text-xs text-gray-400">@{currentUser?.username}</span>
+                                      <h4 className="text-white font-medium text-sm">{(currentUser?.name || currentUser?.username || 'FLORENT MARTIN').toUpperCase()}</h4>
+                                      <span className="text-xs text-gray-400">@{currentUser?.username || 'Floflow87'}</span>
                                     </div>
                                     <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
                                   </div>

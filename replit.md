@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Fixed post headers in "Mes posts" to display correct user data
+  - Updated post headers to show user's real avatar from database (base64 image)
+  - Fixed username and name display to show "FLORENT MARTIN @Floflow87"
+  - Corrected data structure access for current user information
+  - Post headers now properly match the user's profile data from settings
 - June 24, 2025. Fixed social system logic to match user requirements
   - "À la une" tab now shows only posts from followed users (empty if not following anyone)
   - "Marché" tab shows marketplace cards from all users except current user
