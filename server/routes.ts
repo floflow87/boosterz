@@ -858,7 +858,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get follow status and counts for each user
       const socialUsers = await Promise.all(users.map(async user => {
         const collections = await storage.getCollectionsByUserId(user.id);
-        const followers = await storage.getFollowersByUserId(user.id);
+        const followersCount = await storage.getFollowersCount(user.id);
         const isFollowing = currentUserId ? await storage.isFollowing(currentUserId, user.id) : false;
         
         return {
@@ -868,7 +868,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           email: user.email,
           avatar: user.avatar,
           bio: user.bio,
-          followersCount: followers.length,
+          followersCount: followersCount,
           collectionsCount: collections.length,
           isFollowing
         };
