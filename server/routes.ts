@@ -834,6 +834,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Posts endpoints
+  app.post("/api/posts", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const { content, type = "featured", cardId, cardImage, cardName } = req.body;
+
+      const post = await storage.createPost({
+        userId,
+        content,
+        type,
+        cardId,
+        imageUrl: cardImage,
+      });
+
+      res.status(201).json(post);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      res.status(500).json({ error: "Failed to create post" });
+    }
+  });
+
   // Social network endpoints
   app.get('/api/social/users', async (req, res) => {
     try {

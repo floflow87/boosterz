@@ -502,6 +502,11 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createPost(post: any): Promise<any> {
+    const [newPost] = await db.insert(posts).values(post).returning();
+    return newPost;
+  }
+
+  async createPost(post: any): Promise<any> {
     try {
       const [newPost] = await db
         .insert(posts)

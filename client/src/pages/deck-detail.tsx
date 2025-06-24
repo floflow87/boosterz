@@ -238,6 +238,13 @@ export default function DeckDetail() {
     }
   }, [deck]);
 
+  // Synchroniser bannerPosition quand le deck change
+  useEffect(() => {
+    if (deck?.bannerPosition !== undefined) {
+      setBannerPosition(deck.bannerPosition);
+    }
+  }, [deck]);
+
   // Configuration des capteurs pour le drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
