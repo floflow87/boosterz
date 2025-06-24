@@ -391,7 +391,10 @@ export default function Social() {
   });
 
   // Utiliser les résultats de recherche si on recherche, sinon les utilisateurs de découverte
-  const displayedUsers = searchTerm.length > 1 ? searchResults : users;
+  // Filtrer également côté client pour s'assurer que l'utilisateur actuel n'apparaît pas
+  const displayedUsers = (searchTerm.length > 1 ? searchResults : users).filter(user => 
+    user.id !== currentUser?.id
+  );
 
   // Close autocomplete when clicking outside
   useEffect(() => {

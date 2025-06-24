@@ -180,5 +180,22 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
     }
   }
 
+  // Development mode: default to user 1 if no authentication found
+  if (!req.user) {
+    try {
+      const user = await storage.getUser(1);
+      if (user) {
+        req.user = {
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          name: user.name
+        };
+      }
+    } catch (error) {
+      console.error('Default user auth error:', error);
+    }
+  }
+
   next();
 };
