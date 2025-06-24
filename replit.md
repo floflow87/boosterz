@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Implemented autocomplete search functionality in discovery section
+  - Added real-time user search with dropdown suggestions
+  - Fixed useEffect and useRef import issues in social component
+  - Search works by username, name, and email with profile previews
+  - Added click-outside behavior to close autocomplete dropdown
+  - Users can follow/unfollow directly from search results
 - June 24, 2025. Fixed user authentication bug in social features
   - Corrected "Mes posts" section to show posts from currently logged-in user
   - Fixed hardcoded user ID issues in social page and chat

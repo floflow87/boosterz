@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingBag, ArrowLeftRight, Plus, Globe, Heart, MoreHorizontal, Trash2, Grid, List, Filter, PenTool, MoreVertical, UserX, MessageSquare } from "lucide-react";
@@ -91,6 +91,8 @@ export default function Social() {
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
   const [postLikes, setPostLikes] = useState<Record<number, number>>({});
   const [followingStatus, setFollowingStatus] = useState<Record<number, boolean>>({});
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
