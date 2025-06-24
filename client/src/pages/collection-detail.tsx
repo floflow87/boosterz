@@ -254,7 +254,10 @@ export default function CollectionDetail() {
           <p className="text-gray-400 mb-4">Impossible de charger les cartes de la collection</p>
           <button 
             onClick={() => queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] })}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+            className="text-white px-4 py-2 rounded transition-all duration-300"
+            style={{ backgroundColor: '#F37261' }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#E85A47'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#F37261'}
           >
             Réessayer
           </button>
@@ -781,7 +784,7 @@ export default function CollectionDetail() {
             }`}
             style={filter === "bases_numbered" ? { backgroundColor: '#F37261' } : {}}
           >
-            Bases num ({numberedBasesCount})
+            Bases num.
           </button>
           <button
             onClick={() => setFilter("hits")}
@@ -942,7 +945,10 @@ export default function CollectionDetail() {
             </div>
             <button 
               onClick={() => window.location.reload()}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded"
+              className="text-white px-4 py-2 rounded transition-all duration-300"
+              style={{ backgroundColor: '#F37261' }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#E85A47'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#F37261'}
             >
               Recharger la page
             </button>
