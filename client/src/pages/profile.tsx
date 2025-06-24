@@ -76,7 +76,6 @@ interface Post {
 export default function Profile() {
   const [location, setLocation] = useLocation();
   const [match, params] = useRoute("/profile/:userId");
-  const [matchMe] = useRoute("/profile");
   const userId = params?.userId ? parseInt(params.userId) : null;
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [cardView, setCardView] = useState<'grid' | 'list'>('grid');
@@ -84,26 +83,21 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Récupérer les informations de l'utilisateur actuel
-  const { data: authData } = useQuery({
+  // Récupérer les informations de l'utilisateur actuel pour vérifier si c'est son propre profil
+  const { data: currentUser } = useQuery<User>({
     queryKey: ['/api/auth/me'],
   });
-  
-  const currentUser = authData?.user;
-
-  // Utiliser l'ID de l'utilisateur actuel si aucun userId n'est fourni dans l'URL
-  const targetUserId = userId || currentUser?.id;
 
   // Récupérer les informations de l'utilisateur du profil
   const { data: profileUser, isLoading: userLoading } = useQuery<User>({
-    queryKey: [`/api/users/${targetUserId}`],
-    enabled: !!targetUserId,
+    queryKey: [`/api/users/${userId}`],
+    enabled: !!userId,
   });
 
   // Récupérer les collections de l'utilisateur
   const { data: collections = [], isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: [`/api/users/${targetUserId}/collections`],
-    enabled: !!targetUserId,
+    queryKey: [`/api/users/${userId}/collections`],
+    enabled: !!userId,
   });
 
   // Récupérer les cartes de la collection sélectionnée
@@ -114,14 +108,14 @@ export default function Profile() {
 
   // Récupérer les cartes en vente de l'utilisateur
   const { data: saleCards = [] } = useQuery<Card[]>({
-    queryKey: [`/api/users/${targetUserId}/marketplace`],
-    enabled: !!targetUserId && activeTab === 'vente',
+    queryKey: [`/api/users/${userId}/marketplace`],
+    enabled: !!userId && activeTab === 'vente',
   });
 
   // Récupérer les posts de l'utilisateur
   const { data: posts = [] } = useQuery<Post[]>({
-    queryKey: [`/api/users/${targetUserId}/posts`],
-    enabled: !!targetUserId && activeTab === 'une',
+    queryKey: [`/api/users/${userId}/posts`],
+    enabled: !!userId && activeTab === 'une',
   });
 
   // Sélectionner automatiquement la première collection
@@ -135,7 +129,7 @@ export default function Profile() {
   const followMutation = useMutation({
     mutationFn: async (action: 'follow' | 'unfollow') => {
       if (action === 'follow') {
-        const response = await fetch(`/api/users/${targetUserId}/follow`, {
+        const response = await fetch(`/api/users/${userId}/follow`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -144,7 +138,7 @@ export default function Profile() {
         });
         return response.json();
       } else {
-        const response = await fetch(`/api/users/${targetUserId}/follow`, {
+        const response = await fetch(`/api/users/${userId}/follow`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -170,7 +164,7 @@ export default function Profile() {
   };
 
   const handleContact = () => {
-    setLocation(`/chat/${userId}`);
+    setLocation(`/chat/${profileUser.id}`);
   };
 
   const handleBlock = () => {
@@ -201,7 +195,7 @@ export default function Profile() {
     );
   }
 
-  const isOwnProfile = currentUser?.id === profileUser.id;
+  const isOwnProfile = currentUser?.user?.id === profileUser.id;
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)]">

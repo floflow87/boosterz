@@ -58,7 +58,7 @@ function Router() {
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
-      <Route path="/profile" component={ProfileSettings} />
+      <Route path="/profile/:userId" component={Profile} />
       <Route path="/user/:userId" component={UserProfile} />
       <Route path="/add-card" component={AddCard} />
       <Route path="/create-deck" component={CreateDeck} />
