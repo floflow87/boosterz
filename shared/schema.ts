@@ -191,7 +191,29 @@ export const posts = pgTable("posts", {
   type: text("type").notNull().default("text"), // "text", "image", "card_sale", "card_trade", "card_add"
   cardId: integer("card_id"), // Reference to card if post is about a card
   imageUrl: text("image_url"), // URL or base64 data for images
+  images: text("images"), // JSON array of image URLs/base64
+  taggedUsers: text("tagged_users"), // JSON array of usernames
+  likesCount: integer("likes_count").default(0).notNull(),
+  commentsCount: integer("comments_count").default(0).notNull(),
   isVisible: boolean("is_visible").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Post likes table
+export const postLikes = pgTable("post_likes", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull(),
+  userId: integer("user_id").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Post comments table
+export const postComments = pgTable("post_comments", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull(),
+  userId: integer("user_id").notNull(),
+  content: text("content").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

@@ -11,7 +11,8 @@ import {
   Heart,
   MessageCircle,
   Trash2,
-  MoreHorizontal
+  MoreHorizontal,
+  Send
 } from "lucide-react";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +23,7 @@ import HaloBlur from "@/components/halo-blur";
 import CardDisplay from "@/components/card-display";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Button } from "@/components/ui/button";
 import type { User, Collection, Card, Post, Comment } from "@shared/schema";
 
 export default function UserProfile() {
@@ -42,6 +44,74 @@ export default function UserProfile() {
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
+
+  // Get current user for interactions
+  const { data: authData } = useQuery({
+    queryKey: ['/api/auth/me'],
+    retry: false,
+  });
+  const currentUser = authData?.user;
+
+  // Handle like/unlike post
+  const handleLike = (postId: number) => {
+    const isLiked = likedPosts.has(postId);
+    const newLikedPosts = new Set(likedPosts);
+    const currentLikes = postLikes[postId] || 0;
+    
+    if (isLiked) {
+      newLikedPosts.delete(postId);
+      setPostLikes(prev => ({ ...prev, [postId]: Math.max(0, currentLikes - 1) }));
+    } else {
+      newLikedPosts.add(postId);
+      setPostLikes(prev => ({ ...prev, [postId]: currentLikes + 1 }));
+    }
+    setLikedPosts(newLikedPosts);
+  };
+
+  // Toggle comments visibility
+  const toggleComments = (postId: number) => {
+    const newShowComments = new Set(showComments);
+    if (newShowComments.has(postId)) {
+      newShowComments.delete(postId);
+    } else {
+      newShowComments.add(postId);
+    }
+    setShowComments(newShowComments);
+  };
+
+  // Add comment to post
+  const handleAddComment = (postId: number) => {
+    const commentText = commentInputs[postId]?.trim();
+    if (!commentText || !currentUser) return;
+
+    const newComment: Comment = {
+      id: Date.now(), // Temporary ID
+      postId,
+      userId: currentUser.id,
+      content: commentText,
+      userName: currentUser.name,
+      userAvatar: currentUser.avatar,
+      createdAt: new Date().toISOString(),
+    };
+
+    setPostComments(prev => ({
+      ...prev,
+      [postId]: [...(prev[postId] || []), newComment]
+    }));
+
+    setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+  };
+
+  // Initialize post likes from posts data
+  useEffect(() => {
+    if (posts) {
+      const initialLikes: Record<number, number> = {};
+      posts.forEach(post => {
+        initialLikes[post.id] = post.likesCount || 0;
+      });
+      setPostLikes(initialLikes);
+    }
+  }, [posts]);
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
@@ -312,21 +382,25 @@ export default function UserProfile() {
                       <div className="flex items-center justify-between mt-3 pt-3 border-t border-[hsl(214,35%,30%)]">
                         <button 
                           onClick={() => handleLike(post.id)}
-                          className={`flex items-center space-x-2 transition-colors text-xs ${
+                          className={`flex items-center space-x-2 transition-colors text-xs px-3 py-2 rounded-lg ${
                             likedPosts.has(post.id) 
-                              ? 'text-red-500' 
-                              : 'text-gray-400 hover:text-red-400'
+                              ? 'text-red-500 bg-red-500/10' 
+                              : 'text-gray-400 hover:text-red-400 hover:bg-red-400/10'
                           }`}
                         >
                           <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
-                          <span>J'aime</span>
+                          <span>J'aime ({postLikes[post.id] || 0})</span>
                         </button>
                         <button 
                           onClick={() => toggleComments(post.id)}
-                          className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors text-xs"
+                          className={`flex items-center space-x-2 transition-colors text-xs px-3 py-2 rounded-lg ${
+                            showComments.has(post.id) 
+                              ? 'text-blue-400 bg-blue-400/10' 
+                              : 'text-gray-400 hover:text-blue-400 hover:bg-blue-400/10'
+                          }`}
                         >
                           <MessageCircle className="w-4 h-4" />
-                          <span>Commenter</span>
+                          <span>Commenter ({(postComments[post.id] || []).length})</span>
                         </button>
                       </div>
 
@@ -335,10 +409,18 @@ export default function UserProfile() {
                         <div className="mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
                           {/* Add Comment Input */}
                           <div className="flex space-x-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-white">
-                                {user?.name?.charAt(0) || 'U'}
-                              </span>
+                            <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                              {currentUser?.avatar ? (
+                                <img 
+                                  src={currentUser.avatar} 
+                                  alt={currentUser.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-xs font-bold text-white">
+                                  {currentUser?.name?.charAt(0) || 'U'}
+                                </span>
+                              )}
                             </div>
                             <div className="flex-1 flex space-x-2">
                               <Input
@@ -359,9 +441,9 @@ export default function UserProfile() {
                                 onClick={() => handleAddComment(post.id)}
                                 disabled={!commentInputs[post.id]?.trim()}
                                 size="sm"
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
                               >
-                                Publier
+                                <Send className="w-3 h-3" />
                               </Button>
                             </div>
                           </div>
@@ -370,16 +452,24 @@ export default function UserProfile() {
                           <div className="space-y-3">
                             {(postComments[post.id] || []).map((comment) => (
                               <div key={comment.id} className="flex space-x-3">
-                                <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <span className="text-xs font-bold text-white">
-                                    {comment.user?.name?.charAt(0) || 'U'}
-                                  </span>
+                                <div className="w-6 h-6 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                  {comment.userAvatar ? (
+                                    <img 
+                                      src={comment.userAvatar} 
+                                      alt={comment.userName}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <span className="text-xs font-bold text-white">
+                                      {comment.userName?.charAt(0) || 'U'}
+                                    </span>
+                                  )}
                                 </div>
                                 <div className="flex-1">
                                   <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
                                     <div className="flex items-center space-x-2 mb-1">
                                       <span className="text-white font-medium text-sm">
-                                        {comment.user?.name || 'Utilisateur'}
+                                        {comment.userName || 'Utilisateur'}
                                       </span>
                                       <span className="text-gray-400 text-xs">
                                         {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
