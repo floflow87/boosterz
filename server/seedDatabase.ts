@@ -414,13 +414,28 @@ const insertIntergalactic = [
   { playerName: "Eric Cantona", teamName: "Olympique de Marseille" }
 ];
 
+// Cartes d'autographes EXACTES selon la checklist Excel Score Ligue 1 23/24
 const autographCards: AutoCard[] = [
-  { id: 1, playerName: "Dragan Stojković", teamName: "Olympique de Marseille", numberings: ["/199", "/10", "/1"] },
-  { id: 2, playerName: "Fabrizio Ravanelli", teamName: "Olympique de Marseille", numberings: ["/199", "/10", "/1"] },
-  { id: 3, playerName: "Leonardo", teamName: "Paris Saint-Germain", numberings: ["/199", "/1"] },
-  { id: 4, playerName: "Nabil Fekir", teamName: "Olympique Lyonnais", numberings: ["/199", "/10", "/1"] },
-  { id: 5, playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille", numberings: ["/49", "/10", "/1"] },
-  { id: 6, playerName: "Joe Cole", teamName: "LOSC Lille", numberings: ["/25", "/1"] },
+  // Les variantes selon la checklist: /199, /99, /49, /25, /10, /5, /3, /2
+  { id: 1, playerName: "Dragan Stojković", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 2, playerName: "Fabrizio Ravanelli", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 3, playerName: "Leonardo", teamName: "Paris Saint-Germain", numberings: ["/199"] },
+  { id: 4, playerName: "Nabil Fekir", teamName: "Olympique Lyonnais", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 5, playerName: "Pierre-Emerick Aubameyang", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 6, playerName: "Joe Cole", teamName: "LOSC Lille", numberings: ["/199"] },
+  { id: 7, playerName: "Patrice Evra", teamName: "AS Monaco", numberings: ["/199"] },
+  { id: 8, playerName: "Takumi Minamino", teamName: "AS Monaco", numberings: ["/199"] },
+  { id: 9, playerName: "Anthony Martial", teamName: "AS Monaco", numberings: ["/199"] },
+  { id: 10, playerName: "Marco Asensio", teamName: "Paris Saint-Germain", numberings: ["/199"] },
+  { id: 11, playerName: "Claude Makélélé", teamName: "FC Nantes", numberings: ["/199"] },
+  { id: 12, playerName: "Rafael Márquez", teamName: "AS Monaco", numberings: ["/199"] },
+  { id: 13, playerName: "Chris Waddle", teamName: "Olympique de Marseille", numberings: ["/199"] },
+  { id: 14, playerName: "John Arne Riise", teamName: "AS Monaco", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 15, playerName: "Diego Carlos", teamName: "FC Nantes", numberings: ["/199"] },
+  { id: 16, playerName: "Denis Zakaria", teamName: "AS Monaco", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 17, playerName: "David Trezeguet", teamName: "AS Monaco", numberings: ["/199"] },
+  { id: 18, playerName: "Eric Cantona", teamName: "Olympique de Marseille", numberings: ["/199"] },
+  { id: 19, playerName: "Alexis Sánchez", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
   { id: 7, playerName: "Patrice Evra", teamName: "AS Monaco", numberings: ["/199", "/1"] },
   { id: 8, playerName: "Takumi Minamino", teamName: "AS Monaco", numberings: ["/25", "/1"] },
   { id: 9, playerName: "Anthony Martial", teamName: "AS Monaco", numberings: ["/1"] },

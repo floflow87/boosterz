@@ -119,6 +119,17 @@ export default function CardVariantsCarousel({
         <div className="flex-1 space-y-3">
           <div className="grid grid-cols-2 gap-4">
             <div>
+              <span className="text-gray-400 text-sm">Collection:</span>
+              <div className="text-white font-medium">Score Ligue 1</div>
+            </div>
+            <div>
+              <span className="text-gray-400 text-sm">Saison:</span>
+              <div className="text-white font-medium">{currentCard.season || "23/24"}</div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
               <span className="text-gray-400 text-sm">Référence:</span>
               <div className="text-white font-medium">{currentCard.reference}</div>
             </div>

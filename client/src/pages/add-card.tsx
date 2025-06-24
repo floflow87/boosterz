@@ -371,6 +371,20 @@ export default function AddCard() {
                 </p>
               </div>
 
+              {/* Saison */}
+              <div>
+                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
+                <Select value={season} onValueChange={setSeason}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Sélectionne la saison" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
+                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Type de carte */}
               <div>
                 <Label htmlFor="cardType" className="text-white mb-2 block">Type de carte *</Label>
@@ -601,6 +615,7 @@ export default function AddCard() {
                   {playerName && <p><span className="text-zinc-400">Joueur:</span> {playerName}</p>}
                   {teamName && <p><span className="text-zinc-400">Équipe:</span> {teamName}</p>}
                   <p><span className="text-zinc-400">Type:</span> {cardTypes.find(ct => ct.type === cardType)?.label}</p>
+                  {season && <p><span className="text-zinc-400">Saison:</span> {season}</p>}
                   {reference && <p><span className="text-zinc-400">Référence:</span> {reference}</p>}
                   {numbering && <p><span className="text-zinc-400">Numérotation:</span> {numbering}</p>}
                   {condition && <p><span className="text-zinc-400">État:</span> {condition}</p>}
