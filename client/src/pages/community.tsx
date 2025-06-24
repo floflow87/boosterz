@@ -99,29 +99,7 @@ export default function Community() {
           </button>
         </div>
 
-        {/* Bullets Statistics */}
-        <div className="grid grid-cols-4 gap-3 mb-6">
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-            <div className="w-3 h-3 rounded-full bg-green-500 mx-auto mb-2"></div>
-            <div className="text-white font-bold text-lg">248</div>
-            <div className="text-gray-400 text-xs">Membres actifs</div>
-          </div>
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-            <div className="w-3 h-3 rounded-full bg-blue-500 mx-auto mb-2"></div>
-            <div className="text-white font-bold text-lg">1.2k</div>
-            <div className="text-gray-400 text-xs">Échanges</div>
-          </div>
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-            <div className="w-3 h-3 rounded-full bg-purple-500 mx-auto mb-2"></div>
-            <div className="text-white font-bold text-lg">89</div>
-            <div className="text-gray-400 text-xs">Posts aujourd'hui</div>
-          </div>
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-            <div className="w-3 h-3 rounded-full bg-orange-500 mx-auto mb-2"></div>
-            <div className="text-white font-bold text-lg">156</div>
-            <div className="text-gray-400 text-xs">Nouvelles cartes</div>
-          </div>
-        </div>
+
 
         {/* Content based on active sub-tab */}
         {activeSubTab === "featured" && (
