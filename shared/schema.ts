@@ -22,9 +22,6 @@ export const users = pgTable("users", {
   totalCards: integer("total_cards").default(0).notNull(),
   collectionsCount: integer("collections_count").default(0).notNull(),
   completionPercentage: real("completion_percentage").default(0).notNull(),
-  isEmailVerified: boolean("is_email_verified").default(false).notNull(),
-  emailVerificationToken: text("email_verification_token"),
-  hasCompletedOnboarding: boolean("has_completed_onboarding").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
