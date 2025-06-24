@@ -150,26 +150,29 @@ export default function CollectionDetail() {
       let includeCard = false;
       switch (filter) {
         case "bases": 
-          // Pour "Bases num", on veut juste les cartes "Base" sans les parallèles
-          includeCard = card.cardType === "Base";
+          // "Bases num." = Parallel Laser et Swirl (vos 9 variantes par joueur)
+          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
           break;
         case "bases_numbered": 
-          // Pour les bases numérotées, on prend les parallèles Laser et Swirl
+          // Les parallèles (même chose que bases pour cette collection)
           includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
           break;
         case "autographs": 
-          // Corriger le nom du type d'autographe
+          // Autographes (avec le bon nom français)
           includeCard = card.cardType === "Autographe";
           break;
         case "hits": 
+          // Toutes les cartes Insert
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          includeCard = card.cardType.includes("1/1");
+          // Cartes spéciales 1/1
+          includeCard = card.cardType === "Base 1/1";
           break;
 
         default: 
-          includeCard = card.cardType === "Base";
+          // Par défaut, afficher les bases numérotées
+          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
       }
 
       if (includeCard) {
