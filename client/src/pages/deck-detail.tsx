@@ -52,9 +52,12 @@ interface SortableCardProps {
   };
   index: number;
   onRemove: (position: number) => void;
+  isSelected: boolean;
+  onLongPress: (position: number) => void;
 }
 
-function SortableCard({ id, cardData, index, onRemove }: SortableCardProps) {
+function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }: SortableCardProps) {
+  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
   const {
     attributes,
     listeners,
@@ -139,7 +142,18 @@ function SortableCard({ id, cardData, index, onRemove }: SortableCardProps) {
         )
       )}
       
-      {/* Suppression de l'icône poubelle individuelle car elle interfère avec le drag */}
+      {/* Bouton poubelle qui apparaît lors du long press */}
+      {isSelected && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove(cardData.position);
+          }}
+          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg z-20 animate-pulse"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
+      )}
     </div>
   );
 }
@@ -193,6 +207,7 @@ export default function DeckDetail() {
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [showDeletePanel, setShowDeletePanel] = useState(false);
   const [selectedCardToDelete, setSelectedCardToDelete] = useState<number | null>(null);
+  const [longPressCard, setLongPressCard] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
   const [editTheme, setEditTheme] = useState('');
   const [editCoverImage, setEditCoverImage] = useState<string | null>(null);
@@ -358,19 +373,7 @@ export default function DeckDetail() {
               </div>
               
               <div className="flex gap-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className={cn(
-                    "p-2",
-                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors)
-                      ? "text-black hover:bg-black/10"
-                      : "text-white hover:bg-white/10"
-                  )}
-                  onClick={() => setShowDeletePanel(true)}
-                >
-                  <Trash2 className="w-5 h-5" />
-                </Button>
+
                 <Button
                   variant="ghost"
                   size="sm"
@@ -435,7 +438,29 @@ export default function DeckDetail() {
                       id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
                       cardData={deckCard}
                       index={index}
-                      onRemove={() => {}} // Fonction vide car on n'utilise plus cette approche
+                      isSelected={longPressCard === deckCard.position}
+                      onLongPress={(position) => {
+                        setLongPressCard(position);
+                      }}
+                      onRemove={(position) => {
+                        // Supprimer la carte
+                        const newCards = localCards.filter(c => c.position !== position);
+                        const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                        setLocalCards(reorderedCards);
+                        
+                        // Toast de succès
+                        toast({
+                          title: "Carte supprimée",
+                          description: "La carte a été retirée du deck avec succès",
+                          className: "bg-green-600 text-white border-green-600",
+                        });
+                        
+                        // Réinitialiser la sélection
+                        setLongPressCard(null);
+                        
+                        // Invalider le cache
+                        queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                      }}
                     />
                   ))}
                   

@@ -54,46 +54,30 @@ export default function Community() {
           </button>
         </div>
 
-        {/* Dynamic Bullets */}
-        <div className="grid grid-cols-4 gap-2 mb-6">
-{activeTab === 'feed' && [
-            { label: "Posts du jour", value: "23", color: "bg-purple-500" },
-            { label: "Nouvelles cartes", value: "156", color: "bg-orange-500" },
-            { label: "Échanges actifs", value: "12", color: "bg-blue-500" },
-            { label: "Membres en ligne", value: "48", color: "bg-green-500" }
-          ].map((bullet, index) => (
-            <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-              <div className={`w-2 h-2 rounded-full ${bullet.color} mx-auto mb-2`}></div>
-              <div className="text-white font-bold text-lg">{bullet.value}</div>
-              <div className="text-gray-400 text-xs">{bullet.label}</div>
-            </div>
-          ))}
-          
-          {activeTab === 'forums' && [
-            { label: "Messages du jour", value: "142", color: "bg-blue-500" },
-            { label: "Sujets actifs", value: "18", color: "bg-purple-500" },
-            { label: "Nouveaux membres", value: "7", color: "bg-green-500" },
-            { label: "Réponses", value: "89", color: "bg-orange-500" }
-          ].map((bullet, index) => (
-            <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-              <div className={`w-2 h-2 rounded-full ${bullet.color} mx-auto mb-2`}></div>
-              <div className="text-white font-bold text-lg">{bullet.value}</div>
-              <div className="text-gray-400 text-xs">{bullet.label}</div>
-            </div>
-          ))}
-          
-          {activeTab === 'leaderboard' && [
-            { label: "Top collecteurs", value: "50", color: "bg-yellow-500" },
-            { label: "Cartes totales", value: "12.5k", color: "bg-blue-500" },
-            { label: "Collections", value: "247", color: "bg-purple-500" },
-            { label: "Échanges", value: "1.2k", color: "bg-green-500" }
-          ].map((bullet, index) => (
-            <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
-              <div className={`w-2 h-2 rounded-full ${bullet.color} mx-auto mb-2`}></div>
-              <div className="text-white font-bold text-lg">{bullet.value}</div>
-              <div className="text-gray-400 text-xs">{bullet.label}</div>
-            </div>
-          ))}
+
+
+        {/* Bullets Statistics */}
+        <div className="grid grid-cols-4 gap-3 mb-6">
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="w-3 h-3 rounded-full bg-green-500 mx-auto mb-2"></div>
+            <div className="text-white font-bold text-lg">248</div>
+            <div className="text-gray-400 text-xs">Membres actifs</div>
+          </div>
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="w-3 h-3 rounded-full bg-blue-500 mx-auto mb-2"></div>
+            <div className="text-white font-bold text-lg">1.2k</div>
+            <div className="text-gray-400 text-xs">Échanges</div>
+          </div>
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="w-3 h-3 rounded-full bg-purple-500 mx-auto mb-2"></div>
+            <div className="text-white font-bold text-lg">89</div>
+            <div className="text-gray-400 text-xs">Posts aujourd'hui</div>
+          </div>
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="w-3 h-3 rounded-full bg-orange-500 mx-auto mb-2"></div>
+            <div className="text-white font-bold text-lg">156</div>
+            <div className="text-gray-400 text-xs">Nouvelles cartes</div>
+          </div>
         </div>
 
         {/* Mon Feed Tab */}
