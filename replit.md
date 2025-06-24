@@ -118,11 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 24, 2025. Updated Score Ligue 1 23/24 checklist structure with 2769 cards
-  - Renamed "Bases" tab to "Bases num" with 9 numbered variants per player
-  - Restructured Hits: 5 types with 3 variants each, 3 types with 1 variant
-  - Added complete player names and teams for 200 base references
-  - Maintained autographs (304 cards) and special 1/1 cards (350 cards)
+- June 24, 2025. Fixed collection detail page filtering and navigation
+  - Corrected "Bases num." to show Parallel Laser/Swirl cards (200 players × 9 variants = 1800 cards)
+  - Removed redundant "Parallèles" tab as requested
+  - Fixed "Autographes" tab to display 304 autograph cards correctly
+  - Verified hits structure: 360 total Insert cards across 8 different types
+  - Updated Score Ligue 1 23/24 checklist structure with 2814 total cards
 - June 23, 2025. Initial setup
 
 ## User Preferences

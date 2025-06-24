@@ -19,7 +19,7 @@ export default function CollectionDetail() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "bases_numbered" | "autographs" | "hits" | "special_1_1">("bases");
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "autographs" | "hits" | "special_1_1">("bases");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
@@ -153,10 +153,7 @@ export default function CollectionDetail() {
           // "Bases num." = Parallel Laser et Swirl (vos 9 variantes par joueur)
           includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
           break;
-        case "bases_numbered": 
-          // Les parallèles (même chose que bases pour cette collection)
-          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-          break;
+
         case "autographs": 
           // Autographes (avec le bon nom français)
           includeCard = card.cardType === "Autographe";
@@ -792,17 +789,7 @@ export default function CollectionDetail() {
             >
               Bases num.
             </button>
-            <button
-              onClick={() => setFilter("bases_numbered")}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-                filter === "bases_numbered" 
-                  ? "text-white shadow-lg transform scale-105" 
-                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-              }`}
-              style={filter === "bases_numbered" ? { backgroundColor: '#F37261' } : {}}
-            >
-              Parallèles
-            </button>
+
           <button
             onClick={() => setFilter("hits")}
             className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
