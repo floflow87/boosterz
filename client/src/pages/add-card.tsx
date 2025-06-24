@@ -71,7 +71,7 @@ export default function AddCard() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch all players for fallback suggestions
+  // Fetch all players including autographs and inserts
   const { data: allPlayers = [] } = useQuery<Player[]>({
     queryKey: ["/api/cards/all"],
     select: (data: any[]) => {
@@ -79,13 +79,27 @@ export default function AddCard() {
       data?.forEach?.(card => {
         if (card.playerName && card.teamName) {
           const key = `${card.playerName}-${card.teamName}`;
-          playersMap.set(key, {
-            playerName: card.playerName,
-            teamName: card.teamName
-          });
+          if (!playersMap.has(key)) {
+            playersMap.set(key, {
+              playerName: card.playerName,
+              teamName: card.teamName,
+              cardTypes: new Set()
+            });
+          }
+          // Ajouter le type de carte pour ce joueur
+          playersMap.get(key).cardTypes.add(card.cardType);
         }
       });
-      return Array.from(playersMap.values());
+      // Convertir en array et inclure tous les types de cartes
+      return Array.from(playersMap.values()).map(player => ({
+        playerName: player.playerName,
+        teamName: player.teamName,
+        hasAutograph: player.cardTypes.has('Autograph Numbered') || 
+                     player.cardTypes.has('Autograph Gold') ||
+                     player.cardTypes.has('Autograph Red') ||
+                     player.cardTypes.has('Autograph Silver'),
+        hasInsert: Array.from(player.cardTypes).some(type => type.includes('Insert'))
+      }));
     },
     staleTime: 5 * 60 * 1000,
   });

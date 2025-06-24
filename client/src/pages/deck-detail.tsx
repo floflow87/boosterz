@@ -69,7 +69,8 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: isDragging ? 'none' : transition, // Pas de transition pendant le drag
+    zIndex: isDragging ? 1000 : 'auto',
   };
 
   return (
@@ -77,8 +78,8 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative group",
-        isDragging && "opacity-50 z-50"
+        "relative group transition-transform duration-200 ease-out",
+        isDragging && "opacity-75 scale-105 rotate-2 shadow-2xl z-50"
       )}
       {...attributes}
     >
@@ -237,7 +238,8 @@ export default function DeckDetail() {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 5, // Réduction de la distance pour plus de réactivité
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -684,7 +686,7 @@ export default function DeckDetail() {
                 <div className="grid grid-cols-2 gap-3">
                   <Button
                     variant="outline"
-                    className="border-gray-600 text-white hover:bg-white/10"
+                    className="border-gray-600 text-black hover:bg-white/10"
                     onClick={() => {
                       navigator.clipboard.writeText(window.location.href);
                       // Toast notification could be added here
@@ -694,7 +696,7 @@ export default function DeckDetail() {
                   </Button>
                   <Button
                     variant="outline"
-                    className="border-gray-600 text-white hover:bg-white/10"
+                    className="border-gray-600 text-black hover:bg-white/10"
                     onClick={() => {
                       const text = `Découvre mon deck "${deck?.name}" sur BOOSTERZ ! ${window.location.href}`;
                       if (navigator.share) {
