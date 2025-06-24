@@ -141,3 +141,10 @@ The application follows a modern full-stack architecture with clear separation b
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
+
+## Access Credentials
+**Compte "Mac la menace" (maxlamenace):**
+- Username: maxlamenace  
+- Password: motdepasse123
+- User ID: 999
+- Email: maxlamenace@yopmail.com

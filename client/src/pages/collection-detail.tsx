@@ -609,23 +609,23 @@ export default function CollectionDetail() {
         c.cardType === "Parallel Numbered"
       );
       
-      // Trier par ordre de rareté: /50, /35, /30, /25, /20, /15 swirl, /15 laser, /10, /5
+      // Trier par ordre de rareté: toutes les variantes /9 par couleur
       return numberedVariants.sort((a, b) => {
-        const getRarityOrder = (numbering: string, subType: string) => {
-          if (numbering === "1/50") return 1;
-          if (numbering === "1/35") return 2;
-          if (numbering === "1/30") return 3;
-          if (numbering === "1/25") return 4;
-          if (numbering === "1/20") return 5;
-          if (numbering === "1/15" && subType === "swirl") return 6;
-          if (numbering === "1/15" && subType === "laser") return 7;
-          if (numbering === "1/10") return 8;
-          if (numbering === "1/5") return 9;
+        const getRarityOrder = (subType: string) => {
+          if (subType === "Blue") return 1;
+          if (subType === "Red") return 2;
+          if (subType === "Green") return 3;
+          if (subType === "Gold") return 4;
+          if (subType === "Silver") return 5;
+          if (subType === "Purple") return 6;
+          if (subType === "Orange") return 7;
+          if (subType === "Black") return 8;
+          if (subType === "Rainbow") return 9;
           return 10;
         };
         
-        const aOrder = getRarityOrder(a.numbering || "", a.cardSubType || "");
-        const bOrder = getRarityOrder(b.numbering || "", b.cardSubType || "");
+        const aOrder = getRarityOrder(a.cardSubType || "");
+        const bOrder = getRarityOrder(b.cardSubType || "");
         
         return aOrder - bOrder;
       });

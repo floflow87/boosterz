@@ -225,17 +225,17 @@ const baseVariants = [
   { type: "Parallel Swirl", numbering: null, rarity: "Base" }
 ];
 
-// Bases numérotées - 9 variantes par carte de base
+// Bases numérotées - 9 variantes par carte de base (toutes /9)
 const numberedVariants = [
-  { type: "Parallel Numbered", numbering: "1/50", rarity: "Rare", subType: null },
-  { type: "Parallel Numbered", numbering: "1/35", rarity: "Rare", subType: null },
-  { type: "Parallel Numbered", numbering: "1/30", rarity: "Rare", subType: null },
-  { type: "Parallel Numbered", numbering: "1/25", rarity: "Ultra Rare", subType: null },
-  { type: "Parallel Numbered", numbering: "1/20", rarity: "Ultra Rare", subType: null },
-  { type: "Parallel Numbered", numbering: "1/15", rarity: "Ultra Rare", subType: "swirl" },
-  { type: "Parallel Numbered", numbering: "1/15", rarity: "Ultra Rare", subType: "laser" },
-  { type: "Parallel Numbered", numbering: "1/10", rarity: "Super Rare", subType: null },
-  { type: "Parallel Numbered", numbering: "1/5", rarity: "Super Rare", subType: null }
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Rare", subType: "Blue" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Rare", subType: "Red" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Rare", subType: "Green" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Ultra Rare", subType: "Gold" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Ultra Rare", subType: "Silver" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Ultra Rare", subType: "Purple" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Ultra Rare", subType: "Orange" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Super Rare", subType: "Black" },
+  { type: "Parallel Numbered", numbering: "/9", rarity: "Super Rare", subType: "Rainbow" }
 ];
 
 const insertBreakthrough = [
