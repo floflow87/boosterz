@@ -1258,6 +1258,25 @@ export default function Social() {
               <>
                 {/* Profile Header */}
                 <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6 border border-[hsl(214,35%,30%)]">
+                  <div className="flex items-center space-x-4 mb-4">
+                    {currentUser?.avatar ? (
+                      <img 
+                        src={currentUser.avatar} 
+                        alt="Avatar" 
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+                        {currentUser?.name?.charAt(0) || currentUser?.username?.charAt(0) || 'U'}
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-lg font-semibold text-white">
+                        {currentUser?.name || 'Utilisateur'} @{currentUser?.username || 'username'}
+                      </h3>
+                      <p className="text-gray-400">Collection privée</p>
+                    </div>
+                  </div>
                   <div className="grid grid-cols-2 gap-4 text-center">
                     <div>
                       <div className="text-lg font-bold text-white">{myPosts.length}</div>
@@ -1401,10 +1420,13 @@ export default function Social() {
                       </div>
                     ) : (
                       <div className="text-center py-12">
-                        <div className="text-gray-400 mb-2">Aucun post pour le moment</div>
-                        <p className="text-sm text-gray-500">
-                          Tes publications apparaîtront ici
-                        </p>
+                        <div className="text-gray-400 mb-4">Aucun post pour le moment</div>
+                        <Button
+                          onClick={() => setIsPostModalOpen(true)}
+                          className="bg-[#F37261] hover:bg-[#e5624f] text-white font-medium"
+                        >
+                          Créer mon premier post
+                        </Button>
                       </div>
                     )}
                 </div>

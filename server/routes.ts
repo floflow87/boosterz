@@ -1108,26 +1108,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  // Social follow/unfollow endpoints (for compatibility)
+  // Social follow/unfollow endpoints (for compatibility) - CORRIGÉ
   app.post("/api/social/users/:userId/:action", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const targetUserId = parseInt(req.params.userId);
       const action = req.params.action;
       const currentUserId = req.user!.id;
       
+      console.log(`Social action: ${action} from user ${currentUserId} to user ${targetUserId}`);
+      
       if (targetUserId === currentUserId) {
         return res.status(400).json({ message: "Cannot follow yourself" });
       }
 
+      // Vérifier si l'utilisateur cible existe
+      const targetUser = await storage.getUser(targetUserId);
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      let success = false;
       if (action === "follow") {
-        await storage.followUser(currentUserId, targetUserId);
+        // Vérifier si déjà suivi
+        const isAlreadyFollowing = await storage.isFollowing(currentUserId, targetUserId);
+        if (!isAlreadyFollowing) {
+          success = await storage.followUser(currentUserId, targetUserId);
+        } else {
+          return res.status(400).json({ message: "Already following this user" });
+        }
       } else if (action === "unfollow") {
-        await storage.unfollowUser(currentUserId, targetUserId);
+        success = await storage.unfollowUser(currentUserId, targetUserId);
       } else {
         return res.status(400).json({ message: "Invalid action" });
       }
 
-      res.json({ message: `User ${action}ed successfully` });
+      if (success) {
+        console.log(`Successfully ${action}ed user ${targetUserId}`);
+        res.json({ message: `User ${action}ed successfully` });
+      } else {
+        res.status(500).json({ message: `Failed to ${action} user` });
+      }
     } catch (error) {
       console.error(`Error ${req.params.action}ing user:`, error);
       res.status(500).json({ message: "Internal server error" });
@@ -1530,6 +1550,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Unfollow user - CORRIGÉ
   app.delete("/api/users/:id/follow", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const followingId = parseInt(req.params.id);
@@ -1537,18 +1558,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`User ${followerId} wants to unfollow user ${followingId}`);
       
-      // Remove from follows table directly
-      try {
-        await db.delete(follows).where(
-          and(
-            eq(follows.followerId, followerId),
-            eq(follows.followingId, followingId)
-          )
-        );
+      if (followerId === followingId) {
+        return res.status(400).json({ message: "Cannot unfollow yourself" });
+      }
+      
+      // Vérifier si l'utilisateur cible existe
+      const targetUser = await storage.getUser(followingId);
+      if (!targetUser) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      // Utiliser la méthode storage
+      const success = await storage.unfollowUser(followerId, followingId);
+      
+      if (success) {
         console.log(`Successfully removed follow relationship: ${followerId} -> ${followingId}`);
         res.json({ message: "User unfollowed successfully", isFollowing: false });
-      } catch (error) {
-        console.error('Error removing follow relationship:', error);
+      } else {
         res.status(500).json({ message: "Failed to unfollow user" });
       }
     } catch (error) {
