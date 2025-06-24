@@ -32,6 +32,8 @@ export default function Collections() {
   const [isCardRotated, setIsCardRotated] = useState(false);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
+  const [showFeaturedPanel, setShowFeaturedPanel] = useState(false);
+  const [featuredDescription, setFeaturedDescription] = useState("");
   const [salePrice, setSalePrice] = useState('');
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
@@ -1163,6 +1165,19 @@ export default function Collections() {
                     )}
                     
                     <button 
+                      onClick={() => {
+                        setShowOptionsPanel(false);
+                        setShowFeaturedPanel(true);
+                      }}
+                      className="w-full p-2 text-white hover:bg-yellow-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                    >
+                      <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
+                        <Star className="w-4 h-4 text-white" />
+                      </div>
+                      À la une
+                    </button>
+                    
+                    <button 
                       onClick={() => setShowOptionsPanel(false)}
                       className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
@@ -1181,6 +1196,85 @@ export default function Collections() {
                   </div>
                 </div>
               </>
+            )}
+
+            {/* Featured Panel */}
+            {showFeaturedPanel && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
+                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md border border-[hsl(214,35%,30%)]">
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-white">À la une</h3>
+                      <button
+                        onClick={() => setShowFeaturedPanel(false)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Description du post
+                        </label>
+                        <textarea
+                          value={featuredDescription}
+                          onChange={(e) => setFeaturedDescription(e.target.value)}
+                          placeholder="Partagez quelque chose sur cette carte..."
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                          rows={4}
+                        />
+                      </div>
+                      
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => setShowFeaturedPanel(false)}
+                          className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
+                        >
+                          Annuler
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (!featuredDescription.trim() || !selectedCard) return;
+                            
+                            try {
+                              await apiRequest('/api/posts', {
+                                method: 'POST',
+                                body: JSON.stringify({
+                                  content: featuredDescription,
+                                  cardImage: selectedCard.imageUrl,
+                                  cardName: selectedCard.playerName,
+                                  type: 'featured'
+                                })
+                              });
+                              
+                              setShowFeaturedPanel(false);
+                              setFeaturedDescription("");
+                              setSelectedCard(null);
+                              
+                              toast({
+                                title: "Post créé !",
+                                description: "Ton post a été ajouté à la une.",
+                              });
+                            } catch (error) {
+                              toast({
+                                title: "Erreur",
+                                description: "Impossible de créer le post.",
+                                variant: "destructive",
+                              });
+                            }
+                          }}
+                          disabled={!featuredDescription.trim()}
+                          className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg transition-colors"
+                        >
+                          Publier
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Trade Panel */}
