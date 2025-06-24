@@ -1288,22 +1288,22 @@ export default function Social() {
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center space-x-3">
                                   <div className="w-10 h-10 rounded-full overflow-hidden">
-                                    {user?.avatar ? (
+                                    {currentUser?.avatar ? (
                                       <img 
-                                        src={user.avatar} 
-                                        alt={`Avatar de ${user.name}`}
+                                        src={currentUser.avatar} 
+                                        alt={`Avatar de ${currentUser.name}`}
                                         className="w-full h-full object-cover"
                                       />
                                     ) : (
                                       <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                        <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || 'U'}</span>
+                                        <span className="text-sm font-bold text-white">{currentUser?.name?.charAt(0) || 'U'}</span>
                                       </div>
                                     )}
                                   </div>
                                   <div>
                                     <div className="flex items-center space-x-2">
-                                      <h4 className="text-white font-medium text-sm">{user?.name}</h4>
-                                      <span className="text-xs text-gray-400">@{user?.username}</span>
+                                      <h4 className="text-white font-medium text-sm">{currentUser?.name}</h4>
+                                      <span className="text-xs text-gray-400">@{currentUser?.username}</span>
                                     </div>
                                     <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
                                   </div>

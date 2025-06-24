@@ -523,6 +523,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentUserId = req.user?.id;
       
+      console.log('Marketplace cards endpoint - currentUserId:', currentUserId);
+      
       // Get all personal cards that are for sale, excluding current user's cards
       const marketplaceQuery = db.select({
         id: personalCards.id,
@@ -548,13 +550,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .where(
         and(
           eq(personalCards.isForSale, true),
-          currentUserId ? not(eq(personalCards.userId, currentUserId)) : sql`true`
+          not(eq(personalCards.userId, currentUserId || 0))
         )
       )
       .orderBy(desc(personalCards.createdAt));
       
       const marketplaceCards = await marketplaceQuery;
       
+      console.log(`Returning ${marketplaceCards.length} marketplace cards (excluded current user ${currentUserId})`);
       res.json(marketplaceCards);
     } catch (error) {
       console.error("Error fetching marketplace cards:", error);
@@ -871,12 +874,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const searchTerm = req.query.search?.toString().toLowerCase();
       const limit = parseInt(req.query.limit?.toString() || '10');
       
+      console.log('Social users endpoint - currentUserId:', currentUserId);
+      
       let users = await storage.getAllUsers();
       
-      // Remove current user from results
-      if (currentUserId) {
-        users = users.filter(user => user.id !== currentUserId);
-      }
+      // Always remove current user from results (including default user ID 1)
+      users = users.filter(user => user.id !== currentUserId);
       
       // Apply search filter if provided
       if (searchTerm) {
@@ -906,6 +909,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         };
       }));
       
+      console.log(`Returning ${socialUsers.length} users (excluded current user ${currentUserId})`);
       res.json(socialUsers.slice(0, limit));
     } catch (error) {
       console.error('Error fetching social users:', error);
