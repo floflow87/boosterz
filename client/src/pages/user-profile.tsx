@@ -162,10 +162,14 @@ export default function UserProfile() {
           }, ...(prev[postId] || [])]
         }));
 
-        setPostCommentsCount(prev => ({
-          ...prev,
-          [postId]: result.commentsCount
-        }));
+        // Mise à jour du compteur de commentaires
+        setPostComments(prevComments => {
+          const updatedComments = prevComments[postId] || [];
+          return {
+            ...prevComments,
+            [postId]: updatedComments
+          };
+        });
 
         setCommentInputs(prev => ({ ...prev, [postId]: '' }));
       }
