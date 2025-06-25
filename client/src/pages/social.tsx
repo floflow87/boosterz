@@ -1010,9 +1010,11 @@ export default function Social() {
                       )}
 
                       {/* Stats */}
-                      <div className="flex items-center space-x-4 text-sm text-gray-400 mt-3">
-                        <span>{postLikes[post.id] || 0} j'aime</span>
-                        <span>{postComments[post.id]?.length || 0} commentaire{(postComments[post.id]?.length || 0) !== 1 ? 's' : ''}</span>
+                      <div className="flex items-center space-x-4 text-sm mt-3">
+                        <span className={likedPosts.has(post.id) ? 'text-red-500' : 'text-gray-400'}>
+                          {postLikes[post.id] || 0} j'aime
+                        </span>
+                        <span className="text-gray-400">{postComments[post.id]?.length || 0} commentaire{(postComments[post.id]?.length || 0) !== 1 ? 's' : ''}</span>
                       </div>
 
                       {/* Interaction Buttons */}
