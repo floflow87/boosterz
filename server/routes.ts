@@ -325,6 +325,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         imageUrl: posts.imageUrl,
         cardId: posts.cardId,
         createdAt: posts.createdAt,
+        updatedAt: posts.updatedAt,
+        likesCount: sql<number>`(SELECT COUNT(*)::int FROM post_likes WHERE post_id = ${posts.id})`,
         user: {
           id: users.id,
           username: users.username,

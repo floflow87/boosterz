@@ -167,17 +167,20 @@ export default function Social() {
     }
   }, [userLikes]);
 
-  // Initialiser les likes des posts - éviter la boucle infinie
+  // Initialiser les likes des posts avec les vraies données
   useEffect(() => {
     const allPosts = [...feed, ...myPosts];
     if (allPosts.length > 0) {
       const likes: Record<number, number> = {};
       allPosts.forEach(post => {
-        likes[post.id] = post.likesCount || 0;
+        // Utiliser le likesCount du serveur ou garder la valeur existante si elle est plus récente
+        const currentCount = postLikes[post.id];
+        const serverCount = post.likesCount || 0;
+        likes[post.id] = currentCount !== undefined ? currentCount : serverCount;
       });
-      setPostLikes(likes); // Remplacer complètement au lieu de merger
+      setPostLikes(prev => ({ ...prev, ...likes }));
     }
-  }, [feed.length, myPosts.length]); // Dépendances plus précises
+  }, [feed, myPosts]); // Dépendances sur les posts complets
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
