@@ -78,7 +78,7 @@ interface Deck {
 }
 
 export default function Profile() {
-  const { id } = useParams();
+  const { userId: id } = useParams();
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
