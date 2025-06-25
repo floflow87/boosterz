@@ -472,16 +472,16 @@ export default function DeckDetail() {
                 {/* Halos scintillants pour deck complet */}
                 {localCards.length === 12 && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(12)].map((_, i) => (
+                    {[...Array(8)].map((_, i) => (
                       <div
                         key={i}
-                        className="absolute w-2 h-2 bg-gradient-radial from-yellow-300 via-orange-300 to-transparent rounded-full opacity-60"
+                        className="absolute w-1 h-1 bg-gradient-radial from-yellow-200 via-orange-200 to-transparent rounded-full opacity-40"
                         style={{
-                          left: `${5 + Math.random() * 90}%`,
-                          top: `${5 + Math.random() * 90}%`,
+                          left: `${10 + Math.random() * 80}%`,
+                          top: `${10 + Math.random() * 80}%`,
                           animation: `gentle-twinkle ${3 + Math.random() * 4}s ease-in-out infinite`,
                           animationDelay: `${Math.random() * 6}s`,
-                          boxShadow: '0 0 8px rgba(251, 191, 36, 0.6), 0 0 12px rgba(251, 191, 36, 0.3)'
+                          boxShadow: '0 0 15px rgba(251, 191, 36, 0.4), 0 0 25px rgba(251, 191, 36, 0.2), 0 0 35px rgba(251, 191, 36, 0.1)'
                         }}
                       />
                     ))}
