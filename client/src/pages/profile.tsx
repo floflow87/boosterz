@@ -344,7 +344,7 @@ export default function Profile() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                 <span className="text-white text-lg font-bold">
                   {profileUser.name.charAt(0).toUpperCase()}
                 </span>
@@ -434,7 +434,7 @@ export default function Profile() {
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                           <span className="text-white text-sm font-bold">
                             {post.user?.name?.charAt(0)?.toUpperCase() || profileUser.name?.charAt(0)?.toUpperCase() || 'U'}
                           </span>
@@ -506,7 +506,7 @@ export default function Profile() {
                       <div className="pl-13 mt-3 pt-3 border-t border-gray-700/30">
                         {/* Input pour nouveau commentaire */}
                         <div className="flex space-x-3 mb-3">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center flex-shrink-0">
                             <span className="text-white text-xs font-bold">
                               {currentUser?.name?.charAt(0)?.toUpperCase() || 'U'}
                             </span>

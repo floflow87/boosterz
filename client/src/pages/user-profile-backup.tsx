@@ -406,7 +406,7 @@ export default function UserProfile() {
                     <div className="p-4 border-b border-[hsl(214,35%,30%)] bg-[hsl(214,35%,18%)]">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
                             {user.avatar ? (
                               <img 
                                 src={user.avatar} 
@@ -502,7 +502,7 @@ export default function UserProfile() {
                         <div className="mt-4 space-y-3">
                           {/* Add comment */}
                           <div className="flex space-x-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
                               {currentUserData?.avatar ? (
                                 <img 
                                   src={currentUserData.avatar} 

@@ -218,7 +218,7 @@ export default function Chat() {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+          <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
             {(displayUser as any)?.avatar ? (
               <img 
                 src={(displayUser as any).avatar} 

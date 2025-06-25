@@ -420,7 +420,7 @@ export default function CardDisplay({
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                     <span className="text-xs font-bold text-white">{card.seller.name.charAt(0)}</span>
                   </div>
                 )}

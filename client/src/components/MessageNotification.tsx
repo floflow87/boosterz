@@ -53,7 +53,7 @@ export default function MessageNotification({ show, message, onClose }: MessageN
       >
         <div className="flex items-start space-x-3">
           <div className="flex-shrink-0">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
               <MessageCircle className="w-5 h-5 text-white" />
             </div>
           </div>

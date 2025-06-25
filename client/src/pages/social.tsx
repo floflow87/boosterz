@@ -667,7 +667,7 @@ export default function Social() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                             <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
                           </div>
                         )}
@@ -790,7 +790,7 @@ export default function Social() {
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                          <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                             <span className="text-sm font-bold text-white">{item.user?.name?.charAt(0) || 'U'}</span>
                           </div>
                         )}
@@ -1247,7 +1247,7 @@ export default function Social() {
                       className="w-full text-left px-4 py-3 hover:bg-[hsl(214,35%,25%)] transition-colors border-b border-[hsl(214,35%,30%)] last:border-b-0"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
                           {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                         <div className="flex-1 min-w-0">
@@ -1297,7 +1297,7 @@ export default function Social() {
                   <div key={user.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
                           {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                         <div>
@@ -1481,7 +1481,7 @@ export default function Social() {
                                         className="w-full h-full object-cover"
                                       />
                                     ) : (
-                                      <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                                         <span className="text-sm font-bold text-white">{currentUser?.user?.name?.charAt(0) || currentUser?.user?.username?.charAt(0) || 'U'}</span>
                                       </div>
                                     )}

@@ -473,7 +473,7 @@ export default function UserProfile() {
                         <div className="mt-4 space-y-3">
                           {/* Add comment - Optimisé pour mobile */}
                           <div className="flex gap-2 items-center px-1">
-                            <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                            <div className="w-7 h-7 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                               {currentUserData?.avatar ? (
                                 <img 
                                   src={currentUserData.avatar} 
