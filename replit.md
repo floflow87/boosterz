@@ -118,6 +118,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Fixed login page 404 error by adding /login route to application routing
 - June 24, 2025. Fixed post headers in "Mes posts" to display correct user data
   - Updated post headers to show user's real avatar from database (base64 image)
   - Fixed username and name display to show "FLORENT MARTIN @Floflow87"
