@@ -129,6 +129,25 @@ export default function Social() {
     queryKey: ['/api/posts/likes'],
     enabled: !!currentUser?.user?.id,
   });
+
+  // Mettre à jour les likes quand les données arrivent
+  useEffect(() => {
+    if (userLikes.length > 0) {
+      setLikedPosts(new Set(userLikes));
+    }
+  }, [userLikes]);
+
+  // Initialiser les likes des posts
+  useEffect(() => {
+    const allPosts = [...feed, ...myPosts];
+    if (allPosts.length > 0) {
+      const likes: Record<number, number> = {};
+      allPosts.forEach(post => {
+        likes[post.id] = post.likesCount || 0;
+      });
+      setPostLikes(prev => ({ ...prev, ...likes }));
+    }
+  }, [feed, myPosts]);
   
 
   

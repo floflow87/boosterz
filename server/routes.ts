@@ -1978,6 +1978,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const postId = parseInt(req.params.id);
       const userId = req.user!.id;
       
+      console.log(`Like request - postId: ${postId}, userId: ${userId}`);
+      
       // Vérifier si le post existe
       const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
       if (post.length === 0) {
