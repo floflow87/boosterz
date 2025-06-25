@@ -118,6 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Implemented deck deletion functionality with confirmation modal
+  - Added delete button (trash icon) next to edit button in deck header
+  - Created confirmation modal with proper styling and danger colors
+  - Implemented DELETE /api/decks/:id endpoint with cascade deletion
+  - Added deleteDeck method to storage interface for both database and memory storage
+  - Added parallax scroll effect on deck banner images for enhanced visual experience
+  - Set success toast to green color for positive feedback on deletion
+  - Automatic redirection to collections page after successful deletion
 - June 25, 2025. Updated deck theme system with new colors and improved UI
   - Replaced "Marine & Or" with "Marine & Bronze" theme
   - Changed "Noir & Or" to "Or & Noir" (inverted colors)

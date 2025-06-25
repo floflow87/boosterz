@@ -310,7 +310,10 @@ export default function DeckDetail() {
       return response.json();
     },
     onSuccess: () => {
-      toast({ title: "Deck supprimé avec succès!" });
+      toast({ 
+        title: "Deck supprimé avec succès!",
+        className: "bg-green-600 text-white border-green-700"
+      });
       setLocation('/collections?tab=decks');
     },
     onError: () => {
