@@ -124,33 +124,6 @@ export default function Social() {
     retry: false,
   });
 
-  // Charger les likes de l'utilisateur au démarrage
-  const { data: userLikes = [] } = useQuery<number[]>({
-    queryKey: ['/api/posts/likes'],
-    enabled: !!currentUser?.user?.id,
-  });
-
-  // Mettre à jour les likes quand les données arrivent
-  useEffect(() => {
-    if (userLikes.length > 0) {
-      setLikedPosts(new Set(userLikes));
-    }
-  }, [userLikes]);
-
-  // Initialiser les likes des posts
-  useEffect(() => {
-    const allPosts = [...feed, ...myPosts];
-    if (allPosts.length > 0) {
-      const likes: Record<number, number> = {};
-      allPosts.forEach(post => {
-        likes[post.id] = post.likesCount || 0;
-      });
-      setPostLikes(prev => ({ ...prev, ...likes }));
-    }
-  }, [feed, myPosts]);
-  
-
-  
   const currentUserId = currentUser?.user?.id?.toString() || "1";
   const userId = "999"; // Pour les profils consultés (maxlamenace)
 
@@ -180,6 +153,31 @@ export default function Social() {
   const { data: myPosts = [], isLoading: myPostsLoading } = useQuery<Post[]>({
     queryKey: [`/api/users/${currentUserId}/posts`],
   });
+
+  // Charger les likes de l'utilisateur au démarrage
+  const { data: userLikes = [] } = useQuery<number[]>({
+    queryKey: ['/api/posts/likes'],
+    enabled: !!currentUser?.user?.id,
+  });
+
+  // Mettre à jour les likes quand les données arrivent
+  useEffect(() => {
+    if (userLikes.length > 0) {
+      setLikedPosts(new Set(userLikes));
+    }
+  }, [userLikes]);
+
+  // Initialiser les likes des posts
+  useEffect(() => {
+    const allPosts = [...feed, ...myPosts];
+    if (allPosts.length > 0) {
+      const likes: Record<number, number> = {};
+      allPosts.forEach(post => {
+        likes[post.id] = post.likesCount || 0;
+      });
+      setPostLikes(prev => ({ ...prev, ...likes }));
+    }
+  }, [feed, myPosts]);
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
