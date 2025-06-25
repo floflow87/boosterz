@@ -269,7 +269,7 @@ export default function CreateDeck() {
           : "Créer un deck"
         } 
         showBackButton 
-        onBack={() => setLocation('/decks')}
+        onBack={() => setLocation('/collections?tab=decks')}
       />
       
       <main className="relative z-10 px-4 pb-24 pt-4">
