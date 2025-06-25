@@ -463,7 +463,7 @@ export default function UserProfile() {
                         </span>
                       </div>
 
-                      {/* Interaction Buttons - Bouton commenter déplacé à droite */}
+                      {/* Interaction Buttons - Bouton commenter aligné à droite */}
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
                         <div className="flex items-center space-x-6">
                           <button 
@@ -484,13 +484,15 @@ export default function UserProfile() {
                           </button>
                         </div>
                         
-                        <button 
-                          onClick={() => toggleComments(post.id)}
-                          className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
-                        >
-                          <MessageCircle className="w-5 h-5" />
-                          <span className="text-sm">Commenter</span>
-                        </button>
+                        <div className="flex justify-end">
+                          <button 
+                            onClick={() => toggleComments(post.id)}
+                            className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
+                          >
+                            <MessageCircle className="w-5 h-5" />
+                            <span className="text-sm">Commenter</span>
+                          </button>
+                        </div>
                       </div>
 
                       {/* Comments Section */}
