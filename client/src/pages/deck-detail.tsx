@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload, ChevronDown, ChevronUp } from "lucide-react";
@@ -217,6 +217,7 @@ export default function DeckDetail() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const parallaxRef = useRef<HTMLDivElement>(null);
   
   const { data: deck, isLoading } = useQuery<DeckWithCards>({
     queryKey: [`/api/decks/${id}`],
@@ -225,6 +226,7 @@ export default function DeckDetail() {
 
   const [localCards, setLocalCards] = useState<DeckWithCards['cards']>([]);
   const [showEditPanel, setShowEditPanel] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [showDeletePanel, setShowDeletePanel] = useState(false);
   const [selectedCardToDelete, setSelectedCardToDelete] = useState<number | null>(null);
@@ -378,14 +380,16 @@ export default function DeckDetail() {
               borderColor: themeStyle.accentColor
             }}
           >
-            {/* Background Cover Image */}
+            {/* Background Cover Image with Parallax */}
             {deck.coverImage && (
               <>
                 <div 
-                  className="absolute inset-0 bg-cover bg-center"
+                  ref={parallaxRef}
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-75"
                   style={{
                     backgroundImage: `url(${deck.coverImage})`,
-                    backgroundPosition: `center ${deck.bannerPosition || 50}%`
+                    backgroundPosition: `center ${deck.bannerPosition || 50}%`,
+                    transform: 'translateY(0px)'
                   }}
                 />
                 <div className="absolute inset-0 bg-black/40" />
