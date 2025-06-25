@@ -263,7 +263,7 @@ export default function Profile() {
 
         {/* Onglets */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="sticky top-[73px] z-40 bg-[hsl(214,35%,11%)]">
+          <div className="bg-[hsl(214,35%,11%)]">
             <TabsList className="w-full h-auto p-0 bg-transparent">
               <TabsTrigger
                 value="posts"
@@ -292,31 +292,49 @@ export default function Profile() {
             <TabsContent value="posts" className="space-y-4">
               {posts.length > 0 ? (
                 posts.map((post) => (
-                  <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
+                  <div key={post.id} className="bg-[hsl(216,46%,13%)] rounded-lg p-4">
+                    {/* Header du post avec avatar et nom */}
                     <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
-                        {profileUser.avatar ? (
-                          <img 
-                            src={profileUser.avatar} 
-                            alt={profileUser.name}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
+                      {profileUser.avatar && (profileUser.avatar.startsWith('data:image') || profileUser.avatar.startsWith('http')) ? (
+                        <img 
+                          src={profileUser.avatar} 
+                          alt={profileUser.name}
+                          className="w-10 h-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                           <span className="text-white text-sm font-bold">
-                            {profileUser.name.charAt(0).toUpperCase()}
+                            {profileUser.name?.charAt(0)?.toUpperCase() || 'U'}
                           </span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-white font-medium text-sm">{profileUser.name}</p>
-                        <p className="text-gray-400 text-xs">@{profileUser.username}</p>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-white font-semibold text-sm">
+                            {profileUser.name}
+                          </span>
+                          <span className="text-gray-400 text-sm">
+                            @{profileUser.username}
+                          </span>
+                        </div>
+                        <div className="text-gray-400 text-xs">
+                          {new Date(post.createdAt).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
                       </div>
                     </div>
                     
-                    <p className="text-white text-sm leading-relaxed mb-3">{post.content}</p>
-                    
+                    {/* Contenu du post */}
+                    <div className="text-white text-sm leading-relaxed mb-3 pl-13">
+                      {post.content}
+                    </div>
+
                     {post.imageUrl && (
-                      <div className="mb-3">
+                      <div className="mb-3 pl-13">
                         <img 
                           src={post.imageUrl} 
                           alt="Post image" 
@@ -324,19 +342,17 @@ export default function Profile() {
                         />
                       </div>
                     )}
-                    
-                    <div className="flex items-center justify-between text-gray-400">
-                      <div className="flex items-center space-x-4">
-                        <button className="flex items-center space-x-1 hover:text-white transition-colors">
-                          <MessageCircle className="w-4 h-4" />
-                          <span className="text-xs">0</span>
-                        </button>
-                        <button className="flex items-center space-x-1 hover:text-white transition-colors">
-                          <Heart className="w-4 h-4" />
-                          <span className="text-xs">0</span>
-                        </button>
-                      </div>
-                      <span className="text-xs">{new Date(post.createdAt).toLocaleDateString()}</span>
+
+                    {/* Actions du post */}
+                    <div className="flex items-center space-x-6 text-gray-400 pl-13">
+                      <button className="flex items-center space-x-1 hover:text-red-400 transition-colors">
+                        <Heart className="w-4 h-4" />
+                        <span className="text-sm">J'aime</span>
+                      </button>
+                      <button className="flex items-center space-x-1 hover:text-blue-400 transition-colors">
+                        <MessageCircle className="w-4 h-4" />
+                        <span className="text-sm">3 commentaires</span>
+                      </button>
                     </div>
                   </div>
                 ))
