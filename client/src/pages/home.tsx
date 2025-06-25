@@ -87,11 +87,13 @@ export default function Home() {
                   <h3 className="font-semibold text-white">Créer votre première collection</h3>
                 </div>
               </div>
-              <p className="text-gray-400 text-sm mb-4">
-                Organisez vos cartes par thème, équipe ou saison
-              </p>
-              <div className="flex items-center text-blue-400 text-sm font-medium group-hover:text-blue-300">
-                Commencer <ArrowRight className="w-4 h-4 ml-1" />
+              <div className="flex items-center justify-between">
+                <p className="text-gray-400 text-sm">
+                  Organisez vos cartes par thème, équipe ou saison
+                </p>
+                <div className="flex items-center text-[hsl(9,85%,67%)] text-sm font-medium group-hover:text-[hsl(9,85%,60%)]">
+                  Commencer <ArrowRight className="w-4 h-4 ml-1" />
+                </div>
               </div>
             </div>
 
