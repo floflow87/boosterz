@@ -375,14 +375,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { name, email, bio, avatar } = req.body;
       
-      console.log('Profile update request:', { 
-        userId: req.user!.id, 
-        name, 
-        email, 
-        bio, 
-        avatarLength: avatar ? avatar.length : 0 
-      });
-      
       // Update user in database
       const updatedUser = await storage.updateUser(req.user!.id, {
         name,
@@ -394,12 +386,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!updatedUser) {
         return res.status(404).json({ message: "User not found" });
       }
-      
-      console.log('Profile updated successfully:', { 
-        userId: updatedUser.id, 
-        name: updatedUser.name,
-        avatarLength: updatedUser.avatar ? updatedUser.avatar.length : 0 
-      });
       
       res.json({
         message: 'Profil mis à jour avec succès',
@@ -642,11 +628,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentUserId = req.user?.id;
       
-      console.log('Marketplace cards endpoint - currentUserId:', currentUserId);
+      // Get all personal cards that are for sale from all users except current user
+      const personalCards = await storage.getAllPersonalCards();
       
-      // Return empty array to remove all fake cards from marketplace
-      console.log('Returning 0 marketplace cards (marketplace disabled)');
-      res.json([]);
+      // Filter for cards that are for sale and not from current user
+      const marketplaceCards = personalCards.filter(card => 
+        card.isForSale && 
+        card.userId !== currentUserId
+      );
+      
+      console.log(`Marketplace: Found ${marketplaceCards.length} cards for sale`);
+      res.json(marketplaceCards);
     } catch (error) {
       console.error("Error fetching marketplace cards:", error);
       res.status(500).json({ message: "Internal server error" });

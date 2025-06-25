@@ -152,7 +152,6 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
     return res.status(404).json({ message: 'Utilisateur non trouvé' });
   }
   
-  console.log('AuthRoutes /me - returning user with avatar length:', freshUser.avatar?.length || 0);
   res.json({ user: freshUser });
 });
 

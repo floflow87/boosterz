@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Fixed avatar upload and persistence system
+  - Resolved avatar not persisting after page refresh by fixing /api/auth/me endpoint
+  - Updated endpoint to fetch fresh user data from database instead of cached session data
+  - Fixed client-side cache invalidation to immediately update avatar display
+  - Avatar uploads now work correctly for files up to 10MB with proper base64 encoding
 - June 25, 2025. Fixed persistent likes system and marketplace cleanup
   - Implemented persistent like counts that show real total from all users
   - Fixed like counter to persist across page navigation and reload

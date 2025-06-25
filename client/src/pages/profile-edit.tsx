@@ -57,8 +57,6 @@ export default function ProfileEdit() {
   const updateProfileMutation = useMutation({
     mutationFn: async (updatedData: Partial<UserProfile>) => {
       const token = localStorage.getItem('authToken');
-      console.log('Making request to server with token:', !!token);
-      
       const response = await fetch('/api/auth/profile', {
         method: 'PUT',
         headers: {
@@ -68,17 +66,12 @@ export default function ProfileEdit() {
         body: JSON.stringify(updatedData),
       });
       
-      console.log('Server response status:', response.status);
-      
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Server error:', errorText);
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
       
-      const result = await response.json();
-      console.log('Server response:', result);
-      return result;
+      return response.json();
     },
     onSuccess: (data) => {
       // Update the current user data with the response from server
@@ -108,12 +101,6 @@ export default function ProfileEdit() {
       email,
       avatar
     };
-    
-    console.log('Sending profile update:', { 
-      name: updateData.name, 
-      email: updateData.email, 
-      avatarLength: updateData.avatar ? updateData.avatar.length : 0 
-    });
     
     updateProfileMutation.mutate(updateData);
   };
