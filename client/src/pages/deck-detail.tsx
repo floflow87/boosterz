@@ -408,12 +408,24 @@ export default function DeckDetail() {
   }
 
   if (!deck) {
+    // Invalider le cache des decks pour qu'ils se rechargent
+    queryClient.invalidateQueries({ queryKey: ['/api/decks'] });
+    
     return (
       <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
         <HaloBlur />
         <Header title="Deck" showBackButton />
         <div className="flex items-center justify-center min-h-[60vh]">
-          <div className="text-white">Deck non trouvé</div>
+          <div className="text-center text-white">
+            <h1 className="text-2xl font-bold mb-4">Deck non trouvé</h1>
+            <p className="text-gray-400">Ce deck n'existe pas ou a été supprimé.</p>
+            <Button
+              onClick={() => setLocation('/collections?tab=decks')}
+              className="mt-4 bg-[hsl(9,69%,66%)] hover:bg-[hsl(9,69%,60%)] text-white"
+            >
+              Retour aux decks
+            </Button>
+          </div>
         </div>
       </div>
     );

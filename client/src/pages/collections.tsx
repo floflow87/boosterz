@@ -43,7 +43,6 @@ export default function Collections() {
   const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
-  const queryClient = useQueryClient();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
@@ -97,7 +96,6 @@ export default function Collections() {
     queryKey: ["/api/decks"],
     staleTime: 0, // Force refresh des données
     gcTime: 0, // Pas de cache persistant
-    staleTime: 5 * 60 * 1000,
     enabled: activeTab === "deck",
   });
 
