@@ -470,15 +470,13 @@ export default function Social() {
         [postId]: [{
           id: result.comment.id,
           content: result.comment.content,
-          author: result.comment.user.name,
-          avatar: result.comment.user.avatar,
-          timestamp: new Date(result.comment.createdAt).toLocaleString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          })
+          createdAt: result.comment.createdAt,
+          user: {
+            id: result.comment.user.id,
+            name: result.comment.user.name,
+            username: result.comment.user.username,
+            avatar: result.comment.user.avatar
+          }
         }, ...(prev[postId] || [])]
       }));
 
