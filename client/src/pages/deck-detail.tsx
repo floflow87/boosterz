@@ -316,6 +316,9 @@ export default function DeckDetail() {
       if (!response.ok) {
         const errorData = await response.text();
         console.error('Delete error:', errorData);
+        if (response.status === 404) {
+          throw new Error('Ce deck a déjà été supprimé');
+        }
         throw new Error('Erreur lors de la suppression');
       }
       
@@ -331,9 +334,17 @@ export default function DeckDetail() {
       queryClient.invalidateQueries({ queryKey: ['/api/decks'] });
       setLocation('/collections?tab=decks');
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error('Delete mutation error:', error);
-      toast({ title: "Erreur lors de la suppression", variant: "destructive" });
+      const errorMessage = error.message || "Erreur lors de la suppression";
+      toast({ title: errorMessage, variant: "destructive" });
+      
+      // Si le deck n'existe plus, rediriger quand même
+      if (error.message === 'Ce deck a déjà été supprimé') {
+        setTimeout(() => {
+          setLocation('/collections?tab=decks');
+        }, 2000);
+      }
     }
   });
 
