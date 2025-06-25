@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, real, timestamp, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, real, timestamp, varchar, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -203,10 +203,12 @@ export const posts = pgTable("posts", {
 // Post likes table
 export const postLikes = pgTable("post_likes", {
   id: serial("id").primaryKey(),
-  postId: integer("post_id").notNull(),
-  userId: integer("user_id").notNull(),
+  postId: integer("post_id").notNull().references(() => posts.id, { onDelete: "cascade" }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  uniqueUserPost: unique().on(table.postId, table.userId),
+}));
 
 // Post comments table
 export const postComments = pgTable("post_comments", {

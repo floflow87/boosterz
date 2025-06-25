@@ -167,7 +167,7 @@ export default function Social() {
     }
   }, [userLikes]);
 
-  // Initialiser les likes des posts
+  // Initialiser les likes des posts - éviter la boucle infinie
   useEffect(() => {
     const allPosts = [...feed, ...myPosts];
     if (allPosts.length > 0) {
@@ -175,9 +175,9 @@ export default function Social() {
       allPosts.forEach(post => {
         likes[post.id] = post.likesCount || 0;
       });
-      setPostLikes(prev => ({ ...prev, ...likes }));
+      setPostLikes(likes); // Remplacer complètement au lieu de merger
     }
-  }, [feed, myPosts]);
+  }, [feed.length, myPosts.length]); // Dépendances plus précises
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({

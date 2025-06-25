@@ -1991,40 +1991,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)))
         .limit(1);
       
+      let liked = false;
       if (existingLike.length > 0) {
         // Unlike - supprimer le like
+        console.log(`Removing like for post ${postId} by user ${userId}`);
         await db.delete(postLikes)
           .where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)));
-        
-        // Décrémenter le compteur
-        await db.update(posts)
-          .set({ likesCount: sql`${posts.likesCount} - 1` })
-          .where(eq(posts.id, postId));
-        
-        // Récupérer le nouveau nombre de likes
-        const updatedPost = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
-        const newLikesCount = updatedPost[0]?.likesCount || 0;
-        
-        res.json({ liked: false, likesCount: newLikesCount, message: "Like retiré" });
+        liked = false;
       } else {
         // Like - ajouter le like
+        console.log(`Adding like for post ${postId} by user ${userId}`);
         await db.insert(postLikes).values({
           postId,
-          userId,
-          createdAt: new Date().toISOString()
+          userId
         });
-        
-        // Incrémenter le compteur
-        await db.update(posts)
-          .set({ likesCount: sql`${posts.likesCount} + 1` })
-          .where(eq(posts.id, postId));
-        
-        // Récupérer le nouveau nombre de likes
-        const updatedPost = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
-        const newLikesCount = updatedPost[0]?.likesCount || 0;
-        
-        res.json({ liked: true, likesCount: newLikesCount, message: "Post liké" });
+        liked = true;
       }
+
+      // Compter le nombre total de likes pour ce post
+      const likesCountResult = await db.select({ count: sql<number>`count(*)::int` })
+        .from(postLikes)
+        .where(eq(postLikes.postId, postId));
+
+      const likesCount = parseInt(likesCountResult[0]?.count?.toString() || '0');
+      console.log(`Post ${postId} now has ${likesCount} likes, user ${userId} liked: ${liked}`);
+
+      res.json({ liked, likesCount });
     } catch (error) {
       console.error("Erreur lors du like/unlike:", error);
       res.status(500).json({ message: "Erreur interne du serveur" });
