@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Settings, Heart, MessageCircle, Share2, Bell, Send, Trash2 } from "lucide-react";
+import { ArrowLeft, Settings, Heart, MessageCircle, Share2, Bell, Send, Trash2, DollarSign, X, CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import HaloBlur from "@/components/halo-blur";
@@ -569,99 +569,55 @@ export default function UserProfile() {
             )}
           </TabsContent>
 
-          {/* En vente Tab Content - Affichage des cartes en vente */}
+          {/* En vente Tab Content - Affichage des cartes en vente avec le même layout que collections */}
           <TabsContent value="marketplace" className="space-y-4">
             {marketplaceCards && marketplaceCards.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {marketplaceCards.map((card) => (
-                  <div
-                    key={card.id}
+                  <div 
+                    key={card.id} 
+                    className="bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer relative"
                     onClick={() => setSelectedCard(card)}
-                    className="group cursor-pointer"
                   >
-                    <div className="bg-[hsl(214,35%,22%)] rounded-xl border border-[hsl(214,35%,30%)] overflow-hidden hover:border-[hsl(9,85%,67%)] transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
-                      {/* Image container avec effet 3D */}
-                      <div className="relative aspect-[3/4] bg-gradient-to-br from-blue-900/30 to-purple-900/30 overflow-hidden">
-                        {card.imageUrl ? (
-                          <img 
-                            src={card.imageUrl} 
-                            alt={card.playerName}
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-white">
-                            <div className="text-center p-4">
-                              <div className="text-lg font-bold mb-2">{card.playerName}</div>
-                              <div className="text-sm text-gray-300">{card.teamName}</div>
-                              <div className="text-xs text-gray-400 mt-1">{card.cardType}</div>
-                            </div>
-                          </div>
-                        )}
-                        
-                        {/* Badge "En vente" flottant */}
-                        <div className="absolute top-3 right-3 bg-[hsl(9,85%,67%)] text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                          EN VENTE
-                        </div>
-
-                        {/* Effet de brillance au survol */}
-                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 transform translate-x-[-100%] group-hover:translate-x-[100%]" />
-                      </div>
+                    {/* Badge "En vente" */}
+                    <div className="absolute top-2 right-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full font-bold text-xs z-10">
+                      EN VENTE
+                    </div>
+                    
+                    {card.imageUrl && (
+                      <img 
+                        src={card.imageUrl} 
+                        alt={`${card.playerName || 'Carte'}`}
+                        className="w-full h-32 object-cover rounded-md mb-2"
+                      />
+                    )}
+                    
+                    <div className="space-y-1">
+                      {card.playerName && (
+                        <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
+                      )}
+                      {card.teamName && (
+                        <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
+                      )}
+                      <p className="text-gray-500 text-xs">{card.cardType}</p>
                       
-                      {/* Informations de la carte */}
-                      <div className="p-4 space-y-3">
-                        <div>
-                          <h3 className="text-white font-bold text-base mb-1 group-hover:text-[hsl(9,85%,67%)] transition-colors">
-                            {card.playerName}
-                          </h3>
-                          <p className="text-gray-400 text-sm">{card.teamName}</p>
-                          <p className="text-gray-500 text-xs">{card.cardType}</p>
+                      {/* Prix de vente */}
+                      {card.salePrice && (
+                        <div className="flex items-center gap-1 mt-2">
+                          <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
+                          <span className="text-[hsl(9,85%,67%)] text-xs font-medium">{card.salePrice}€</span>
                         </div>
-                        
-                        {/* Prix avec effet visuel */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            {card.salePrice ? (
-                              <div className="text-[hsl(9,85%,67%)] font-bold text-xl">
-                                {card.salePrice}€
-                              </div>
-                            ) : (
-                              <div className="text-[hsl(9,85%,67%)] font-bold text-base">
-                                Prix à négocier
-                              </div>
-                            )}
-                            <div className="text-gray-400 text-xs mt-1">
-                              État: Near Mint
-                            </div>
-                          </div>
-                          
-                          {/* Indicateur de qualité */}
-                          <div className="flex items-center space-x-1">
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                          </div>
-                        </div>
-                        
-                        {/* Description courte */}
-                        {card.saleDescription && (
-                          <p className="text-gray-300 text-xs line-clamp-2 leading-relaxed">
-                            {card.saleDescription}
-                          </p>
-                        )}
-                      </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-16">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-[hsl(9,85%,67%)] to-[hsl(9,85%,50%)] flex items-center justify-center">
-                  <div className="text-white text-2xl">💳</div>
-                </div>
-                <div className="text-gray-400 text-lg font-medium mb-2">Aucune carte en vente</div>
-                <p className="text-sm text-gray-500 max-w-md mx-auto">
-                  Les cartes mises en vente par cet utilisateur apparaîtront ici. 
-                  Revenez bientôt pour découvrir de nouvelles opportunités !
+              <div className="text-center py-12">
+                <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <div className="text-gray-400 mb-2 text-lg">Aucune carte en vente</div>
+                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                  Les cartes mises en vente par cet utilisateur apparaîtront ici.
                 </p>
               </div>
             )}
