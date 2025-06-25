@@ -566,11 +566,11 @@ export default function UserProfile() {
 
           {/* En vente Tab Content - Affichage des cartes en vente */}
           <TabsContent value="marketplace" className="space-y-4">
-            {marketplaceCards.length > 0 ? (
+            {marketplaceCards && marketplaceCards.length > 0 ? (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {marketplaceCards.map((card) => (
-                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)] overflow-hidden">
-                    <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
+                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)] overflow-hidden hover:border-[hsl(9,85%,67%)] transition-colors">
+                    <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center relative">
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 
@@ -583,18 +583,39 @@ export default function UserProfile() {
                           <div className="text-xs text-gray-300">{card.teamName}</div>
                         </div>
                       )}
+                      
+                      {/* Badge "En vente" */}
+                      <div className="absolute top-2 right-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-md text-xs font-medium">
+                        En vente
+                      </div>
                     </div>
+                    
                     <div className="p-3">
                       <div className="text-white font-medium text-sm mb-1">{card.playerName}</div>
-                      <div className="text-gray-400 text-xs mb-2">{card.teamName}</div>
-                      {card.salePrice && (
-                        <div className="text-[hsl(9,85%,67%)] font-bold text-sm">
+                      <div className="text-gray-400 text-xs mb-2">{card.teamName} • {card.cardType}</div>
+                      
+                      {/* Prix de vente */}
+                      {card.salePrice ? (
+                        <div className="text-[hsl(9,85%,67%)] font-bold text-lg mb-1">
                           {card.salePrice}€
                         </div>
+                      ) : (
+                        <div className="text-[hsl(9,85%,67%)] font-bold text-lg mb-1">
+                          Prix à négocier
+                        </div>
                       )}
+                      
+                      {/* Description de vente */}
                       {card.saleDescription && (
-                        <div className="text-gray-300 text-xs mt-1 line-clamp-2">
+                        <div className="text-gray-300 text-xs mt-2 line-clamp-2">
                           {card.saleDescription}
+                        </div>
+                      )}
+                      
+                      {/* État de la carte */}
+                      {card.condition && (
+                        <div className="text-gray-400 text-xs mt-1">
+                          État: {card.condition}
                         </div>
                       )}
                     </div>
