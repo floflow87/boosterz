@@ -169,20 +169,20 @@ export default function Profile() {
         <div className="flex items-center justify-between">
           {/* Flèche retour et logo BOOSTERZ */}
           <div className="relative flex items-center space-x-3">
+            {/* Halo main color derrière la flèche */}
+            <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-16 h-16 bg-[hsl(9,85%,67%)] opacity-20 rounded-full blur-xl"></div>
             <button 
               onClick={() => {
-                console.log("Arrow clicked - navigating back");
-                setLocation("/social");
+                console.log("Arrow clicked - navigating to social");
+                window.location.href = "/social";
               }}
-              className="text-white hover:text-gray-300 transition-colors"
+              className="text-white hover:text-gray-300 transition-colors relative z-10"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
             <h1 className="text-white font-bold text-lg z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
               BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
             </h1>
-            {/* Halo main color en haut à gauche */}
-            <div className="absolute -left-8 -top-8 w-32 h-32 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
           </div>
           
           {/* Icônes à droite */}
