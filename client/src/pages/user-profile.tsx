@@ -612,7 +612,7 @@ export default function UserProfile() {
           </TabsContent>
 
           <TabsContent value="decks" className="space-y-4">
-            {userDecks.length > 0 ? (
+            {userDecks && userDecks.length > 0 ? (
               <div className="space-y-4">
                 {userDecks.map((deck: any) => (
                   <div 
