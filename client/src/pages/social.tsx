@@ -1085,12 +1085,44 @@ export default function Social() {
                         <span className={likedPosts.has(post.id) ? 'text-red-500' : 'text-gray-400'}>
                           {postLikes[post.id] || 0} j'aime
                         </span>
-                        <span className="text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" onClick={() => {
+                        <span className="text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" onClick={async () => {
                           const newShowComments = new Set(showComments);
                           if (newShowComments.has(post.id)) {
                             newShowComments.delete(post.id);
                           } else {
                             newShowComments.add(post.id);
+                            // Charger les commentaires si pas encore chargés
+                            if (!postComments[post.id]) {
+                              try {
+                                const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+                                const response = await fetch(`/api/posts/${post.id}/comments`, {
+                                  headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                  },
+                                });
+                                if (response.ok) {
+                                  const data = await response.json();
+                                  setPostComments(prev => ({
+                                    ...prev,
+                                    [post.id]: data.comments.map((comment: any) => ({
+                                      id: comment.id,
+                                      content: comment.content,
+                                      author: comment.user.name,
+                                      avatar: comment.user.avatar,
+                                      timestamp: new Date(comment.createdAt).toLocaleString('fr-FR', {
+                                        day: '2-digit',
+                                        month: '2-digit',
+                                        year: 'numeric',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      })
+                                    }))
+                                  }));
+                                }
+                              } catch (error) {
+                                console.error('Erreur lors du chargement des commentaires:', error);
+                              }
+                            }
                           }
                           setShowComments(newShowComments);
                         }}>
@@ -1112,38 +1144,12 @@ export default function Social() {
                           <span className="text-sm">J'aime</span>
                         </button>
                         <button 
-                          onClick={async () => {
+                          onClick={() => {
                             const newShowComments = new Set(showComments);
                             if (newShowComments.has(post.id)) {
                               newShowComments.delete(post.id);
                             } else {
                               newShowComments.add(post.id);
-                              // Charger les commentaires si pas encore chargés
-                              if (!postComments[post.id]) {
-                                try {
-                                  const response = await fetch(`/api/posts/${post.id}/comments`);
-                                  if (response.ok) {
-                                    const comments = await response.json();
-                                    setPostComments(prev => ({
-                                      ...prev,
-                                      [post.id]: comments.map((c: any) => ({
-                                        id: c.id,
-                                        content: c.content,
-                                        author: c.user.name,
-                                        timestamp: new Date(c.createdAt).toLocaleString('fr-FR', {
-                                          day: '2-digit',
-                                          month: '2-digit',
-                                          year: 'numeric',
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })
-                                      }))
-                                    }));
-                                  }
-                                } catch (error) {
-                                  console.error('Erreur lors du chargement des commentaires:', error);
-                                }
-                              }
                             }
                             setShowComments(newShowComments);
                           }}
@@ -1161,16 +1167,16 @@ export default function Social() {
                           {/* Add Comment Input */}
                           <div className="flex space-x-3 mb-4">
                             <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                              {currentUser?.avatar ? (
+                              {currentUser?.user?.avatar ? (
                                 <img 
-                                  src={currentUser.avatar} 
+                                  src={currentUser.user.avatar} 
                                   alt="Avatar" 
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
                                 <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                                   <span className="text-xs font-bold text-white">
-                                    {currentUser?.username?.charAt(0)?.toUpperCase() || 'U'}
+                                    {currentUser?.user?.username?.charAt(0)?.toUpperCase() || 'U'}
                                   </span>
                                 </div>
                               )}
