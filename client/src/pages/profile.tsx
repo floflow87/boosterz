@@ -201,8 +201,8 @@ export default function Profile() {
       <main className="pb-6">
         {/* Header centré */}
         <div className="text-center px-6 py-8">
-          {/* Avatar dynamique */}
-          <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden">
+          {/* Avatar avec taille similaire à collections */}
+          <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden border-2 border-orange-400">
             {profileUser.avatar && profileUser.avatar.startsWith('data:image') ? (
               <img 
                 src={profileUser.avatar} 
@@ -211,18 +211,18 @@ export default function Profile() {
               />
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">
+                <span className="text-white text-lg font-bold">
                   {profileUser.name.charAt(0).toUpperCase()}
                 </span>
               </div>
             )}
           </div>
 
-          {/* Nom et pseudo */}
-          <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
+          {/* Nom avec taille ajustée */}
+          <h1 className="text-lg font-bold text-white mb-1" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
             {profileUser.name.toUpperCase()}
           </h1>
-          <p className="text-gray-400 mb-3">@{profileUser.username}</p>
+          <p className="text-gray-400 mb-3 text-sm">@{profileUser.username}</p>
 
           {/* Description */}
           {profileUser.bio && (

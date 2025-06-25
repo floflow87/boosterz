@@ -8,6 +8,7 @@ import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
 import { db } from "./db";
+import { decks } from "@shared/schema";
 import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema, follows, collections, userCards, conversations, messages, activities, subscriptions, postLikes, postComments } from "@shared/schema";
 import { eq, desc, and, inArray, not, or, ilike, asc, like, sql } from "drizzle-orm";
 
@@ -418,9 +419,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const followersCount = await storage.getFollowersCount(userId);
       const followingCount = await storage.getFollowingCount(userId);
       
-      // Get decks count (real decks from database)
-      const decks = await storage.getDecksByUserId(userId);
-      const decksCount = decks.length;
+      // Get decks count directly from database
+      const userDecks = await db.select().from(decks).where(eq(decks.userId, userId));
+      const decksCount = userDecks.length;
       
       // Calculate total cards owned across all collections
       let totalCards = 0;
