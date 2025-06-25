@@ -224,7 +224,17 @@ export default function CreateDeck() {
       }))
     };
 
-    createDeckMutation.mutate(deckData);
+    createDeckMutation.mutate(deckData, {
+      onSuccess: (response) => {
+        toast({
+          title: "Deck créé !",
+          description: `Le deck "${deckName}" a été créé avec succès.`,
+          className: "bg-green-600 text-white border-green-600",
+        });
+        // Rediriger vers la page du deck créé
+        setLocation(`/deck/${response.id}`);
+      }
+    });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -246,7 +256,12 @@ export default function CreateDeck() {
   const selectedThemeData = themeStyles[selectedTheme as keyof typeof themeStyles] || themeStyles["main+background"];
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
+    <div 
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        backgroundColor: selectedThemeData.backgroundColor
+      }}
+    >
       <HaloBlur />
       <Header 
         title={isAddMode && existingDeck 
@@ -254,6 +269,7 @@ export default function CreateDeck() {
           : "Créer un deck"
         } 
         showBackButton 
+        onBack={() => setLocation('/decks')}
       />
       
       <main className="relative z-10 px-4 pb-24 pt-4">

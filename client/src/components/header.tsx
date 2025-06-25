@@ -20,13 +20,18 @@ interface ConversationItem {
 interface HeaderProps {
   title: string;
   showBackButton?: boolean;
+  onBack?: () => void;
 }
 
-export default function Header({ title, showBackButton = false }: HeaderProps) {
+export default function Header({ title, showBackButton = false, onBack }: HeaderProps) {
   const [, setLocation] = useLocation();
 
   const handleBack = () => {
-    setLocation("/collections");
+    if (onBack) {
+      onBack();
+    } else {
+      setLocation("/collections");
+    }
   };
 
   // Get conversations to check for unread messages

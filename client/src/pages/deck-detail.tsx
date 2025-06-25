@@ -359,7 +359,11 @@ export default function DeckDetail() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
       <HaloBlur />
-      <Header title={deck.name} showBackButton />
+      <Header 
+        title={deck.name} 
+        showBackButton 
+        onBack={() => setLocation('/decks')}
+      />
       
       <main className="relative z-10 px-4 pb-24 pt-4">
         <div className="max-w-4xl mx-auto">
