@@ -623,10 +623,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getFollowersCount(userId: number): Promise<number> {
-    const result = await db.select({ count: sql<number>`count(*)` })
-      .from(follows)
-      .where(eq(follows.followingId, userId));
-    return result[0]?.count || 0;
+    try {
+      const result = await db.select({ count: sql<number>`count(*)` })
+        .from(follows)
+        .where(eq(follows.followingId, userId));
+      
+      const followersCount = result[0]?.count || 0;
+      console.log(`User ${userId} has ${followersCount} followers`);
+      return followersCount;
+    } catch (error) {
+      console.error('Error getting followers count:', error);
+      return 0;
+    }
+  }
+
+  async getFollowingCount(userId: number): Promise<number> {
+    try {
+      const result = await db.select({ count: sql<number>`count(*)` })
+        .from(follows)
+        .where(eq(follows.followerId, userId));
+      
+      return result[0]?.count || 0;
+    } catch (error) {
+      console.error('Error getting following count:', error);
+      return 0;
+    }
   }
 
   async deletePost(id: number): Promise<boolean> {
@@ -1470,8 +1491,7 @@ export class MemStorage implements IStorage {
         createdAt: new Date().toISOString()
       });
       
-      // Mettre à jour le compte d'abonnés dans la table users
-      await this.updateFollowersCount(followingId);
+      console.log(`User ${followerId} now follows user ${followingId}`);
       return true;
     } catch (error) {
       console.error('Error following user:', error);
@@ -1481,16 +1501,15 @@ export class MemStorage implements IStorage {
 
   async unfollowUser(followerId: number, followingId: number): Promise<boolean> {
     try {
-      await db.delete(follows).where(
+      const result = await db.delete(follows).where(
         and(
           eq(follows.followerId, followerId),
           eq(follows.followingId, followingId)
         )
       );
       
-      // Mettre à jour le compte d'abonnés dans la table users
-      await this.updateFollowersCount(followingId);
-      return true;
+      console.log(`User ${followerId} unfollowed user ${followingId}`);
+      return (result.rowCount || 0) > 0;
     } catch (error) {
       console.error('Error unfollowing user:', error);
       return false;

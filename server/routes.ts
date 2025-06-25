@@ -401,6 +401,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
+      // Get real followers count from database
+      const followersCount = await storage.getFollowersCount(userId);
+      const followingCount = await storage.getFollowingCount(userId);
+      console.log(`Profile for user ${userId}: ${followersCount} followers, ${followingCount} following`);
+      
       // If there's a current user and they're looking at someone else's profile, include follow status
       let isFollowing = false;
       if (req.user && req.user.id !== userId) {
@@ -409,9 +414,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({
         ...user,
+        followersCount,
+        followingCount,
         isFollowing
       });
     } catch (error) {
+      console.error('Error fetching user profile:', error);
       res.status(500).json({ message: "Internal server error" });
     }
   });
