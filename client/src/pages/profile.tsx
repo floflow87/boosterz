@@ -295,26 +295,26 @@ export default function Profile() {
                   <div key={post.id} className="bg-[#24354C] rounded-xl p-4 border border-gray-700/30">
                     {/* Header du post avec avatar et nom */}
                     <div className="flex items-center space-x-3 mb-3">
-                      {profileUser.avatar && (profileUser.avatar.startsWith('data:image') || profileUser.avatar.startsWith('http')) ? (
+                      {post.user?.avatar && (post.user.avatar.startsWith('data:image') || post.user.avatar.startsWith('http')) ? (
                         <img 
-                          src={profileUser.avatar} 
-                          alt={profileUser.name}
+                          src={post.user.avatar} 
+                          alt={post.user.name}
                           className="w-10 h-10 rounded-full object-cover"
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                           <span className="text-white text-sm font-bold">
-                            {profileUser.name?.charAt(0)?.toUpperCase() || 'U'}
+                            {post.user?.name?.charAt(0)?.toUpperCase() || profileUser.name?.charAt(0)?.toUpperCase() || 'U'}
                           </span>
                         </div>
                       )}
                       <div className="flex-1">
                         <div className="flex items-center space-x-2">
                           <span className="text-white font-semibold text-sm">
-                            {profileUser.name}
+                            {post.user?.name || profileUser.name}
                           </span>
                           <span className="text-gray-400 text-sm">
-                            @{profileUser.username}
+                            @{post.user?.username || profileUser.username}
                           </span>
                         </div>
                         <div className="text-gray-400 text-xs">
