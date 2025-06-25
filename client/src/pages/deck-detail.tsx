@@ -472,23 +472,23 @@ export default function DeckDetail() {
                 {/* Effet glitter pour deck complet */}
                 {localCards.length === 12 && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(15)].map((_, i) => (
+                    {[...Array(8)].map((_, i) => (
                       <div
                         key={i}
-                        className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-80"
+                        className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-50"
                         style={{
                           left: `${Math.random() * 100}%`,
                           top: `${Math.random() * 100}%`,
                           animation: `glitter ${1 + Math.random() * 2}s ease-in-out infinite`,
                           animationDelay: `${Math.random() * 3}s`,
-                          boxShadow: '0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(251, 191, 36, 0.6)'
+                          boxShadow: '0 0 4px rgba(255, 255, 255, 0.5), 0 0 8px rgba(251, 191, 36, 0.3)'
                         }}
                       />
                     ))}
-                    {[...Array(10)].map((_, i) => (
+                    {[...Array(5)].map((_, i) => (
                       <div
                         key={`star-${i}`}
-                        className="absolute text-white opacity-60"
+                        className="absolute text-white opacity-50"
                         style={{
                           left: `${Math.random() * 100}%`,
                           top: `${Math.random() * 100}%`,
