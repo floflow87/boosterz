@@ -123,7 +123,7 @@ const SortableCard = ({ id, cardData, index, isSelected, onLongPress, onRemove }
             e.stopPropagation();
             onRemove(cardData.position);
           }}
-          className="absolute -top-2 -left-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all z-20"
+          className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-all z-20"
           style={{ pointerEvents: 'auto' }}
         >
           <Trash2 className="w-4 h-4" />

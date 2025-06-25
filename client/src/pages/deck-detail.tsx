@@ -605,45 +605,87 @@ export default function DeckDetail() {
                         onLongPress={(position) => {
                           setLongPressCard(position);
                         }}
-                        onRemove={(position) => {
-                          // Supprimer la carte
-                          const newCards = localCards.filter(c => c.position !== position);
-                          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                          setLocalCards(reorderedCards);
-                          
-                          // Toast de succès
-                          toast({
-                            title: "Carte supprimée",
-                            description: "La carte a été retirée du deck avec succès",
-                            className: "bg-green-600 text-white border-green-700",
-                          });
-                          
-                          // Réinitialiser la sélection
-                          setLongPressCard(null);
-                          
-                          // Invalider le cache
-                          queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                        onRemove={async (position) => {
+                          try {
+                            // Appel API pour supprimer la carte
+                            const response = await fetch(`/api/decks/${id}/cards/${position}`, {
+                              method: 'DELETE',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                            });
+
+                            if (response.ok) {
+                              // Supprimer la carte localement
+                              const newCards = localCards.filter(c => c.position !== position);
+                              const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                              setLocalCards(reorderedCards);
+                              
+                              // Toast de succès
+                              toast({
+                                title: "Carte supprimée",
+                                description: "La carte a été retirée du deck avec succès",
+                                className: "bg-green-600 text-white border-green-700",
+                              });
+                              
+                              // Réinitialiser la sélection
+                              setLongPressCard(null);
+                              
+                              // Invalider le cache
+                              queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                            } else {
+                              throw new Error('Erreur lors de la suppression');
+                            }
+                          } catch (error) {
+                            console.error('Erreur lors de la suppression de la carte:', error);
+                            toast({
+                              title: "Erreur",
+                              description: "Impossible de supprimer la carte",
+                              variant: "destructive",
+                            });
+                          }
                         }}
                       />
                       {/* Bouton de suppression visible au survol */}
                       <button
-                        onClick={() => {
-                          // Supprimer la carte
-                          const newCards = localCards.filter(c => c.position !== deckCard.position);
-                          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                          setLocalCards(reorderedCards);
-                          
-                          // Toast de succès
-                          toast({
-                            title: "Carte supprimée",
-                            description: "La carte a été retirée du deck avec succès",
-                            className: "bg-green-600 text-white border-green-700",
-                          });
-                          
-                          // Invalider le cache
-                          queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                        onClick={async () => {
+                          try {
+                            // Appel API pour supprimer la carte
+                            const response = await fetch(`/api/decks/${id}/cards/${deckCard.position}`, {
+                              method: 'DELETE',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                            });
+
+                            if (response.ok) {
+                              // Supprimer la carte localement
+                              const newCards = localCards.filter(c => c.position !== deckCard.position);
+                              const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                              setLocalCards(reorderedCards);
+                              
+                              // Toast de succès
+                              toast({
+                                title: "Carte supprimée",
+                                description: "La carte a été retirée du deck avec succès",
+                                className: "bg-green-600 text-white border-green-700",
+                              });
+                              
+                              // Invalider le cache
+                              queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                            } else {
+                              throw new Error('Erreur lors de la suppression');
+                            }
+                          } catch (error) {
+                            console.error('Erreur lors de la suppression de la carte:', error);
+                            toast({
+                              title: "Erreur",
+                              description: "Impossible de supprimer la carte",
+                              variant: "destructive",
+                            });
+                          }
                         }}
-                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg z-20"
+                        className="absolute -top-2 -left-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg z-20"
                       >
                         <X className="w-3 h-3" />
                       </button>
