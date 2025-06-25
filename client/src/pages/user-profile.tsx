@@ -26,6 +26,35 @@ import { Button } from "@/components/ui/button";
 import { PostComponent } from "@/components/PostComponent";
 import type { User, Collection, Card, Post } from "@shared/schema";
 
+// Utilitaires pour les thèmes de deck (réplique de collections.tsx)
+const getThemeGradient = (themeColors: string) => {
+  const themes: Record<string, string> = {
+    "Marine & Or": "linear-gradient(135deg, #1e3a8a 0%, #fbbf24 100%)",
+    "Noir & Argent": "linear-gradient(135deg, #1f1f1f 0%, #e5e7eb 100%)",
+    "Rouge & Blanc": "linear-gradient(135deg, #dc2626 0%, #f9fafb 100%)",
+    "Vert & Blanc": "linear-gradient(135deg, #16a34a 0%, #f9fafb 100%)",
+    "Marine & Bronze": "linear-gradient(135deg, #1e3a8a 0%, #a16207 100%)",
+    "Or & Noir": "linear-gradient(135deg, #fbbf24 0%, #1f1f1f 100%)",
+    "Rouge & Noir": "linear-gradient(135deg, #dc2626 0%, #1f1f1f 100%)",
+    "Bleu Blanc Rouge": "linear-gradient(135deg, #2563eb 0%, #f9fafb 50%, #dc2626 100%)"
+  };
+  return themes[themeColors] || "hsl(214,35%,22%)";
+};
+
+const getThemeTextColor = (themeColors: string) => {
+  const themes: Record<string, string> = {
+    "Marine & Or": "#fbbf24",
+    "Noir & Argent": "#e5e7eb", 
+    "Rouge & Blanc": "#f9fafb",
+    "Vert & Blanc": "#f9fafb",
+    "Marine & Bronze": "#a16207",
+    "Or & Noir": "#fbbf24",
+    "Rouge & Noir": "#dc2626",
+    "Bleu Blanc Rouge": "#f9fafb"
+  };
+  return themes[themeColors] || "#ffffff";
+};
+
 interface CommentData {
   id: number;
   postId: number;
@@ -323,7 +352,7 @@ export default function UserProfile() {
                 <div className="text-xs text-gray-400">Cartes</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-bold text-white">{collections.length}</div>
+                <div className="text-xl font-bold text-white">{userDecks.length}</div>
                 <div className="text-xs text-gray-400">Decks</div>
               </div>
               <div className="text-center">
@@ -554,35 +583,84 @@ export default function UserProfile() {
             )}
           </TabsContent>
 
-          <TabsContent value="collections" className="space-y-4">
-            {collections.length > 0 ? (
-              <div className="grid gap-4">
-                {collections.map((collection) => (
-                  <div
-                    key={collection.id}
-                    onClick={() => setLocation(`/collections/${collection.id}`)}
-                    className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+          <TabsContent value="decks" className="space-y-4">
+            {deckPreviews.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {deckPreviews.map((deck: any) => (
+                  <div 
+                    key={deck.id} 
+                    onClick={() => setLocation(`/deck/${deck.id}`)}
+                    className="rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform relative overflow-hidden"
+                    style={{
+                      background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"
+                    }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="font-semibold text-white mb-1">{collection.name}</h3>
-                        <p className="text-sm text-gray-400">
-                          {collection.ownedCards || 0} / {collection.totalCards || 0} cartes
-                        </p>
+                    {/* Effet d'étoiles filantes pour les decks complets */}
+                    {deck.cardCount === 12 && (
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        {Array.from({length: 8}).map((_, i) => (
+                          <div
+                            key={i}
+                            className="absolute w-px h-8 bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-70"
+                            style={{
+                              top: `${-10 + Math.random() * 20}%`,
+                              left: `${Math.random() * 100}%`,
+                              transform: `rotate(${20 + Math.random() * 20}deg)`,
+                              animation: `shooting-star ${2 + Math.random() * 3}s ease-in-out infinite`,
+                              animationDelay: `${Math.random() * 4}s`
+                            }}
+                          />
+                        ))}
                       </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-[#F37261]">
-                          {Math.round(collection.completionPercentage || 0)}%
+                    )}
+                    <div className="flex items-center justify-between mb-3 relative z-10">
+                      <h4 className="font-bold text-lg font-luckiest" style={{
+                        color: deck.themeColors ? getThemeTextColor(deck.themeColors) : "#ffffff"
+                      }}>{deck.name}</h4>
+                      <span className="text-xs" style={{
+                        color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
+                      }}>{deck.cardCount}/12</span>
+                    </div>
+                    
+                    {/* Preview des 3 premières cartes */}
+                    <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-3">
+                      {deck.previewCards && deck.previewCards.length > 0 ? (
+                        <div className="flex space-x-3 w-full perspective-1000">
+                          {deck.previewCards.map((cardData: any, index: number) => (
+                            <div 
+                              key={index}
+                              className="relative flex-1 transform hover:scale-105 transition-all duration-300 hover:z-10"
+                              style={{
+                                transform: `perspective(800px) rotateY(${index * 5}deg)`,
+                                marginLeft: index > 0 ? '-20px' : '0'
+                              }}
+                            >
+                              <CardDisplay
+                                card={cardData.card}
+                                variant="compact"
+                                showActions={false}
+                                className="w-full shadow-lg border border-gray-600"
+                              />
+                            </div>
+                          ))}
+                          {deck.previewCards.length < 3 && (
+                            <div className="flex-1 border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs">
+                              +{12 - deck.cardCount}
+                            </div>
+                          )}
                         </div>
-                        <div className="text-xs text-gray-400">Complétée</div>
-                      </div>
+                      ) : (
+                        <div className="w-full border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-sm">
+                          Deck vide
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="text-gray-400">Aucune collection trouvée</div>
+                <div className="text-gray-400">Aucun deck trouvé</div>
               </div>
             )}
           </TabsContent>
