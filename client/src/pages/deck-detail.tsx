@@ -217,7 +217,7 @@ export default function DeckDetail() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const parallaxRef = useRef<HTMLDivElement>(null);
+
   
   const { data: deck, isLoading } = useQuery<DeckWithCards>({
     queryKey: [`/api/decks/${id}`],
@@ -460,12 +460,10 @@ export default function DeckDetail() {
             {deck.coverImage && (
               <>
                 <div 
-                  ref={parallaxRef}
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-75"
+                  className="absolute inset-0 bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${deck.coverImage})`,
                     backgroundPosition: `center ${deck.bannerPosition || 50}%`,
-                    transform: 'translateY(-40px)'
                   }}
                 />
                 <div className="absolute inset-0 bg-black/40" />
