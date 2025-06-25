@@ -525,15 +525,15 @@ export default function UserProfile() {
                                     handleAddComment(post.id);
                                   }
                                 }}
-                                className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400 text-sm"
+                                className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400 text-sm flex-1"
                               />
                               <Button
                                 onClick={() => handleAddComment(post.id)}
                                 disabled={!commentInputs[post.id]?.trim()}
                                 size="sm"
-                                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+                                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4"
                               >
-                                <Send className="w-4 h-4" />
+                                Publier
                               </Button>
                             </div>
                           </div>
@@ -578,6 +578,53 @@ export default function UserProfile() {
                 <div className="text-gray-400 mb-2">Aucun post pour le moment</div>
                 <p className="text-sm text-gray-500">
                   Les publications apparaîtront ici
+                </p>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* En vente Tab Content */}
+          <TabsContent value="marketplace" className="space-y-4">
+            {marketplaceCards.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {marketplaceCards.map((card) => (
+                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)] overflow-hidden">
+                    <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 to-purple-900 flex items-center justify-center">
+                      {card.imageUrl ? (
+                        <img 
+                          src={card.imageUrl} 
+                          alt={card.playerName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="text-white text-center p-4">
+                          <div className="font-bold text-sm mb-1">{card.playerName}</div>
+                          <div className="text-xs text-gray-300">{card.teamName}</div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <div className="text-white font-medium text-sm mb-1">{card.playerName}</div>
+                      <div className="text-gray-400 text-xs mb-2">{card.teamName}</div>
+                      {card.salePrice && (
+                        <div className="text-[hsl(9,85%,67%)] font-bold text-sm">
+                          {card.salePrice}€
+                        </div>
+                      )}
+                      {card.saleDescription && (
+                        <div className="text-gray-300 text-xs mt-1 line-clamp-2">
+                          {card.saleDescription}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="text-gray-400 mb-2">Aucune carte en vente</div>
+                <p className="text-sm text-gray-500">
+                  Les cartes mises en vente apparaîtront ici
                 </p>
               </div>
             )}
