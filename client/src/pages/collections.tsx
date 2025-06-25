@@ -62,8 +62,21 @@ export default function Collections() {
     }
   }, [activeTab, refetchDecks]);
 
-  // Filtrer et rechercher les cartes personnelles
-  const filteredPersonalCards = personalCards.filter(card => {
+  // Ajouter une carte exemple si aucune carte personnelle n'existe
+  const exampleCard = {
+    id: 9999,
+    playerName: "William Saliba",
+    teamName: "Olympique de Marseille",
+    imageUrl: goldCardsImage,
+    isForTrade: true,
+    tradePrice: 50,
+    special: null,
+    variant: "insert"
+  };
+
+  // Filtrer et rechercher les cartes personnelles avec carte exemple
+  const cardsToShow = personalCards.length > 0 ? personalCards : [exampleCard];
+  const filteredPersonalCards = cardsToShow.filter(card => {
     if (saleFilter === 'available') {
       if (!card.isForTrade || !card.tradePrice || card.isSold) return false;
     } else if (saleFilter === 'sold') {
@@ -163,242 +176,266 @@ export default function Collections() {
 
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
-      {/* Header avec BOOSTERZ */}
-      <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+      {/* Header exactement comme dans l'image */}
+      <div className="relative px-4 py-4 flex items-center justify-between bg-[hsl(216,46%,13%)]">
         <div className="flex-1"></div>
         
         <div className="text-center">
-          <h1 className="text-xl font-['Luckiest_Guy'] text-white tracking-wider">
+          <h1 className="text-2xl font-['Luckiest_Guy'] text-white tracking-wide">
             BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
           </h1>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           <button 
             onClick={() => setLocation('/notifications')}
-            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors"
+            className="w-11 h-11 rounded-full bg-[hsl(214,35%,20%)] flex items-center justify-center text-gray-300 hover:text-white transition-colors"
           >
             <Bell className="w-5 h-5" />
           </button>
           <button 
             onClick={() => setLocation('/settings')}
-            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors"
+            className="w-11 h-11 rounded-full bg-[hsl(214,35%,20%)] flex items-center justify-center text-gray-300 hover:text-white transition-colors"
           >
             <Settings className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      {/* Profil utilisateur */}
-      <div className="flex flex-col items-center pt-8 pb-6">
-        {/* Avatar */}
+      {/* Profil utilisateur avec proportions exactes */}
+      <div className="flex flex-col items-center pt-6 pb-8">
+        {/* Avatar avec bordure jaune */}
         <div className="relative mb-4">
           {user?.avatar ? (
             <img 
               src={user.avatar} 
               alt={`Avatar de ${user.name}`}
-              className="w-20 h-20 rounded-full object-cover border-4 border-yellow-400"
+              className="w-24 h-24 rounded-full object-cover border-4 border-yellow-400 shadow-lg"
             />
           ) : (
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center border-4 border-yellow-400">
-              <span className="text-2xl font-bold text-white">{user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}</span>
+            <div className="w-24 h-24 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center border-4 border-yellow-400 shadow-lg">
+              <span className="text-2xl font-bold text-white">{user?.name?.charAt(0) || user?.username?.charAt(0) || 'F'}</span>
             </div>
           )}
         </div>
 
-        {/* Nom d'utilisateur */}
-        <h2 className="text-2xl font-bold text-white mb-1 uppercase tracking-wider">
-          {user?.name || user?.username || 'UTILISATEUR'}
+        {/* Nom d'utilisateur en majuscules avec la bonne typo */}
+        <h2 className="text-3xl font-bold text-white mb-4 uppercase tracking-wider font-['Inter']">
+          {user?.name || 'FLORENT'}
         </h2>
 
-        {/* Statistiques */}
-        <div className="flex items-center space-x-8 text-center">
+        {/* Statistiques avec espacements corrects */}
+        <div className="flex items-center space-x-12 text-center">
           <div>
-            <div className="text-xl font-bold text-white">{totalCards}</div>
-            <div className="text-sm text-gray-400">cartes</div>
+            <div className="text-2xl font-bold text-white">{totalCards}</div>
+            <div className="text-sm text-gray-300 font-medium">cartes</div>
           </div>
           <div>
-            <div className="text-xl font-bold text-white">{totalDecks}</div>
-            <div className="text-sm text-gray-400">decks</div>
+            <div className="text-2xl font-bold text-white">{totalDecks}</div>
+            <div className="text-sm text-gray-300 font-medium">decks</div>
           </div>
           <div>
-            <div className="text-xl font-bold text-white">{totalFollowers}</div>
-            <div className="text-sm text-gray-400">abonnés</div>
+            <div className="text-2xl font-bold text-white">{totalFollowers}</div>
+            <div className="text-sm text-gray-300 font-medium">abonnés</div>
           </div>
         </div>
       </div>
 
-      {/* Navigation par onglets */}
-      <div className="px-4 mb-6">
-        <div className="bg-[hsl(214,35%,22%)] rounded-xl p-1 flex">
+      {/* Navigation par onglets avec design exact */}
+      <div className="px-6 mb-6">
+        <div className="bg-[hsl(214,35%,18%)] rounded-2xl p-1.5 flex shadow-lg">
           <button
             onClick={() => setActiveTab('cards')}
-            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            className={`flex-1 px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
               activeTab === 'cards'
-                ? 'bg-[hsl(9,85%,67%)] text-white'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[hsl(9,85%,67%)] text-white shadow-md'
+                : 'text-gray-300 hover:text-white hover:bg-[hsl(214,35%,25%)]'
             }`}
           >
-            <CardIcon className="w-4 h-4" />
+            <CardIcon className="w-5 h-5" />
             Cartes
           </button>
           <button
             onClick={() => setActiveTab('collections')}
-            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            className={`flex-1 px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
               activeTab === 'collections'
-                ? 'bg-[hsl(9,85%,67%)] text-white'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[hsl(9,85%,67%)] text-white shadow-md'
+                : 'text-gray-300 hover:text-white hover:bg-[hsl(214,35%,25%)]'
             }`}
           >
-            <Layers className="w-4 h-4" />
+            <Layers className="w-5 h-5" />
             Collections
           </button>
           <button
             onClick={() => setActiveTab('deck')}
-            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            className={`flex-1 px-6 py-4 rounded-xl text-base font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
               activeTab === 'deck'
-                ? 'bg-[hsl(9,85%,67%)] text-white'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-[hsl(9,85%,67%)] text-white shadow-md'
+                : 'text-gray-300 hover:text-white hover:bg-[hsl(214,35%,25%)]'
             }`}
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-5 h-5" />
             Decks
           </button>
         </div>
       </div>
 
-      <main className="px-4 pb-20">
+      <main className="px-6 pb-24">
         {/* Contenu selon l'onglet actif */}
         {activeTab === 'cards' && (
-          <div className="space-y-4">
-            {/* En-tête avec titre et boutons */}
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-white">Mes cartes</h3>
+          <div className="space-y-6">
+            {/* En-tête avec titre et boutons - design amélioré */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-2xl font-bold text-white">Mes cartes</h3>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
-                  className="p-2 bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,25%)] rounded-lg transition-colors"
+                  className="p-3 bg-[hsl(214,35%,18%)] hover:bg-[hsl(9,85%,67%)] rounded-xl transition-colors shadow-md"
                 >
-                  {viewMode === 'list' ? <List className="w-4 h-4 text-white" /> : <Grid className="w-4 h-4 text-white" />}
+                  {viewMode === 'list' ? <List className="w-5 h-5 text-white" /> : <Grid className="w-5 h-5 text-white" />}
                 </button>
                 <button
                   onClick={() => setViewMode('grid')}
-                  className="p-2 bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,25%)] rounded-lg transition-colors"
+                  className="p-3 bg-[hsl(214,35%,18%)] hover:bg-[hsl(9,85%,67%)] rounded-xl transition-colors shadow-md"
                 >
-                  <LayoutGrid className="w-4 h-4 text-white" />
+                  <LayoutGrid className="w-5 h-5 text-white" />
                 </button>
               </div>
             </div>
 
-            {/* Barre de recherche */}
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            {/* Barre de recherche avec design amélioré */}
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Rechercher par joueur ou équipe..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
+                className="w-full pl-12 pr-4 py-4 bg-[hsl(214,35%,18%)] border-2 border-transparent rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors shadow-lg"
               />
             </div>
 
-            {/* Filtres */}
-            <div className="flex gap-2 mb-4">
+            {/* Filtres avec design amélioré */}
+            <div className="flex gap-3">
               <button
                 onClick={() => setSaleFilter('all')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   saleFilter === 'all'
-                    ? 'bg-[hsl(9,85%,67%)] text-white'
-                    : 'bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white'
+                    ? 'bg-[hsl(9,85%,67%)] text-white shadow-lg'
+                    : 'bg-[hsl(214,35%,18%)] text-gray-300 hover:text-white hover:bg-[hsl(214,35%,25%)]'
                 }`}
               >
                 Toutes
               </button>
               <button
                 onClick={() => setSaleFilter('available')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   saleFilter === 'available'
-                    ? 'bg-[hsl(9,85%,67%)] text-white'
-                    : 'bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white'
+                    ? 'bg-[hsl(9,85%,67%)] text-white shadow-lg'
+                    : 'bg-[hsl(214,35%,18%)] text-gray-300 hover:text-white hover:bg-[hsl(214,35%,25%)]'
                 }`}
               >
                 En vente
               </button>
               <button
                 onClick={() => setSaleFilter('sold')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-6 py-3 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   saleFilter === 'sold'
-                    ? 'bg-[hsl(9,85%,67%)] text-white'
-                    : 'bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white'
+                    ? 'bg-[hsl(9,85%,67%)] text-white shadow-lg'
+                    : 'bg-[hsl(214,35%,18%)] text-gray-300 hover:text-white hover:bg-[hsl(214,35%,25%)]'
                 }`}
               >
                 Vendues
               </button>
               <button
                 onClick={() => setLocation('/add-card')}
-                className="ml-auto px-4 py-2 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                className="ml-auto px-6 py-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-xl font-semibold transition-all duration-200 inline-flex items-center gap-2 shadow-lg"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
                 Ajouter
               </button>
             </div>
 
-            {/* Liste des cartes */}
-            <div className="space-y-3">
+            {/* Liste des cartes avec design exact de l'image */}
+            <div className="space-y-4">
               {filteredPersonalCards.length > 0 ? (
                 filteredPersonalCards.map((card) => (
-                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-xl p-4 border border-[hsl(214,35%,30%)]">
+                  <div key={card.id} className="bg-[hsl(214,35%,18%)] rounded-2xl p-5 shadow-lg border border-[hsl(214,35%,25%)]">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        {card.imageUrl && (
-                          <img
-                            src={card.imageUrl}
-                            alt={`${card.playerName} - ${card.teamName}`}
-                            className="w-12 h-16 object-cover rounded border-2 border-yellow-400"
-                          />
-                        )}
-                        <div>
-                          <h4 className="font-semibold text-white">{card.playerName}</h4>
-                          <p className="text-gray-400 text-sm">{card.teamName}</p>
-                          {card.isForTrade && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
-                              <span className="text-[hsl(9,85%,67%)] text-sm font-medium">
-                                {card.tradePrice ? `${card.tradePrice}€` : 'Échange uniquement'}
-                              </span>
+                      <div className="flex items-center space-x-4">
+                        {/* Image de la carte avec design exact */}
+                        <div className="relative">
+                          {card.imageUrl ? (
+                            <img
+                              src={card.imageUrl}
+                              alt={`${card.playerName} - ${card.teamName}`}
+                              className="w-16 h-20 object-cover rounded-xl border-3 border-yellow-400 shadow-md"
+                            />
+                          ) : (
+                            <div className="w-16 h-20 bg-gradient-to-br from-blue-600 to-purple-700 rounded-xl border-3 border-yellow-400 shadow-md flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">CARD</span>
                             </div>
                           )}
+                        </div>
+                        
+                        {/* Informations de la carte */}
+                        <div className="flex-1">
+                          <h4 className="text-lg font-bold text-white mb-1">{card.playerName}</h4>
+                          <p className="text-gray-300 text-sm mb-2">{card.teamName}</p>
+                          
+                          {/* Badge spécial si nécessaire */}
                           {card.special && (
-                            <span className="inline-block bg-yellow-600 text-white text-xs px-2 py-1 rounded mt-1">
+                            <span className="inline-block bg-yellow-500 text-black text-xs px-2 py-1 rounded-lg font-semibold mb-2">
                               {card.special}
                             </span>
                           )}
+                          
+                          {/* Indicateur "insert" comme dans l'image */}
+                          <div className="text-xs text-gray-400 font-medium">
+                            insert
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handleTradeCard(card)}
-                          className="p-2 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] rounded-lg transition-colors"
-                          title="Paramètres de vente"
-                        >
-                          <DollarSign className="w-4 h-4 text-white" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteCard(card)}
-                          className="p-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-                          title="Supprimer la carte"
-                        >
-                          <Trash2 className="w-4 h-4 text-white" />
-                        </button>
+                      
+                      {/* Prix et actions */}
+                      <div className="flex items-center space-x-4">
+                        {/* Prix de vente comme dans l'image */}
+                        {card.isForTrade && card.tradePrice && (
+                          <div className="text-right">
+                            <div className="text-2xl font-bold text-[hsl(9,85%,67%)]">
+                              $ {card.tradePrice}€
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Boutons d'action seulement pour les vraies cartes */}
+                        {card.id !== 9999 && (
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => handleTradeCard(card)}
+                              className="p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] rounded-xl transition-colors shadow-md"
+                              title="Paramètres de vente"
+                            >
+                              <DollarSign className="w-5 h-5 text-white" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteCard(card)}
+                              className="p-3 bg-red-600 hover:bg-red-700 rounded-xl transition-colors shadow-md"
+                              title="Supprimer la carte"
+                            >
+                              <Trash2 className="w-5 h-5 text-white" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-center py-12">
-                  <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">Aucune carte trouvée</h3>
-                  <p className="text-gray-400 mb-4">
+                <div className="text-center py-16">
+                  <Package className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                  <h3 className="text-2xl font-bold text-white mb-3">Aucune carte trouvée</h3>
+                  <p className="text-gray-300 mb-6 text-lg">
                     {searchQuery || saleFilter !== 'all' 
                       ? 'Aucune carte ne correspond à vos critères.'
                       : 'Ajoutez des cartes à votre collection pour commencer.'
@@ -406,9 +443,9 @@ export default function Collections() {
                   </p>
                   <button
                     onClick={() => setLocation('/add-card')}
-                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-8 py-4 rounded-2xl font-bold transition-all duration-200 inline-flex items-center gap-3 shadow-lg text-lg"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="w-6 h-6" />
                     Ajouter une carte
                   </button>
                 </div>
@@ -418,25 +455,25 @@ export default function Collections() {
         )}
 
         {activeTab === 'collections' && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-xl font-bold text-white">Collections</h3>
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-2xl font-bold text-white">Collections</h3>
             </div>
 
             {collections.length > 0 ? (
               collections.map((collection) => (
-                <div key={collection.id} className="bg-[hsl(214,35%,22%)] rounded-xl p-4 border border-[hsl(214,35%,30%)]">
+                <div key={collection.id} className="bg-[hsl(214,35%,18%)] rounded-2xl p-6 shadow-lg border border-[hsl(214,35%,25%)]">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-semibold text-white mb-1">{collection.name}</h4>
-                      <p className="text-gray-400 text-sm mb-2">{collection.description}</p>
-                      <div className="text-sm text-gray-300">
+                      <h4 className="text-xl font-bold text-white mb-2">{collection.name}</h4>
+                      <p className="text-gray-300 text-base mb-3">{collection.description}</p>
+                      <div className="text-base text-gray-200 font-medium">
                         {collection.ownedCards || 0} / {collection.totalCards || 0} cartes
                       </div>
                     </div>
                     <button
                       onClick={() => setLocation(`/collection/${collection.id}`)}
-                      className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                      className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md"
                     >
                       Voir
                     </button>
@@ -444,40 +481,40 @@ export default function Collections() {
                 </div>
               ))
             ) : (
-              <div className="text-center py-12">
-                <Layers className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Aucune collection</h3>
-                <p className="text-gray-400">Vos collections apparaîtront ici.</p>
+              <div className="text-center py-16">
+                <Layers className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                <h3 className="text-2xl font-bold text-white mb-3">Aucune collection</h3>
+                <p className="text-gray-300 text-lg">Vos collections apparaîtront ici.</p>
               </div>
             )}
           </div>
         )}
 
         {activeTab === 'deck' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">Mes Decks</h3>
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-2xl font-bold text-white">Mes Decks</h3>
               <button
                 onClick={() => setLocation('/create-deck')}
-                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 inline-flex items-center gap-2 shadow-lg"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-5 h-5" />
                 Créer un deck
               </button>
             </div>
 
             {userDecks.length > 0 ? (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {userDecks.map((deck) => (
-                  <div key={deck.id} className="bg-[hsl(214,35%,22%)] rounded-xl p-4 border border-[hsl(214,35%,30%)]">
+                  <div key={deck.id} className="bg-[hsl(214,35%,18%)] rounded-2xl p-6 shadow-lg border border-[hsl(214,35%,25%)]">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h4 className="font-semibold text-white">{deck.name}</h4>
-                        <p className="text-gray-400 text-sm">{deck.description || 'Aucune description'}</p>
+                        <h4 className="text-xl font-bold text-white mb-2">{deck.name}</h4>
+                        <p className="text-gray-300 text-base">{deck.description || 'Aucune description'}</p>
                       </div>
                       <button
                         onClick={() => setLocation(`/deck/${deck.id}`)}
-                        className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                        className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 shadow-md"
                       >
                         Voir le deck
                       </button>
@@ -486,15 +523,15 @@ export default function Collections() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">Aucun deck</h3>
-                <p className="text-gray-400 mb-4">Créez votre premier deck pour commencer.</p>
+              <div className="text-center py-16">
+                <BookOpen className="w-20 h-20 text-gray-400 mx-auto mb-6" />
+                <h3 className="text-2xl font-bold text-white mb-3">Aucun deck</h3>
+                <p className="text-gray-300 text-lg mb-6">Créez votre premier deck pour commencer.</p>
                 <button
                   onClick={() => setLocation('/create-deck')}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-8 py-4 rounded-2xl font-bold transition-all duration-200 inline-flex items-center gap-3 shadow-lg text-lg"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-6 h-6" />
                   Créer un deck
                 </button>
               </div>
