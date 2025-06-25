@@ -6,22 +6,19 @@ import * as schema from "@shared/schema";
 neonConfig.webSocketConstructor = ws;
 
 // Détermine l'environnement
-const isProduction = process.env.NODE_ENV === 'production';
-const isDevelopment = process.env.NODE_ENV === 'development' || !process.env.NODE_ENV;
-
-// Utilise la base de données appropriée selon l'environnement
-const databaseUrl = isProduction 
-  ? process.env.PRODUCTION_DATABASE_URL 
+// Support for separate dev/production databases
+const databaseUrl = process.env.NODE_ENV === 'production' 
+  ? process.env.PROD_DATABASE_URL || process.env.DATABASE_URL
   : process.env.DATABASE_URL;
 
 if (!databaseUrl) {
-  const envType = isProduction ? 'PRODUCTION_DATABASE_URL' : 'DATABASE_URL';
   throw new Error(
-    `${envType} must be set for ${isProduction ? 'production' : 'development'} environment.`,
+    "DATABASE_URL must be set. Did you forget to provision a database?",
   );
 }
 
-console.log(`🗄️ Connecting to ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} database`);
-
-export const pool = new Pool({ connectionString: databaseUrl });
+export const pool = new Pool({ 
+  connectionString: databaseUrl,
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
 export const db = drizzle({ client: pool, schema });
