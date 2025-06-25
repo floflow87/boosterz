@@ -365,8 +365,8 @@ export default function DeckDetail() {
 
     if (!over || active.id === over.id) return;
 
-    const oldIndex = localCards.findIndex(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}` === active.id);
-    const newIndex = localCards.findIndex(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}` === over.id);
+    const oldIndex = localCards.findIndex(card => `deck-card-${card.position}-${card.cardId || card.personalCardId}` === active.id);
+    const newIndex = localCards.findIndex(card => `deck-card-${card.position}-${card.cardId || card.personalCardId}` === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
       const newCards = arrayMove(localCards, oldIndex, newIndex);
@@ -591,99 +591,28 @@ export default function DeckDetail() {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={localCards.map(card => `${card.type}-${card.type === 'collection' ? (card.card as Card).id : (card.card as PersonalCard).id}`)}
+                items={localCards.map(card => `deck-card-${card.position}-${card.cardId || card.personalCardId}`)}
                 strategy={rectSortingStrategy}
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {localCards.map((deckCard, index) => (
-                    <div key={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`} className="relative group">
+                    <div key={`deck-card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`} className="relative group">
                       <SortableCard
-                        id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
+                        id={`deck-card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`}
                         cardData={deckCard}
                         index={index}
                         isSelected={longPressCard === deckCard.position}
                         onLongPress={(position) => {
                           setLongPressCard(position);
                         }}
-                        onRemove={async (position) => {
-                          try {
-                            // Appel API pour supprimer la carte
-                            const response = await fetch(`/api/decks/${id}/cards/${position}`, {
-                              method: 'DELETE',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                            });
-
-                            if (response.ok) {
-                              // Supprimer la carte localement
-                              const newCards = localCards.filter(c => c.position !== position);
-                              const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                              setLocalCards(reorderedCards);
-                              
-                              // Toast de succès
-                              toast({
-                                title: "Carte supprimée",
-                                description: "La carte a été retirée du deck avec succès",
-                                className: "bg-green-600 text-white border-green-700",
-                              });
-                              
-                              // Réinitialiser la sélection
-                              setLongPressCard(null);
-                              
-                              // Invalider le cache
-                              queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-                            } else {
-                              throw new Error('Erreur lors de la suppression');
-                            }
-                          } catch (error) {
-                            console.error('Erreur lors de la suppression de la carte:', error);
-                            toast({
-                              title: "Erreur",
-                              description: "Impossible de supprimer la carte",
-                              variant: "destructive",
-                            });
-                          }
+                        onRemove={(position) => {
+                          removeCardMutation.mutate(position);
                         }}
                       />
                       {/* Bouton de suppression visible au survol */}
                       <button
-                        onClick={async () => {
-                          try {
-                            // Appel API pour supprimer la carte
-                            const response = await fetch(`/api/decks/${id}/cards/${deckCard.position}`, {
-                              method: 'DELETE',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                            });
-
-                            if (response.ok) {
-                              // Supprimer la carte localement
-                              const newCards = localCards.filter(c => c.position !== deckCard.position);
-                              const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                              setLocalCards(reorderedCards);
-                              
-                              // Toast de succès
-                              toast({
-                                title: "Carte supprimée",
-                                description: "La carte a été retirée du deck avec succès",
-                                className: "bg-green-600 text-white border-green-700",
-                              });
-                              
-                              // Invalider le cache
-                              queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-                            } else {
-                              throw new Error('Erreur lors de la suppression');
-                            }
-                          } catch (error) {
-                            console.error('Erreur lors de la suppression de la carte:', error);
-                            toast({
-                              title: "Erreur",
-                              description: "Impossible de supprimer la carte",
-                              variant: "destructive",
-                            });
-                          }
+                        onClick={() => {
+                          removeCardMutation.mutate(deckCard.position);
                         }}
                         className="absolute -top-2 -left-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg z-20"
                       >
