@@ -16,6 +16,22 @@ import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
 
+const getThemeBackgroundColor = (themeColors: string) => {
+  const themeStyles: Record<string, string> = {
+    "main+background": "#1A2332",
+    "white+sky": "#FFFFFF",
+    "red+navy": "#FF0000",
+    "navy+bronze": "#000080",
+    "white+red": "#FFFFFF",
+    "white+blue": "#FFFFFF",
+    "gold+black": "#FFD700",
+    "green+white": "#22C55E",
+    "red+black": "#DC2626",
+    "blue+white+red": "#3B82F6"
+  };
+  return themeStyles[themeColors] || "#1A2332";
+};
+
 
 export default function Collections() {
   const [, setLocation] = useLocation();
@@ -141,6 +157,15 @@ export default function Collections() {
   };
 
   // Mettre à jour les suggestions quand la recherche change
+  // Gérer le paramètre tab dans l'URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tabParam = urlParams.get('tab');
+    if (tabParam === 'decks') {
+      setActiveTab('deck');
+    }
+  }, []);
+
   useEffect(() => {
     if (personalCards.length === 0) return;
     
@@ -400,7 +425,11 @@ export default function Collections() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
+    <div className="min-h-screen relative overflow-hidden" style={{
+      background: activeTab === "deck" && userDecks && userDecks.length > 0 && userDecks[0]?.themeColors 
+        ? getThemeBackgroundColor(userDecks[0].themeColors)
+        : "hsl(216,46%,13%)"
+    }}>
       <HaloBlur />
       <Header title="Mes cartes" />
       <main className="relative z-10 px-4 pb-24">
@@ -442,7 +471,7 @@ export default function Collections() {
                 <span>cartes</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{collections?.length || 0}</span>
+                <span className="font-medium text-white">{userDecks?.length || 0}</span>
                 <span>decks</span>
               </div>
               <div className="flex items-center space-x-1">
