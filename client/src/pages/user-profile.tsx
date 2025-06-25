@@ -174,7 +174,11 @@ export default function UserProfile() {
         return newSet;
       });
     } else {
-      setShowComments(prev => new Set([...prev, postId]));
+      setShowComments(prev => {
+        const newSet = new Set(prev);
+        newSet.add(postId);
+        return newSet;
+      });
       
       // Load comments if not already loaded
       if (!postComments[postId]) {
@@ -613,11 +617,9 @@ export default function UserProfile() {
                       )}
                       
                       {/* État de la carte */}
-                      {card.condition && (
-                        <div className="text-gray-400 text-xs mt-1">
-                          État: {card.condition}
-                        </div>
-                      )}
+                      <div className="text-gray-400 text-xs mt-1">
+                        État: Near Mint
+                      </div>
                     </div>
                   </div>
                 ))}
