@@ -164,18 +164,17 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white">
-      {/* Header identique à la page sociale */}
-      <div className="relative bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-gray-800">
-        <div className="flex items-center justify-between px-4 py-3">
-          <button 
-            onClick={() => setLocation("/")}
-            className="text-white hover:text-gray-300 transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
+      {/* Header avec logo BOOSTERZ et halo à gauche */}
+      <div className="relative bg-[hsl(214,35%,11%)] px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo BOOSTERZ à gauche avec halo */}
+          <div className="relative flex items-center">
+            <h1 className="text-white font-bold text-xl z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>BOOSTERZ</h1>
+            {/* Halo orange à gauche du logo */}
+            <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 w-16 h-16 bg-[hsl(27,96%,61%)] opacity-20 rounded-full blur-xl"></div>
+          </div>
           
-          <h1 className="text-white font-bold text-xl" style={{ fontFamily: 'Luckiest Guy, cursive' }}>BOOSTERZ</h1>
-          
+          {/* Icônes à droite */}
           <div className="flex items-center space-x-4">
             <button className="text-white hover:text-gray-300 transition-colors relative">
               <Bell className="w-6 h-6" />
@@ -189,14 +188,11 @@ export default function Profile() {
             </button>
           </div>
         </div>
-        
-        {/* Halo effet main color */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-[hsl(27,96%,61%)] opacity-10 rounded-full blur-2xl"></div>
       </div>
 
       <main className="pb-6">
         {/* Header centré */}
-        <div className="text-center px-6 py-8 border-b border-[hsl(214,35%,30%)]">
+        <div className="text-center px-6 py-8">
           {/* Avatar dynamique */}
           <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden">
             {profileUser.avatar && profileUser.avatar.startsWith('data:image') ? (
@@ -257,7 +253,7 @@ export default function Profile() {
 
         {/* Onglets */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="sticky top-[73px] z-40 bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+          <div className="sticky top-[73px] z-40 bg-[hsl(214,35%,11%)]">
             <TabsList className="w-full h-auto p-0 bg-transparent">
               <TabsTrigger
                 value="posts"
