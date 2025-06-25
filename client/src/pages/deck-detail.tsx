@@ -449,10 +449,11 @@ export default function DeckDetail() {
           <div 
             className={cn(
               "rounded-2xl p-6 mb-6 relative overflow-hidden h-48",
-              themeStyle.gradientClass
+              deck.coverImage ? "" : themeStyle.gradientClass
             )}
             style={{
-              borderColor: themeStyle.accentColor
+              borderColor: themeStyle.accentColor,
+              backgroundColor: deck.coverImage ? 'transparent' : undefined
             }}
           >
             {/* Background Cover Image with Parallax */}
