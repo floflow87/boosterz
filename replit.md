@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Enhanced deck creation and visual effects
+  - Removed background color change during deck creation (keeps default background)
+  - Removed duplicate "Ajouter des cartes" button from deck creation form
+  - Changed deck creation toast to green color for positive feedback
+  - Modified creation flow to redirect to deck detail page instead of collections
+  - Added shooting star animation effect for complete decks (9 cards)
+  - Implemented fine shooting star trails with gradient effects and random positioning
 - June 25, 2025. Fixed deck deletion cache management and error handling
   - Resolved ReferenceError for refetchDecks by moving useEffect after useQuery declaration
   - Added proper cache invalidation (staleTime: 0, gcTime: 0) for deleted decks
