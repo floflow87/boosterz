@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Settings, Heart, MessageCircle, Share2, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface User {
   id: number;
@@ -179,6 +180,96 @@ export default function Profile() {
   const handleFollow = () => {
     const action = profileUser?.isFollowing ? 'unfollow' : 'follow';
     followMutation.mutate(action);
+  };
+
+  const handleLike = async (postId: number) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/like`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const newLikedState = new Set(likedPosts);
+        if (likedPosts.has(postId)) {
+          newLikedState.delete(postId);
+          setPostLikes(prev => ({
+            ...prev,
+            [postId]: Math.max(0, (prev[postId] || 0) - 1)
+          }));
+        } else {
+          newLikedState.add(postId);
+          setPostLikes(prev => ({
+            ...prev,
+            [postId]: (prev[postId] || 0) + 1
+          }));
+        }
+        setLikedPosts(newLikedState);
+      }
+    } catch (error) {
+      console.error('Erreur lors du like:', error);
+    }
+  };
+
+  const handleComment = async (postId: number) => {
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
+
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content }),
+      });
+
+      if (response.ok) {
+        const newComment = await response.json();
+        setPostComments(prev => ({
+          ...prev,
+          [postId]: [...(prev[postId] || []), newComment]
+        }));
+        setPostCommentsCount(prev => ({
+          ...prev,
+          [postId]: (prev[postId] || 0) + 1
+        }));
+        setCommentInputs(prev => ({
+          ...prev,
+          [postId]: ''
+        }));
+      }
+    } catch (error) {
+      console.error('Erreur lors du commentaire:', error);
+    }
+  };
+
+  const toggleComments = async (postId: number) => {
+    const newShowComments = new Set(showComments);
+    
+    if (showComments.has(postId)) {
+      newShowComments.delete(postId);
+    } else {
+      newShowComments.add(postId);
+      
+      // Charger les commentaires si pas encore fait
+      if (!postComments[postId]) {
+        try {
+          const response = await fetch(`/api/posts/${postId}/comments`);
+          const comments = await response.json();
+          setPostComments(prev => ({
+            ...prev,
+            [postId]: comments
+          }));
+        } catch (error) {
+          console.error('Erreur lors du chargement des commentaires:', error);
+        }
+      }
+    }
+    
+    setShowComments(newShowComments);
   };
 
   if (isUserLoading || !userId) {
