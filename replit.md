@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Fixed deck deletion cache management and error handling
+  - Resolved ReferenceError for refetchDecks by moving useEffect after useQuery declaration
+  - Added proper cache invalidation (staleTime: 0, gcTime: 0) for deleted decks
+  - Enhanced deck-not-found error handling with automatic cache invalidation
+  - Fixed navigation flow after deck deletion with immediate UI updates
 - June 25, 2025. Implemented deck deletion functionality with confirmation modal
   - Added delete button (trash icon) next to edit button in deck header
   - Created confirmation modal with proper styling and danger colors

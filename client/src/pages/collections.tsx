@@ -66,13 +66,6 @@ export default function Collections() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Effet pour rafraîchir les decks quand on change d'onglet
-  useEffect(() => {
-    if (activeTab === "deck") {
-      refetchDecks();
-    }
-  }, [activeTab, refetchDecks]);
-
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ["/api/users/1"],
   });
@@ -98,6 +91,13 @@ export default function Collections() {
     gcTime: 0, // Pas de cache persistant
     enabled: activeTab === "deck",
   });
+
+  // Effet pour rafraîchir les decks quand on change d'onglet
+  useEffect(() => {
+    if (activeTab === "deck") {
+      refetchDecks();
+    }
+  }, [activeTab, refetchDecks]);
 
   // Query pour obtenir les détails complets des decks avec cartes pour prévisualisation
   const { data: deckPreviews = [] } = useQuery({
