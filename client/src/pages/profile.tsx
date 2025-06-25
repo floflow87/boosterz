@@ -170,7 +170,7 @@ export default function Profile() {
           {/* Flèche retour et logo BOOSTERZ */}
           <div className="relative flex items-center space-x-3">
             {/* Halo main color derrière la flèche */}
-            <div className="absolute -left-2 top-1/2 transform -translate-y-1/2 w-16 h-16 bg-[hsl(9,85%,67%)] opacity-20 rounded-full blur-xl"></div>
+            <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 w-24 h-24 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
             <button 
               onClick={() => {
                 console.log("Arrow clicked - navigating to social");
