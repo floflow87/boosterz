@@ -124,6 +124,8 @@ export default function Social() {
     queryKey: ['/api/auth/me'],
     retry: false,
   });
+  
+  console.log('Current user data:', currentUser);
 
   const currentUserId = currentUser?.user?.id?.toString() || "1";
   const userId = "999"; // Pour les profils consultés (maxlamenace)
@@ -462,10 +464,10 @@ export default function Social() {
 
       const result = await response.json();
       
-      // Mettre à jour les commentaires
+      // Mettre à jour les commentaires (ajout en tête pour ordre décroissant)
       setPostComments(prev => ({
         ...prev,
-        [postId]: [...(prev[postId] || []), {
+        [postId]: [{
           id: result.comment.id,
           content: result.comment.content,
           author: result.comment.user.name,
@@ -477,7 +479,7 @@ export default function Social() {
             hour: '2-digit',
             minute: '2-digit'
           })
-        }]
+        }, ...(prev[postId] || [])]
       }));
 
       // Mettre à jour le compteur

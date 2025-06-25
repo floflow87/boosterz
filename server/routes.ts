@@ -2065,7 +2065,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .from(postComments)
       .innerJoin(users, eq(postComments.userId, users.id))
       .where(eq(postComments.postId, postId))
-      .orderBy(asc(postComments.createdAt));
+      .orderBy(desc(postComments.createdAt));
 
       res.json(comments);
     } catch (error) {
