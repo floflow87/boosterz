@@ -247,21 +247,33 @@ export default function Social() {
   // Handle like functionality
   const handleLike = async (postId: number) => {
     try {
+      console.log('Attempting to like post:', postId);
+      const token = localStorage.getItem('token');
+      console.log('Token exists:', !!token);
+      
       const response = await fetch(`/api/posts/${postId}/like`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
       
-      if (!response.ok) throw new Error('Erreur lors du like');
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Response error:', errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
       
       const result = await response.json();
+      console.log('Like result:', result);
       
       if (result.liked) {
         setLikedPosts(prev => new Set([...prev, postId]));
         setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
+        console.log('Post liked successfully');
       } else {
         setLikedPosts(prev => {
           const newSet = new Set(prev);
@@ -269,9 +281,10 @@ export default function Social() {
           return newSet;
         });
         setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
+        console.log('Post unliked successfully');
       }
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur complète:', error);
     }
   };
 
@@ -1012,7 +1025,15 @@ export default function Social() {
                           <span className="text-sm">J'aime</span>
                         </button>
                         <button 
-                          onClick={() => toggleComments(post.id)}
+                          onClick={() => {
+                            const newShowComments = new Set(showComments);
+                            if (newShowComments.has(post.id)) {
+                              newShowComments.delete(post.id);
+                            } else {
+                              newShowComments.add(post.id);
+                            }
+                            setShowComments(newShowComments);
+                          }}
                           className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
                         >
                           <MessageCircle className="w-4 h-4" />
