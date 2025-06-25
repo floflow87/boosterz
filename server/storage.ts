@@ -85,6 +85,7 @@ export interface IStorage {
   
   // Deck card management
   removeCardFromDeck(deckId: number, cardPosition: number): Promise<void>;
+  deleteDeck(deckId: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {

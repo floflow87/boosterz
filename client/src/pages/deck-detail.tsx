@@ -452,6 +452,21 @@ export default function DeckDetail() {
                 >
                   <Edit3 className="w-5 h-5" />
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "p-2",
+                    deck.coverImage
+                      ? "text-white hover:bg-red-500/20 backdrop-blur-sm"
+                      : ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
+                        ? "text-black hover:bg-red-500/10"
+                        : "text-white hover:bg-red-500/10"
+                  )}
+                  onClick={() => setShowDeleteConfirm(true)}
+                >
+                  <Trash2 className="w-5 h-5" />
+                </Button>
               </div>
             </div>
 
@@ -797,6 +812,37 @@ export default function DeckDetail() {
                   </Button>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de confirmation de suppression */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 max-w-md w-full mx-4 border border-[hsl(214,35%,30%)]">
+            <h3 className="text-xl font-bold text-white mb-4">Supprimer le deck</h3>
+            <p className="text-gray-300 mb-6">
+              Êtes-vous sûr de vouloir supprimer définitivement ce deck ? Cette action est irréversible.
+            </p>
+            <div className="flex space-x-3">
+              <Button
+                onClick={() => setShowDeleteConfirm(false)}
+                variant="outline"
+                className="flex-1 bg-transparent border-gray-600 text-white hover:bg-gray-700"
+              >
+                Annuler
+              </Button>
+              <Button
+                onClick={() => {
+                  deleteDeckMutation.mutate();
+                  setShowDeleteConfirm(false);
+                }}
+                disabled={deleteDeckMutation.isPending}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white"
+              >
+                {deleteDeckMutation.isPending ? 'Suppression...' : 'Supprimer'}
+              </Button>
             </div>
           </div>
         </div>
