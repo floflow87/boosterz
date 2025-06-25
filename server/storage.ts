@@ -83,7 +83,8 @@ export interface IStorage {
   getCardsForSaleByUserId(userId: number): Promise<any[]>;
   getUsers(): Promise<User[]>;
   
-  // Deck card management
+  // Deck management
+  getDecks(userId: number): Promise<any[]>;
   removeCardFromDeck(deckId: number, cardPosition: number): Promise<void>;
   deleteDeck(deckId: number): Promise<boolean>;
 }
@@ -1727,6 +1728,36 @@ export class MemStorage implements IStorage {
     } catch (error) {
       console.error('Error getting followed users posts:', error);
       return [];
+    }
+  }
+
+  async removeCardFromDeck(deckId: number, cardPosition: number): Promise<void> {
+    console.log(`Removing card at position ${cardPosition} from deck ${deckId}`);
+    
+    // Supprimer la carte à la position spécifiée
+    await db.delete(deckCards)
+      .where(and(
+        eq(deckCards.deckId, deckId),
+        eq(deckCards.position, cardPosition)
+      ));
+    
+    // Réorganiser les positions des cartes restantes
+    const remainingCards = await db.select()
+      .from(deckCards)
+      .where(eq(deckCards.deckId, deckId))
+      .orderBy(deckCards.position);
+    
+    // Supprimer toutes les cartes et les ré-insérer avec les nouvelles positions
+    await db.delete(deckCards).where(eq(deckCards.deckId, deckId));
+    
+    for (let i = 0; i < remainingCards.length; i++) {
+      const card = remainingCards[i];
+      await db.insert(deckCards).values({
+        deckId: card.deckId,
+        cardId: card.cardId,
+        personalCardId: card.personalCardId,
+        position: i
+      });
     }
   }
 }

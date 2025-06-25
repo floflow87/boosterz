@@ -912,11 +912,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const cardPosition = parseInt(req.params.cardPosition);
       const userId = req.user!.id;
 
-      // Verify deck ownership
-      const deck = await storage.getDeck(deckId);
-      if (!deck || deck.userId !== userId) {
-        return res.status(404).json({ message: "Deck not found" });
-      }
+      console.log(`Removing card at position ${cardPosition} from deck ${deckId} for user ${userId}`);
 
       // Remove card and reorder positions
       await storage.removeCardFromDeck(deckId, cardPosition);
