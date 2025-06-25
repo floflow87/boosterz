@@ -630,44 +630,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const currentUserId = req.user?.id;
       
-      // Get all personal cards that are for sale, excluding current user's cards
-      const personalCards = await storage.getPersonalCards();
-      const marketplaceCards = personalCards.filter(card => 
-        card.isForTrade && 
-        !card.isSold && 
-        card.userId !== currentUserId
-      );
-      
-      res.json(marketplaceCards);
-    } catch (error) {
-      console.error("Error fetching marketplace cards:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-
-  app.get("/api/users/:id/sale-cards", optionalAuth, async (req: AuthRequest, res) => {
-    try {
-      const userId = parseInt(req.params.id);
-      
-      // Get personal cards for the specific user that are for sale
-      const personalCards = await storage.getPersonalCards();
-      const saleCards = personalCards.filter(card => 
-        card.userId === userId && 
-        card.isForTrade && 
-        !card.isSold
-      );
-      
-      res.json(saleCards);
-    } catch (error) {
-      console.error("Error fetching user sale cards:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-
-  app.get("/api/cards/marketplace-old", optionalAuth, async (req: AuthRequest, res) => {
-    try {
-      const currentUserId = req.user?.id;
-      
       // Get all personal cards that are for sale from all users except current user
       const personalCards = await storage.getAllPersonalCards();
       

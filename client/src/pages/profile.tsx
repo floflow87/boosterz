@@ -296,34 +296,42 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
-      {/* Header identique à settings avec bouton retour */}
-      <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
-        <button 
-          onClick={() => setLocation(-1)}
-          className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors relative z-10"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
-        
-        <div className="flex-1 text-center">
-          <h1 className="text-xl font-bold font-luckiest text-white">
-            BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
-          </h1>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors">
-            <Bell className="w-5 h-5" />
-          </button>
-          <button 
-            onClick={() => setLocation('/settings')}
-            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+      {/* Header avec logo BOOSTERZ et halo */}
+      <div className="relative px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Flèche retour et logo BOOSTERZ */}
+          <div className="relative flex items-center space-x-3">
+            {/* Halo main color derrière la flèche */}
+            <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 w-32 h-32 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
+            <button 
+              onClick={() => {
+                setLocation("/social");
+              }}
+              className="text-white hover:text-gray-300 transition-colors relative z-10"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-white font-bold text-lg z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
+              BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
+            </h1>
+          </div>
+          
+          {/* Icônes à droite */}
+          <div className="flex items-center space-x-4">
+            <button className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors relative">
+              <Bell className="w-5 h-5 text-white" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <button 
+              onClick={() => setLocation("/settings")}
+              className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors"
+            >
+              <Settings className="w-5 h-5 text-white" />
+            </button>
+          </div>
         </div>
       </div>
-      
+
       <main className="pb-6">
         {/* Header centré */}
         <div className="text-center px-6 py-8">

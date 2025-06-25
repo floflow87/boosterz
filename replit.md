@@ -118,13 +118,6 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 25, 2025. Restored collections page to exact original design from user image
-  - Recreated header with proper BOOSTERZ logo typography and spacing
-  - Restored user profile section with large avatar, name in uppercase, and correct statistics layout
-  - Implemented proper tab navigation with Cartes/Collections/Decks
-  - Enhanced search bar, filters, and card display to match original proportions
-  - Added William Saliba example card to demonstrate exact layout as shown in reference image
-  - Applied correct colors, shadows, and typography throughout the interface
 - June 25, 2025. Resolved compilation errors and prepared HTTPS deployment for boosterz.fr
   - Fixed duplicate function implementations in storage.ts causing TypeScript errors
   - Removed redundant getPersonalCard, updatePersonalCard, deletePersonalCard methods
