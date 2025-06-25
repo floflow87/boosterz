@@ -319,13 +319,18 @@ export default function Social() {
       return apiRequest("POST", "/api/posts", postData);
     },
     onSuccess: () => {
+      // Invalider les requêtes pour rafraîchir les données depuis la base
       queryClient.invalidateQueries({ queryKey: ["/api/users/feed"] });
       queryClient.invalidateQueries({ queryKey: ["/api/social/activities"] });
       queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/posts`] });
+      
+      // Reset form
       setNewPostContent("");
       setSelectedPhoto(null);
       setTaggedPeople([]);
       setSearchPeople("");
+      setIsPostModalOpen(false);
+      
       toast({
         title: "Publication créée avec succès",
         className: "bg-green-600 text-white border-green-700"
