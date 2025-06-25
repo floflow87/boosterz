@@ -123,6 +123,7 @@ The application follows a modern full-stack architecture with clear separation b
   - Added environment-specific database connection logic in db.ts
   - Created comprehensive deployment guide for HTTPS setup and domain configuration
   - Configured infrastructure for production deployment with proper database separation
+  - **Note** : Base de données production pas encore créée - utilise actuellement la même base pour dev/prod
 - June 25, 2025. Updated profile page header and navigation consistency
   - Added consistent header with BOOSTERZ logo in Luckiest Guy font with Z in main color
   - Optimized back arrow navigation using setLocation for faster page transitions
