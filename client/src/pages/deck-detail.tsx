@@ -448,7 +448,7 @@ export default function DeckDetail() {
           {/* Deck Header */}
           <div 
             className={cn(
-              "rounded-2xl p-6 mb-6 relative overflow-hidden",
+              "rounded-2xl p-6 mb-6 relative overflow-hidden h-24",
               themeStyle.gradientClass
             )}
             style={{
@@ -628,7 +628,7 @@ export default function DeckDetail() {
                         toast({
                           title: "Carte supprimée",
                           description: "La carte a été retirée du deck avec succès",
-                          className: "bg-green-600 text-white border-green-600",
+                          className: "bg-green-600 text-white border-green-700",
                         });
                         
                         // Réinitialiser la sélection
