@@ -182,21 +182,35 @@ export default function Profile() {
     });
   };
 
-  // Gérer les likes des posts
-  const handleLike = (postId: number) => {
-    const isLiked = likedPosts.has(postId);
-    const newLikedPosts = new Set(likedPosts);
-    const currentLikes = postLikes[postId] || Math.floor(Math.random() * 20) + 1;
-    
-    if (isLiked) {
-      newLikedPosts.delete(postId);
-      setPostLikes(prev => ({ ...prev, [postId]: Math.max(0, currentLikes - 1) }));
-    } else {
-      newLikedPosts.add(postId);
-      setPostLikes(prev => ({ ...prev, [postId]: currentLikes + 1 }));
+  // Mutation pour liker/unliker un post
+  const likeMutation = useMutation({
+    mutationFn: async (postId: number) => {
+      const response = await apiRequest(`/api/posts/${postId}/like`, {
+        method: 'POST'
+      });
+      return response;
+    },
+    onSuccess: (data, postId) => {
+      const newLikedPosts = new Set(likedPosts);
+      if (data.liked) {
+        newLikedPosts.add(postId);
+      } else {
+        newLikedPosts.delete(postId);
+      }
+      setLikedPosts(newLikedPosts);
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${userId}/posts`] });
     }
-    setLikedPosts(newLikedPosts);
+  });
+
+  const handleLike = (postId: number) => {
+    likeMutation.mutate(postId);
   };
+
+  // Charger les commentaires d'un post
+  const { data: commentsData } = useQuery({
+    queryKey: [`/api/posts/${showComments.size > 0 ? Array.from(showComments)[0] : 0}/comments`],
+    enabled: showComments.size > 0,
+  });
 
   // Gérer l'affichage des commentaires
   const toggleComments = (postId: number) => {
@@ -205,51 +219,45 @@ export default function Profile() {
       newShowComments.delete(postId);
     } else {
       newShowComments.add(postId);
-      // Simuler des commentaires si ils n'existent pas encore
-      if (!postComments[postId]) {
+      // Charger les commentaires depuis l'API
+      queryClient.fetchQuery({
+        queryKey: [`/api/posts/${postId}/comments`],
+      }).then((comments) => {
         setPostComments(prev => ({
           ...prev,
-          [postId]: [
-            {
-              id: 1,
-              user: { name: "Sophie Martin", username: "sophie_m" },
-              content: "Superbe carte ! 🔥",
-              createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
-            },
-            {
-              id: 2,
-              user: { name: "Lucas Dubois", username: "lucas_d" },
-              content: "Tu l'as eue dans quel booster ?",
-              createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
-            }
-          ]
+          [postId]: comments || []
         }));
-      }
+      });
     }
     setShowComments(newShowComments);
   };
 
-  // Ajouter un commentaire
+  // Mutation pour ajouter un commentaire
+  const commentMutation = useMutation({
+    mutationFn: async ({ postId, content }: { postId: number; content: string }) => {
+      const response = await apiRequest(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({ content })
+      });
+      return response;
+    },
+    onSuccess: (data, { postId }) => {
+      setPostComments(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), data]
+      }));
+      setCommentInputs(prev => ({
+        ...prev,
+        [postId]: ""
+      }));
+      queryClient.invalidateQueries({ queryKey: [`/api/posts/${postId}/comments`] });
+    }
+  });
+
   const addComment = (postId: number) => {
     const content = commentInputs[postId]?.trim();
     if (!content) return;
-
-    const newComment = {
-      id: Date.now(),
-      user: { name: currentUser?.user?.name || "Utilisateur", username: currentUser?.user?.username || "user" },
-      content,
-      createdAt: new Date().toISOString()
-    };
-
-    setPostComments(prev => ({
-      ...prev,
-      [postId]: [...(prev[postId] || []), newComment]
-    }));
-
-    setCommentInputs(prev => ({
-      ...prev,
-      [postId]: ""
-    }));
+    commentMutation.mutate({ postId, content });
   };
 
   if (!userId) {
@@ -436,8 +444,18 @@ export default function Profile() {
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-2">
-                            <span className="font-medium text-white">{profileUser.name}</span>
-                            <span className="text-gray-400 text-sm">@{profileUser.username}</span>
+                            <button
+                              onClick={() => setLocation(`/profile/${profileUser.id}`)}
+                              className="font-medium text-white hover:text-blue-400 transition-colors cursor-pointer"
+                            >
+                              {profileUser.name}
+                            </button>
+                            <button
+                              onClick={() => setLocation(`/profile/${profileUser.id}`)}
+                              className="text-gray-400 text-sm hover:text-blue-400 transition-colors cursor-pointer"
+                            >
+                              @{profileUser.username}
+                            </button>
                             <span className="text-gray-500 text-sm">
                               {new Date(post.createdAt).toLocaleDateString('fr-FR')}
                             </span>
@@ -486,17 +504,18 @@ export default function Profile() {
                           <div className="flex items-center space-x-4 pt-3 border-t border-[hsl(214,35%,30%)]">
                             <button
                               onClick={() => handleLike(post.id)}
+                              disabled={likeMutation.isPending}
                               className={`flex items-center space-x-2 transition-colors ${
-                                likedPosts.has(post.id) 
+                                post.isLikedByUser
                                   ? "text-red-500" 
                                   : "text-gray-400 hover:text-red-500"
                               }`}
                             >
                               <Heart 
-                                className={`w-4 h-4 ${likedPosts.has(post.id) ? "fill-current" : ""}`} 
+                                className={`w-4 h-4 ${post.isLikedByUser ? "fill-current" : ""}`} 
                               />
                               <span className="text-sm">
-                                {postLikes[post.id] || Math.floor(Math.random() * 20) + 1}
+                                {post.likesCount || 0}
                               </span>
                             </button>
                             
@@ -506,7 +525,7 @@ export default function Profile() {
                             >
                               <MessageCircle className="w-4 h-4" />
                               <span className="text-sm">
-                                {(postComments[post.id] || []).length || Math.floor(Math.random() * 8) + 1}
+                                {post.commentsCount || 0}
                               </span>
                             </button>
                           </div>
