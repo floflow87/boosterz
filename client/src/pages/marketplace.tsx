@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Search, Filter, Grid, List, DollarSign, User, Store } from "lucide-react";
-import Header from "@/components/header";
+import { Search, TrendingUp, Store, Users, MessageCircle, DollarSign, User, Grid, List } from "lucide-react";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
 import LoadingScreen from "@/components/LoadingScreen";
@@ -11,8 +10,8 @@ import type { Card } from "@shared/schema";
 export default function Marketplace() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("marketplace");
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-  const [filterType, setFilterType] = useState<string>("all");
 
   // Récupérer les cartes en vente depuis l'API marketplace
   const { data: marketplaceCards = [], isLoading, error } = useQuery<Card[]>({
@@ -20,26 +19,15 @@ export default function Marketplace() {
     staleTime: 30000,
   });
 
-  // Filtrer les cartes selon la recherche et le type
+  // Filtrer les cartes selon la recherche
   const filteredCards = marketplaceCards.filter(card => {
     const matchesSearch = !searchQuery || 
       card.playerName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       card.teamName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       card.cardType?.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesFilter = filterType === "all" || card.cardType === filterType;
-    
-    return matchesSearch && matchesFilter;
+    return matchesSearch;
   });
-
-  // Obtenir les types de cartes uniques pour le filtre
-  const cardTypesSet = new Set<string>();
-  marketplaceCards.forEach(card => {
-    if (card.cardType) {
-      cardTypesSet.add(card.cardType);
-    }
-  });
-  const cardTypes = Array.from(cardTypesSet);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -49,12 +37,73 @@ export default function Marketplace() {
     <div className="min-h-screen bg-[hsl(216,46%,13%)] relative overflow-hidden">
       <HaloBlur />
       
-      <Header title="Marché des cartes" />
-      
-      {/* Main content */}
-      <main className="relative z-10 px-4 pb-24">
-        <div className="flex items-center justify-between mb-6">
-          {/* Vue mode toggle */}
+      {/* Header with logo */}
+      <div className="relative z-10 px-4 py-4">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-white font-['Luckiest_Guy']">
+            <span className="text-white">BOOSTER</span>
+            <span className="text-[hsl(9,85%,67%)]">Z</span>
+          </h1>
+        </div>
+      </div>
+
+      {/* Navigation tabs */}
+      <div className="relative z-10 px-4 mb-6">
+        <div className="flex space-x-1 bg-[hsl(214,35%,22%)] rounded-lg p-1">
+          <button
+            onClick={() => setLocation('/social')}
+            className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-gray-400 hover:text-white transition-colors"
+          >
+            <TrendingUp className="w-4 h-4" />
+            <span className="text-sm font-medium">À la une</span>
+          </button>
+          <button
+            onClick={() => setActiveTab("marketplace")}
+            className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md bg-[hsl(9,85%,67%)] text-white"
+          >
+            <Store className="w-4 h-4" />
+            <span className="text-sm font-medium">Sur le marché</span>
+          </button>
+          <button
+            onClick={() => setLocation('/social')}
+            className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-gray-400 hover:text-white transition-colors"
+          >
+            <Users className="w-4 h-4" />
+            <span className="text-sm font-medium">Découvrir</span>
+          </button>
+          <button
+            onClick={() => setLocation('/social')}
+            className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-md text-gray-400 hover:text-white transition-colors"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span className="text-sm font-medium">Mes posts</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Search bar */}
+      <div className="relative z-10 px-4 mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Rechercher par joueur, équipe..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
+          />
+        </div>
+      </div>
+
+      {/* View mode toggle */}
+      <div className="relative z-10 px-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <Store className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+            <span className="text-white font-medium">
+              {filteredCards.length} carte{filteredCards.length !== 1 ? 's' : ''} en vente
+            </span>
+          </div>
           <div className="flex items-center space-x-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
             <button
               onClick={() => setViewMode("list")}
@@ -70,64 +119,10 @@ export default function Marketplace() {
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Barre de recherche et filtres */}
-        <div className="space-y-4 mb-6">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <input
-              type="text"
-              placeholder="Rechercher par joueur, équipe ou type..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
-            />
-          </div>
-
-          {/* Filtres par type */}
-          <div className="flex items-center space-x-2 overflow-x-auto pb-2">
-            <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <button
-              onClick={() => setFilterType("all")}
-              className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
-                filterType === "all" 
-                  ? "bg-[hsl(9,85%,67%)] text-white" 
-                  : "bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white"
-              }`}
-            >
-              Toutes
-            </button>
-            {cardTypes.map(type => (
-              <button
-                key={type}
-                onClick={() => setFilterType(type)}
-                className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${
-                  filterType === type 
-                    ? "bg-[hsl(9,85%,67%)] text-white" 
-                    : "bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white"
-                }`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Statistiques */}
-        <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Store className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-              <span className="text-white font-medium">
-                {filteredCards.length} carte{filteredCards.length !== 1 ? 's' : ''} en vente
-              </span>
-            </div>
-            <div className="text-gray-400 text-sm">
-              {marketplaceCards.length} total
-            </div>
-          </div>
-        </div>
-
+      {/* Main content */}
+      <main className="relative z-10 px-4 pb-24">
         {/* Liste des cartes */}
         {error ? (
           <div className="text-center py-12">
@@ -140,11 +135,11 @@ export default function Marketplace() {
           <div className="text-center py-12">
             <Store className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <div className="text-gray-400 mb-2 text-lg">
-              {searchQuery || filterType !== "all" ? "Aucune carte trouvée" : "Aucune carte en vente"}
+              {searchQuery ? "Aucune carte trouvée" : "Aucune carte en vente"}
             </div>
             <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed max-w-md mx-auto">
-              {searchQuery || filterType !== "all" 
-                ? "Essayez de modifier vos critères de recherche." 
+              {searchQuery 
+                ? "Essayez de modifier votre recherche." 
                 : "Les cartes mises en vente par les utilisateurs apparaîtront ici."}
             </p>
           </div>
