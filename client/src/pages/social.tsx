@@ -22,11 +22,13 @@ import type { User as UserType, Collection, Card, Post } from "@shared/schema";
 import CardDisplay from "@/components/card-display";
 
 interface CurrentUser {
-  id: number;
-  username: string;
-  email: string;
-  name: string;
-  avatar?: string;
+  user: {
+    id: number;
+    username: string;
+    email: string;
+    name: string;
+    avatar?: string;
+  };
 }
 
 interface SocialUser {
@@ -122,7 +124,10 @@ export default function Social() {
     retry: false,
   });
   
-  const currentUserId = currentUser?.id?.toString() || "1";
+  // Debug log to see what data we're getting
+  console.log('Current user data:', currentUser);
+  
+  const currentUserId = currentUser?.user?.id?.toString() || "1";
   const userId = "999"; // Pour les profils consultés (maxlamenace)
 
   // Profile data queries
@@ -1259,20 +1264,20 @@ export default function Social() {
                 {/* Profile Header */}
                 <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6 border border-[hsl(214,35%,30%)]">
                   <div className="flex items-center space-x-4 mb-4">
-                    {currentUser?.avatar ? (
+                    {currentUser?.user?.avatar ? (
                       <img 
-                        src={currentUser.avatar} 
+                        src={currentUser.user.avatar} 
                         alt="Avatar" 
                         className="w-16 h-16 rounded-full object-cover"
                       />
                     ) : (
                       <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                        {currentUser?.name?.charAt(0) || currentUser?.username?.charAt(0) || 'U'}
+                        {currentUser?.user?.name?.charAt(0) || currentUser?.user?.username?.charAt(0) || 'U'}
                       </div>
                     )}
                     <div>
                       <h3 className="text-lg font-semibold text-white">
-                        {currentUser?.name || 'Utilisateur'} @{currentUser?.username || 'username'}
+                        {currentUser?.user?.name || currentUser?.user?.username || 'Chargement...'} @{currentUser?.user?.username || 'chargement...'}
                       </h3>
                       <p className="text-gray-400">Collection privée</p>
                     </div>
@@ -1314,22 +1319,22 @@ export default function Social() {
                               <div className="flex items-center justify-between mb-2">
                                 <div className="flex items-center space-x-3">
                                   <div className="w-10 h-10 rounded-full overflow-hidden">
-                                    {currentUser?.avatar ? (
+                                    {currentUser?.user?.avatar ? (
                                       <img 
-                                        src={currentUser.avatar} 
-                                        alt={`Avatar de ${currentUser.name}`}
+                                        src={currentUser.user.avatar} 
+                                        alt={`Avatar de ${currentUser.user.name}`}
                                         className="w-full h-full object-cover"
                                       />
                                     ) : (
                                       <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                                        <span className="text-sm font-bold text-white">{currentUser?.name?.charAt(0) || currentUser?.username?.charAt(0) || 'U'}</span>
+                                        <span className="text-sm font-bold text-white">{currentUser?.user?.name?.charAt(0) || currentUser?.user?.username?.charAt(0) || 'U'}</span>
                                       </div>
                                     )}
                                   </div>
                                   <div>
                                     <div className="flex items-center space-x-2">
-                                      <h4 className="text-white font-medium text-sm">{currentUser?.name?.toUpperCase() || currentUser?.username?.toUpperCase() || 'UTILISATEUR'}</h4>
-                                      <span className="text-xs text-gray-400">@{currentUser?.username || 'username'}</span>
+                                      <h4 className="text-white font-medium text-sm">{currentUser?.user?.name?.toUpperCase() || currentUser?.user?.username?.toUpperCase() || 'CHARGEMENT...'}</h4>
+                                      <span className="text-xs text-gray-400">@{currentUser?.user?.username || 'chargement...'}</span>
                                     </div>
                                     <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
                                   </div>

@@ -118,10 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 24, 2025. Updated "Mes posts" section to show dynamic user data instead of hardcoded username
-  - Avatar and username now pull from authenticated user data (currentUser)
-  - Removed hardcoded "FLORENT MARTIN" and "@Floflow87" references
-  - User initials in avatar fallback now use actual user data
+- June 24, 2025. Fixed "Mes posts" section to correctly access nested user data structure
+  - Corrected data access from currentUser.user instead of currentUser directly
+  - Fixed avatar display to use currentUser.user.avatar from API response
+  - Updated username/name display to use currentUser.user.name and currentUser.user.username
+  - Resolved "Utilisateur @username" display issue with proper data binding
 - June 24, 2025. Fixed login page 404 error by adding /login route to application routing
 - June 24, 2025. Fixed post headers in "Mes posts" to display correct user data
   - Updated post headers to show user's real avatar from database (base64 image)
