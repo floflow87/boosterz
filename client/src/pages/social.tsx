@@ -971,10 +971,7 @@ export default function Social() {
                           <MessageCircle className="w-4 h-4" />
                           <span className="text-sm">Commenter</span>
                         </button>
-                        <button className="flex items-center space-x-2 text-gray-400 hover:text-green-400 transition-colors">
-                          <ArrowLeftRight className="w-4 h-4" />
-                          <span className="text-sm">Échanger</span>
-                        </button>
+
                       </div>
 
                       {/* Comments Section */}
