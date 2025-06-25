@@ -491,9 +491,9 @@ export default function UserProfile() {
                       {/* Comments Section */}
                       {showComments.has(post.id) && (
                         <div className="mt-4 space-y-3">
-                          {/* Add comment - Champ réduit pour éviter le débordement */}
-                          <div className="flex space-x-2 items-center">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                          {/* Add comment - Optimisé pour mobile */}
+                          <div className="flex gap-2 items-center px-1">
+                            <div className="w-7 h-7 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                               {currentUserData?.avatar ? (
                                 <img 
                                   src={currentUserData.avatar} 
@@ -506,28 +506,25 @@ export default function UserProfile() {
                                 </span>
                               )}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <Input
-                                placeholder="Commentaire..."
-                                value={commentInputs[post.id] || ""}
-                                onChange={(e) => setCommentInputs(prev => ({
-                                  ...prev,
-                                  [post.id]: e.target.value
-                                }))}
-                                onKeyPress={(e) => {
-                                  if (e.key === 'Enter' && !e.shiftKey) {
-                                    e.preventDefault();
-                                    handleAddComment(post.id);
-                                  }
-                                }}
-                                className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400 text-sm w-full"
-                              />
-                            </div>
+                            <Input
+                              placeholder="Écrivez..."
+                              value={commentInputs[post.id] || ""}
+                              onChange={(e) => setCommentInputs(prev => ({
+                                ...prev,
+                                [post.id]: e.target.value
+                              }))}
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleAddComment(post.id);
+                                }
+                              }}
+                              className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400 text-sm flex-1 h-8 px-2"
+                            />
                             <Button
                               onClick={() => handleAddComment(post.id)}
                               disabled={!commentInputs[post.id]?.trim()}
-                              size="sm"
-                              className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-3 py-1 text-xs flex-shrink-0"
+                              className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white h-8 px-2 text-xs font-medium flex-shrink-0"
                             >
                               Publier
                             </Button>
