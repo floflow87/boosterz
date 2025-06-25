@@ -118,6 +118,16 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Resolved compilation errors and prepared HTTPS deployment for boosterz.fr
+  - Fixed duplicate function implementations in storage.ts causing TypeScript errors
+  - Removed redundant getPersonalCard, updatePersonalCard, deletePersonalCard methods
+  - Corrected conversation schema references (removed non-existent updatedAt field)
+  - Fixed createConversation method signature to match IStorage interface
+  - Enhanced database configuration in db.ts to support separate dev/production environments
+  - Created comprehensive HTTPS deployment guide (https-deployment-guide.md) for boosterz.fr domain
+  - Configured SSL/TLS setup, Nginx reverse proxy, and production security headers
+  - Documented complete deployment process with Let's Encrypt certificates
+  - **Note**: Production database still needs to be created separately from development database
 - June 25, 2025. Enhanced deck viewing experience for non-owners
   - Hidden edit/delete controls when viewing other users' decks
   - Disabled drag & drop and card numbering for visitors

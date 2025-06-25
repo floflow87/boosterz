@@ -324,49 +324,41 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(userCards).where(eq(userCards.userId, userId));
   }
 
-  async getPersonalCard(id: number): Promise<PersonalCard | undefined> {
-    const [personalCard] = await db.select().from(personalCards).where(eq(personalCards.id, id));
-    return personalCard || undefined;
+  async getUserCardsByCollectionId(collectionId: number, userId: number): Promise<UserCard[]> {
+    return await db.select().from(userCards)
+      .where(
+        and(
+          eq(userCards.collectionId, collectionId),
+          eq(userCards.userId, userId)
+        )
+      );
   }
 
-  async updatePersonalCard(id: number, updates: Partial<PersonalCard>): Promise<PersonalCard | undefined> {
-    console.log(`DatabaseStorage: Updating personal card ${id} with:`, updates);
-    
-    const [personalCard] = await db
-      .update(personalCards)
-      .set(updates)
-      .where(eq(personalCards.id, id))
+  async getUserCard(id: number): Promise<UserCard | undefined> {
+    const [userCard] = await db.select().from(userCards).where(eq(userCards.id, id));
+    return userCard || undefined;
+  }
+
+  async createUserCard(insertUserCard: InsertUserCard): Promise<UserCard> {
+    const [userCard] = await db
+      .insert(userCards)
+      .values(insertUserCard)
       .returning();
-    
-    console.log(`DatabaseStorage: Personal card after update:`, personalCard);
-    return personalCard || undefined;
+    return userCard;
   }
 
-  async deletePersonalCard(id: number): Promise<boolean> {
-    try {
-      console.log(`DatabaseStorage: Attempting to delete personal card ${id}`);
-      
-      // Check if personal card exists first
-      const existingCard = await db.select().from(personalCards).where(eq(personalCards.id, id));
-      console.log(`DatabaseStorage: Personal card exists check - found ${existingCard.length} cards`);
-      
-      if (existingCard.length === 0) {
-        console.log(`DatabaseStorage: Personal card ${id} not found`);
-        return false;
-      }
-      
-      // Delete the personal card
-      const result = await db.delete(personalCards).where(eq(personalCards.id, id));
-      console.log(`DatabaseStorage: Delete result:`, result);
-      
-      const success = result.rowCount ? result.rowCount > 0 : false;
-      console.log(`DatabaseStorage: Delete success: ${success}`);
-      
-      return success;
-    } catch (error) {
-      console.error("DatabaseStorage: Error deleting personal card:", error);
-      return false;
-    }
+  async updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined> {
+    const [userCard] = await db
+      .update(userCards)
+      .set(updates)
+      .where(eq(userCards.id, id))
+      .returning();
+    return userCard || undefined;
+  }
+
+  async deleteUserCard(id: number): Promise<boolean> {
+    const result = await db.delete(userCards).where(eq(userCards.id, id));
+    return (result.rowCount || 0) > 0;
   }
 
   async getUserCardsByCollectionId(collectionId: number, userId: number): Promise<UserCard[]> {
@@ -495,7 +487,8 @@ export class DatabaseStorage implements IStorage {
     return conversation || undefined;
   }
 
-  async createConversation(user1Id: number, user2Id: number): Promise<Conversation> {
+  async createConversation(conversation: { user1Id: number; user2Id: number }): Promise<Conversation> {
+    const { user1Id, user2Id } = conversation;
     const [newConversation] = await db
       .insert(conversations)
       .values({
@@ -1706,16 +1699,7 @@ export class MemStorage implements IStorage {
     return this.getAllUsers();
   }
 
-  async getFollowedUsersPosts(userId: number): Promise<any[]> {
-    try {
-      const following = await this.getFollowingByUserId(userId);
-      const followingIds = following.map(f => f.followingId);
-      return this.getPostsByUserIds(followingIds);
-    } catch (error) {
-      console.error('Error getting followed users posts:', error);
-      return [];
-    }
-  }
+
 
   async removeCardFromDeck(deckId: number, cardPosition: number): Promise<void> {
     console.log(`Removing card at position ${cardPosition} from deck ${deckId}`);
