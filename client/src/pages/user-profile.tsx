@@ -23,6 +23,7 @@ import CardDisplay from "@/components/card-display";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Button } from "@/components/ui/button";
+import { PostComponent } from "@/components/PostComponent";
 import type { User, Collection, Card, Post } from "@shared/schema";
 
 interface CommentData {
@@ -90,29 +91,51 @@ export default function UserProfile() {
   };
 
   // Add comment to post
-  const handleAddComment = (postId: number) => {
-    const commentText = commentInputs[postId]?.trim();
-    if (!commentText || !currentUser) return;
+  const handleAddComment = async (postId: number) => {
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
 
-    const newComment: CommentData = {
-      id: Date.now(), // Temporary ID
-      postId,
-      userId: currentUser.id,
-      content: commentText,
-      userName: currentUser.name,
-      userAvatar: currentUser.avatar,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const response = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content }),
+      });
 
-    setPostComments(prev => ({
-      ...prev,
-      [postId]: [...(prev[postId] || []), newComment]
-    }));
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Mettre à jour les commentaires (ajout en tête pour ordre décroissant)
+        setPostComments(prev => ({
+          ...prev,
+          [postId]: [{
+            id: result.comment.id,
+            content: result.comment.content,
+            author: result.comment.user.name,
+            avatar: result.comment.user.avatar,
+            timestamp: new Date(result.comment.createdAt).toLocaleString('fr-FR', {
+              day: '2-digit',
+              month: '2-digit',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            })
+          }, ...(prev[postId] || [])]
+        }));
 
-    setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+        setPostCommentsCount(prev => ({
+          ...prev,
+          [postId]: result.commentsCount
+        }));
+
+        setCommentInputs(prev => ({ ...prev, [postId]: '' }));
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout du commentaire:', error);
+    }
   };
 
-  // Initialize post likes from posts data
+  // Initialize post likes from posts data and liked posts
   useEffect(() => {
     if (posts) {
       const initialLikes: Record<number, number> = {};
@@ -123,9 +146,18 @@ export default function UserProfile() {
     }
   }, [posts]);
 
+  // Initialize liked posts
+  useEffect(() => {
+    if (likedPostIds) {
+      setLikedPosts(new Set(likedPostIds));
+    }
+  }, [likedPostIds]);
+
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
   });
+
+
 
   const { data: collections = [], isLoading: collectionsLoading } = useQuery<Collection[]>({
     queryKey: [`/api/users/${userId}/collections`],
@@ -141,6 +173,17 @@ export default function UserProfile() {
 
   const { data: posts = [], isLoading: postsLoading } = useQuery<Post[]>({
     queryKey: [`/api/users/${userId}/posts`],
+  });
+
+  // Get liked posts
+  const { data: likedPostIds = [] } = useQuery({
+    queryKey: ['/api/posts/likes'],
+    queryFn: async () => {
+      const response = await fetch('/api/posts/likes');
+      if (!response.ok) return [];
+      return response.json();
+    },
+    enabled: !!currentUserData
   });
 
   // Delete post mutation
@@ -275,9 +318,25 @@ export default function UserProfile() {
                 <div className="text-gray-400">Chargement des posts...</div>
               </div>
             ) : posts.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {posts.map((post) => (
-                  <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
+                  <PostComponent
+                    key={post.id}
+                    post={{...post, user: user}}
+                    currentUser={{user: currentUserData}}
+                    likedPosts={likedPosts}
+                    showComments={showComments}
+                    postComments={postComments}
+                    postCommentsCount={postCommentsCount}
+                    commentInputs={commentInputs}
+                    onLike={handleLike}
+                    onToggleComments={toggleComments}
+                    onUpdateCommentInput={(postId, value) => setCommentInputs(prev => ({ ...prev, [postId]: value }))}
+                    onAddComment={handleAddComment}
+                    onUserClick={(username) => setLocation(`/profile/${username}`)}
+                  />
+                ))}
+              </div>
                     {/* Post Header */}
                     <div className="p-4 border-b border-[hsl(214,35%,30%)]">
                       <div className="flex items-center justify-between mb-2">
@@ -497,11 +556,6 @@ export default function UserProfile() {
                             ))}
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
             ) : (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-2">Aucun post pour le moment</div>
