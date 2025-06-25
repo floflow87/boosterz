@@ -84,10 +84,16 @@ export default function Profile() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("posts");
 
-  const { data: profileUser, isLoading: isUserLoading } = useQuery({
+  const { data: profileUser, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: [`/api/users/${id}`],
     enabled: !!id,
   });
+
+  // Debug logging
+  console.log("Profile page - user ID:", id);
+  console.log("Profile user data:", profileUser);
+  console.log("Is loading:", isUserLoading);
+  console.log("Error:", userError);
 
   const { data: posts = [], isLoading: isPostsLoading } = useQuery({
     queryKey: [`/api/users/${id}/posts`],
@@ -142,12 +148,13 @@ export default function Profile() {
     );
   }
 
-  if (!profileUser) {
+  if (!profileUser && !isUserLoading) {
     return (
       <div className="min-h-screen bg-[hsl(214,35%,11%)] flex items-center justify-center">
         <div className="text-white text-center">
           <h2 className="text-xl font-bold mb-2">Utilisateur introuvable</h2>
           <p className="text-gray-400">Cet utilisateur n'existe pas ou a été supprimé.</p>
+          <p className="text-xs text-gray-500 mt-2">ID: {id}</p>
         </div>
       </div>
     );
