@@ -1217,10 +1217,10 @@ export default function Social() {
                                     <img 
                                       src={comment.avatar} 
                                       alt={`Avatar de ${comment.author}`} 
-                                      className="w-full h-full object-cover"
+                                      className="w-full h-full object-cover rounded-full"
                                     />
                                   ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                                       <span className="text-xs font-bold text-white">
                                         {comment.author?.charAt(0)?.toUpperCase() || 'U'}
                                       </span>
