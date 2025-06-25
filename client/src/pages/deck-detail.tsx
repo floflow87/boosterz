@@ -250,19 +250,7 @@ export default function DeckDetail() {
     }
   }, [deck]);
 
-  // Effet parallax sur l'image de bannière (décalé et ralenti)
-  useEffect(() => {
-    const handleScroll = () => {
-      if (parallaxRef.current) {
-        const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.15; // Vitesse encore plus réduite
-        parallaxRef.current.style.transform = `translateY(${parallax + 20}px)`; // Décalage initial
-      }
-    };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // Synchroniser bannerPosition quand le deck change
   useEffect(() => {
@@ -608,35 +596,58 @@ export default function DeckDetail() {
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {localCards.map((deckCard, index) => (
-                    <SortableCard
-                      key={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
-                      id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
-                      cardData={deckCard}
-                      index={index}
-                      isSelected={longPressCard === deckCard.position}
-                      onLongPress={(position) => {
-                        setLongPressCard(position);
-                      }}
-                      onRemove={(position) => {
-                        // Supprimer la carte
-                        const newCards = localCards.filter(c => c.position !== position);
-                        const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
-                        setLocalCards(reorderedCards);
-                        
-                        // Toast de succès
-                        toast({
-                          title: "Carte supprimée",
-                          description: "La carte a été retirée du deck avec succès",
-                          className: "bg-green-600 text-white border-green-700",
-                        });
-                        
-                        // Réinitialiser la sélection
-                        setLongPressCard(null);
-                        
-                        // Invalider le cache
-                        queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-                      }}
-                    />
+                    <div key={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`} className="relative group">
+                      <SortableCard
+                        id={`${deckCard.type}-${deckCard.type === 'collection' ? (deckCard.card as Card).id : (deckCard.card as PersonalCard).id}`}
+                        cardData={deckCard}
+                        index={index}
+                        isSelected={longPressCard === deckCard.position}
+                        onLongPress={(position) => {
+                          setLongPressCard(position);
+                        }}
+                        onRemove={(position) => {
+                          // Supprimer la carte
+                          const newCards = localCards.filter(c => c.position !== position);
+                          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                          setLocalCards(reorderedCards);
+                          
+                          // Toast de succès
+                          toast({
+                            title: "Carte supprimée",
+                            description: "La carte a été retirée du deck avec succès",
+                            className: "bg-green-600 text-white border-green-700",
+                          });
+                          
+                          // Réinitialiser la sélection
+                          setLongPressCard(null);
+                          
+                          // Invalider le cache
+                          queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                        }}
+                      />
+                      {/* Bouton de suppression visible au survol */}
+                      <button
+                        onClick={() => {
+                          // Supprimer la carte
+                          const newCards = localCards.filter(c => c.position !== deckCard.position);
+                          const reorderedCards = newCards.map((c, index) => ({ ...c, position: index }));
+                          setLocalCards(reorderedCards);
+                          
+                          // Toast de succès
+                          toast({
+                            title: "Carte supprimée",
+                            description: "La carte a été retirée du deck avec succès",
+                            className: "bg-green-600 text-white border-green-700",
+                          });
+                          
+                          // Invalider le cache
+                          queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+                        }}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-lg z-20"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
                   ))}
                   
                   {/* Empty slots */}
