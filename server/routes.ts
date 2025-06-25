@@ -375,6 +375,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { name, email, bio, avatar } = req.body;
       
+      console.log('Profile update request:', { 
+        userId: req.user!.id, 
+        name, 
+        email, 
+        bio, 
+        avatarLength: avatar ? avatar.length : 0 
+      });
+      
       // Update user in database
       const updatedUser = await storage.updateUser(req.user!.id, {
         name,
@@ -387,7 +395,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      res.json(updatedUser);
+      console.log('Profile updated successfully:', { 
+        userId: updatedUser.id, 
+        name: updatedUser.name,
+        avatarLength: updatedUser.avatar ? updatedUser.avatar.length : 0 
+      });
+      
+      res.json({
+        message: 'Profil mis à jour avec succès',
+        user: {
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          name: updatedUser.name,
+          avatar: updatedUser.avatar,
+          bio: updatedUser.bio
+        }
+      });
     } catch (error) {
       console.error("Error updating user profile:", error);
       res.status(500).json({ message: "Internal server error" });

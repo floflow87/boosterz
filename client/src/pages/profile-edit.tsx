@@ -93,11 +93,19 @@ export default function ProfileEdit() {
 
   const handleSave = () => {
     const fullName = `${firstName} ${lastName}`.trim();
-    updateProfileMutation.mutate({
+    const updateData = {
       name: fullName,
       email,
       avatar
+    };
+    
+    console.log('Sending profile update:', { 
+      name: updateData.name, 
+      email: updateData.email, 
+      avatarLength: updateData.avatar ? updateData.avatar.length : 0 
     });
+    
+    updateProfileMutation.mutate(updateData);
   };
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
