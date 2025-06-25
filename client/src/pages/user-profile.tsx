@@ -61,22 +61,32 @@ export default function UserProfile() {
     queryKey: ['/api/auth/me'],
     retry: false,
   });
-  const currentUser = authData?.user;
+  const currentUserData = authData?.user;
 
   // Handle like/unlike post
-  const handleLike = (postId: number) => {
-    const isLiked = likedPosts.has(postId);
-    const newLikedPosts = new Set(likedPosts);
-    const currentLikes = postLikes[postId] || 0;
-    
-    if (isLiked) {
-      newLikedPosts.delete(postId);
-      setPostLikes(prev => ({ ...prev, [postId]: Math.max(0, currentLikes - 1) }));
-    } else {
-      newLikedPosts.add(postId);
-      setPostLikes(prev => ({ ...prev, [postId]: currentLikes + 1 }));
+  const handleLike = async (postId: number) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/like`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        setLikedPosts(prev => {
+          const newSet = new Set(prev);
+          if (result.liked) {
+            newSet.add(postId);
+          } else {
+            newSet.delete(postId);
+          }
+          return newSet;
+        });
+        setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
+      }
+    } catch (error) {
+      console.error('Erreur lors du like:', error);
     }
-    setLikedPosts(newLikedPosts);
   };
 
   // Toggle comments visibility
@@ -337,34 +347,7 @@ export default function UserProfile() {
                   />
                 ))}
               </div>
-                    {/* Post Header */}
-                    <div className="p-4 border-b border-[hsl(214,35%,30%)]">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-white">{user?.name.charAt(0)}</span>
-                          </div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <h4 className="text-white font-medium text-sm">{user?.name}</h4>
-                              <span className="text-xs text-gray-400">@{user?.username}</span>
-                            </div>
-                            <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
-                          </div>
-                        </div>
-                        
-                        {/* Delete button for own posts */}
-                        {user && post.userId === user.id && (
-                          <button
-                            onClick={() => deletePostMutation.mutate(post.id)}
-                            disabled={deletePostMutation.isPending}
-                            className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
+
 
                     {/* Post Content */}
                     <div className="p-4">
