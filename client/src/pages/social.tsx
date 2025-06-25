@@ -1520,9 +1520,46 @@ export default function Social() {
 
                                   {/* Comments */}
                                   <div className="flex items-center space-x-2">
-                                    <button className="flex items-center space-x-1 text-gray-400 hover:text-blue-400 transition-colors">
+                                    <button 
+                                      onClick={async () => {
+                                        const newShowComments = new Set(showComments);
+                                        if (newShowComments.has(post.id)) {
+                                          newShowComments.delete(post.id);
+                                        } else {
+                                          newShowComments.add(post.id);
+                                          // Charger les commentaires si pas encore chargés
+                                          if (!postComments[post.id]) {
+                                            try {
+                                              const response = await fetch(`/api/posts/${post.id}/comments`);
+                                              if (response.ok) {
+                                                const comments = await response.json();
+                                                setPostComments(prev => ({
+                                                  ...prev,
+                                                  [post.id]: comments.map((c: any) => ({
+                                                    id: c.id,
+                                                    content: c.content,
+                                                    author: c.user.name,
+                                                    timestamp: new Date(c.createdAt).toLocaleString('fr-FR', {
+                                                      day: '2-digit',
+                                                      month: '2-digit',
+                                                      year: 'numeric',
+                                                      hour: '2-digit',
+                                                      minute: '2-digit'
+                                                    })
+                                                  }))
+                                                }));
+                                              }
+                                            } catch (error) {
+                                              console.error('Erreur lors du chargement des commentaires:', error);
+                                            }
+                                          }
+                                        }
+                                        setShowComments(newShowComments);
+                                      }}
+                                      className="flex items-center space-x-1 text-gray-400 hover:text-blue-400 transition-colors"
+                                    >
                                       <MessageCircle className="w-4 h-4" />
-                                      <span className="text-xs">0</span>
+                                      <span className="text-xs">{postCommentsCount[post.id] || 0}</span>
                                     </button>
                                   </div>
                                 </div>
