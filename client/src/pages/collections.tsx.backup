@@ -1437,11 +1437,6 @@ export default function Collections() {
         )}
       </main>
     </div>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
     
     {/* Delete Confirmation Modal */}
       {showDeleteModal && collectionToDelete && (
