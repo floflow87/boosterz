@@ -250,15 +250,6 @@ export default function DeckDetail() {
     }
   }, [deck]);
 
-
-
-  // Synchroniser bannerPosition quand le deck change
-  useEffect(() => {
-    if (deck?.bannerPosition !== undefined) {
-      setBannerPosition(deck.bannerPosition);
-    }
-  }, [deck]);
-
   // Configuration des capteurs pour le drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -398,8 +389,8 @@ export default function DeckDetail() {
 
     if (!over || active.id === over.id) return;
 
-    const oldIndex = localCards.findIndex(card => `deck-card-${card.position}-${card.cardId || card.personalCardId}` === active.id);
-    const newIndex = localCards.findIndex(card => `deck-card-${card.position}-${card.cardId || card.personalCardId}` === over.id);
+    const oldIndex = localCards.findIndex(card => `card-${card.position}-${card.cardId || card.personalCardId}` === active.id);
+    const newIndex = localCards.findIndex(card => `card-${card.position}-${card.cardId || card.personalCardId}` === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
       const newCards = arrayMove(localCards, oldIndex, newIndex);
@@ -424,13 +415,7 @@ export default function DeckDetail() {
     }
   };
 
-  // Effet pour synchroniser les cartes du deck avec l'état local
-  useEffect(() => {
-    if (deckQuery.data?.cards) {
-      console.log('Updating local cards from server:', deckQuery.data.cards.length);
-      setLocalCards(deckQuery.data.cards);
-    }
-  }, [deckQuery.data?.cards]);
+
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -632,14 +617,14 @@ export default function DeckDetail() {
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={localCards.map(card => `deck-card-${card.position}-${card.cardId || card.personalCardId}`)}
+                items={localCards.map(card => `card-${card.position}-${card.cardId || card.personalCardId}`)}
                 strategy={rectSortingStrategy}
               >
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                   {localCards.map((deckCard, index) => (
-                    <div key={`deck-card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`} className="relative group">
+                    <div key={`card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`} className="relative group">
                       <SortableCard
-                        id={`deck-card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`}
+                        id={`card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`}
                         cardData={deckCard}
                         index={index}
                         isSelected={longPressCard === deckCard.position}
