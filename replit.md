@@ -130,6 +130,9 @@ The application follows a modern full-stack architecture with clear separation b
   - Fixed avatar size to 64x64px with orange border matching collections page design
   - Enhanced avatar display to show real user avatars (base64 or HTTP URLs) with gradient fallback matching post display
   - Standardized background color to hsl(216,46%,13%) matching collections and social pages
+  - Updated post design to match social feed with rounded borders and proper background
+  - Added like and comment counters above action buttons with separator line
+  - Removed sticky navigation for better scroll experience
   - Profile page now matches overall app design language with authentic data and consistent styling
 - June 25, 2025. Enhanced user profile community features
   - Added dynamic avatar display throughout user profile pages

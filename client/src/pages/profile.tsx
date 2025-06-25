@@ -292,7 +292,7 @@ export default function Profile() {
             <TabsContent value="posts" className="space-y-4">
               {posts.length > 0 ? (
                 posts.map((post) => (
-                  <div key={post.id} className="bg-[hsl(216,46%,13%)] rounded-lg p-4">
+                  <div key={post.id} className="bg-[hsl(216,46%,13%)] rounded-xl p-4 border border-gray-700/30">
                     {/* Header du post avec avatar et nom */}
                     <div className="flex items-center space-x-3 mb-3">
                       {profileUser.avatar && (profileUser.avatar.startsWith('data:image') || profileUser.avatar.startsWith('http')) ? (
@@ -343,15 +343,21 @@ export default function Profile() {
                       </div>
                     )}
 
+                    {/* Compteurs */}
+                    <div className="flex items-center space-x-4 text-gray-400 text-sm pl-13 mb-2">
+                      <span>1 j'aime</span>
+                      <span>3 commentaires</span>
+                    </div>
+
                     {/* Actions du post */}
-                    <div className="flex items-center space-x-6 text-gray-400 pl-13">
-                      <button className="flex items-center space-x-1 hover:text-red-400 transition-colors">
+                    <div className="flex items-center space-x-6 text-gray-400 pl-13 pt-2 border-t border-gray-700/30">
+                      <button className="flex items-center space-x-1 hover:text-red-400 transition-colors py-2">
                         <Heart className="w-4 h-4" />
                         <span className="text-sm">J'aime</span>
                       </button>
-                      <button className="flex items-center space-x-1 hover:text-blue-400 transition-colors">
+                      <button className="flex items-center space-x-1 hover:text-blue-400 transition-colors py-2">
                         <MessageCircle className="w-4 h-4" />
-                        <span className="text-sm">3 commentaires</span>
+                        <span className="text-sm">Commenter</span>
                       </button>
                     </div>
                   </div>
