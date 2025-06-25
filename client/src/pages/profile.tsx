@@ -217,10 +217,10 @@ export default function Profile() {
           </div>
 
           {/* Nom et pseudo */}
-          <h1 className="text-2xl font-bold text-white mb-1">
+          <h1 className="text-2xl font-bold text-white mb-1" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
             {profileUser.name.toUpperCase()}
           </h1>
-          <p className="text-gray-400 mb-3" style={{ fontFamily: 'Luckiest Guy, cursive' }}>@{profileUser.username}</p>
+          <p className="text-gray-400 mb-3">@{profileUser.username}</p>
 
           {/* Description */}
           {profileUser.bio && (

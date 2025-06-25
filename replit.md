@@ -123,6 +123,7 @@ The application follows a modern full-stack architecture with clear separation b
   - Added notification and settings icons to right side with main color halo effect
   - Removed unfollow button, kept only follow button for non-followed users
   - Changed KPI labels from "Abonnements/Collections" to "Suivis/Decks"
+  - Applied Luckiest Guy font to user name (first name + last name) for brand consistency
   - Profile page now matches overall app design language
 - June 25, 2025. Enhanced user profile community features
   - Added dynamic avatar display throughout user profile pages
