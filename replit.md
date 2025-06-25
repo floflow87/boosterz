@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Enhanced user profile community features
+  - Added dynamic avatar display throughout user profile pages
+  - Implemented social feed post box design on user profile "À la une" section
+  - Enhanced post display with improved header styling and gradient avatars
+  - Added complete like and comment functionality with real-time interactions
+  - Improved post layout to match social feed design standards
 - June 25, 2025. Redesigned user profile layout with centered header
   - Created centered header with large avatar, name, username and description
   - Simplified tabs to 3 main sections: À la une, En vente, Decks

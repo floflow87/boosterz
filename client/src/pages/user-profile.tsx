@@ -283,11 +283,11 @@ export default function UserProfile() {
       <Header title={`@${user.username}`} />
 
       <main className="relative z-10 pb-24">
-        {/* Header Profile - Centré selon l'image */}
-        <div className="bg-[hsl(214,35%,22%)] p-8 mb-6">
+        {/* Header Profile - Reproduit l'image exacte */}
+        <div className="bg-[hsl(214,35%,22%)] px-6 pt-8 pb-6">
           <div className="flex flex-col items-center text-center space-y-4">
-            {/* Avatar principal */}
-            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
+            {/* Avatar principal avec fond arrondi */}
+            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center overflow-hidden">
               {user.avatar ? (
                 <img 
                   src={user.avatar} 
@@ -295,51 +295,69 @@ export default function UserProfile() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-3xl font-bold text-white">{user.name.charAt(0)}</span>
+                <span className="text-2xl font-bold text-white">{user.name.charAt(0)}</span>
               )}
             </div>
             
-            {/* Nom complet */}
-            <h1 className="text-2xl font-bold text-white">{user.name.toUpperCase()}</h1>
+            {/* Nom complet en majuscules */}
+            <h1 className="text-xl font-bold text-white tracking-wide">{user.name.toUpperCase()}</h1>
             
-            {/* Pseudo */}
-            <p className="text-gray-400 text-lg">@{user.username}</p>
+            {/* Pseudo grisé */}
+            <p className="text-gray-400 text-sm">@{user.username}</p>
             
             {/* Description */}
-            {user.bio && (
-              <p className="text-gray-300 text-sm max-w-md leading-relaxed">
+            {user.bio ? (
+              <p className="text-gray-300 text-xs max-w-xs leading-relaxed">
                 {user.bio}
               </p>
+            ) : (
+              <p className="text-gray-500 text-xs italic">
+                Description lorem ipsum
+              </p>
             )}
-          </div>
-        </div>
-
-        <div className="px-4">
-          {/* KPIs */}
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-2xl font-bold text-white">{collections.length}</div>
-                <div className="text-xs text-gray-400">Decks</div>
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-white">{user.totalCards || 0}</div>
+            
+            {/* KPIs intégrés dans le header */}
+            <div className="grid grid-cols-3 gap-8 pt-4 w-full max-w-xs">
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">{user.totalCards || 0}</div>
                 <div className="text-xs text-gray-400">Cartes</div>
               </div>
-              <div>
-                <div className="text-2xl font-bold text-white">{Math.round(user.completionPercentage || 0)}%</div>
-                <div className="text-xs text-gray-400">Complétées</div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">{collections.length}</div>
+                <div className="text-xs text-gray-400">Decks</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">{user.followersCount || 0}</div>
+                <div className="text-xs text-gray-400">Abonnés</div>
               </div>
             </div>
           </div>
-
-          {/* Onglets simplifiés selon la demande */}
-          <Tabs defaultValue="posts" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-[hsl(214,35%,22%)] mb-6">
-              <TabsTrigger value="posts" className="text-sm">À la une</TabsTrigger>
-              <TabsTrigger value="marketplace" className="text-sm">En vente</TabsTrigger>
-              <TabsTrigger value="decks" className="text-sm">Decks</TabsTrigger>
-            </TabsList>
+          
+          {/* Onglets intégrés dans le header */}
+          <div className="pt-6">
+            <Tabs defaultValue="posts" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0 space-x-0">
+                <TabsTrigger 
+                  value="posts" 
+                  className="text-sm text-gray-400 data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[hsl(9,85%,67%)] rounded-none border-b-2 border-transparent pb-3 bg-transparent"
+                >
+                  À la une
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="marketplace" 
+                  className="text-sm text-gray-400 data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[hsl(9,85%,67%)] rounded-none border-b-2 border-transparent pb-3 bg-transparent"
+                >
+                  En vente
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="decks" 
+                  className="text-sm text-gray-400 data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[hsl(9,85%,67%)] rounded-none border-b-2 border-transparent pb-3 bg-transparent"
+                >
+                  Decks
+                </TabsTrigger>
+              </TabsList>
+              
+              <div className="px-4 pt-6">
 
           {/* À la une Tab Content */}
           <TabsContent value="posts" className="space-y-4">
@@ -704,7 +722,9 @@ export default function UserProfile() {
               </div>
             )}
           </TabsContent>
-          </Tabs>
+              </div>
+            </Tabs>
+          </div>
         </div>
       </main>
 
