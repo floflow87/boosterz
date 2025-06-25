@@ -173,8 +173,7 @@ export default function Profile() {
             <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 w-24 h-24 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
             <button 
               onClick={() => {
-                console.log("Arrow clicked - navigating to social");
-                window.location.href = "/social";
+                setLocation("/social");
               }}
               className="text-white hover:text-gray-300 transition-colors relative z-10"
             >
@@ -204,16 +203,16 @@ export default function Profile() {
       <main className="pb-6">
         {/* Header centré */}
         <div className="text-center px-6 py-8">
-          {/* Avatar avec taille similaire à collections */}
+          {/* Avatar dynamique */}
           <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden border-2 border-orange-400">
-            {profileUser.avatar && profileUser.avatar.startsWith('data:image') ? (
+            {profileUser.avatar && (profileUser.avatar.startsWith('data:image') || profileUser.avatar.startsWith('http')) ? (
               <img 
                 src={profileUser.avatar} 
                 alt={profileUser.name}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <span className="text-white text-lg font-bold">
                   {profileUser.name.charAt(0).toUpperCase()}
                 </span>
