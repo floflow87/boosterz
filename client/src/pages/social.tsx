@@ -976,10 +976,20 @@ export default function Social() {
                     <div className="p-4 border-b border-[hsl(214,35%,30%)]">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                            <span className="text-sm font-bold text-white">
-                              {post.user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                            </span>
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
+                            {post.user?.avatar ? (
+                              <img 
+                                src={post.user.avatar} 
+                                alt={`Avatar de ${post.user.name}`}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                                <span className="text-sm font-bold text-white">
+                                  {post.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
@@ -1119,7 +1129,7 @@ export default function Social() {
                                   className="w-full h-full object-cover rounded-full"
                                 />
                               ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                                   <span className="text-xs font-bold text-white">
                                     {currentUser?.user?.name?.charAt(0)?.toUpperCase() || currentUser?.user?.username?.charAt(0)?.toUpperCase() || 'U'}
                                   </span>
@@ -1165,7 +1175,7 @@ export default function Social() {
                                       className="w-full h-full object-cover rounded-full"
                                     />
                                   ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                    <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                                       <span className="text-xs font-bold text-white">
                                         {comment.author?.charAt(0)?.toUpperCase() || 'U'}
                                       </span>

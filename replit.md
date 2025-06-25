@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Enhanced avatar display system and unified post components across pages
+  - Implemented consistent real user avatar display throughout the application
+  - Replaced placeholder gradients with actual user avatars from database
+  - Updated social page and profile page post components to use identical structure
+  - Applied orange-yellow gradient fallback for users without avatars
+  - Fixed comment button positioning to match social page layout
+  - Standardized avatar sizes and styling across all components
 - June 25, 2025. Resolved compilation errors and prepared HTTPS deployment for boosterz.fr
   - Fixed duplicate function implementations in storage.ts causing TypeScript errors
   - Removed redundant getPersonalCard, updatePersonalCard, deletePersonalCard methods

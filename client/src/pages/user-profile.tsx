@@ -392,10 +392,10 @@ export default function UserProfile() {
                 {posts.map((post) => (
                   <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg border border-[hsl(214,35%,30%)]">
                     {/* Post Header */}
-                    <div className="p-4 border-b border-[hsl(214,35%,30%)] bg-[hsl(214,35%,18%)]">
+                    <div className="p-4 border-b border-[hsl(214,35%,30%)]">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden">
                             {user.avatar ? (
                               <img 
                                 src={user.avatar} 
@@ -403,38 +403,21 @@ export default function UserProfile() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <span className="text-sm font-bold text-white">{user.name.charAt(0)}</span>
+                              <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                                <span className="text-sm font-bold text-white">{user.name.charAt(0)}</span>
+                              </div>
                             )}
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
-                              <button
-                                onClick={() => setLocation(`/user/${user.id}`)}
-                                className="text-white font-medium text-sm hover:text-blue-400 transition-colors cursor-pointer"
-                              >
-                                {user.name}
-                              </button>
-                              <button
-                                onClick={() => setLocation(`/user/${user.id}`)}
-                                className="text-xs text-gray-400 hover:text-blue-400 transition-colors cursor-pointer"
-                              >
-                                @{user.username}
-                              </button>
+                              <span className="text-white font-medium text-sm">{user.name}</span>
+                              <span className="text-xs text-gray-400">@{user.username}</span>
                             </div>
                             <div className="text-xs text-gray-400">
                               {formatPostDate(post.createdAt)}
                             </div>
                           </div>
                         </div>
-                        
-                        {/* Menu options pour le post si c'est l'utilisateur actuel */}
-                        {currentUserData?.id === user.id && (
-                          <button
-                            className="text-gray-400 hover:text-red-400 transition-colors p-1"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
                       </div>
                     </div>
 
