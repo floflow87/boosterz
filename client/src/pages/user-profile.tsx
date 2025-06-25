@@ -516,24 +516,31 @@ export default function UserProfile() {
                               {postComments[post.id].map((comment) => (
                                 <div key={comment.id} className="flex space-x-3 p-3 bg-[hsl(214,35%,18%)] rounded-lg">
                                   <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
-                                    {(comment.userAvatar || (comment as any).user?.avatar) ? (
+                                    {comment.user?.avatar ? (
                                       <img 
-                                        src={comment.userAvatar || (comment as any).user?.avatar} 
-                                        alt="Avatar"
+                                        src={comment.user.avatar} 
+                                        alt={`Avatar de ${comment.user.name}`}
                                         className="w-full h-full object-cover"
                                       />
                                     ) : (
                                       <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                                         <span className="text-xs font-bold text-white">
-                                          {(comment.userName || (comment as any).user?.name)?.charAt(0) || 'U'}
+                                          {comment.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                         </span>
                                       </div>
                                     )}
                                   </div>
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-2 mb-1">
-                                      <span className="text-sm font-medium text-white">{comment.userName || (comment as any).user?.name}</span>
-                                      <span className="text-xs text-gray-400">{comment.createdAt}</span>
+                                      <span className="text-sm font-medium text-white">{comment.user?.name}</span>
+                                      <span className="text-xs text-gray-400">
+                                        {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
+                                          day: 'numeric',
+                                          month: 'short',
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </span>
                                     </div>
                                     <p className="text-sm text-gray-300">{comment.content}</p>
                                   </div>
