@@ -1151,6 +1151,7 @@ export default function Social() {
                               newShowComments.delete(post.id);
                             } else {
                               newShowComments.add(post.id);
+                              // Ne pas charger les commentaires automatiquement, juste ouvrir le panneau
                             }
                             setShowComments(newShowComments);
                           }}
@@ -1208,9 +1209,10 @@ export default function Social() {
                             </div>
                           </div>
 
-                          {/* Comments List */}
-                          <div className="space-y-3">
-                            {(postComments[post.id] || []).map((comment) => (
+                          {/* Comments List - Only show if comments are loaded */}
+                          {postComments[post.id] && postComments[post.id].length > 0 && (
+                            <div className="space-y-3 mb-4">
+                              {postComments[post.id].map((comment) => (
                               <div key={comment.id} className="flex space-x-3">
                                 <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
                                   {comment.avatar ? (
@@ -1241,8 +1243,9 @@ export default function Social() {
                                   </div>
                                 </div>
                               </div>
-                            ))}
-                          </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>
