@@ -1469,6 +1469,9 @@ export class MemStorage implements IStorage {
         followingId,
         createdAt: new Date().toISOString()
       });
+      
+      // Mettre à jour le compte d'abonnés dans la table users
+      await this.updateFollowersCount(followingId);
       return true;
     } catch (error) {
       console.error('Error following user:', error);
@@ -1484,6 +1487,9 @@ export class MemStorage implements IStorage {
           eq(follows.followingId, followingId)
         )
       );
+      
+      // Mettre à jour le compte d'abonnés dans la table users
+      await this.updateFollowersCount(followingId);
       return true;
     } catch (error) {
       console.error('Error unfollowing user:', error);

@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 24, 2025. Implemented real followers count display on user profiles
+  - Added getFollowingCount method to storage interface
+  - Enhanced follow/unfollow methods to update user followers count in database
+  - Added updateFollowersCount helper to maintain accurate follower statistics
+  - Profile pages now show actual follower counts from database instead of mock data
 - June 24, 2025. Fixed "Mes posts" section to correctly access nested user data structure
   - Corrected data access from currentUser.user instead of currentUser directly
   - Fixed avatar display to use currentUser.user.avatar from API response
