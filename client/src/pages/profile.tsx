@@ -356,77 +356,82 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* Profile Header */}
-      <div className="px-4 py-6 border-b border-[hsl(214,35%,30%)]">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className="w-20 h-20 rounded-full overflow-hidden">
+      {/* Profile Header - Design selon l'image */}
+      <div className="bg-[hsl(214,35%,22%)] px-6 pt-8 pb-6">
+        <div className="flex flex-col items-center text-center space-y-4">
+          {/* Avatar principal avec fond arrondi */}
+          <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center overflow-hidden">
             {profileUser.avatar ? (
               <img 
                 src={profileUser.avatar} 
-                alt={`Avatar de ${profileUser.name}`}
+                alt={profileUser.name}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-[hsl(9,85%,67%)] flex items-center justify-center">
-                <span className="text-white text-2xl font-bold">
-                  {profileUser.name.charAt(0).toUpperCase()}
-                </span>
-              </div>
+              <span className="text-2xl font-bold text-white">{profileUser.name.charAt(0)}</span>
             )}
           </div>
-          <div className="flex-1">
-            <h2 className="text-xl font-bold text-white">{profileUser.name}</h2>
-            <p className="text-gray-400">@{profileUser.username}</p>
-            {profileUser.bio && (
-              <p className="text-gray-300 text-sm mt-2">{profileUser.bio}</p>
-            )}
+          
+          {/* Nom complet en majuscules */}
+          <h1 className="text-xl font-bold text-white tracking-wide">{profileUser.name.toUpperCase()}</h1>
+          
+          {/* Pseudo grisé */}
+          <p className="text-gray-400 text-sm">@{profileUser.username}</p>
+          
+          {/* Description */}
+          {profileUser.bio ? (
+            <p className="text-gray-300 text-xs max-w-xs leading-relaxed">
+              {profileUser.bio}
+            </p>
+          ) : (
+            <p className="text-gray-500 text-xs italic">
+              Description lorem ipsum
+            </p>
+          )}
+          
+          {/* KPIs intégrés dans le header */}
+          <div className="grid grid-cols-3 gap-8 pt-4 w-full max-w-xs">
+            <div className="text-center">
+              <div className="text-xl font-bold text-white">{profileUser.totalCards || 0}</div>
+              <div className="text-xs text-gray-400">Cartes</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-bold text-white">{userDecks.length}</div>
+              <div className="text-xs text-gray-400">Decks</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-bold text-white">{profileUser.followersCount || 0}</div>
+              <div className="text-xs text-gray-400">Abonnés</div>
+            </div>
           </div>
         </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 text-center">
-          <div>
-            <div className="text-lg font-bold text-white">{profileUser.totalCards}</div>
-            <div className="text-xs text-gray-400">Cartes</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold text-white">{userDecks.length}</div>
-            <div className="text-xs text-gray-400">Decks</div>
-          </div>
-          <div>
-            <div className="text-lg font-bold text-white">{profileUser.followersCount}</div>
-            <div className="text-xs text-gray-400">Abonnés</div>
-          </div>
-        </div>
-      </div>
-
-      <main className="pb-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <div className="sticky top-[73px] z-40 bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
-            <TabsList className="w-full h-auto p-0 bg-transparent">
-              <TabsTrigger
-                value="une"
-                className="flex-1 py-4 text-gray-400 border-b-2 border-transparent data-[state=active]:text-white data-[state=active]:border-[#F37261] data-[state=active]:bg-transparent"
+        
+        {/* Onglets intégrés dans le header */}
+        <div className="pt-6">
+          <Tabs defaultValue="posts" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-transparent h-auto p-0 space-x-0">
+              <TabsTrigger 
+                value="posts" 
+                className="text-sm text-gray-400 data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[hsl(9,85%,67%)] rounded-none border-b-2 border-transparent pb-3 bg-transparent"
               >
                 À la une
               </TabsTrigger>
-              <TabsTrigger
-                value="vente"
-                className="flex-1 py-4 text-gray-400 border-b-2 border-transparent data-[state=active]:text-white data-[state=active]:border-[#F37261] data-[state=active]:bg-transparent"
+              <TabsTrigger 
+                value="marketplace" 
+                className="text-sm text-gray-400 data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[hsl(9,85%,67%)] rounded-none border-b-2 border-transparent pb-3 bg-transparent"
               >
                 En vente
               </TabsTrigger>
-              <TabsTrigger
-                value="decks"
-                className="flex-1 py-4 text-gray-400 border-b-2 border-transparent data-[state=active]:text-white data-[state=active]:border-[#F37261] data-[state=active]:bg-transparent"
+              <TabsTrigger 
+                value="decks" 
+                className="text-sm text-gray-400 data-[state=active]:text-white data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[hsl(9,85%,67%)] rounded-none border-b-2 border-transparent pb-3 bg-transparent"
               >
                 Decks
               </TabsTrigger>
             </TabsList>
-          </div>
-
-          {/* Onglet À la une - Posts et activités */}
-          <TabsContent value="une" className="px-4 pt-4 space-y-4">
+            
+            {/* À la une Tab Content */}
+            <TabsContent value="posts" className="space-y-4">
             {posts.length > 0 ? (
               <div className="space-y-4">
                 {posts.map((post) => (
