@@ -146,7 +146,14 @@ router.post('/logout', authenticateToken, async (req: AuthRequest, res) => {
 
 // Get current user
 router.get('/me', authenticateToken, async (req: AuthRequest, res) => {
-  res.json({ user: req.user });
+  // Get fresh user data from database to ensure we have latest avatar
+  const freshUser = await storage.getUser(req.user!.id);
+  if (!freshUser) {
+    return res.status(404).json({ message: 'Utilisateur non trouvé' });
+  }
+  
+  console.log('AuthRoutes /me - returning user with avatar length:', freshUser.avatar?.length || 0);
+  res.json({ user: freshUser });
 });
 
 // Update user profile

@@ -80,14 +80,17 @@ export default function ProfileEdit() {
       console.log('Server response:', result);
       return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      // Update the current user data with the response from server
+      queryClient.setQueryData('/api/auth/me', data);
+      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
+      
       toast({
         title: "Profil mis à jour",
         description: "Vos modifications ont été sauvegardées avec succès.",
         className: "bg-green-600 text-white border-green-700",
       });
       setIsEditing(false);
-      queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
     },
     onError: () => {
       toast({
