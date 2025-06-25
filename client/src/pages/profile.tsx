@@ -83,6 +83,13 @@ export default function Profile() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
+  // États pour les likes et commentaires
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [postLikes, setPostLikes] = useState<Record<number, number>>({});
+  const [showComments, setShowComments] = useState<Set<number>>(new Set());
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+  const [postComments, setPostComments] = useState<Record<number, any[]>>({});
+
   // Récupérer les informations de l'utilisateur actuel pour vérifier si c'est son propre profil
   const { data: currentUser } = useQuery<User>({
     queryKey: ['/api/auth/me'],
@@ -164,7 +171,7 @@ export default function Profile() {
   };
 
   const handleContact = () => {
-    setLocation(`/chat/${profileUser.id}`);
+    setLocation(`/chat/${userId}`);
   };
 
   const handleBlock = () => {
@@ -173,6 +180,76 @@ export default function Profile() {
       description: "Cet utilisateur a été bloqué",
       className: "bg-red-600 text-white border-red-700",
     });
+  };
+
+  // Gérer les likes des posts
+  const handleLike = (postId: number) => {
+    const isLiked = likedPosts.has(postId);
+    const newLikedPosts = new Set(likedPosts);
+    const currentLikes = postLikes[postId] || Math.floor(Math.random() * 20) + 1;
+    
+    if (isLiked) {
+      newLikedPosts.delete(postId);
+      setPostLikes(prev => ({ ...prev, [postId]: Math.max(0, currentLikes - 1) }));
+    } else {
+      newLikedPosts.add(postId);
+      setPostLikes(prev => ({ ...prev, [postId]: currentLikes + 1 }));
+    }
+    setLikedPosts(newLikedPosts);
+  };
+
+  // Gérer l'affichage des commentaires
+  const toggleComments = (postId: number) => {
+    const newShowComments = new Set(showComments);
+    if (newShowComments.has(postId)) {
+      newShowComments.delete(postId);
+    } else {
+      newShowComments.add(postId);
+      // Simuler des commentaires si ils n'existent pas encore
+      if (!postComments[postId]) {
+        setPostComments(prev => ({
+          ...prev,
+          [postId]: [
+            {
+              id: 1,
+              user: { name: "Sophie Martin", username: "sophie_m" },
+              content: "Superbe carte ! 🔥",
+              createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString()
+            },
+            {
+              id: 2,
+              user: { name: "Lucas Dubois", username: "lucas_d" },
+              content: "Tu l'as eue dans quel booster ?",
+              createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString()
+            }
+          ]
+        }));
+      }
+    }
+    setShowComments(newShowComments);
+  };
+
+  // Ajouter un commentaire
+  const addComment = (postId: number) => {
+    const content = commentInputs[postId]?.trim();
+    if (!content) return;
+
+    const newComment = {
+      id: Date.now(),
+      user: { name: currentUser?.user?.name || "Utilisateur", username: currentUser?.user?.username || "user" },
+      content,
+      createdAt: new Date().toISOString()
+    };
+
+    setPostComments(prev => ({
+      ...prev,
+      [postId]: [...(prev[postId] || []), newComment]
+    }));
+
+    setCommentInputs(prev => ({
+      ...prev,
+      [postId]: ""
+    }));
   };
 
   if (!userId) {

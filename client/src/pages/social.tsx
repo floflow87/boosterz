@@ -1332,8 +1332,18 @@ export default function Social() {
                                   </div>
                                   <div>
                                     <div className="flex items-center space-x-2">
-                                      <h4 className="text-white font-medium text-sm">{currentUser?.user?.name?.toUpperCase() || currentUser?.user?.username?.toUpperCase() || 'CHARGEMENT...'}</h4>
-                                      <span className="text-xs text-gray-400">@{currentUser?.user?.username || 'chargement...'}</span>
+                                      <button
+                                        onClick={() => setLocation(`/profile/${currentUser?.user?.id}`)}
+                                        className="text-white font-medium text-sm hover:text-blue-400 transition-colors cursor-pointer"
+                                      >
+                                        {currentUser?.user?.name?.toUpperCase() || currentUser?.user?.username?.toUpperCase() || 'CHARGEMENT...'}
+                                      </button>
+                                      <button
+                                        onClick={() => setLocation(`/profile/${currentUser?.user?.id}`)}
+                                        className="text-xs text-gray-400 hover:text-blue-400 transition-colors cursor-pointer"
+                                      >
+                                        @{currentUser?.user?.username || 'chargement...'}
+                                      </button>
                                     </div>
                                     <div className="text-xs text-gray-400">{formatPostDate(post.createdAt)}</div>
                                   </div>
