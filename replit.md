@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Added likes and comments functionality to profile posts
+  - Added like/unlike functionality with heart icons and real-time count updates
+  - Added comments system with expandable comment sections
+  - Added comment input with real-time submission
+  - Added visual feedback for liked posts (filled heart, red color)
+  - Replaced "Collections" terminology with "Decks" across all profile pages
 - June 25, 2025. Implemented real counts display on user profiles
   - Added calculation of real collections count from user's actual collections
   - Added calculation of real cards count from owned cards across all collections

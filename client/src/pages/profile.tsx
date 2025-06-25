@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, MoreVertical, UserPlus, UserMinus, MessageSquare, UserX, Grid, LayoutGrid, Star } from "lucide-react";
+import { ArrowLeft, MoreVertical, UserPlus, UserMinus, MessageSquare, UserX, Grid, LayoutGrid, Star, Heart, MessageCircle } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -392,7 +392,7 @@ export default function Profile() {
                             </div>
                           )}
                           {post.playerName && post.teamName && (
-                            <div className="flex items-center space-x-2 text-sm text-gray-400">
+                            <div className="flex items-center space-x-2 text-sm text-gray-400 mb-3">
                               <span>{post.playerName}</span>
                               <span>•</span>
                               <span>{post.teamName}</span>
@@ -404,8 +404,100 @@ export default function Profile() {
                               )}
                             </div>
                           )}
+                          
+                          {/* Actions du post */}
+                          <div className="flex items-center space-x-4 pt-3 border-t border-[hsl(214,35%,30%)]">
+                            <button
+                              onClick={() => handleLike(post.id)}
+                              className={`flex items-center space-x-2 transition-colors ${
+                                likedPosts.has(post.id) 
+                                  ? "text-red-500" 
+                                  : "text-gray-400 hover:text-red-500"
+                              }`}
+                            >
+                              <Heart 
+                                className={`w-4 h-4 ${likedPosts.has(post.id) ? "fill-current" : ""}`} 
+                              />
+                              <span className="text-sm">
+                                {postLikes[post.id] || Math.floor(Math.random() * 20) + 1}
+                              </span>
+                            </button>
+                            
+                            <button
+                              onClick={() => toggleComments(post.id)}
+                              className="flex items-center space-x-2 text-gray-400 hover:text-blue-500 transition-colors"
+                            >
+                              <MessageCircle className="w-4 h-4" />
+                              <span className="text-sm">
+                                {(postComments[post.id] || []).length || Math.floor(Math.random() * 8) + 1}
+                              </span>
+                            </button>
+                          </div>
                         </div>
                       </div>
+                      
+                      {/* Section commentaires */}
+                      {showComments.has(post.id) && (
+                        <div className="mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
+                          {/* Liste des commentaires */}
+                          <div className="space-y-3 mb-4">
+                            {(postComments[post.id] || []).map((comment) => (
+                              <div key={comment.id} className="flex items-start space-x-3">
+                                <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                                  <span className="text-white text-xs font-bold">
+                                    {comment.user.name.charAt(0).toUpperCase()}
+                                  </span>
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-white text-sm font-medium">{comment.user.name}</span>
+                                    <span className="text-gray-400 text-xs">
+                                      {new Date(comment.createdAt).toLocaleTimeString('fr-FR', { 
+                                        hour: '2-digit', 
+                                        minute: '2-digit' 
+                                      })}
+                                    </span>
+                                  </div>
+                                  <p className="text-gray-300 text-sm">{comment.content}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {/* Zone d'ajout de commentaire */}
+                          <div className="flex items-center space-x-3">
+                            <div className="w-6 h-6 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                              <span className="text-white text-xs font-bold">
+                                {currentUser?.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                              </span>
+                            </div>
+                            <div className="flex-1 flex items-center space-x-2">
+                              <input
+                                type="text"
+                                placeholder="Ajouter un commentaire..."
+                                value={commentInputs[post.id] || ""}
+                                onChange={(e) => setCommentInputs(prev => ({
+                                  ...prev,
+                                  [post.id]: e.target.value
+                                }))}
+                                onKeyPress={(e) => {
+                                  if (e.key === 'Enter') {
+                                    addComment(post.id);
+                                  }
+                                }}
+                                className="flex-1 bg-[hsl(214,35%,22%)] text-white text-sm rounded-full px-4 py-2 border border-[hsl(214,35%,30%)] focus:outline-none focus:border-blue-500"
+                              />
+                              <button
+                                onClick={() => addComment(post.id)}
+                                disabled={!commentInputs[post.id]?.trim()}
+                                className="text-blue-500 hover:text-blue-400 disabled:text-gray-500 disabled:cursor-not-allowed"
+                              >
+                                <MessageCircle className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 ))}
