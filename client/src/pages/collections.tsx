@@ -43,6 +43,7 @@ export default function Collections() {
   const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
+  const queryClient = useQueryClient();
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
@@ -66,6 +67,13 @@ export default function Collections() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Effet pour rafraîchir les decks quand on change d'onglet
+  useEffect(() => {
+    if (activeTab === "deck") {
+      refetchDecks();
+    }
+  }, [activeTab, refetchDecks]);
+
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ["/api/users/1"],
   });
@@ -85,8 +93,10 @@ export default function Collections() {
   });
 
   // Query pour les decks de l'utilisateur
-  const { data: userDecks = [], isLoading: decksLoading } = useQuery<any[]>({
+  const { data: userDecks = [], isLoading: decksLoading, refetch: refetchDecks } = useQuery<any[]>({
     queryKey: ["/api/decks"],
+    staleTime: 0, // Force refresh des données
+    gcTime: 0, // Pas de cache persistant
     staleTime: 5 * 60 * 1000,
     enabled: activeTab === "deck",
   });
@@ -879,7 +889,11 @@ export default function Collections() {
                 {(deckPreviews.length > 0 ? deckPreviews : userDecks).map((deck: any) => (
                   <div 
                     key={deck.id} 
-                    onClick={() => setLocation(`/deck/${deck.id}`)}
+                    onClick={() => {
+                      // Vérifier que le deck existe avant la navigation
+                      queryClient.invalidateQueries({ queryKey: [`/api/decks/${deck.id}`] });
+                      setLocation(`/deck/${deck.id}`);
+                    }}
                     className="rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform relative overflow-hidden"
                     style={{
                       background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"

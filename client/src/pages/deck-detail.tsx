@@ -332,6 +332,7 @@ export default function DeckDetail() {
       });
       // Invalider les requêtes pour forcer le rechargement
       queryClient.invalidateQueries({ queryKey: ['/api/decks'] });
+      queryClient.removeQueries({ queryKey: [`/api/decks/${id}`] });
       setLocation('/collections?tab=decks');
     },
     onError: (error: any) => {
