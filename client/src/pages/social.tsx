@@ -1108,6 +1108,7 @@ export default function Social() {
                                       id: comment.id,
                                       content: comment.content,
                                       author: comment.user?.name || 'Anonyme',
+                                      username: comment.user?.username,
                                       avatar: comment.user?.avatar,
                                       timestamp: new Date(comment.createdAt).toLocaleString('fr-FR', {
                                         day: '2-digit',
@@ -1117,11 +1118,6 @@ export default function Social() {
                                         minute: '2-digit'
                                       })
                                     }))
-                                  }));
-                                  
-                                  setPostCommentsCount(prev => ({
-                                    ...prev,
-                                    [post.id]: comments?.length || 0
                                   }));
                                 }
                               } catch (error) {
@@ -1220,13 +1216,13 @@ export default function Social() {
                                   {comment.avatar ? (
                                     <img 
                                       src={comment.avatar} 
-                                      alt="Avatar" 
+                                      alt={`Avatar de ${comment.author}`} 
                                       className="w-full h-full object-cover"
                                     />
                                   ) : (
-                                    <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                                    <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                                       <span className="text-xs font-bold text-white">
-                                        {comment.author?.charAt(0) || 'U'}
+                                        {comment.author?.charAt(0)?.toUpperCase() || 'U'}
                                       </span>
                                     </div>
                                   )}
