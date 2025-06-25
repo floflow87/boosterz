@@ -469,19 +469,19 @@ export default function DeckDetail() {
                 />
                 <div className="absolute inset-0 bg-black/40" />
                 
-                {/* Étoiles filantes pour deck complet */}
+                {/* Halos scintillants pour deck complet */}
                 {localCards.length === 12 && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(8)].map((_, i) => (
+                    {[...Array(12)].map((_, i) => (
                       <div
                         key={i}
-                        className="absolute w-1 h-8 bg-gradient-to-b from-yellow-400 via-orange-400 to-transparent opacity-80"
+                        className="absolute w-2 h-2 bg-gradient-radial from-yellow-300 via-orange-300 to-transparent rounded-full opacity-60"
                         style={{
-                          left: `${10 + Math.random() * 80}%`,
-                          top: `${Math.random() * 100}%`,
-                          transform: `rotate(${20 + Math.random() * 20}deg)`,
-                          animation: `shooting-star ${2 + Math.random() * 3}s ease-in-out infinite`,
-                          animationDelay: `${Math.random() * 4}s`
+                          left: `${5 + Math.random() * 90}%`,
+                          top: `${5 + Math.random() * 90}%`,
+                          animation: `gentle-twinkle ${3 + Math.random() * 4}s ease-in-out infinite`,
+                          animationDelay: `${Math.random() * 6}s`,
+                          boxShadow: '0 0 8px rgba(251, 191, 36, 0.6), 0 0 12px rgba(251, 191, 36, 0.3)'
                         }}
                       />
                     ))}
