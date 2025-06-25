@@ -164,20 +164,18 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white">
-      <div className="sticky top-0 z-50 bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)] relative">
+      {/* Header identique à la page sociale */}
+      <div className="relative bg-gradient-to-r from-[#1a1a2e] to-[#16213e] border-b border-gray-800">
         <div className="flex items-center justify-between px-4 py-3">
-          {/* Logo Boosterz à gauche */}
-          <div className="flex items-center">
-            <button 
-              onClick={() => setLocation("/")}
-              className="text-white hover:text-gray-300 transition-colors mr-3"
-            >
-              <ArrowLeft className="w-6 h-6" />
-            </button>
-            <h1 className="text-white font-bold text-xl" style={{ fontFamily: 'Luckiest Guy, cursive' }}>BOOSTERZ</h1>
-          </div>
+          <button 
+            onClick={() => setLocation("/")}
+            className="text-white hover:text-gray-300 transition-colors"
+          >
+            <ArrowLeft className="w-6 h-6" />
+          </button>
           
-          {/* Icônes à droite */}
+          <h1 className="text-white font-bold text-xl" style={{ fontFamily: 'Luckiest Guy, cursive' }}>BOOSTERZ</h1>
+          
           <div className="flex items-center space-x-4">
             <button className="text-white hover:text-gray-300 transition-colors relative">
               <Bell className="w-6 h-6" />
@@ -190,25 +188,25 @@ export default function Profile() {
               <Settings className="w-6 h-6" />
             </button>
           </div>
-          
-          {/* Halo main color en haut à droite */}
-          <div className="absolute -top-10 -right-10 w-32 h-32 bg-[hsl(27,96%,61%)] opacity-20 rounded-full blur-2xl pointer-events-none"></div>
         </div>
+        
+        {/* Halo effet main color */}
+        <div className="absolute top-0 right-0 w-24 h-24 bg-[hsl(27,96%,61%)] opacity-10 rounded-full blur-2xl"></div>
       </div>
 
       <main className="pb-6">
         {/* Header centré */}
         <div className="text-center px-6 py-8 border-b border-[hsl(214,35%,30%)]">
-          {/* Avatar */}
+          {/* Avatar dynamique */}
           <div className="w-24 h-24 mx-auto mb-4 rounded-full overflow-hidden">
-            {profileUser.avatar ? (
+            {profileUser.avatar && profileUser.avatar.startsWith('data:image') ? (
               <img 
                 src={profileUser.avatar} 
                 alt={profileUser.name}
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+              <div className="w-full h-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
                 <span className="text-white text-2xl font-bold">
                   {profileUser.name.charAt(0).toUpperCase()}
                 </span>
@@ -240,23 +238,19 @@ export default function Profile() {
             </Button>
           )}
 
-          {/* KPIs */}
+          {/* KPIs dans l'ordre demandé */}
           <div className="flex justify-center space-x-8 mt-6">
+            <div className="text-center">
+              <div className="text-xl font-bold text-white">{profileUser.totalCards || 0}</div>
+              <div className="text-sm text-gray-400">Cartes</div>
+            </div>
             <div className="text-center">
               <div className="text-xl font-bold text-white">{profileUser.followersCount || 0}</div>
               <div className="text-sm text-gray-400">Abonnés</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold text-white">{profileUser.followingCount || 0}</div>
-              <div className="text-sm text-gray-400">Suivis</div>
-            </div>
-            <div className="text-center">
               <div className="text-xl font-bold text-white">{profileUser.collectionsCount || 0}</div>
               <div className="text-sm text-gray-400">Decks</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-white">{profileUser.totalCards || 0}</div>
-              <div className="text-sm text-gray-400">Cartes</div>
             </div>
           </div>
         </div>
