@@ -125,6 +125,12 @@ export default function Profile() {
     enabled: !!userId && activeTab === 'une',
   });
 
+  // Récupérer les decks de l'utilisateur pour compter le nombre réel
+  const { data: userDecks = [] } = useQuery({
+    queryKey: [`/api/decks`],
+    enabled: !!userId,
+  });
+
   // Sélectionner automatiquement la première collection
   useEffect(() => {
     if (collections.length > 0 && !selectedCollection) {
