@@ -120,13 +120,15 @@ The application follows a modern full-stack architecture with clear separation b
 ## Changelog
 - June 25, 2025. Updated profile page header and navigation consistency
   - Added consistent header with BOOSTERZ logo in Luckiest Guy font with Z in main color
-  - Added back arrow navigation and main color halo effect behind logo
+  - Added back arrow navigation with window.history.back() functionality and main color halo effect behind logo
   - Updated notification and settings icons to match design specifications
   - Removed unfollow button, kept only follow button for non-followed users
   - Changed KPI labels from "Abonnements/Collections" to "Suivis/Decks" 
   - Applied Luckiest Guy font to user name (first name + last name) for brand consistency
   - Implemented real dynamic KPI calculations: actual cards count, followers count, and decks count
-  - Profile page now matches overall app design language with authentic data
+  - Fixed avatar size to 64x64px with orange border matching collections page design
+  - Standardized background color to hsl(216,46%,13%) matching collections and social pages
+  - Profile page now matches overall app design language with authentic data and consistent styling
 - June 25, 2025. Enhanced user profile community features
   - Added dynamic avatar display throughout user profile pages
   - Implemented social feed post box design on user profile "À la une" section

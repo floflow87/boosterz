@@ -163,14 +163,14 @@ export default function Profile() {
   const isOwnProfile = currentUser?.user?.id === profileUser.id;
 
   return (
-    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
       {/* Header avec logo BOOSTERZ et halo */}
       <div className="relative bg-[hsl(214,35%,11%)] px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Flèche retour et logo BOOSTERZ */}
           <div className="relative flex items-center space-x-3">
             <button 
-              onClick={() => setLocation("/")}
+              onClick={() => window.history.back()}
               className="text-white hover:text-gray-300 transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
