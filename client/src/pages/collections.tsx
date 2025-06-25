@@ -897,6 +897,24 @@ export default function Collections() {
                       background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"
                     }}
                   >
+                    {/* Effet d'étoiles filantes pour les decks complets */}
+                    {deck.previewCards && deck.previewCards.length === 9 && (
+                      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                        {Array.from({length: 8}).map((_, i) => (
+                          <div
+                            key={i}
+                            className="absolute w-px h-8 bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-70"
+                            style={{
+                              top: `${-10 + Math.random() * 20}%`,
+                              left: `${Math.random() * 100}%`,
+                              transform: `rotate(${20 + Math.random() * 20}deg)`,
+                              animation: `shooting-star ${2 + Math.random() * 3}s ease-in-out infinite`,
+                              animationDelay: `${Math.random() * 4}s`
+                            }}
+                          />
+                        ))}
+                      </div>
+                    )}
                     <div className="flex items-center justify-between mb-3 relative z-10">
                       <h4 className="font-bold text-lg font-luckiest" style={{
                         color: deck.themeColors ? getThemeTextColor(deck.themeColors) : "#ffffff"

@@ -146,8 +146,9 @@ export default function CreateDeck() {
         toast({
           title: "Deck créé avec succès !",
           description: `Ton deck "${deckName}" a été créé.`,
+          className: "bg-green-600 text-white border-green-700"
         });
-        setLocation("/collections");
+        setLocation(`/deck/${result.id}`);
       }
       queryClient.invalidateQueries({ queryKey: ["/api/decks"] });
       queryClient.invalidateQueries({ queryKey: [`/api/decks/${deckId}`] });
@@ -256,12 +257,7 @@ export default function CreateDeck() {
   const selectedThemeData = themeStyles[selectedTheme as keyof typeof themeStyles] || themeStyles["main+background"];
 
   return (
-    <div 
-      className="min-h-screen relative overflow-hidden"
-      style={{
-        backgroundColor: selectedThemeData.backgroundColor
-      }}
-    >
+    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
       <HaloBlur />
       <Header 
         title={isAddMode && existingDeck 
@@ -476,15 +472,7 @@ export default function CreateDeck() {
             {selectedCards.length === 0 ? (
               <div className="bg-[hsl(214,35%,22%)] border-2 border-dashed border-[hsl(214,35%,30%)] rounded-lg p-8 text-center">
                 <div className="text-gray-400 mb-2">Aucune carte sélectionnée</div>
-                {!isAddMode && (
-                  <Button
-                    onClick={() => setShowCardSelector(true)}
-                    className="bg-primary hover:bg-primary/90 text-white"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Ajouter ta première carte
-                  </Button>
-                )}
+
               </div>
             ) : (
               <div className="grid grid-cols-3 gap-2">
