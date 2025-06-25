@@ -463,36 +463,26 @@ export default function UserProfile() {
                         </span>
                       </div>
 
-                      {/* Interaction Buttons - Bouton commenter aligné à droite */}
+                      {/* Interaction Buttons - Structure identique à la page social */}
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
-                        <div className="flex items-center space-x-6">
-                          <button 
-                            onClick={() => handleLike(post.id)}
-                            className={`flex items-center space-x-2 transition-colors ${
-                              likedPosts.has(post.id) 
-                                ? 'text-red-500' 
-                                : 'text-gray-400 hover:text-red-400'
-                            }`}
-                          >
-                            <Heart className={`w-5 h-5 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
-                            <span className="text-sm">J'aime</span>
-                          </button>
-                          
-                          <button className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors">
-                            <Share2 className="w-5 h-5" />
-                            <span className="text-sm">Partager</span>
-                          </button>
-                        </div>
-                        
-                        <div className="flex justify-end">
-                          <button 
-                            onClick={() => toggleComments(post.id)}
-                            className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
-                          >
-                            <MessageCircle className="w-5 h-5" />
-                            <span className="text-sm">Commenter</span>
-                          </button>
-                        </div>
+                        <button 
+                          onClick={() => handleLike(post.id)}
+                          className={`flex items-center space-x-2 transition-colors ${
+                            likedPosts.has(post.id) 
+                              ? 'text-red-500' 
+                              : 'text-gray-400 hover:text-red-400'
+                          }`}
+                        >
+                          <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
+                          <span className="text-sm">J'aime</span>
+                        </button>
+                        <button 
+                          onClick={() => toggleComments(post.id)}
+                          className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
+                        >
+                          <MessageCircle className="w-4 h-4" />
+                          <span className="text-sm">Commenter</span>
+                        </button>
                       </div>
 
                       {/* Comments Section */}
