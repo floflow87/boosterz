@@ -210,10 +210,12 @@ export default function Marketplace() {
                         </span>
                       </div>
                     )}
-                    <div className="flex items-center gap-1 text-gray-400 text-xs">
-                      <User className="w-3 h-3" />
-                      <span>Vendeur</span>
-                    </div>
+                    {(card as any).seller && (
+                      <div className="flex items-center gap-1 text-gray-400 text-xs">
+                        <User className="w-3 h-3" />
+                        <span>par {(card as any).seller.name}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
