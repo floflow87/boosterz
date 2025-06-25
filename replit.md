@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Enhanced user profile community features
+  - Added dynamic avatar display throughout user profile pages
+  - Implemented social feed post box design on user profile "À la une" section
+  - Enhanced post display with improved header styling and gradient avatars
+  - Added complete like and comment functionality with real-time interactions
+  - Improved post layout to match social feed design standards
 - June 25, 2025. Enhanced deck creation and visual effects
   - Removed background color change during deck creation (keeps default background)
   - Removed duplicate "Ajouter des cartes" button from deck creation form
