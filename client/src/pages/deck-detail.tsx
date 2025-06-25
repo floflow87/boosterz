@@ -175,10 +175,10 @@ const themeStyles = {
     accentColor: "#000080",
     gradientClass: "bg-gradient-radial from-red-500 via-red-500 to-blue-900"
   },
-  "navy+gold": {
+  "navy+bronze": {
     backgroundColor: "#000080",
-    accentColor: "#FFD700",
-    gradientClass: "bg-gradient-radial from-blue-900 via-blue-900 to-yellow-500"
+    accentColor: "#CD7F32",
+    gradientClass: "bg-gradient-radial from-blue-900 via-blue-900 to-orange-600"
   },
   "white+red": {
     backgroundColor: "#FFFFFF",
@@ -190,10 +190,10 @@ const themeStyles = {
     accentColor: "#3B82F6",
     gradientClass: "bg-gradient-radial from-white via-white to-blue-500"
   },
-  "black+gold": {
-    backgroundColor: "#000000",
-    accentColor: "#FFD700",
-    gradientClass: "bg-gradient-radial from-black via-black to-yellow-500"
+  "gold+black": {
+    backgroundColor: "#FFD700",
+    accentColor: "#000000",
+    gradientClass: "bg-gradient-radial from-yellow-500 via-yellow-500 to-black"
   },
   "green+white": {
     backgroundColor: "#22C55E",
@@ -634,10 +634,10 @@ export default function DeckDetail() {
                         {editTheme === "main+background" && "Défaut"}
                         {editTheme === "white+sky" && "Blanc & Ciel"}
                         {editTheme === "red+navy" && "Rouge & Marine"}
-                        {editTheme === "navy+gold" && "Marine & Or"}
+                        {editTheme === "navy+bronze" && "Marine & Bronze"}
                         {editTheme === "white+red" && "Blanc & Rouge"}
                         {editTheme === "white+blue" && "Blanc & Bleu"}
-                        {editTheme === "black+gold" && "Noir & Or"}
+                        {editTheme === "gold+black" && "Or & Noir"}
                         {editTheme === "green+white" && "Vert & Blanc"}
                         {editTheme === "red+black" && "Rouge & Noir"}
                         {editTheme === "blue+white+red" && "Bleu Blanc Rouge"}
@@ -674,10 +674,10 @@ export default function DeckDetail() {
                           {key === "main+background" && "Défaut"}
                           {key === "white+sky" && "Blanc & Ciel"}
                           {key === "red+navy" && "Rouge & Marine"}
-                          {key === "navy+gold" && "Marine & Or"}
+                          {key === "navy+bronze" && "Marine & Bronze"}
                           {key === "white+red" && "Blanc & Rouge"}
                           {key === "white+blue" && "Blanc & Bleu"}
-                          {key === "black+gold" && "Noir & Or"}
+                          {key === "gold+black" && "Or & Noir"}
                           {key === "green+white" && "Vert & Blanc"}
                           {key === "red+black" && "Rouge & Noir"}
                           {key === "blue+white+red" && "Bleu Blanc Rouge"}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, X, Upload, Palette, Check } from "lucide-react";
+import { Plus, X, Upload, Palette, Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Card, PersonalCard, Deck } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -19,50 +19,58 @@ interface DeckCard {
   position: number;
 }
 
-const themeOptions = [
-  {
-    id: "main+background",
-    name: "Par défaut",
+const themeStyles = {
+  "main+background": {
     backgroundColor: "#1A2332",
     accentColor: "#F37261",
-    preview: "bg-[#1A2332] border-[#F37261]"
+    gradientClass: "bg-gradient-radial from-[#1A2332] via-[#1A2332] to-[#F37261]"
   },
-  {
-    id: "white+sky",
-    name: "Blanc & Bleu ciel",
+  "white+sky": {
     backgroundColor: "#FFFFFF",
     accentColor: "#87CEEB",
-    preview: "bg-white border-sky-400"
+    gradientClass: "bg-gradient-radial from-white via-white to-sky-400"
   },
-  {
-    id: "red+navy",
-    name: "Rouge & Bleu marine",
+  "red+navy": {
     backgroundColor: "#FF0000",
     accentColor: "#000080",
-    preview: "bg-red-500 border-navy-800"
+    gradientClass: "bg-gradient-radial from-red-500 via-red-500 to-blue-900"
   },
-  {
-    id: "navy+gold",
-    name: "Bleu marine & Or",
+  "navy+bronze": {
     backgroundColor: "#000080",
-    accentColor: "#FFD700",
-    preview: "bg-navy-800 border-yellow-500"
+    accentColor: "#CD7F32",
+    gradientClass: "bg-gradient-radial from-blue-900 via-blue-900 to-orange-600"
   },
-  {
-    id: "white+red",
-    name: "Blanc & Rouge",
+  "white+red": {
     backgroundColor: "#FFFFFF",
     accentColor: "#DC2626",
-    preview: "bg-white border-red-600"
+    gradientClass: "bg-gradient-radial from-white via-white to-red-600"
   },
-  {
-    id: "white+blue",
-    name: "Blanc & Bleu",
+  "white+blue": {
     backgroundColor: "#FFFFFF",
     accentColor: "#3B82F6",
-    preview: "bg-white border-blue-500"
+    gradientClass: "bg-gradient-radial from-white via-white to-blue-500"
+  },
+  "gold+black": {
+    backgroundColor: "#FFD700",
+    accentColor: "#000000",
+    gradientClass: "bg-gradient-radial from-yellow-500 via-yellow-500 to-black"
+  },
+  "green+white": {
+    backgroundColor: "#22C55E",
+    accentColor: "#FFFFFF",
+    gradientClass: "bg-gradient-radial from-green-500 via-green-500 to-white"
+  },
+  "red+black": {
+    backgroundColor: "#DC2626",
+    accentColor: "#000000",
+    gradientClass: "bg-gradient-radial from-red-600 via-red-600 to-black"
+  },
+  "blue+white+red": {
+    backgroundColor: "#3B82F6",
+    accentColor: "#DC2626",
+    gradientClass: "bg-gradient-radial from-blue-500 via-white to-red-600"
   }
-];
+};
 
 export default function CreateDeck() {
   const [, setLocation] = useLocation();
@@ -80,6 +88,7 @@ export default function CreateDeck() {
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [selectedCards, setSelectedCards] = useState<DeckCard[]>([]);
   const [showCardSelector, setShowCardSelector] = useState(false);
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
 
   // Fetch user's cards (from collections and personal cards)
   const { data: collectionCards = [] } = useQuery<Card[]>({
@@ -269,35 +278,72 @@ export default function CreateDeck() {
           {/* Theme Selection - Hidden in add mode */}
           {!isAddMode && (
             <div>
-              <Label className="text-white mb-3 block">
-                <Palette className="w-4 h-4 inline mr-2" />
-                Thème de couleur
-              </Label>
-              <div className="grid grid-cols-2 gap-3">
-                {themeOptions.map((theme) => (
-                  <button
-                    key={theme.id}
-                    onClick={() => setSelectedTheme(theme.id)}
-                    className={cn(
-                      "p-3 rounded-lg border-2 transition-all text-left",
-                      selectedTheme === theme.id
-                        ? "border-primary bg-primary/10"
-                        : "border-gray-600 hover:border-gray-500"
-                    )}
-                  >
-                    <div className={cn(
-                      "w-full h-8 rounded mb-2 border-2",
-                      theme.preview
-                    )} />
-                    <div className="text-white text-sm font-medium">
-                      {theme.name}
+              <button
+                onClick={() => setShowThemeSelector(!showThemeSelector)}
+                className="w-full flex items-center justify-between p-3 bg-[hsl(214,35%,18%)] rounded-lg border border-gray-600 hover:border-gray-500 transition-colors mb-3"
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={cn("w-8 h-8 rounded", themeStyles[selectedTheme as keyof typeof themeStyles]?.gradientClass || themeStyles["main+background"].gradientClass)}
+                  />
+                  <div>
+                    <Label className="text-white text-sm font-medium">Thème</Label>
+                    <div className="text-gray-400 text-xs">
+                      {selectedTheme === "main+background" && "Défaut"}
+                      {selectedTheme === "white+sky" && "Blanc & Ciel"}
+                      {selectedTheme === "red+navy" && "Rouge & Marine"}
+                      {selectedTheme === "navy+bronze" && "Marine & Bronze"}
+                      {selectedTheme === "white+red" && "Blanc & Rouge"}
+                      {selectedTheme === "white+blue" && "Blanc & Bleu"}
+                      {selectedTheme === "gold+black" && "Or & Noir"}
+                      {selectedTheme === "green+white" && "Vert & Blanc"}
+                      {selectedTheme === "red+black" && "Rouge & Noir"}
+                      {selectedTheme === "blue+white+red" && "Bleu Blanc Rouge"}
                     </div>
-                    {selectedTheme === theme.id && (
-                      <Check className="w-4 h-4 text-primary ml-auto" />
-                    )}
-                  </button>
-                ))}
-              </div>
+                  </div>
+                </div>
+                {showThemeSelector ? (
+                  <ChevronUp className="w-5 h-5 text-gray-400" />
+                ) : (
+                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                )}
+              </button>
+
+              {showThemeSelector && (
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  {Object.entries(themeStyles).map(([key, theme]) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setSelectedTheme(key);
+                        setShowThemeSelector(false);
+                      }}
+                      className={cn(
+                        "p-3 rounded-lg border-2 transition-all",
+                        selectedTheme === key
+                          ? "border-white bg-white/10"
+                          : "border-gray-600 hover:border-gray-400"
+                      )}
+                    >
+                      <div
+                        className={cn("w-full h-8 rounded", theme.gradientClass)}
+                      />
+                      <div className="text-white text-xs mt-1 text-center">
+                        {key === "main+background" && "Défaut"}
+                        {key === "white+sky" && "Blanc & Ciel"}
+                        {key === "red+navy" && "Rouge & Marine"}
+                        {key === "navy+bronze" && "Marine & Bronze"}
+                        {key === "white+red" && "Blanc & Rouge"}
+                        {key === "white+blue" && "Blanc & Bleu"}
+                        {key === "gold+black" && "Or & Noir"}
+                        {key === "green+white" && "Vert & Blanc"}
+                        {key === "red+black" && "Rouge & Noir"}
+                        {key === "blue+white+red" && "Bleu Blanc Rouge"}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 

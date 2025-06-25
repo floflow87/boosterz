@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Updated deck theme system with new colors and improved UI
+  - Replaced "Marine & Or" with "Marine & Bronze" theme
+  - Changed "Noir & Or" to "Or & Noir" (inverted colors)
+  - Added 4 new themes: Or & Noir, Vert & Blanc, Rouge & Noir, Bleu Blanc Rouge
+  - Created collapsible theme selector with arrow for both creation and editing
+  - Synchronized theme options between deck creation and modification pages
 - June 25, 2025. Fixed deck banner registration and upload system
   - Updated PATCH /api/decks/:id endpoint to handle coverImage and bannerPosition fields
   - Added proper validation and dynamic update data preparation
