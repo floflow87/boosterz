@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Redesigned user profile layout with centered header
+  - Created centered header with large avatar, name, username and description
+  - Simplified tabs to 3 main sections: À la une, En vente, Decks
+  - Moved KPIs to separate section below header
+  - Improved visual hierarchy matching user's design requirements
 - June 25, 2025. Added description field to user profiles
   - Added bio/description textarea field to profile editing page
   - Implemented character limit (200) with counter display

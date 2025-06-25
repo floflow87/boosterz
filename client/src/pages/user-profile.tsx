@@ -282,12 +282,12 @@ export default function UserProfile() {
       
       <Header title={`@${user.username}`} />
 
-      <main className="relative z-10 px-4 pb-24">
-        {/* User Info - Nouveau layout centré */}
-        <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6">
-          {/* Avatar et nom centrés */}
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden mb-3">
+      <main className="relative z-10 pb-24">
+        {/* Header Profile - Centré selon l'image */}
+        <div className="bg-[hsl(214,35%,22%)] p-8 mb-6">
+          <div className="flex flex-col items-center text-center space-y-4">
+            {/* Avatar principal */}
+            <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
               {user.avatar ? (
                 <img 
                   src={user.avatar} 
@@ -295,52 +295,53 @@ export default function UserProfile() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-2xl font-bold text-white">{user.name.charAt(0)}</span>
+                <span className="text-3xl font-bold text-white">{user.name.charAt(0)}</span>
               )}
             </div>
-            <h1 className="text-xl font-bold text-white mb-1">{user.name.toUpperCase()}</h1>
-            <p className="text-gray-400 text-sm">@{user.username}</p>
-          </div>
-
-          {/* Description section */}
-          {user.bio && (
-            <div className="mb-6">
-              <div className="bg-[hsl(214,35%,18%)] rounded-lg p-4">
-                <h3 className="text-white font-medium mb-2">Description</h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  {user.bio}
-                </p>
-              </div>
-            </div>
-          )}
-          
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-2xl font-bold text-white">{collections.length}</div>
-              <div className="text-xs text-gray-400">Decks</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-white">{user.totalCards || 0}</div>
-              <div className="text-xs text-gray-400">Cartes</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-white">{Math.round(user.completionPercentage || 0)}%</div>
-              <div className="text-xs text-gray-400">Complétées</div>
-            </div>
+            
+            {/* Nom complet */}
+            <h1 className="text-2xl font-bold text-white">{user.name.toUpperCase()}</h1>
+            
+            {/* Pseudo */}
+            <p className="text-gray-400 text-lg">@{user.username}</p>
+            
+            {/* Description */}
+            {user.bio && (
+              <p className="text-gray-300 text-sm max-w-md leading-relaxed">
+                {user.bio}
+              </p>
+            )}
           </div>
         </div>
 
-        <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="grid w-full grid-cols-6 bg-[hsl(214,35%,22%)] mb-6">
-            <TabsTrigger value="posts" className="text-xs">Posts</TabsTrigger>
-            <TabsTrigger value="collections" className="text-xs">Collections</TabsTrigger>
-            <TabsTrigger value="decks" className="text-xs">Decks</TabsTrigger>
-            <TabsTrigger value="featured" className="text-xs">À la une</TabsTrigger>
-            <TabsTrigger value="marketplace" className="text-xs">Marché</TabsTrigger>
-            <TabsTrigger value="sold" className="text-xs">Vendues</TabsTrigger>
-          </TabsList>
+        <div className="px-4">
+          {/* KPIs */}
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6">
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-white">{collections.length}</div>
+                <div className="text-xs text-gray-400">Decks</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{user.totalCards || 0}</div>
+                <div className="text-xs text-gray-400">Cartes</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-white">{Math.round(user.completionPercentage || 0)}%</div>
+                <div className="text-xs text-gray-400">Complétées</div>
+              </div>
+            </div>
+          </div>
 
-          {/* Posts Tab Content */}
+          {/* Onglets simplifiés selon la demande */}
+          <Tabs defaultValue="posts" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 bg-[hsl(214,35%,22%)] mb-6">
+              <TabsTrigger value="posts" className="text-sm">À la une</TabsTrigger>
+              <TabsTrigger value="marketplace" className="text-sm">En vente</TabsTrigger>
+              <TabsTrigger value="decks" className="text-sm">Decks</TabsTrigger>
+            </TabsList>
+
+          {/* À la une Tab Content */}
           <TabsContent value="posts" className="space-y-4">
             {postsLoading ? (
               <div className="text-center py-8">
@@ -703,7 +704,8 @@ export default function UserProfile() {
               </div>
             )}
           </TabsContent>
-        </Tabs>
+          </Tabs>
+        </div>
       </main>
 
       <Navigation />
