@@ -40,6 +40,7 @@ export interface IStorage {
 
   // Personal Cards (pour "Mes cartes")
   getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]>;
+  getAllPersonalCards(): Promise<PersonalCard[]>;
   getPersonalCard(id: number): Promise<PersonalCard | undefined>;
   createPersonalCard(personalCard: InsertPersonalCard): Promise<PersonalCard>;
   updatePersonalCard(id: number, updates: Partial<PersonalCard>): Promise<PersonalCard | undefined>;
