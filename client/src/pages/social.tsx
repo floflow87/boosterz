@@ -124,8 +124,7 @@ export default function Social() {
     retry: false,
   });
   
-  // Debug log to see what data we're getting
-  console.log('Current user data:', currentUser);
+
   
   const currentUserId = currentUser?.user?.id?.toString() || "1";
   const userId = "999"; // Pour les profils consultés (maxlamenace)
