@@ -359,6 +359,39 @@ export default function DeckDetail() {
     }
   });
 
+  // Mutation pour supprimer une carte
+  const removeCardMutation = useMutation({
+    mutationFn: async (cardPosition: number) => {
+      const response = await fetch(`/api/decks/${id}/cards/${cardPosition}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) throw new Error('Failed to remove card');
+      return response.json();
+    },
+    onSuccess: () => {
+      // Forcer le rechargement complet des données
+      queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+      queryClient.refetchQueries({ queryKey: [`/api/decks/${id}`] });
+      
+      toast({
+        title: "Carte supprimée",
+        description: "La carte a été retirée du deck avec succès",
+        className: "bg-green-600 text-white border-green-700",
+      });
+      
+      setLongPressCard(null);
+    },
+    onError: (error) => {
+      console.error('Erreur lors de la suppression:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de supprimer la carte",
+        variant: "destructive",
+      });
+    }
+  });
+
   // Gestionnaire de fin de drag
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -390,6 +423,14 @@ export default function DeckDetail() {
       updatePositionsMutation.mutate(newPositions);
     }
   };
+
+  // Effet pour synchroniser les cartes du deck avec l'état local
+  useEffect(() => {
+    if (deckQuery.data?.cards) {
+      console.log('Updating local cards from server:', deckQuery.data.cards.length);
+      setLocalCards(deckQuery.data.cards);
+    }
+  }, [deckQuery.data?.cards]);
 
   if (isLoading) {
     return <LoadingScreen />;
