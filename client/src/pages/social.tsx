@@ -114,6 +114,7 @@ export default function Social() {
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
+  const [postCommentsCount, setPostCommentsCount] = useState<Record<number, number>>({});
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -167,18 +168,25 @@ export default function Social() {
     }
   }, [userLikes]);
 
-  // Initialiser les likes des posts avec les vraies données
+  // Initialiser les likes et commentaires des posts avec les vraies données
   useEffect(() => {
     const allPosts = [...feed, ...myPosts];
     if (allPosts.length > 0) {
       const likes: Record<number, number> = {};
+      const comments: Record<number, number> = {};
       allPosts.forEach(post => {
         // Utiliser le likesCount du serveur ou garder la valeur existante si elle est plus récente
-        const currentCount = postLikes[post.id];
-        const serverCount = post.likesCount || 0;
-        likes[post.id] = currentCount !== undefined ? currentCount : serverCount;
+        const currentLikeCount = postLikes[post.id];
+        const serverLikeCount = post.likesCount || 0;
+        likes[post.id] = currentLikeCount !== undefined ? currentLikeCount : serverLikeCount;
+        
+        // Même logique pour les commentaires
+        const currentCommentCount = postCommentsCount[post.id];
+        const serverCommentCount = post.commentsCount || 0;
+        comments[post.id] = currentCommentCount !== undefined ? currentCommentCount : serverCommentCount;
       });
       setPostLikes(prev => ({ ...prev, ...likes }));
+      setPostCommentsCount(prev => ({ ...prev, ...comments }));
     }
   }, [feed, myPosts]); // Dépendances sur les posts complets
 
@@ -1017,7 +1025,17 @@ export default function Social() {
                         <span className={likedPosts.has(post.id) ? 'text-red-500' : 'text-gray-400'}>
                           {postLikes[post.id] || 0} j'aime
                         </span>
-                        <span className="text-gray-400">{postComments[post.id]?.length || 0} commentaire{(postComments[post.id]?.length || 0) !== 1 ? 's' : ''}</span>
+                        <span className="text-gray-400 cursor-pointer hover:text-blue-400 transition-colors" onClick={() => {
+                          const newShowComments = new Set(showComments);
+                          if (newShowComments.has(post.id)) {
+                            newShowComments.delete(post.id);
+                          } else {
+                            newShowComments.add(post.id);
+                          }
+                          setShowComments(newShowComments);
+                        }}>
+                          {postCommentsCount[post.id] || 0} commentaire{(postCommentsCount[post.id] || 0) !== 1 ? 's' : ''}
+                        </span>
                       </div>
 
                       {/* Interaction Buttons */}
@@ -1034,12 +1052,38 @@ export default function Social() {
                           <span className="text-sm">J'aime</span>
                         </button>
                         <button 
-                          onClick={() => {
+                          onClick={async () => {
                             const newShowComments = new Set(showComments);
                             if (newShowComments.has(post.id)) {
                               newShowComments.delete(post.id);
                             } else {
                               newShowComments.add(post.id);
+                              // Charger les commentaires si pas encore chargés
+                              if (!postComments[post.id]) {
+                                try {
+                                  const response = await fetch(`/api/posts/${post.id}/comments`);
+                                  if (response.ok) {
+                                    const comments = await response.json();
+                                    setPostComments(prev => ({
+                                      ...prev,
+                                      [post.id]: comments.map((c: any) => ({
+                                        id: c.id,
+                                        content: c.content,
+                                        author: c.user.name,
+                                        timestamp: new Date(c.createdAt).toLocaleString('fr-FR', {
+                                          day: '2-digit',
+                                          month: '2-digit',
+                                          year: 'numeric',
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })
+                                      }))
+                                    }));
+                                  }
+                                } catch (error) {
+                                  console.error('Erreur lors du chargement des commentaires:', error);
+                                }
+                              }
                             }
                             setShowComments(newShowComments);
                           }}

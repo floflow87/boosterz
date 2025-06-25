@@ -8,7 +8,7 @@ import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
 import { db } from "./db";
-import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema, follows, collections, userCards, conversations, messages, activities, subscriptions, postLikes } from "@shared/schema";
+import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema, follows, collections, userCards, conversations, messages, activities, subscriptions, postLikes, postComments } from "@shared/schema";
 import { eq, desc, and, inArray, not, or, ilike, asc, like, sql } from "drizzle-orm";
 
 // Initialize sample data in database
@@ -327,6 +327,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: posts.createdAt,
         updatedAt: posts.updatedAt,
         likesCount: sql<number>`(SELECT COUNT(*)::int FROM post_likes WHERE post_id = ${posts.id})`,
+        commentsCount: sql<number>`(SELECT COUNT(*)::int FROM post_comments WHERE post_id = ${posts.id})`,
         user: {
           id: users.id,
           username: users.username,
@@ -2037,6 +2038,100 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(likedPostIds);
     } catch (error) {
       console.error("Erreur lors de la récupération des likes:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Get comments for a post
+  app.get("/api/posts/:id/comments", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const postId = parseInt(req.params.id);
+      
+      if (isNaN(postId)) {
+        return res.status(400).json({ message: "Invalid post ID" });
+      }
+
+      const comments = await db.select({
+        id: postComments.id,
+        content: postComments.content,
+        createdAt: postComments.createdAt,
+        user: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+          avatar: users.avatar
+        }
+      })
+      .from(postComments)
+      .innerJoin(users, eq(postComments.userId, users.id))
+      .where(eq(postComments.postId, postId))
+      .orderBy(asc(postComments.createdAt));
+
+      res.json(comments);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Add comment to a post
+  app.post("/api/posts/:id/comments", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      const { content } = req.body;
+
+      if (isNaN(postId)) {
+        return res.status(400).json({ message: "Invalid post ID" });
+      }
+
+      if (!content || content.trim().length === 0) {
+        return res.status(400).json({ message: "Comment content is required" });
+      }
+
+      // Vérifier si le post existe
+      const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+      if (post.length === 0) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+
+      // Ajouter le commentaire
+      const newComment = await db.insert(postComments).values({
+        postId,
+        userId,
+        content: content.trim()
+      }).returning();
+
+      // Récupérer le commentaire avec les infos utilisateur
+      const commentWithUser = await db.select({
+        id: postComments.id,
+        content: postComments.content,
+        createdAt: postComments.createdAt,
+        user: {
+          id: users.id,
+          username: users.username,
+          name: users.name,
+          avatar: users.avatar
+        }
+      })
+      .from(postComments)
+      .innerJoin(users, eq(postComments.userId, users.id))
+      .where(eq(postComments.id, newComment[0].id))
+      .limit(1);
+
+      // Compter le nombre total de commentaires
+      const commentsCountResult = await db.select({ count: sql<number>`count(*)::int` })
+        .from(postComments)
+        .where(eq(postComments.postId, postId));
+
+      const commentsCount = parseInt(commentsCountResult[0]?.count?.toString() || '0');
+
+      res.json({
+        comment: commentWithUser[0],
+        commentsCount
+      });
+    } catch (error) {
+      console.error("Error adding comment:", error);
       res.status(500).json({ message: "Erreur interne du serveur" });
     }
   });
