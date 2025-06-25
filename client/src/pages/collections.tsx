@@ -446,7 +446,7 @@ export default function Collections() {
                 <span>collections</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.followersCount || 1250}</span>
+                <span className="font-medium text-white">{user.followersCount || 0}</span>
                 <span>abonnés</span>
               </div>
             </div>

@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Implemented real counts display on user profiles
+  - Added calculation of real collections count from user's actual collections
+  - Added calculation of real cards count from owned cards across all collections
+  - Added personal cards count (excluding sold cards) to total cards calculation
+  - Added real completion percentage based on owned/total cards ratio
+  - Profile pages now show authentic data: followers, following, collections, cards, completion
 - June 24, 2025. Implemented real followers count display on user profiles
   - Added getFollowingCount method to storage interface
   - Enhanced follow/unfollow methods to update user followers count in database

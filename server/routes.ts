@@ -401,10 +401,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "User not found" });
       }
       
-      // Get real followers count from database
+      // Get real counts from database
       const followersCount = await storage.getFollowersCount(userId);
       const followingCount = await storage.getFollowingCount(userId);
-      console.log(`Profile for user ${userId}: ${followersCount} followers, ${followingCount} following`);
+      
+      // Get collections count
+      const collections = await storage.getCollectionsByUserId(userId);
+      const collectionsCount = collections.length;
+      
+      // Calculate total cards owned across all collections
+      let totalCards = 0;
+      let ownedCards = 0;
+      
+      for (const collection of collections) {
+        const cards = await storage.getCardsByCollectionId(collection.id);
+        totalCards += cards.length;
+        ownedCards += cards.filter(card => card.isOwned).length;
+      }
+      
+      // Add personal cards count
+      const personalCards = await storage.getPersonalCardsByUserId(userId);
+      const personalCardsCount = personalCards.filter(card => !card.isSold).length;
+      totalCards += personalCardsCount;
+      ownedCards += personalCardsCount;
+      
+      // Calculate completion percentage
+      const completionPercentage = totalCards > 0 ? Math.round((ownedCards / totalCards) * 100) : 0;
+      
+      console.log(`Profile for user ${userId}: ${followersCount} followers, ${followingCount} following, ${collectionsCount} collections, ${ownedCards}/${totalCards} cards (${completionPercentage}%)`);
       
       // If there's a current user and they're looking at someone else's profile, include follow status
       let isFollowing = false;
@@ -416,6 +440,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...user,
         followersCount,
         followingCount,
+        collectionsCount,
+        totalCards: ownedCards, // Only show owned cards for simplicity
+        completionPercentage,
         isFollowing
       });
     } catch (error) {

@@ -121,7 +121,7 @@ export default function AllCards() {
                 <p className="text-[hsl(212,23%,69%)] text-sm">@{user.username}</p>
               </div>
               <div className="text-right">
-                <div className="text-xl font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString()}</div>
+                <div className="text-xl font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString() || 0}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes totales</div>
               </div>
             </div>
