@@ -434,7 +434,61 @@ export default function Social() {
     setTaggedPeople(taggedPeople.filter(person => person !== username));
   };
 
+  // Handle add comment
+  const handleAddComment = async (postId: number, content?: string) => {
+    const commentContent = content || commentInputs[postId];
+    if (!commentContent?.trim()) return;
+    
+    try {
+      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+      
+      const response = await fetch(`/api/posts/${postId}/comments`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ content: commentContent.trim() }),
+      });
 
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'ajout du commentaire');
+      }
+
+      const result = await response.json();
+      
+      // Mettre à jour les commentaires
+      setPostComments(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), {
+          id: result.comment.id,
+          content: result.comment.content,
+          author: result.comment.user.name,
+          timestamp: new Date(result.comment.createdAt).toLocaleString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        }]
+      }));
+
+      // Mettre à jour le compteur
+      setPostCommentsCount(prev => ({
+        ...prev,
+        [postId]: result.commentsCount
+      }));
+
+      // Vider l'input
+      setCommentInputs(prev => ({
+        ...prev,
+        [postId]: ""
+      }));
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout du commentaire:', error);
+    }
+  };
 
   // Mutation pour suivre/arrêter de suivre un utilisateur
   const followMutation = useMutation({
