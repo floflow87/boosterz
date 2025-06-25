@@ -1101,14 +1101,14 @@ export default function Social() {
                                   },
                                 });
                                 if (response.ok) {
-                                  const data = await response.json();
+                                  const comments = await response.json();
                                   setPostComments(prev => ({
                                     ...prev,
-                                    [post.id]: data.comments.map((comment: any) => ({
+                                    [post.id]: (comments || []).map((comment: any) => ({
                                       id: comment.id,
                                       content: comment.content,
-                                      author: comment.user.name,
-                                      avatar: comment.user.avatar,
+                                      author: comment.user?.name || 'Anonyme',
+                                      avatar: comment.user?.avatar,
                                       timestamp: new Date(comment.createdAt).toLocaleString('fr-FR', {
                                         day: '2-digit',
                                         month: '2-digit',
@@ -1117,6 +1117,11 @@ export default function Social() {
                                         minute: '2-digit'
                                       })
                                     }))
+                                  }));
+                                  
+                                  setPostCommentsCount(prev => ({
+                                    ...prev,
+                                    [post.id]: comments?.length || 0
                                   }));
                                 }
                               } catch (error) {
@@ -1211,10 +1216,20 @@ export default function Social() {
                           <div className="space-y-3">
                             {(postComments[post.id] || []).map((comment) => (
                               <div key={comment.id} className="flex space-x-3">
-                                <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center flex-shrink-0">
-                                  <span className="text-xs font-bold text-white">
-                                    {comment.user?.name?.charAt(0) || 'U'}
-                                  </span>
+                                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                  {comment.avatar ? (
+                                    <img 
+                                      src={comment.avatar} 
+                                      alt="Avatar" 
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                                      <span className="text-xs font-bold text-white">
+                                        {comment.author?.charAt(0) || 'U'}
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="flex-1">
                                   <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
