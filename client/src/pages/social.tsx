@@ -271,9 +271,9 @@ export default function Social() {
       const result = await response.json();
       console.log('Like result:', result);
       
+      // Mettre à jour immédiatement l'interface
       if (result.liked) {
         setLikedPosts(prev => new Set([...prev, postId]));
-        setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
         console.log('Post liked successfully');
       } else {
         setLikedPosts(prev => {
@@ -281,9 +281,12 @@ export default function Social() {
           newSet.delete(postId);
           return newSet;
         });
-        setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
         console.log('Post unliked successfully');
       }
+      
+      // Mettre à jour le compteur de likes
+      setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
+      console.log(`Updated likes count for post ${postId}: ${result.likesCount}`);
     } catch (error) {
       console.error('Erreur complète:', error);
     }
