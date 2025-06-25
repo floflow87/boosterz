@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Fixed deck banner registration and upload system
+  - Updated PATCH /api/decks/:id endpoint to handle coverImage and bannerPosition fields
+  - Added proper validation and dynamic update data preparation
+  - Banner upload and position adjustment now save correctly to database
+  - Added debugging logs to track successful deck updates
 - June 25, 2025. Cleaned up marketplace to show only real cards for sale
   - Removed all mock/fake cards from "Sur le marché" tab in social section
   - Marketplace now displays only authentic personal cards marked isForSale: true

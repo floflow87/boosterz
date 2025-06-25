@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload } from "lucide-react";
+import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload, ChevronDown, ChevronUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
@@ -189,6 +189,26 @@ const themeStyles = {
     backgroundColor: "#FFFFFF",
     accentColor: "#3B82F6",
     gradientClass: "bg-gradient-radial from-white via-white to-blue-500"
+  },
+  "black+gold": {
+    backgroundColor: "#000000",
+    accentColor: "#FFD700",
+    gradientClass: "bg-gradient-radial from-black via-black to-yellow-500"
+  },
+  "green+white": {
+    backgroundColor: "#22C55E",
+    accentColor: "#FFFFFF",
+    gradientClass: "bg-gradient-radial from-green-500 via-green-500 to-white"
+  },
+  "red+black": {
+    backgroundColor: "#DC2626",
+    accentColor: "#000000",
+    gradientClass: "bg-gradient-radial from-red-600 via-red-600 to-black"
+  },
+  "blue+white+red": {
+    backgroundColor: "#3B82F6",
+    accentColor: "#DC2626",
+    gradientClass: "bg-gradient-radial from-blue-500 via-white to-red-600"
   }
 };
 
@@ -213,6 +233,7 @@ export default function DeckDetail() {
   const [editTheme, setEditTheme] = useState('');
   const [editCoverImage, setEditCoverImage] = useState<string | null>(null);
   const [bannerPosition, setBannerPosition] = useState(50); // Position verticale en %
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
 
   // useEffect pour synchroniser les cartes locales et initialiser l'édition
   useEffect(() => {
@@ -357,7 +378,7 @@ export default function DeckDetail() {
               <div>
                 <h1 className={cn(
                   "text-2xl font-bold font-luckiest mb-2",
-                  ["white+sky", "white+red", "white+blue"].includes(deck.themeColors) 
+                  ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors) 
                     ? "text-black" 
                     : "text-white"
                 )}>
@@ -365,7 +386,7 @@ export default function DeckDetail() {
                 </h1>
                 <div className="text-sm">
                   <span className={cn(
-                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors) 
+                    ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors) 
                       ? "text-black/80" 
                       : "text-white/80"
                   )}>
@@ -599,33 +620,72 @@ export default function DeckDetail() {
               </div>
 
               <div>
-                <Label className="text-white mb-2 block">Thème</Label>
-                <div className="grid grid-cols-2 gap-3">
-                  {Object.entries(themeStyles).map(([key, theme]) => (
-                    <button
-                      key={key}
-                      onClick={() => setEditTheme(key)}
-                      className={cn(
-                        "p-3 rounded-lg border-2 transition-all",
-                        editTheme === key
-                          ? "border-white"
-                          : "border-gray-600 hover:border-gray-400"
-                      )}
-                    >
-                      <div
-                        className={cn("w-full h-8 rounded", theme.gradientClass)}
-                      />
-                      <div className="text-white text-xs mt-1 text-center">
-                        {key === "main+background" && "Défaut"}
-                        {key === "white+sky" && "Blanc & Ciel"}
-                        {key === "red+navy" && "Rouge & Marine"}
-                        {key === "navy+gold" && "Marine & Or"}
-                        {key === "white+red" && "Blanc & Rouge"}
-                        {key === "white+blue" && "Blanc & Bleu"}
+                <button
+                  onClick={() => setShowThemeSelector(!showThemeSelector)}
+                  className="w-full flex items-center justify-between p-3 bg-[hsl(214,35%,18%)] rounded-lg border border-gray-600 hover:border-gray-500 transition-colors mb-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={cn("w-8 h-8 rounded", themeStyles[editTheme as keyof typeof themeStyles]?.gradientClass || themeStyles["main+background"].gradientClass)}
+                    />
+                    <div>
+                      <Label className="text-white text-sm font-medium">Thème</Label>
+                      <div className="text-gray-400 text-xs">
+                        {editTheme === "main+background" && "Défaut"}
+                        {editTheme === "white+sky" && "Blanc & Ciel"}
+                        {editTheme === "red+navy" && "Rouge & Marine"}
+                        {editTheme === "navy+gold" && "Marine & Or"}
+                        {editTheme === "white+red" && "Blanc & Rouge"}
+                        {editTheme === "white+blue" && "Blanc & Bleu"}
+                        {editTheme === "black+gold" && "Noir & Or"}
+                        {editTheme === "green+white" && "Vert & Blanc"}
+                        {editTheme === "red+black" && "Rouge & Noir"}
+                        {editTheme === "blue+white+red" && "Bleu Blanc Rouge"}
                       </div>
-                    </button>
-                  ))}
-                </div>
+                    </div>
+                  </div>
+                  {showThemeSelector ? (
+                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                  ) : (
+                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                  )}
+                </button>
+
+                {showThemeSelector && (
+                  <div className="grid grid-cols-2 gap-3 mb-4">
+                    {Object.entries(themeStyles).map(([key, theme]) => (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          setEditTheme(key);
+                          setShowThemeSelector(false);
+                        }}
+                        className={cn(
+                          "p-3 rounded-lg border-2 transition-all",
+                          editTheme === key
+                            ? "border-white bg-white/10"
+                            : "border-gray-600 hover:border-gray-400"
+                        )}
+                      >
+                        <div
+                          className={cn("w-full h-8 rounded", theme.gradientClass)}
+                        />
+                        <div className="text-white text-xs mt-1 text-center">
+                          {key === "main+background" && "Défaut"}
+                          {key === "white+sky" && "Blanc & Ciel"}
+                          {key === "red+navy" && "Rouge & Marine"}
+                          {key === "navy+gold" && "Marine & Or"}
+                          {key === "white+red" && "Blanc & Rouge"}
+                          {key === "white+blue" && "Blanc & Bleu"}
+                          {key === "black+gold" && "Noir & Or"}
+                          {key === "green+white" && "Vert & Blanc"}
+                          {key === "red+black" && "Rouge & Noir"}
+                          {key === "blue+white+red" && "Bleu Blanc Rouge"}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 pt-4">
