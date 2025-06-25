@@ -418,21 +418,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const followersCount = await storage.getFollowersCount(userId);
       const followingCount = await storage.getFollowingCount(userId);
       
-      // Get collections count
-      const collections = await storage.getCollectionsByUserId(userId);
-      const collectionsCount = collections.length;
+      // Get decks count (real decks from database)
+      const decks = await storage.getDecksByUserId(userId);
+      const decksCount = decks.length;
       
       // Calculate total cards owned across all collections
       let totalCards = 0;
       let ownedCards = 0;
       
+      const collections = await storage.getCollectionsByUserId(userId);
       for (const collection of collections) {
         const cards = await storage.getCardsByCollectionId(collection.id);
         totalCards += cards.length;
         ownedCards += cards.filter(card => card.isOwned).length;
       }
       
-      // Add personal cards count
+      // Add personal cards count (non-sold cards)
       const personalCards = await storage.getPersonalCardsByUserId(userId);
       const personalCardsCount = personalCards.filter(card => !card.isSold).length;
       totalCards += personalCardsCount;
@@ -441,7 +442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Calculate completion percentage
       const completionPercentage = totalCards > 0 ? Math.round((ownedCards / totalCards) * 100) : 0;
       
-      console.log(`Profile for user ${userId}: ${followersCount} followers, ${followingCount} following, ${collectionsCount} collections, ${ownedCards}/${totalCards} cards (${completionPercentage}%)`);
+      console.log(`Profile for user ${userId}: ${followersCount} followers, ${followingCount} following, ${decksCount} decks, ${ownedCards}/${totalCards} cards (${completionPercentage}%)`);
       
       // If there's a current user and they're looking at someone else's profile, include follow status
       let isFollowing = false;
@@ -453,8 +454,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...user,
         followersCount,
         followingCount,
-        collectionsCount,
-        totalCards: ownedCards, // Only show owned cards for simplicity
+        collectionsCount: decksCount, // Use real decks count
+        totalCards: ownedCards, // Only show owned cards
         completionPercentage,
         isFollowing
       });

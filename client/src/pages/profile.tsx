@@ -164,27 +164,35 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white">
-      {/* Header avec logo BOOSTERZ et halo à gauche */}
+      {/* Header avec logo BOOSTERZ et halo */}
       <div className="relative bg-[hsl(214,35%,11%)] px-4 py-3">
         <div className="flex items-center justify-between">
-          {/* Logo BOOSTERZ à gauche avec halo */}
-          <div className="relative flex items-center">
-            <h1 className="text-white font-bold text-xl z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>BOOSTERZ</h1>
-            {/* Halo orange à gauche du logo */}
-            <div className="absolute -left-6 top-1/2 transform -translate-y-1/2 w-16 h-16 bg-[hsl(27,96%,61%)] opacity-20 rounded-full blur-xl"></div>
+          {/* Flèche retour et logo BOOSTERZ */}
+          <div className="relative flex items-center space-x-3">
+            <button 
+              onClick={() => setLocation("/")}
+              className="text-white hover:text-gray-300 transition-colors"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-white font-bold text-xl z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
+              BOOSTER<span className="text-[hsl(27,96%,61%)]">Z</span>
+            </h1>
+            {/* Halo main color */}
+            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-20 h-20 bg-[hsl(27,96%,61%)] opacity-15 rounded-full blur-2xl"></div>
           </div>
           
           {/* Icônes à droite */}
           <div className="flex items-center space-x-4">
-            <button className="text-white hover:text-gray-300 transition-colors relative">
-              <Bell className="w-6 h-6" />
+            <button className="text-gray-400 hover:text-white transition-colors relative">
+              <Bell className="w-5 h-5" />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
             <button 
               onClick={() => setLocation("/settings")}
-              className="text-white hover:text-gray-300 transition-colors"
+              className="text-gray-400 hover:text-white transition-colors"
             >
-              <Settings className="w-6 h-6" />
+              <Settings className="w-5 h-5" />
             </button>
           </div>
         </div>

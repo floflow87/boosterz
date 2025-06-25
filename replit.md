@@ -119,12 +119,14 @@ The application follows a modern full-stack architecture with clear separation b
 
 ## Changelog
 - June 25, 2025. Updated profile page header and navigation consistency
-  - Added consistent header with BOOSTERZ logo in Luckiest Guy font
-  - Added notification and settings icons to right side with main color halo effect
+  - Added consistent header with BOOSTERZ logo in Luckiest Guy font with Z in main color
+  - Added back arrow navigation and main color halo effect behind logo
+  - Updated notification and settings icons to match design specifications
   - Removed unfollow button, kept only follow button for non-followed users
-  - Changed KPI labels from "Abonnements/Collections" to "Suivis/Decks"
+  - Changed KPI labels from "Abonnements/Collections" to "Suivis/Decks" 
   - Applied Luckiest Guy font to user name (first name + last name) for brand consistency
-  - Profile page now matches overall app design language
+  - Implemented real dynamic KPI calculations: actual cards count, followers count, and decks count
+  - Profile page now matches overall app design language with authentic data
 - June 25, 2025. Enhanced user profile community features
   - Added dynamic avatar display throughout user profile pages
   - Implemented social feed post box design on user profile "À la une" section
