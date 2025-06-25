@@ -303,20 +303,36 @@ export default function DeckDetail() {
   // Mutation pour supprimer le deck
   const deleteDeckMutation = useMutation({
     mutationFn: async () => {
+      console.log(`Deleting deck with ID: ${id}`);
       const response = await fetch(`/api/decks/${id}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
-      if (!response.ok) throw new Error('Erreur lors de la suppression');
+      
+      console.log('Delete response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error('Delete error:', errorData);
+        throw new Error('Erreur lors de la suppression');
+      }
+      
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('Delete successful:', data);
       toast({ 
         title: "Deck supprimé avec succès!",
         className: "bg-green-600 text-white border-green-700"
       });
+      // Invalider les requêtes pour forcer le rechargement
+      queryClient.invalidateQueries({ queryKey: ['/api/decks'] });
       setLocation('/collections?tab=decks');
     },
-    onError: () => {
+    onError: (error) => {
+      console.error('Delete mutation error:', error);
       toast({ title: "Erreur lors de la suppression", variant: "destructive" });
     }
   });
@@ -870,6 +886,7 @@ export default function DeckDetail() {
               </Button>
               <Button
                 onClick={() => {
+                  console.log('Delete button clicked, mutating...');
                   deleteDeckMutation.mutate();
                   setShowDeleteConfirm(false);
                 }}

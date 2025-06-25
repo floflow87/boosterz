@@ -1737,6 +1737,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Delete deck
+  app.delete("/api/decks/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const deckId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      console.log(`Attempting to delete deck ${deckId} for user ${userId}`);
+      
+      // Vérifier que le deck appartient à l'utilisateur
+      const [existingDeck] = await db.select().from(decks).where(eq(decks.id, deckId));
+      if (!existingDeck) {
+        console.log(`Deck ${deckId} not found`);
+        return res.status(404).json({ message: "Deck not found" });
+      }
+      
+      if (existingDeck.userId !== userId) {
+        console.log(`Deck ${deckId} does not belong to user ${userId}`);
+        return res.status(403).json({ message: "Unauthorized" });
+      }
+      
+      // Supprimer d'abord les cartes du deck
+      const deletedCards = await db.delete(deckCards).where(eq(deckCards.deckId, deckId));
+      console.log(`Deleted cards from deck ${deckId}`);
+      
+      // Supprimer le deck
+      const deletedDeck = await db.delete(decks).where(eq(decks.id, deckId));
+      console.log(`Deleted deck ${deckId}`);
+      
+      res.json({ message: "Deck deleted successfully" });
+    } catch (error) {
+      console.error('Error deleting deck:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Create new deck
   app.post("/api/decks", authenticateToken, async (req: AuthRequest, res) => {
     try {
