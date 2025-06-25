@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Updated profile page header and navigation consistency
+  - Added consistent header with BOOSTERZ logo in Luckiest Guy font
+  - Added notification and settings icons to right side with main color halo effect
+  - Removed unfollow button, kept only follow button for non-followed users
+  - Changed KPI labels from "Abonnements/Collections" to "Suivis/Decks"
+  - Profile page now matches overall app design language
 - June 25, 2025. Enhanced user profile community features
   - Added dynamic avatar display throughout user profile pages
   - Implemented social feed post box design on user profile "À la une" section

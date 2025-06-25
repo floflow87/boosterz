@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Settings, Heart, MessageCircle, Share2 } from "lucide-react";
+import { ArrowLeft, Settings, Heart, MessageCircle, Share2, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface User {
@@ -164,25 +164,35 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white">
-      <div className="sticky top-0 z-50 bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+      <div className="sticky top-0 z-50 bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)] relative">
         <div className="flex items-center justify-between px-4 py-3">
-          <button
-            onClick={() => setLocation('/social')}
-            className="p-2 hover:bg-[hsl(214,35%,18%)] rounded-full transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
-          <div className="text-center">
-            <h1 className="font-bold text-lg text-white">Profil</h1>
-          </div>
-          {isOwnProfile && (
-            <button
-              onClick={() => setLocation('/profile-edit')}
-              className="p-2 hover:bg-[hsl(214,35%,18%)] rounded-full transition-colors"
+          {/* Logo Boosterz à gauche */}
+          <div className="flex items-center">
+            <button 
+              onClick={() => setLocation("/")}
+              className="text-white hover:text-gray-300 transition-colors mr-3"
             >
-              <Settings className="w-5 h-5 text-white" />
+              <ArrowLeft className="w-6 h-6" />
             </button>
-          )}
+            <h1 className="text-white font-bold text-xl" style={{ fontFamily: 'Luckiest Guy, cursive' }}>BOOSTERZ</h1>
+          </div>
+          
+          {/* Icônes à droite */}
+          <div className="flex items-center space-x-4">
+            <button className="text-white hover:text-gray-300 transition-colors relative">
+              <Bell className="w-6 h-6" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            <button 
+              onClick={() => setLocation("/settings")}
+              className="text-white hover:text-gray-300 transition-colors"
+            >
+              <Settings className="w-6 h-6" />
+            </button>
+          </div>
+          
+          {/* Halo main color en haut à droite */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-[hsl(27,96%,61%)] opacity-20 rounded-full blur-2xl pointer-events-none"></div>
         </div>
       </div>
 
@@ -219,22 +229,14 @@ export default function Profile() {
             </p>
           )}
 
-          {/* Bouton Follow/Unfollow */}
-          {!isOwnProfile && (
+          {/* Bouton Follow seulement */}
+          {!isOwnProfile && !profileUser.isFollowing && (
             <Button
               onClick={handleFollow}
               disabled={followMutation.isPending}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
-                profileUser.isFollowing
-                  ? "bg-gray-600 hover:bg-gray-700 text-white"
-                  : "bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
-              }`}
+              className="px-6 py-2 rounded-full font-medium transition-colors bg-[hsl(27,96%,61%)] hover:bg-[hsl(27,96%,55%)] text-white"
             >
-              {followMutation.isPending
-                ? "..."
-                : profileUser.isFollowing
-                ? "Se désabonner"
-                : "Suivre"}
+              {followMutation.isPending ? "..." : "Suivre"}
             </Button>
           )}
 
@@ -246,11 +248,11 @@ export default function Profile() {
             </div>
             <div className="text-center">
               <div className="text-xl font-bold text-white">{profileUser.followingCount || 0}</div>
-              <div className="text-sm text-gray-400">Abonnements</div>
+              <div className="text-sm text-gray-400">Suivis</div>
             </div>
             <div className="text-center">
               <div className="text-xl font-bold text-white">{profileUser.collectionsCount || 0}</div>
-              <div className="text-sm text-gray-400">Collections</div>
+              <div className="text-sm text-gray-400">Decks</div>
             </div>
             <div className="text-center">
               <div className="text-xl font-bold text-white">{profileUser.totalCards || 0}</div>
