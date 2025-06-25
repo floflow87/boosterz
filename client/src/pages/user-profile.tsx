@@ -12,7 +12,9 @@ import {
   MessageCircle,
   Trash2,
   MoreHorizontal,
-  Send
+  Send,
+  Bell,
+  Settings
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
@@ -203,7 +205,7 @@ export default function UserProfile() {
   });
 
   const { data: marketplaceCards = [] } = useQuery<Card[]>({
-    queryKey: [`/api/users/${userId}/marketplace`],
+    queryKey: [`/api/users/${userId}/sale-cards`],
   });
 
   const { data: featuredCards = [] } = useQuery<Card[]>({
@@ -282,8 +284,33 @@ export default function UserProfile() {
   if (userLoading || collectionsLoading) {
     return (
       <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
-        <HaloBlur />
-        <Header title="Profil" />
+        {/* Header identique à settings avec bouton retour */}
+        <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+          <button 
+            onClick={() => setLocation(-1)}
+            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors relative z-10"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          
+          <div className="flex-1 text-center">
+            <h1 className="text-xl font-bold font-luckiest text-white">
+              BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
+            </h1>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+              <Bell className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => setLocation('/settings')}
+              className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
         <div className="flex items-center justify-center h-96">
           <div className="text-gray-400">Chargement...</div>
         </div>
@@ -295,8 +322,33 @@ export default function UserProfile() {
   if (!user) {
     return (
       <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
-        <HaloBlur />
-        <Header title="Profil" />
+        {/* Header identique à settings avec bouton retour */}
+        <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+          <button 
+            onClick={() => setLocation(-1)}
+            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors relative z-10"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          
+          <div className="flex-1 text-center">
+            <h1 className="text-xl font-bold font-luckiest text-white">
+              BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
+            </h1>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+              <Bell className="w-5 h-5" />
+            </button>
+            <button 
+              onClick={() => setLocation('/settings')}
+              className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
         <div className="flex items-center justify-center h-96">
           <div className="text-gray-400">Utilisateur introuvable</div>
         </div>
