@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Enhanced marketplace display with authentic user cards for sale
+  - Removed all dummy/fake cards from marketplace and user profile "En vente" tabs
+  - Implemented real card sales system using personal_cards table with is_for_sale flag
+  - Added enhanced card display with sale badges, pricing, condition, and descriptions
+  - Created hover effects and visual indicators for cards marked for sale
+  - Updated marketplace to show only authentic personal cards from real users
+  - Cards display includes sale price, condition status, and detailed descriptions
 - June 25, 2025. Completed avatar display system with real user images throughout application
   - Fixed getUserPosts method in storage.ts to include complete user data (name, username, avatar)
   - Implemented consistent real user avatar display in posts, comments, and all components
