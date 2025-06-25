@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Search, Filter, Grid, List, ArrowLeft, DollarSign, User, Store } from "lucide-react";
+import { Search, Filter, Grid, List, DollarSign, User, Store } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -49,25 +49,11 @@ export default function Marketplace() {
     <div className="min-h-screen bg-[hsl(216,46%,13%)] relative overflow-hidden">
       <HaloBlur />
       
-      {/* Header avec navigation retour */}
-      <div className="relative z-10 px-4 py-4">
+      <Header title="Marché des cartes" />
+      
+      {/* Main content */}
+      <main className="relative z-10 px-4 pb-24">
         <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={() => setLocation('/social')}
-              className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center text-white hover:bg-[hsl(214,35%,30%)] transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-white font-['Luckiest_Guy']">
-                <span className="text-white">BOOSTER</span>
-                <span className="text-[hsl(9,85%,67%)]">Z</span>
-              </h1>
-              <p className="text-gray-400 text-sm">Marché des cartes</p>
-            </div>
-          </div>
-          
           {/* Vue mode toggle */}
           <div className="flex items-center space-x-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
             <button
@@ -222,7 +208,7 @@ export default function Marketplace() {
             ))}
           </div>
         )}
-      </div>
+      </main>
 
       <Navigation />
     </div>
