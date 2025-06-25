@@ -915,8 +915,18 @@ export default function Social() {
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
-                              <h4 className="text-white font-medium text-sm">{post.user?.name}</h4>
-                              <span className="text-xs text-gray-400">@{post.user?.username}</span>
+                              <button
+                                onClick={() => setLocation(`/profile/${post.user?.id}`)}
+                                className="text-white font-medium text-sm hover:text-blue-400 transition-colors cursor-pointer"
+                              >
+                                {post.user?.name}
+                              </button>
+                              <button
+                                onClick={() => setLocation(`/profile/${post.user?.id}`)}
+                                className="text-xs text-gray-400 hover:text-blue-400 transition-colors cursor-pointer"
+                              >
+                                @{post.user?.username}
+                              </button>
                             </div>
                             <div className="text-xs text-gray-400">
                               {new Date(post.createdAt).toLocaleDateString('fr-FR', {
