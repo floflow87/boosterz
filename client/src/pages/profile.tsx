@@ -170,7 +170,10 @@ export default function Profile() {
           {/* Flèche retour et logo BOOSTERZ */}
           <div className="relative flex items-center space-x-3">
             <button 
-              onClick={() => setLocation("/social")}
+              onClick={() => {
+                console.log("Arrow clicked - navigating back");
+                setLocation("/social");
+              }}
               className="text-white hover:text-gray-300 transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
@@ -178,21 +181,21 @@ export default function Profile() {
             <h1 className="text-white font-bold text-lg z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
               BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
             </h1>
-            {/* Halo main color */}
-            <div className="absolute -left-4 top-1/2 transform -translate-y-1/2 w-20 h-20 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
+            {/* Halo main color en haut à gauche */}
+            <div className="absolute -left-8 -top-8 w-32 h-32 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
           </div>
           
           {/* Icônes à droite */}
           <div className="flex items-center space-x-4">
-            <button className="text-gray-400 hover:text-white transition-colors relative">
-              <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            <button className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors relative">
+              <Bell className="w-5 h-5 text-white" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
             <button 
               onClick={() => setLocation("/settings")}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors"
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
