@@ -1,4 +1,4 @@
-import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, comments, postLikes, decks, deckCards, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage, type Comment, type InsertComment } from "@shared/schema";
+import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, postComments, postLikes, decks, deckCards, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage, type PostComment, type InsertPostComment } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ilike, desc, asc, inArray, sql, not } from "drizzle-orm";
 import { follows } from "@shared/schema";
@@ -1456,19 +1456,6 @@ export class MemStorage implements IStorage {
     return true;
   }
 
-  async followUser(followerId: number, followingId: number): Promise<boolean> {
-    return true;
-  }
-
-  async unfollowUser(followerId: number, followingId: number): Promise<boolean> {
-    return true;
-  }
-
-  async isFollowing(followerId: number, followingId: number): Promise<boolean> {
-    // User 1 is following user 999 for testing
-    return followerId === 1 && followingId === 999;
-  }
-
   async getFollowedUsersPosts(userId: number): Promise<any[]> {
     // Mock implementation: return posts from user 2 if Max la menace (999) is requesting
     if (userId === 999) {
@@ -1516,7 +1503,6 @@ export class MemStorage implements IStorage {
       await db.insert(follows).values({
         followerId,
         followingId,
-        createdAt: new Date().toISOString()
       });
       
       console.log(`User ${followerId} now follows user ${followingId}`);
