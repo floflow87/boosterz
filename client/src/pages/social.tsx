@@ -1145,7 +1145,7 @@ export default function Social() {
                                 onClick={() => handleAddComment(post.id)}
                                 disabled={!commentInputs[post.id]?.trim()}
                                 size="sm"
-                                className="bg-[#F37261] hover:bg-[#e5634f] text-white"
+                                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
                               >
                                 Publier
                               </Button>
