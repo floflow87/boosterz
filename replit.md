@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Fixed persistent likes system and marketplace cleanup
+  - Implemented persistent like counts that show real total from all users
+  - Fixed like counter to persist across page navigation and reload
+  - Removed fake marketplace cards from "Sur le marché" section  
+  - Replaced deck count with cards for sale count in discovery page user cards
+  - Added cardsForSaleCount field to social users with real database counts
 - June 25, 2025. Enhanced social interactions and navigation
   - Made usernames clickable in "À la une" feed to redirect to user profiles
   - Removed "Échanger" (trade) button from all posts in social feed
