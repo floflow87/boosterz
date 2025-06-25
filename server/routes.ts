@@ -1834,7 +1834,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const deckId = parseInt(req.params.id);
       const userId = req.user!.id;
-      const { name, themeColors } = req.body;
+      const { name, themeColors, coverImage, bannerPosition } = req.body;
+
+      console.log(`Updating deck ${deckId}:`, { name, themeColors, coverImage: coverImage ? 'present' : 'null', bannerPosition });
 
       // Check if deck belongs to user
       const [existingDeck] = await db.select().from(decks).where(eq(decks.id, deckId));
@@ -1842,15 +1844,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Deck non trouvé" });
       }
 
+      // Prepare update data
+      const updateData: any = {};
+      if (name !== undefined) updateData.name = name;
+      if (themeColors !== undefined) updateData.themeColors = themeColors;
+      if (coverImage !== undefined) updateData.coverImage = coverImage;
+      if (bannerPosition !== undefined) updateData.bannerPosition = bannerPosition;
+
       // Update deck
       const [updatedDeck] = await db.update(decks)
-        .set({ 
-          name: name || existingDeck.name,
-          themeColors: themeColors || existingDeck.themeColors
-        })
+        .set(updateData)
         .where(eq(decks.id, deckId))
         .returning();
 
+      console.log('Deck updated successfully:', updatedDeck.id);
       res.json(updatedDeck);
     } catch (error) {
       console.error("Error updating deck:", error);
