@@ -16,20 +16,25 @@ import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
 
-const getThemeBackgroundColor = (themeColors: string) => {
+const getThemeGradient = (themeColors: string) => {
   const themeStyles: Record<string, string> = {
-    "main+background": "#1A2332",
-    "white+sky": "#FFFFFF",
-    "red+navy": "#FF0000",
-    "navy+bronze": "#000080",
-    "white+red": "#FFFFFF",
-    "white+blue": "#FFFFFF",
-    "gold+black": "#FFD700",
-    "green+white": "#22C55E",
-    "red+black": "#DC2626",
-    "blue+white+red": "#3B82F6"
+    "main+background": "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)",
+    "white+sky": "linear-gradient(135deg, #ffffff 0%, #0ea5e9 100%)",
+    "red+navy": "linear-gradient(135deg, #dc2626 0%, #1e3a8a 100%)",
+    "navy+bronze": "linear-gradient(135deg, #1e3a8a 0%, #a3a3a3 100%)",
+    "white+red": "linear-gradient(135deg, #ffffff 0%, #dc2626 100%)",
+    "white+blue": "linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)",
+    "gold+black": "linear-gradient(135deg, #fbbf24 0%, #000000 100%)",
+    "green+white": "linear-gradient(135deg, #22c55e 0%, #ffffff 100%)",
+    "red+black": "linear-gradient(135deg, #dc2626 0%, #000000 100%)",
+    "blue+white+red": "linear-gradient(135deg, #3b82f6 0%, #ffffff 50%, #dc2626 100%)"
   };
-  return themeStyles[themeColors] || "#1A2332";
+  return themeStyles[themeColors] || "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)";
+};
+
+const getThemeTextColor = (themeColors: string) => {
+  const lightThemes = ["white+sky", "white+red", "white+blue", "green+white"];
+  return lightThemes.includes(themeColors) ? "#000000" : "#ffffff";
 };
 
 
@@ -425,11 +430,7 @@ export default function Collections() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{
-      background: activeTab === "deck" && userDecks && userDecks.length > 0 && userDecks[0]?.themeColors 
-        ? getThemeBackgroundColor(userDecks[0].themeColors)
-        : "hsl(216,46%,13%)"
-    }}>
+    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
       <HaloBlur />
       <Header title="Mes cartes" />
       <main className="relative z-10 px-4 pb-24">
@@ -879,11 +880,18 @@ export default function Collections() {
                   <div 
                     key={deck.id} 
                     onClick={() => setLocation(`/deck/${deck.id}`)}
-                    className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform"
+                    className="rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform relative overflow-hidden"
+                    style={{
+                      background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"
+                    }}
                   >
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-bold text-white text-lg">{deck.name}</h4>
-                      <span className="text-xs text-gray-400">{deck.cardCount}/12 cartes</span>
+                    <div className="flex items-center justify-between mb-3 relative z-10">
+                      <h4 className="font-bold text-lg font-luckiest" style={{
+                        color: deck.themeColors ? getThemeTextColor(deck.themeColors) : "#ffffff"
+                      }}>{deck.name}</h4>
+                      <span className="text-xs" style={{
+                        color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
+                      }}>{deck.cardCount}/12 cartes</span>
                     </div>
                     
                     {/* Preview des 3 premières cartes */}
