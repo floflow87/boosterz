@@ -499,57 +499,8 @@ export default function Collections() {
           </div>
         </div>
         
-        <div className="px-4">
-        {/* User Profile Section */}
-        {user && (
-          <div className="flex flex-col items-center text-center mb-4 mt-2">
-            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg relative">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt="Avatar utilisateur"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
-                />
-              ) : (
-                <img 
-                  src={avatarImage} 
-                  alt="Avatar par défaut"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
-                />
-              )}
-            </div>
-            <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
-            <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">
-                  {(() => {
-                    // Compter les cartes des collections
-                    const collectionCards = collections?.reduce((total, collection) => {
-                      const completion = getCollectionCompletion(collection);
-                      return total + completion.ownedCards;
-                    }, 0) || 0;
-                    
-                    // Compter les cartes personnelles (excepté les vendues)
-                    const personalCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
-                    
-                    return collectionCards + personalCardsCount;
-                  })()}
-                </span>
-                <span>cartes</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{userDecks?.length || 0}</span>
-                <span>decks</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.followersCount || 0}</span>
-                <span>abonnés</span>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Navigation Tabs - Horizontal Scroll */}
+        <div className="px-4">
         <div className="overflow-x-auto scrollbar-hide mb-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <div className="flex space-x-2 bg-[hsl(214,35%,22%)] rounded-xl p-1 min-w-max">
             <button
