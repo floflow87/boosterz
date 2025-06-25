@@ -292,7 +292,7 @@ export default function Profile() {
             <TabsContent value="posts" className="space-y-4">
               {posts.length > 0 ? (
                 posts.map((post) => (
-                  <div key={post.id} className="bg-[hsl(216,46%,13%)] rounded-xl p-4 border border-gray-700/30">
+                  <div key={post.id} className="bg-[#24354C] rounded-xl p-4 border border-gray-700/30">
                     {/* Header du post avec avatar et nom */}
                     <div className="flex items-center space-x-3 mb-3">
                       {profileUser.avatar && (profileUser.avatar.startsWith('data:image') || profileUser.avatar.startsWith('http')) ? (
