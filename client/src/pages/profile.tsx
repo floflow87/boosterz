@@ -78,45 +78,86 @@ interface Deck {
 }
 
 export default function Profile() {
-  const { userId: id } = useParams();
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
+  const { pathname } = useLocation()[0];
+  const userId = pathname.split("/")[2];
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("posts");
+  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
+  const [postLikes, setPostLikes] = useState<Record<number, number>>({});
+  const [showComments, setShowComments] = useState<Set<number>>(new Set());
+  const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
+  const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
+  const [postCommentsCount, setPostCommentsCount] = useState<Record<number, number>>({});
 
   const { data: profileUser, isLoading: isUserLoading, error: userError } = useQuery({
-    queryKey: [`/api/users/${id}`],
-    enabled: !!id,
+    queryKey: [`/api/users/${userId}`],
+    enabled: !!userId,
   });
 
   // Debug logging
-  console.log("Profile page - user ID:", id);
+  console.log("Profile page - user ID:", userId);
   console.log("Profile user data:", profileUser);
   console.log("Is loading:", isUserLoading);
   console.log("Error:", userError);
 
   const { data: posts = [], isLoading: isPostsLoading } = useQuery({
-    queryKey: [`/api/users/${id}/posts`],
-    enabled: !!id,
+    queryKey: [`/api/users/${userId}/posts`],
+    enabled: !!userId,
   });
 
   const { data: saleCards = [], isLoading: isSaleCardsLoading } = useQuery({
-    queryKey: [`/api/users/${id}/sale-cards`],
-    enabled: !!id,
+    queryKey: [`/api/users/${userId}/sale-cards`],
+    enabled: !!userId,
   });
 
   const { data: userDecks = [], isLoading: isDecksLoading } = useQuery({
-    queryKey: [`/api/users/${id}/decks`],
-    enabled: !!id,
+    queryKey: [`/api/users/${userId}/decks`],
+    enabled: !!userId,
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ["/api/users/me"],
   });
 
+  // Récupérer les likes des posts
+  const { data: userLikedPosts = [] } = useQuery<number[]>({
+    queryKey: ['/api/posts/likes'],
+    staleTime: 30000,
+  });
+
+  // Charger les likes et commentaires au montage
+  useEffect(() => {
+    if (userLikedPosts.length > 0) {
+      setLikedPosts(new Set(userLikedPosts));
+    }
+  }, [userLikedPosts]);
+
+  // Charger les compteurs de commentaires pour chaque post
+  useEffect(() => {
+    if (posts.length > 0) {
+      posts.forEach(async (post) => {
+        try {
+          const response = await fetch(`/api/posts/${post.id}/comments`);
+          const comments = await response.json();
+          setPostCommentsCount(prev => ({
+            ...prev,
+            [post.id]: comments.length
+          }));
+          setPostComments(prev => ({
+            ...prev,
+            [post.id]: comments
+          }));
+        } catch (error) {
+          console.error('Erreur lors du chargement des commentaires:', error);
+        }
+      });
+    }
+  }, [posts]);
+
   const followMutation = useMutation({
     mutationFn: async (action: 'follow' | 'unfollow') => {
-      const response = await fetch(`/api/users/${id}/follow`, {
+      const response = await fetch(`/api/users/${userId}/follow`, {
         method: action === 'follow' ? 'POST' : 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -345,21 +386,99 @@ export default function Profile() {
 
                     {/* Compteurs */}
                     <div className="flex items-center space-x-4 text-gray-400 text-sm pl-13 mb-2">
-                      <span>1 j'aime</span>
-                      <span>3 commentaires</span>
+                      <span>{postLikes[post.id] || 0} j'aime{(postLikes[post.id] || 0) > 1 ? 's' : ''}</span>
+                      <span>{postCommentsCount[post.id] || 0} commentaire{(postCommentsCount[post.id] || 0) > 1 ? 's' : ''}</span>
                     </div>
 
                     {/* Actions du post */}
                     <div className="flex items-center space-x-6 text-gray-400 pl-13 pt-2 border-t border-gray-700/30">
-                      <button className="flex items-center space-x-1 hover:text-red-400 transition-colors py-2">
-                        <Heart className="w-4 h-4" />
+                      <button 
+                        onClick={() => handleLike(post.id)}
+                        className={`flex items-center space-x-1 transition-colors py-2 ${
+                          likedPosts.has(post.id) ? 'text-red-500' : 'hover:text-red-400'
+                        }`}
+                      >
+                        <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
                         <span className="text-sm">J'aime</span>
                       </button>
-                      <button className="flex items-center space-x-1 hover:text-blue-400 transition-colors py-2">
+                      <button 
+                        onClick={() => toggleComments(post.id)}
+                        className="flex items-center space-x-1 hover:text-blue-400 transition-colors py-2"
+                      >
                         <MessageCircle className="w-4 h-4" />
                         <span className="text-sm">Commenter</span>
                       </button>
                     </div>
+
+                    {/* Section commentaires */}
+                    {showComments.has(post.id) && (
+                      <div className="pl-13 mt-3 pt-3 border-t border-gray-700/30">
+                        {/* Input pour nouveau commentaire */}
+                        <div className="flex space-x-3 mb-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                            <span className="text-white text-xs font-bold">
+                              {currentUser?.name?.charAt(0)?.toUpperCase() || 'U'}
+                            </span>
+                          </div>
+                          <div className="flex-1 flex space-x-2">
+                            <input
+                              type="text"
+                              placeholder="Écrivez un commentaire..."
+                              value={commentInputs[post.id] || ''}
+                              onChange={(e) => setCommentInputs(prev => ({
+                                ...prev,
+                                [post.id]: e.target.value
+                              }))}
+                              className="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              onKeyPress={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                  e.preventDefault();
+                                  handleComment(post.id);
+                                }
+                              }}
+                            />
+                            <button
+                              onClick={() => handleComment(post.id)}
+                              disabled={!commentInputs[post.id]?.trim()}
+                              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:opacity-50 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+                            >
+                              Publier
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Liste des commentaires */}
+                        <div className="space-y-3">
+                          {(postComments[post.id] || []).map((comment, index) => (
+                            <div key={index} className="flex space-x-3">
+                              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-500 to-blue-600 flex items-center justify-center flex-shrink-0">
+                                <span className="text-white text-xs font-bold">
+                                  {comment.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                </span>
+                              </div>
+                              <div className="flex-1">
+                                <div className="bg-gray-700 rounded-lg px-3 py-2">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <span className="text-white text-sm font-medium">
+                                      {comment.user?.name || 'Utilisateur'}
+                                    </span>
+                                    <span className="text-gray-400 text-xs">
+                                      {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      })}
+                                    </span>
+                                  </div>
+                                  <p className="text-gray-200 text-sm">{comment.content}</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ))
               ) : (
