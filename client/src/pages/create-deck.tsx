@@ -140,6 +140,7 @@ export default function CreateDeck() {
         toast({
           title: "Cartes ajoutées !",
           description: `${selectedCards.length} carte${selectedCards.length > 1 ? 's' : ''} ajoutée${selectedCards.length > 1 ? 's' : ''} au deck.`,
+          className: "bg-green-600 text-white border-green-700",
         });
         setLocation(`/deck/${deckId}`);
       } else {

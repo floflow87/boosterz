@@ -448,7 +448,7 @@ export default function DeckDetail() {
           {/* Deck Header */}
           <div 
             className={cn(
-              "rounded-2xl p-6 mb-6 relative overflow-hidden h-24",
+              "rounded-2xl p-6 mb-6 relative overflow-hidden h-48",
               themeStyle.gradientClass
             )}
             style={{
@@ -464,7 +464,7 @@ export default function DeckDetail() {
                   style={{
                     backgroundImage: `url(${deck.coverImage})`,
                     backgroundPosition: `center ${deck.bannerPosition || 50}%`,
-                    transform: 'translateY(20px)'
+                    transform: 'translateY(-40px)'
                   }}
                 />
                 <div className="absolute inset-0 bg-black/40" />
