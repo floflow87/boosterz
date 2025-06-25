@@ -16,38 +16,11 @@ import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
 
-const getThemeGradient = (themeColors: string) => {
-  const themeStyles: Record<string, string> = {
-    "main+background": "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)",
-    "white+sky": "linear-gradient(135deg, #ffffff 0%, #0ea5e9 100%)",
-    "red+navy": "linear-gradient(135deg, #dc2626 0%, #1e3a8a 100%)",
-    "navy+bronze": "linear-gradient(135deg, #1e3a8a 0%, #a3a3a3 100%)",
-    "white+red": "linear-gradient(135deg, #ffffff 0%, #dc2626 100%)",
-    "white+blue": "linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)",
-    "gold+black": "linear-gradient(135deg, #fbbf24 0%, #000000 100%)",
-    "green+white": "linear-gradient(135deg, #22c55e 0%, #ffffff 100%)",
-    "red+black": "linear-gradient(135deg, #dc2626 0%, #000000 100%)",
-    "blue+white+red": "linear-gradient(135deg, #3b82f6 0%, #ffffff 50%, #dc2626 100%)"
-  };
-  return themeStyles[themeColors] || "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)";
-};
-
-const getThemeTextColor = (themeColors: string) => {
-  const lightThemes = ["white+sky", "white+red", "white+blue", "green+white"];
-  return lightThemes.includes(themeColors) ? "#000000" : "#ffffff";
-};
-
-
 export default function Collections() {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
-  const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
-  const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
@@ -65,7 +38,7 @@ export default function Collections() {
   // Queries pour les données utilisateur
   const { data: user, isLoading: userLoading } = useQuery({
     queryKey: ['/api/auth/me'],
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
   const { data: collections = [], isLoading: collectionsLoading, refetch: refetchCollections } = useQuery({
@@ -91,17 +64,12 @@ export default function Collections() {
 
   // Filtrer et rechercher les cartes personnelles
   const filteredPersonalCards = personalCards.filter(card => {
-    // Filtre par statut de vente
     if (saleFilter === 'available') {
-      // En vente : cartes avec isForTrade=true ET un prix, mais pas vendues
       if (!card.isForTrade || !card.tradePrice || card.isSold) return false;
     } else if (saleFilter === 'sold') {
-      // Vendues : seulement les cartes avec isSold=true
       if (!card.isSold) return false;
     } 
-    // Pour 'all', on affiche toutes les cartes sans filtrage par statut de vente
     
-    // Filtre par recherche
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       const playerMatch = card.playerName?.toLowerCase().includes(query);
@@ -121,8 +89,6 @@ export default function Collections() {
         variant: "default",
       });
       refetchPersonalCards();
-      setShowDeleteCardModal(false);
-      setCardToDelete(null);
     },
     onError: () => {
       toast({
@@ -154,14 +120,7 @@ export default function Collections() {
   });
 
   const handleDeleteCard = (card: Card) => {
-    setCardToDelete(card);
-    setShowDeleteCardModal(true);
-  };
-
-  const confirmDeleteCard = () => {
-    if (cardToDelete) {
-      deleteCardMutation.mutate(cardToDelete.id);
-    }
+    deleteCardMutation.mutate(card.id);
   };
 
   const handleTradeCard = (card: any) => {
@@ -197,122 +156,198 @@ export default function Collections() {
     return <LoadingScreen />;
   }
 
+  // Calculer les statistiques du profil
+  const totalCards = personalCards.length;
+  const totalDecks = userDecks.length;
+  const totalFollowers = 1; // Remplacer par la vraie valeur depuis l'API
+
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
-      {/* Header avec nom, prénom et avatar */}
+      {/* Header avec BOOSTERZ */}
       <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
-        <button 
-          onClick={() => setLocation(-1)}
-          className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors relative z-10"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </button>
+        <div className="flex-1"></div>
         
-        <div className="flex items-center space-x-3">
-          {user?.avatar ? (
-            <img 
-              src={user.avatar} 
-              alt={`Avatar de ${user.name}`}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-              <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}</span>
-            </div>
-          )}
-          <div className="text-center">
-            <h1 className="text-lg font-['Luckiest_Guy'] text-white">
-              BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
-            </h1>
-          </div>
+        <div className="text-center">
+          <h1 className="text-xl font-['Luckiest_Guy'] text-white tracking-wider">
+            BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
+          </h1>
         </div>
         
         <div className="flex items-center space-x-2">
-          <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors">
+          <button 
+            onClick={() => setLocation('/notifications')}
+            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors"
+          >
             <Bell className="w-5 h-5" />
           </button>
-          <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors">
+          <button 
+            onClick={() => setLocation('/settings')}
+            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors"
+          >
             <Settings className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      <main className="p-4">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-white mb-2">Collections</h2>
-          <p className="text-gray-400">Gérez vos collections de cartes à collectionner</p>
-        </div>
-        
-        {/* Navigation par onglets */}
-        <div className="flex justify-center mb-6">
-          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-1 flex">
-            <button
-              onClick={() => setActiveTab('cards')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'cards'
-                  ? 'bg-[hsl(9,85%,67%)] text-white'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <CardIcon className="w-4 h-4 inline mr-2" />
-              Mes cartes
-            </button>
-            <button
-              onClick={() => setActiveTab('collections')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'collections'
-                  ? 'bg-[hsl(9,85%,67%)] text-white'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <Layers className="w-4 h-4 inline mr-2" />
-              Collections
-            </button>
-            <button
-              onClick={() => setActiveTab('deck')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                activeTab === 'deck'
-                  ? 'bg-[hsl(9,85%,67%)] text-white'
-                  : 'text-gray-400 hover:text-white'
-              }`}
-            >
-              <BookOpen className="w-4 h-4 inline mr-2" />
-              Decks
-            </button>
-          </div>
+      {/* Profil utilisateur */}
+      <div className="flex flex-col items-center pt-8 pb-6">
+        {/* Avatar */}
+        <div className="relative mb-4">
+          {user?.avatar ? (
+            <img 
+              src={user.avatar} 
+              alt={`Avatar de ${user.name}`}
+              className="w-20 h-20 rounded-full object-cover border-4 border-yellow-400"
+            />
+          ) : (
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center border-4 border-yellow-400">
+              <span className="text-2xl font-bold text-white">{user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}</span>
+            </div>
+          )}
         </div>
 
+        {/* Nom d'utilisateur */}
+        <h2 className="text-2xl font-bold text-white mb-1 uppercase tracking-wider">
+          {user?.name || user?.username || 'UTILISATEUR'}
+        </h2>
+
+        {/* Statistiques */}
+        <div className="flex items-center space-x-8 text-center">
+          <div>
+            <div className="text-xl font-bold text-white">{totalCards}</div>
+            <div className="text-sm text-gray-400">cartes</div>
+          </div>
+          <div>
+            <div className="text-xl font-bold text-white">{totalDecks}</div>
+            <div className="text-sm text-gray-400">decks</div>
+          </div>
+          <div>
+            <div className="text-xl font-bold text-white">{totalFollowers}</div>
+            <div className="text-sm text-gray-400">abonnés</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Navigation par onglets */}
+      <div className="px-4 mb-6">
+        <div className="bg-[hsl(214,35%,22%)] rounded-xl p-1 flex">
+          <button
+            onClick={() => setActiveTab('cards')}
+            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'cards'
+                ? 'bg-[hsl(9,85%,67%)] text-white'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <CardIcon className="w-4 h-4" />
+            Cartes
+          </button>
+          <button
+            onClick={() => setActiveTab('collections')}
+            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'collections'
+                ? 'bg-[hsl(9,85%,67%)] text-white'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <Layers className="w-4 h-4" />
+            Collections
+          </button>
+          <button
+            onClick={() => setActiveTab('deck')}
+            className={`flex-1 px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+              activeTab === 'deck'
+                ? 'bg-[hsl(9,85%,67%)] text-white'
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            Decks
+          </button>
+        </div>
+      </div>
+
+      <main className="px-4 pb-20">
         {/* Contenu selon l'onglet actif */}
         {activeTab === 'cards' && (
           <div className="space-y-4">
-            {/* Barre de recherche et filtres */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par joueur ou équipe..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
-                />
+            {/* En-tête avec titre et boutons */}
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Mes cartes</h3>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setViewMode(viewMode === 'list' ? 'grid' : 'list')}
+                  className="p-2 bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,25%)] rounded-lg transition-colors"
+                >
+                  {viewMode === 'list' ? <List className="w-4 h-4 text-white" /> : <Grid className="w-4 h-4 text-white" />}
+                </button>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className="p-2 bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,25%)] rounded-lg transition-colors"
+                >
+                  <LayoutGrid className="w-4 h-4 text-white" />
+                </button>
               </div>
-              <select
-                value={saleFilter}
-                onChange={(e) => setSaleFilter(e.target.value as any)}
-                className="px-4 py-2 bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-lg text-white focus:outline-none focus:border-[hsl(9,85%,67%)]"
-              >
-                <option value="all">Toutes les cartes</option>
-                <option value="available">En vente</option>
-                <option value="sold">Vendues</option>
-              </select>
             </div>
 
-            {/* Liste des cartes personnelles */}
-            <div className="grid gap-4">
+            {/* Barre de recherche */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Rechercher par joueur ou équipe..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,22%)] border border-[hsl(214,35%,30%)] rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
+              />
+            </div>
+
+            {/* Filtres */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setSaleFilter('all')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  saleFilter === 'all'
+                    ? 'bg-[hsl(9,85%,67%)] text-white'
+                    : 'bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white'
+                }`}
+              >
+                Toutes
+              </button>
+              <button
+                onClick={() => setSaleFilter('available')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  saleFilter === 'available'
+                    ? 'bg-[hsl(9,85%,67%)] text-white'
+                    : 'bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white'
+                }`}
+              >
+                En vente
+              </button>
+              <button
+                onClick={() => setSaleFilter('sold')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  saleFilter === 'sold'
+                    ? 'bg-[hsl(9,85%,67%)] text-white'
+                    : 'bg-[hsl(214,35%,22%)] text-gray-400 hover:text-white'
+                }`}
+              >
+                Vendues
+              </button>
+              <button
+                onClick={() => setLocation('/add-card')}
+                className="ml-auto px-4 py-2 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Ajouter
+              </button>
+            </div>
+
+            {/* Liste des cartes */}
+            <div className="space-y-3">
               {filteredPersonalCards.length > 0 ? (
                 filteredPersonalCards.map((card) => (
-                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-xl p-4 border border-[hsl(214,35%,30%)]">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         {card.imageUrl && (
@@ -323,15 +358,20 @@ export default function Collections() {
                           />
                         )}
                         <div>
-                          <h3 className="font-semibold text-white">{card.playerName}</h3>
+                          <h4 className="font-semibold text-white">{card.playerName}</h4>
                           <p className="text-gray-400 text-sm">{card.teamName}</p>
                           {card.isForTrade && (
-                            <div className="flex items-center gap-2 mt-1">
-                              <DollarSign className="w-4 h-4 text-green-400" />
-                              <span className="text-green-400 text-sm">
+                            <div className="flex items-center gap-1 mt-1">
+                              <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
+                              <span className="text-[hsl(9,85%,67%)] text-sm font-medium">
                                 {card.tradePrice ? `${card.tradePrice}€` : 'Échange uniquement'}
                               </span>
                             </div>
+                          )}
+                          {card.special && (
+                            <span className="inline-block bg-yellow-600 text-white text-xs px-2 py-1 rounded mt-1">
+                              {card.special}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -358,7 +398,7 @@ export default function Collections() {
                 <div className="text-center py-12">
                   <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-white mb-2">Aucune carte trouvée</h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-400 mb-4">
                     {searchQuery || saleFilter !== 'all' 
                       ? 'Aucune carte ne correspond à vos critères.'
                       : 'Ajoutez des cartes à votre collection pour commencer.'
@@ -366,7 +406,7 @@ export default function Collections() {
                   </p>
                   <button
                     onClick={() => setLocation('/add-card')}
-                    className="mt-4 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     Ajouter une carte
@@ -379,19 +419,26 @@ export default function Collections() {
 
         {activeTab === 'collections' && (
           <div className="space-y-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-white">Collections</h3>
+            </div>
+
             {collections.length > 0 ? (
               collections.map((collection) => (
-                <div key={collection.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+                <div key={collection.id} className="bg-[hsl(214,35%,22%)] rounded-xl p-4 border border-[hsl(214,35%,30%)]">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-white mb-2">{collection.name}</h3>
-                      <p className="text-gray-400 text-sm mb-4">{collection.description}</p>
+                      <h4 className="font-semibold text-white mb-1">{collection.name}</h4>
+                      <p className="text-gray-400 text-sm mb-2">{collection.description}</p>
+                      <div className="text-sm text-gray-300">
+                        {collection.ownedCards || 0} / {collection.totalCards || 0} cartes
+                      </div>
                     </div>
                     <button
                       onClick={() => setLocation(`/collection/${collection.id}`)}
                       className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors"
                     >
-                      Voir la collection
+                      Voir
                     </button>
                   </div>
                 </div>
@@ -408,8 +455,8 @@ export default function Collections() {
 
         {activeTab === 'deck' && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-white">Mes Decks</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">Mes Decks</h3>
               <button
                 onClick={() => setLocation('/create-deck')}
                 className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
@@ -420,9 +467,9 @@ export default function Collections() {
             </div>
 
             {userDecks.length > 0 ? (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {userDecks.map((deck) => (
-                  <div key={deck.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
+                  <div key={deck.id} className="bg-[hsl(214,35%,22%)] rounded-xl p-4 border border-[hsl(214,35%,30%)]">
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="font-semibold text-white">{deck.name}</h4>
@@ -442,10 +489,10 @@ export default function Collections() {
               <div className="text-center py-12">
                 <BookOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-white mb-2">Aucun deck</h3>
-                <p className="text-gray-400">Créez votre premier deck pour commencer.</p>
+                <p className="text-gray-400 mb-4">Créez votre premier deck pour commencer.</p>
                 <button
                   onClick={() => setLocation('/create-deck')}
-                  className="mt-4 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg font-medium transition-colors inline-flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   Créer un deck
@@ -525,48 +572,6 @@ export default function Collections() {
                 className="flex-1 p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors"
               >
                 Sauvegarder
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Modal de confirmation de suppression de carte */}
-      {showDeleteCardModal && cardToDelete && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
-                <Trash2 className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold">Supprimer la carte</h3>
-                <p className="text-gray-400 text-sm">Cette action est irréversible</p>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <p className="text-gray-300 text-sm">
-                Êtes-vous sûr de vouloir supprimer définitivement cette carte ?
-              </p>
-            </div>
-            
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDeleteCardModal(false);
-                  setCardToDelete(null);
-                }}
-                className="flex-1 px-4 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={confirmDeleteCard}
-                disabled={deleteCardMutation.isPending}
-                className="flex-1 px-4 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-              >
-                {deleteCardMutation.isPending ? 'Suppression...' : 'Supprimer'}
               </button>
             </div>
           </div>
