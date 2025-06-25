@@ -8,7 +8,7 @@ import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
 import { db } from "./db";
-import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema, follows, collections, userCards, conversations, messages, activities, subscriptions } from "@shared/schema";
+import { cards, posts, users, personalCards, insertPersonalCardSchema, decks, deckCards, insertDeckSchema, insertDeckCardSchema, follows, collections, userCards, conversations, messages, activities, subscriptions, postLikes } from "@shared/schema";
 import { eq, desc, and, inArray, not, or, ilike, asc, like, sql } from "drizzle-orm";
 
 // Initialize sample data in database
@@ -1969,6 +1969,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting deck:", error);
       res.status(500).json({ message: "Erreur lors de la suppression du deck" });
+    }
+  });
+
+  // Like/Unlike a post
+  app.post("/api/posts/:id/like", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const postId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      // Vérifier si le post existe
+      const post = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+      if (post.length === 0) {
+        return res.status(404).json({ message: "Post non trouvé" });
+      }
+      
+      // Vérifier si l'utilisateur a déjà liké
+      const existingLike = await db.select().from(postLikes)
+        .where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)))
+        .limit(1);
+      
+      if (existingLike.length > 0) {
+        // Unlike - supprimer le like
+        await db.delete(postLikes)
+          .where(and(eq(postLikes.postId, postId), eq(postLikes.userId, userId)));
+        
+        // Décrémenter le compteur
+        await db.update(posts)
+          .set({ likesCount: sql`${posts.likesCount} - 1` })
+          .where(eq(posts.id, postId));
+        
+        // Récupérer le nouveau nombre de likes
+        const updatedPost = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+        const newLikesCount = updatedPost[0]?.likesCount || 0;
+        
+        res.json({ liked: false, likesCount: newLikesCount, message: "Like retiré" });
+      } else {
+        // Like - ajouter le like
+        await db.insert(postLikes).values({
+          postId,
+          userId,
+          createdAt: new Date().toISOString()
+        });
+        
+        // Incrémenter le compteur
+        await db.update(posts)
+          .set({ likesCount: sql`${posts.likesCount} + 1` })
+          .where(eq(posts.id, postId));
+        
+        // Récupérer le nouveau nombre de likes
+        const updatedPost = await db.select().from(posts).where(eq(posts.id, postId)).limit(1);
+        const newLikesCount = updatedPost[0]?.likesCount || 0;
+        
+        res.json({ liked: true, likesCount: newLikesCount, message: "Post liké" });
+      }
+    } catch (error) {
+      console.error("Erreur lors du like/unlike:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Get user's liked posts
+  app.get("/api/posts/likes", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const userLikes = await db.select({ postId: postLikes.postId })
+        .from(postLikes)
+        .where(eq(postLikes.userId, userId));
+      
+      const likedPostIds = userLikes.map(like => like.postId);
+      res.json(likedPostIds);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des likes:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
     }
   });
 

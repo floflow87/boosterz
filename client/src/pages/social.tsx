@@ -110,12 +110,6 @@ export default function Social() {
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Charger les likes de l'utilisateur au démarrage
-  const { data: userLikes = [] } = useQuery<number[]>({
-    queryKey: ['/api/posts/likes'],
-    enabled: !!currentUser?.user?.id,
-  });
-  
   // Comments state
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
@@ -128,6 +122,12 @@ export default function Social() {
   const { data: currentUser } = useQuery<CurrentUser>({
     queryKey: ['/api/auth/me'],
     retry: false,
+  });
+
+  // Charger les likes de l'utilisateur au démarrage
+  const { data: userLikes = [] } = useQuery<number[]>({
+    queryKey: ['/api/posts/likes'],
+    enabled: !!currentUser?.user?.id,
   });
   
 
@@ -228,20 +228,34 @@ export default function Social() {
   };
 
   // Handle like functionality
-  const handleLike = (postId: number) => {
-    const isCurrentlyLiked = likedPosts.has(postId);
-    const newLikedPosts = new Set(likedPosts);
-    const currentLikes = postLikes[postId] || 0;
-
-    if (isCurrentlyLiked) {
-      newLikedPosts.delete(postId);
-      setPostLikes(prev => ({ ...prev, [postId]: Math.max(0, currentLikes - 1) }));
-    } else {
-      newLikedPosts.add(postId);
-      setPostLikes(prev => ({ ...prev, [postId]: currentLikes + 1 }));
+  const handleLike = async (postId: number) => {
+    try {
+      const response = await fetch(`/api/posts/${postId}/like`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) throw new Error('Erreur lors du like');
+      
+      const result = await response.json();
+      
+      if (result.liked) {
+        setLikedPosts(prev => new Set([...prev, postId]));
+        setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
+      } else {
+        setLikedPosts(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(postId);
+          return newSet;
+        });
+        setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
+      }
+    } catch (error) {
+      console.error('Erreur:', error);
     }
-
-    setLikedPosts(newLikedPosts);
   };
 
   // Fonction pour convertir un fichier en base64
