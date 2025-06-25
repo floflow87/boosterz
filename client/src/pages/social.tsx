@@ -248,13 +248,14 @@ export default function Social() {
   const handleLike = async (postId: number) => {
     try {
       console.log('Attempting to like post:', postId);
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token') || localStorage.getItem('authToken');
       console.log('Token exists:', !!token);
+      console.log('Token type:', localStorage.getItem('token') ? 'token' : 'authToken');
       
       const response = await fetch(`/api/posts/${postId}/like`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${token || localStorage.getItem('authToken')}`,
           'Content-Type': 'application/json',
         },
       });
