@@ -440,16 +440,23 @@ export class DatabaseStorage implements IStorage {
         commentsCount: posts.commentsCount,
         isVisible: posts.isVisible,
         createdAt: posts.createdAt,
-        updatedAt: posts.updatedAt
+        updatedAt: posts.updatedAt,
+        userName: users.name,
+        userUsername: users.username,
+        userAvatar: users.avatar
       })
       .from(posts)
+      .innerJoin(users, eq(posts.userId, users.id))
       .where(eq(posts.userId, userId))
       .orderBy(desc(posts.createdAt));
       
       return result.map(post => ({
         ...post,
         user: {
-          id: post.userId
+          id: post.userId,
+          name: post.userName,
+          username: post.userUsername,
+          avatar: post.userAvatar
         }
       }));
     } catch (error) {
