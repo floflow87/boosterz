@@ -250,12 +250,12 @@ export default function DeckDetail() {
     }
   }, [deck]);
 
-  // Effet parallax sur l'image de bannière (décalé)
+  // Effet parallax sur l'image de bannière (décalé et ralenti)
   useEffect(() => {
     const handleScroll = () => {
       if (parallaxRef.current) {
         const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.3; // Réduction de l'intensité
+        const parallax = scrolled * 0.15; // Vitesse encore plus réduite
         parallaxRef.current.style.transform = `translateY(${parallax + 20}px)`; // Décalage initial
       }
     };
@@ -469,21 +469,36 @@ export default function DeckDetail() {
                 />
                 <div className="absolute inset-0 bg-black/40" />
                 
-                {/* Halos scintillants pour deck complet */}
+                {/* Effet glitter pour deck complet */}
                 {localCards.length === 12 && (
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    {[...Array(8)].map((_, i) => (
+                    {[...Array(15)].map((_, i) => (
                       <div
                         key={i}
-                        className="absolute w-1 h-1 bg-gradient-radial from-yellow-200 via-orange-200 to-transparent rounded-full opacity-40"
+                        className="absolute w-0.5 h-0.5 bg-white rounded-full opacity-80"
                         style={{
-                          left: `${10 + Math.random() * 80}%`,
-                          top: `${10 + Math.random() * 80}%`,
-                          animation: `gentle-twinkle ${3 + Math.random() * 4}s ease-in-out infinite`,
-                          animationDelay: `${Math.random() * 6}s`,
-                          boxShadow: '0 0 15px rgba(251, 191, 36, 0.4), 0 0 25px rgba(251, 191, 36, 0.2), 0 0 35px rgba(251, 191, 36, 0.1)'
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          animation: `glitter ${1 + Math.random() * 2}s ease-in-out infinite`,
+                          animationDelay: `${Math.random() * 3}s`,
+                          boxShadow: '0 0 4px rgba(255, 255, 255, 0.8), 0 0 8px rgba(251, 191, 36, 0.6)'
                         }}
                       />
+                    ))}
+                    {[...Array(10)].map((_, i) => (
+                      <div
+                        key={`star-${i}`}
+                        className="absolute text-white opacity-60"
+                        style={{
+                          left: `${Math.random() * 100}%`,
+                          top: `${Math.random() * 100}%`,
+                          fontSize: '8px',
+                          animation: `glitter-star ${2 + Math.random() * 3}s ease-in-out infinite`,
+                          animationDelay: `${Math.random() * 4}s`,
+                        }}
+                      >
+                        ✨
+                      </div>
                     ))}
                   </div>
                 )}
