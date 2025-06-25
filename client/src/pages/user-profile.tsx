@@ -283,10 +283,11 @@ export default function UserProfile() {
       <Header title={`@${user.username}`} />
 
       <main className="relative z-10 px-4 pb-24">
-        {/* User Info */}
+        {/* User Info - Nouveau layout centré */}
         <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6">
-          <div className="flex items-center space-x-4 mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center overflow-hidden">
+          {/* Avatar et nom centrés */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center overflow-hidden mb-3">
               {user.avatar ? (
                 <img 
                   src={user.avatar} 
@@ -294,14 +295,24 @@ export default function UserProfile() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-xl font-bold text-white">{user.name.charAt(0)}</span>
+                <span className="text-2xl font-bold text-white">{user.name.charAt(0)}</span>
               )}
             </div>
-            <div>
-              <h2 className="text-xl font-bold text-white">{user.name}</h2>
-              <p className="text-gray-400">@{user.username}</p>
-            </div>
+            <h1 className="text-xl font-bold text-white mb-1">{user.name.toUpperCase()}</h1>
+            <p className="text-gray-400 text-sm">@{user.username}</p>
           </div>
+
+          {/* Description section */}
+          {user.bio && (
+            <div className="mb-6">
+              <div className="bg-[hsl(214,35%,18%)] rounded-lg p-4">
+                <h3 className="text-white font-medium mb-2">Description</h3>
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  {user.bio}
+                </p>
+              </div>
+            </div>
+          )}
           
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>

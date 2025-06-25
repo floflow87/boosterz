@@ -30,6 +30,7 @@ export default function ProfileEdit() {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
   const [avatar, setAvatar] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
@@ -49,6 +50,7 @@ export default function ProfileEdit() {
       setLastName(nameParts.slice(1).join(" ") || "");
       setUsername(currentUser.username || "");
       setEmail(currentUser.email || "");
+      setBio(currentUser.bio || "");
       setAvatar(currentUser.avatar || "");
     }
   }, [currentUser]);
@@ -99,6 +101,7 @@ export default function ProfileEdit() {
     const updateData = {
       name: fullName,
       email,
+      bio,
       avatar
     };
     
@@ -258,6 +261,23 @@ export default function ProfileEdit() {
                 className="mt-2 bg-[hsl(214,35%,30%)] border-[hsl(214,35%,40%)] text-white placeholder-gray-400 focus:border-[hsl(9,85%,67%)] h-12"
                 placeholder="votre@email.com"
               />
+            </div>
+
+            <div>
+              <Label htmlFor="bio" className="text-white text-sm font-medium">Description</Label>
+              <textarea
+                id="bio"
+                value={bio}
+                onChange={(e) => {
+                  setBio(e.target.value);
+                  setIsEditing(true);
+                }}
+                maxLength={200}
+                rows={3}
+                className="mt-2 w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] text-white placeholder-gray-400 focus:border-[hsl(9,85%,67%)] rounded-lg px-3 py-2 resize-none"
+                placeholder="Décrivez-vous en quelques mots (200 caractères max)..."
+              />
+              <p className="text-xs text-gray-500 mt-1">{bio.length}/200 caractères</p>
             </div>
 
             {/* Bouton de sauvegarde */}

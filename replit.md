@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Added description field to user profiles
+  - Added bio/description textarea field to profile editing page
+  - Implemented character limit (200) with counter display
+  - Description appears on user profile pages under avatar and username
+  - Bio field already existed in database schema, now fully integrated in UI
 - June 25, 2025. Enhanced user profile community features
   - Added dynamic avatar display throughout user profile pages
   - Implemented social feed post box design on user profile "À la une" section
