@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Prepared deployment configuration for boosterz.fr domain
+  - Enhanced database configuration to support separate dev/prod environments
+  - Added environment-specific database connection logic in db.ts
+  - Created comprehensive deployment guide for HTTPS setup and domain configuration
+  - Configured infrastructure for production deployment with proper database separation
 - June 25, 2025. Updated profile page header and navigation consistency
   - Added consistent header with BOOSTERZ logo in Luckiest Guy font with Z in main color
   - Optimized back arrow navigation using setLocation for faster page transitions
