@@ -79,8 +79,8 @@ interface Deck {
 
 export default function Profile() {
   const [, setLocation] = useLocation();
-  const { pathname } = useLocation()[0];
-  const userId = pathname.split("/")[2];
+  const [pathname] = useLocation();
+  const userId = pathname?.split("/")[2];
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("posts");
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set());
@@ -181,7 +181,7 @@ export default function Profile() {
     followMutation.mutate(action);
   };
 
-  if (isUserLoading) {
+  if (isUserLoading || !userId) {
     return (
       <div className="min-h-screen bg-[hsl(214,35%,11%)] flex items-center justify-center">
         <div className="text-white">Chargement...</div>
