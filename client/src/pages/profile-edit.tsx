@@ -56,11 +56,22 @@ export default function ProfileEdit() {
   // Mutation pour mettre à jour le profil
   const updateProfileMutation = useMutation({
     mutationFn: async (updatedData: Partial<UserProfile>) => {
-      const response = await apiRequest('/api/auth/profile', {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/auth/profile', {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(updatedData),
       });
-      return response;
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       toast({

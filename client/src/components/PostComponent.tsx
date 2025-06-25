@@ -115,64 +115,20 @@ export function PostComponent({
       {/* Post Content */}
       <p className="text-gray-200 mb-4 leading-relaxed">{post.content}</p>
 
-      {/* Post Actions */}
+      {/* Post Actions - Only show counts for "mes posts" */}
       <div className="flex items-center justify-between pt-4 border-t border-[hsl(214,35%,30%)]">
         <div className="flex items-center space-x-6">
-          {/* Like Button */}
-          <button 
-            onClick={() => onLike(post.id)}
-            className={`flex items-center space-x-2 transition-colors ${
-              likedPosts.has(post.id) 
-                ? 'text-red-400 hover:text-red-300' 
-                : 'text-gray-400 hover:text-red-400'
-            }`}
-          >
-            <Heart className={`w-4 h-4 ${likedPosts.has(post.id) ? 'fill-current' : ''}`} />
-            <span className="text-sm">J'aime</span>
-          </button>
-
-          {/* Comment Button */}
-          <button 
-            onClick={() => onToggleComments(post.id)}
-            className="flex items-center space-x-2 text-gray-400 hover:text-blue-400 transition-colors"
-          >
-            <MessageCircle className="w-4 h-4" />
-            <span className="text-sm">Commenter</span>
-          </button>
-
-          {/* Comments Count */}
+          {/* Like Count Only */}
           <div className="flex items-center space-x-2">
-            <button 
-              onClick={async () => {
-                const newShowComments = new Set(showComments);
-                if (newShowComments.has(post.id)) {
-                  newShowComments.delete(post.id);
-                } else {
-                  newShowComments.add(post.id);
-                  // Charger les commentaires si pas encore chargés
-                  if (!postComments[post.id]) {
-                    try {
-                      const response = await fetch(`/api/posts/${post.id}/comments`);
-                      if (response.ok) {
-                        const comments = await response.json();
-                        // Mise à jour via callback parent
-                      }
-                    } catch (error) {
-                      console.error('Erreur lors du chargement des commentaires:', error);
-                    }
-                  }
-                }
-              }}
-              className="flex items-center space-x-1 text-gray-400 hover:text-blue-400 transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span className="text-sm">{postCommentsCount[post.id] || 0} commentaires</span>
-            </button>
+            <Heart className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-400">{post.likesCount || 0} j'aime</span>
           </div>
-        </div>
 
-        <div className="flex items-center space-x-2">
-          <span className="text-sm text-gray-400">{post.likesCount || 0} j'aime</span>
+          {/* Comment Count Only */}
+          <div className="flex items-center space-x-2">
+            <MessageCircle className="w-4 h-4 text-gray-400" />
+            <span className="text-sm text-gray-400">{postCommentsCount[post.id] || 0} commentaires</span>
+          </div>
         </div>
       </div>
 

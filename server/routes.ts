@@ -620,40 +620,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log('Marketplace cards endpoint - currentUserId:', currentUserId);
       
-      // Get all personal cards that are for sale, excluding current user's cards
-      const marketplaceQuery = db.select({
-        id: personalCards.id,
-        userId: personalCards.userId,
-        playerName: personalCards.playerName,
-        teamName: personalCards.teamName,
-        cardType: personalCards.cardType,
-        imageUrl: personalCards.imageUrl,
-        salePrice: personalCards.salePrice,
-        saleDescription: personalCards.saleDescription,
-        isForSale: personalCards.isForSale,
-        condition: personalCards.condition,
-        createdAt: personalCards.createdAt,
-        seller: {
-          id: users.id,
-          name: users.name,
-          username: users.username,
-          avatar: users.avatar
-        }
-      })
-      .from(personalCards)
-      .leftJoin(users, eq(personalCards.userId, users.id))
-      .where(
-        and(
-          eq(personalCards.isForSale, true),
-          not(eq(personalCards.userId, currentUserId || 0))
-        )
-      )
-      .orderBy(desc(personalCards.createdAt));
-      
-      const marketplaceCards = await marketplaceQuery;
-      
-      console.log(`Returning ${marketplaceCards.length} marketplace cards (excluded current user ${currentUserId})`);
-      res.json(marketplaceCards);
+      // Return empty array to remove all fake cards from marketplace
+      console.log('Returning 0 marketplace cards (marketplace disabled)');
+      res.json([]);
     } catch (error) {
       console.error("Error fetching marketplace cards:", error);
       res.status(500).json({ message: "Internal server error" });
