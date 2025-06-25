@@ -1235,15 +1235,10 @@ export default function Social() {
                                   <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
                                     <div className="flex items-center space-x-2 mb-1">
                                       <span className="text-white font-medium text-sm">
-                                        {comment.user?.name || 'Utilisateur'}
+                                        {comment.author}
                                       </span>
                                       <span className="text-gray-400 text-xs">
-                                        {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
-                                          day: 'numeric',
-                                          month: 'short',
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })}
+                                        {comment.timestamp}
                                       </span>
                                     </div>
                                     <p className="text-gray-200 text-sm">{comment.content}</p>
