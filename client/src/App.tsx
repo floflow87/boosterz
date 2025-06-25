@@ -62,6 +62,7 @@ function Router() {
       <Route path="/profile/:userId" component={Profile} />
       <Route path="/user/:userId" component={UserProfile} />
       <Route path="/add-card" component={AddCard} />
+      <Route path="/decks" component={Home} />
       <Route path="/create-deck" component={CreateDeck} />
       <Route path="/deck/:id" component={DeckDetail} />
       <Route path="/card-examples" component={CardExamples} />

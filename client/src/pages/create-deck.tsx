@@ -404,6 +404,59 @@ export default function CreateDeck() {
             </div>
           )}
 
+          {/* Deck Preview */}
+          {!isAddMode && deckName.trim() && (
+            <div className="mb-6">
+              <Label className="text-white mb-2 block">Aperçu du deck</Label>
+              <div 
+                className={cn(
+                  "rounded-2xl p-4 relative overflow-hidden",
+                  selectedThemeData.gradientClass
+                )}
+                style={{
+                  borderColor: selectedThemeData.accentColor
+                }}
+              >
+                {/* Background Cover Image */}
+                {coverImage && (
+                  <>
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{
+                        backgroundImage: `url(${coverImage})`,
+                        backgroundPosition: `center 50%`
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/40" />
+                  </>
+                )}
+                <div className="relative z-10">
+                  <h3 className={cn(
+                    "text-lg font-bold font-luckiest mb-1",
+                    coverImage 
+                      ? "text-white drop-shadow-lg" 
+                      : ["white+sky", "white+red", "white+blue", "green+white"].includes(selectedTheme) 
+                        ? "text-black" 
+                        : "text-white"
+                  )}>
+                    {deckName}
+                  </h3>
+                  <div className="text-sm">
+                    <span className={cn(
+                      coverImage 
+                        ? "text-white/90 drop-shadow-lg"
+                        : ["white+sky", "white+red", "white+blue", "green+white"].includes(selectedTheme) 
+                          ? "text-black/80" 
+                          : "text-white/80"
+                    )}>
+                      {selectedCards.length}/12 cartes
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Selected Cards */}
           <div>
             <div className="flex items-center justify-between mb-3">
