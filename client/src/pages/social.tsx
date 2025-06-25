@@ -109,6 +109,12 @@ export default function Social() {
   const [followingStatus, setFollowingStatus] = useState<Record<number, boolean>>({});
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Charger les likes de l'utilisateur au démarrage
+  const { data: userLikes = [] } = useQuery<number[]>({
+    queryKey: ['/api/posts/likes'],
+    enabled: !!currentUser?.user?.id,
+  });
   
   // Comments state
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
