@@ -250,6 +250,20 @@ export default function DeckDetail() {
     }
   }, [deck]);
 
+  // Effet parallax sur l'image de bannière
+  useEffect(() => {
+    const handleScroll = () => {
+      if (parallaxRef.current) {
+        const scrolled = window.pageYOffset;
+        const parallax = scrolled * 0.5;
+        parallaxRef.current.style.transform = `translateY(${parallax}px)`;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Synchroniser bannerPosition quand le deck change
   useEffect(() => {
     if (deck?.bannerPosition !== undefined) {
@@ -283,6 +297,24 @@ export default function DeckDetail() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+    }
+  });
+
+  // Mutation pour supprimer le deck
+  const deleteDeckMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(`/api/decks/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Erreur lors de la suppression');
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({ title: "Deck supprimé avec succès!" });
+      setLocation('/collections?tab=decks');
+    },
+    onError: () => {
+      toast({ title: "Erreur lors de la suppression", variant: "destructive" });
     }
   });
 

@@ -1,4 +1,4 @@
-import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, comments, postLikes, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage, type Comment, type InsertComment } from "@shared/schema";
+import { users, collections, cards, userCards, personalCards, conversations, messages, posts, activities, subscriptions, comments, postLikes, decks, deckCards, type User, type Collection, type Card, type UserCard, type PersonalCard, type InsertUser, type InsertCollection, type InsertCard, type InsertUserCard, type InsertPersonalCard, type Conversation, type Message, type InsertConversation, type InsertMessage, type Comment, type InsertComment } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, ilike, desc, asc, inArray, sql, not } from "drizzle-orm";
 import { follows } from "@shared/schema";
@@ -812,6 +812,21 @@ export class DatabaseStorage implements IStorage {
   async removeCardFromDeck(deckId: number, cardPosition: number): Promise<void> {
     console.log(`Removing card at position ${cardPosition} from deck ${deckId}`);
     // Implementation would remove card from deck tables
+  }
+
+  async deleteDeck(deckId: number): Promise<boolean> {
+    try {
+      // Supprimer d'abord les cartes du deck
+      await db.delete(deckCards).where(eq(deckCards.deckId, deckId));
+      
+      // Supprimer le deck
+      const result = await db.delete(decks).where(eq(decks.id, deckId));
+      
+      return true;
+    } catch (error) {
+      console.error('Error deleting deck:', error);
+      return false;
+    }
   }
 }
 
