@@ -1436,10 +1436,9 @@ export default function Collections() {
           </div>
         )}
       </main>
-      
-
-      
-      {/* Delete Confirmation Modal */}
+    </div>
+    
+    {/* Delete Confirmation Modal */}
       {showDeleteModal && collectionToDelete && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 max-w-md w-full mx-4 border border-[hsl(214,35%,30%)]">
@@ -1608,6 +1607,8 @@ export default function Collections() {
       )}
 
       <Navigation />
+    </div>
+    </div>
     </div>
   );
 }
