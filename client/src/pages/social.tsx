@@ -469,6 +469,7 @@ export default function Social() {
           id: result.comment.id,
           content: result.comment.content,
           author: result.comment.user.name,
+          avatar: result.comment.user.avatar,
           timestamp: new Date(result.comment.createdAt).toLocaleString('fr-FR', {
             day: '2-digit',
             month: '2-digit',
@@ -1159,10 +1160,20 @@ export default function Social() {
                         <div className="mt-4 pt-4 border-t border-[hsl(214,35%,30%)]">
                           {/* Add Comment Input */}
                           <div className="flex space-x-3 mb-4">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-white">
-                                {currentUser?.username?.charAt(0)?.toUpperCase() || 'U'}
-                              </span>
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                              {currentUser?.avatar ? (
+                                <img 
+                                  src={currentUser.avatar} 
+                                  alt="Avatar" 
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                  <span className="text-xs font-bold text-white">
+                                    {currentUser?.username?.charAt(0)?.toUpperCase() || 'U'}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                             <div className="flex-1 flex space-x-2">
                               <Input
@@ -1183,7 +1194,7 @@ export default function Social() {
                                 onClick={() => handleAddComment(post.id)}
                                 disabled={!commentInputs[post.id]?.trim()}
                                 size="sm"
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-[#F37261] hover:bg-[#e5634f] text-white"
                               >
                                 Publier
                               </Button>
