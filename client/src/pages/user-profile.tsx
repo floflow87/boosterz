@@ -84,6 +84,11 @@ interface CommentData {
   userName: string;
   userAvatar?: string;
   createdAt: string;
+  user?: {
+    id: number;
+    name: string;
+    avatar?: string;
+  };
 }
 
 export default function UserProfile() {
@@ -535,22 +540,24 @@ export default function UserProfile() {
                             <div className="space-y-2">
                               {postComments[post.id].map((comment) => (
                                 <div key={comment.id} className="flex space-x-3 p-3 bg-[hsl(214,35%,18%)] rounded-lg">
-                                  <div className="w-6 h-6 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center">
-                                    {comment.userAvatar ? (
+                                  <div className="w-6 h-6 rounded-full flex items-center justify-center overflow-hidden">
+                                    {(comment.userAvatar || (comment as any).user?.avatar) ? (
                                       <img 
-                                        src={comment.userAvatar} 
+                                        src={comment.userAvatar || (comment as any).user?.avatar} 
                                         alt="Avatar"
-                                        className="w-full h-full object-cover rounded-full"
+                                        className="w-full h-full object-cover"
                                       />
                                     ) : (
-                                      <span className="text-xs font-bold text-white">
-                                        {comment.userName?.charAt(0) || 'U'}
-                                      </span>
+                                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                                        <span className="text-xs font-bold text-white">
+                                          {(comment.userName || (comment as any).user?.name)?.charAt(0) || 'U'}
+                                        </span>
+                                      </div>
                                     )}
                                   </div>
                                   <div className="flex-1">
                                     <div className="flex items-center space-x-2 mb-1">
-                                      <span className="text-sm font-medium text-white">{comment.userName}</span>
+                                      <span className="text-sm font-medium text-white">{comment.userName || (comment as any).user?.name}</span>
                                       <span className="text-xs text-gray-400">{comment.createdAt}</span>
                                     </div>
                                     <p className="text-sm text-gray-300">{comment.content}</p>
