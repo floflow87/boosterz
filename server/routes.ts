@@ -639,8 +639,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         card.userId !== currentUserId
       );
       
-      console.log(`Marketplace: Found ${marketplaceCards.length} cards for sale`);
-      res.json(marketplaceCards);
+      // Enrich cards with seller information
+      const enrichedCards = await Promise.all(
+        marketplaceCards.map(async (card) => {
+          const seller = await storage.getUser(card.userId);
+          return {
+            ...card,
+            seller: {
+              id: seller?.id,
+              name: seller?.name,
+              username: seller?.username,
+              avatar: seller?.avatar
+            }
+          };
+        })
+      );
+      
+      console.log(`Marketplace: Found ${enrichedCards.length} cards for sale`);
+      res.json(enrichedCards);
     } catch (error) {
       console.error("Error fetching marketplace cards:", error);
       res.status(500).json({ message: "Internal server error" });

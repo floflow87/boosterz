@@ -924,12 +924,8 @@ export default function Social() {
                 À la une
               </button>
               <button
-                onClick={() => setActiveTab("forsale")}
-                className={`px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
-                  activeTab === "forsale" 
-                    ? "bg-purple-600 text-white shadow-lg transform scale-105" 
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-                }`}
+                onClick={() => setLocation("/marketplace")}
+                className="px-5 py-3 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600"
               >
                 <ShoppingBag className="w-3 h-3 mr-1 inline" />
                 Sur le marché
@@ -1365,52 +1361,7 @@ export default function Social() {
 
 
 
-          <TabsContent value="forsale" className="space-y-4">
-            {/* Barre de recherche pour cartes à la vente */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                type="text"
-                placeholder="Rechercher des cartes..."
-                value={forSaleSearchTerm}
-                onChange={(e) => setForSaleSearchTerm(e.target.value)}
-                className="pl-10 bg-[hsl(214,35%,22%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400"
-              />
-            </div>
-            
-            {/* Cards for sale with search functionality */}
-            <div className="grid grid-cols-2 gap-4">
-              {filteredCardsForSale.length === 0 ? (
-                <div className="col-span-2 text-center py-8">
-                  <div className="text-gray-400">
-                    {forSaleSearchTerm ? "Aucune carte trouvée" : "Aucune carte en vente"}
-                  </div>
-                </div>
-              ) : (
-                filteredCardsForSale.map((card) => (
-                <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 border border-[hsl(214,35%,30%)]">
-                  <div className="aspect-[3/4] bg-gray-600 rounded mb-2 flex items-center justify-center">
-                    {card.imageUrl ? (
-                      <img src={card.imageUrl} alt={card.playerName} className="w-full h-full object-cover rounded" />
-                    ) : (
-                      <div className="text-gray-400 text-xs text-center">
-                        Photo non disponible
-                      </div>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-white font-medium text-sm">{card.playerName}</h4>
-                    <p className="text-gray-400 text-xs">{card.teamName} • {card.cardType}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[hsl(9,85%,67%)] font-bold text-sm">{card.price}</span>
-                      <span className="text-gray-400 text-xs">par {card.seller}</span>
-                    </div>
-                  </div>
-                </div>
-                ))
-              )}
-            </div>
-          </TabsContent>
+
 
           <TabsContent value="profile" className="space-y-4">
             {userLoading ? (
