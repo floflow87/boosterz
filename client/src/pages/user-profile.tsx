@@ -491,9 +491,9 @@ export default function UserProfile() {
                       {/* Comments Section */}
                       {showComments.has(post.id) && (
                         <div className="mt-4 space-y-3">
-                          {/* Add comment - Bouton publier en couleur principale et champ rétréci */}
-                          <div className="flex space-x-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                          {/* Add comment - Champ réduit pour éviter le débordement */}
+                          <div className="flex space-x-2 items-center">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
                               {currentUserData?.avatar ? (
                                 <img 
                                   src={currentUserData.avatar} 
@@ -506,9 +506,9 @@ export default function UserProfile() {
                                 </span>
                               )}
                             </div>
-                            <div className="flex-1 flex space-x-2">
+                            <div className="flex-1 min-w-0">
                               <Input
-                                placeholder="Ajouter un commentaire..."
+                                placeholder="Commentaire..."
                                 value={commentInputs[post.id] || ""}
                                 onChange={(e) => setCommentInputs(prev => ({
                                   ...prev,
@@ -520,17 +520,17 @@ export default function UserProfile() {
                                     handleAddComment(post.id);
                                   }
                                 }}
-                                className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400 text-sm flex-1"
+                                className="bg-[hsl(214,35%,18%)] border-[hsl(214,35%,30%)] text-white placeholder:text-gray-400 text-sm w-full"
                               />
-                              <Button
-                                onClick={() => handleAddComment(post.id)}
-                                disabled={!commentInputs[post.id]?.trim()}
-                                size="sm"
-                                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-4"
-                              >
-                                Publier
-                              </Button>
                             </div>
+                            <Button
+                              onClick={() => handleAddComment(post.id)}
+                              disabled={!commentInputs[post.id]?.trim()}
+                              size="sm"
+                              className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-3 py-1 text-xs flex-shrink-0"
+                            >
+                              Publier
+                            </Button>
                           </div>
 
                           {/* Comments list */}
