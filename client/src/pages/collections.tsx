@@ -891,7 +891,7 @@ export default function Collections() {
                       }}>{deck.name}</h4>
                       <span className="text-xs" style={{
                         color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.cardCount}/12 cartes</span>
+                      }}>{deck.cardCount}/12</span>
                     </div>
                     
                     {/* Preview des 3 premières cartes */}

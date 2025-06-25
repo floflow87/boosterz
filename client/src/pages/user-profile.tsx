@@ -286,8 +286,16 @@ export default function UserProfile() {
         {/* User Info */}
         <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6 mb-6">
           <div className="flex items-center space-x-4 mb-4">
-            <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center">
-              <span className="text-xl font-bold">{user.name.charAt(0)}</span>
+            <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
+              {user.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-xl font-bold text-white">{user.name.charAt(0)}</span>
+              )}
             </div>
             <div>
               <h2 className="text-xl font-bold text-white">{user.name}</h2>
@@ -328,23 +336,65 @@ export default function UserProfile() {
                 <div className="text-gray-400">Chargement des posts...</div>
               </div>
             ) : posts.length > 0 ? (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {posts.map((post) => (
-                  <PostComponent
-                    key={post.id}
-                    post={{...post, user: user}}
-                    currentUser={{user: currentUserData}}
-                    likedPosts={likedPosts}
-                    showComments={showComments}
-                    postComments={postComments}
-                    postCommentsCount={postCommentsCount}
-                    commentInputs={commentInputs}
-                    onLike={handleLike}
-                    onToggleComments={toggleComments}
-                    onUpdateCommentInput={(postId, value) => setCommentInputs(prev => ({ ...prev, [postId]: value }))}
-                    onAddComment={handleAddComment}
-                    onUserClick={(username) => setLocation(`/profile/${username}`)}
-                  />
+                  <div key={post.id} className="bg-[hsl(214,35%,22%)] rounded-lg overflow-hidden">
+                    {/* Post Header */}
+                    <div className="p-4 border-b border-[hsl(214,35%,30%)]">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center overflow-hidden">
+                          {user.avatar ? (
+                            <img 
+                              src={user.avatar} 
+                              alt={user.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-sm font-bold text-white">{user.name.charAt(0)}</span>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center space-x-2">
+                            <h4 
+                              onClick={() => setLocation(`/user/${user.id}`)}
+                              className="text-white font-medium text-sm cursor-pointer hover:underline"
+                            >
+                              {user.name}
+                            </h4>
+                            <span className="text-xs text-gray-400">@{user.username}</span>
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {new Date(post.createdAt).toLocaleDateString('fr-FR', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Post Content */}
+                    <div className="p-4">
+                      <p className="text-white text-sm mb-3 leading-relaxed">{post.content}</p>
+                      
+                      {/* Post Actions */}
+                      <div className="flex items-center justify-between pt-3 border-t border-[hsl(214,35%,30%)]">
+                        <div className="flex items-center space-x-6">
+                          <div className="flex items-center space-x-2">
+                            <Heart className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm text-gray-400">{post.likesCount || 0} j'aime</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <MessageCircle className="w-4 h-4 text-gray-400" />
+                            <span className="text-sm text-gray-400">0 commentaires</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             ) : (
