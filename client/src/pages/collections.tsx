@@ -438,10 +438,68 @@ export default function Collections() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
-      <HaloBlur />
-      <Header title="Mes cartes" />
-      <main className="relative z-10 px-4 pb-24">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
+      {/* Header avec nom, prénom et avatar */}
+      <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+        <button 
+          onClick={() => setLocation(-1)}
+          className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors relative z-10"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        
+        <div className="flex items-center space-x-3">
+          {user?.avatar ? (
+            <img 
+              src={user.avatar} 
+              alt={`Avatar de ${user.name}`}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <span className="text-sm font-bold text-white">{user?.name?.charAt(0) || user?.username?.charAt(0) || 'U'}</span>
+            </div>
+          )}
+          <div className="text-center">
+            <h1 className="text-lg font-bold font-luckiest text-white">
+              {user?.name || user?.username}
+            </h1>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+            <Bell className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={() => setLocation('/settings')}
+            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      
+      <main className="relative z-10 pb-24">
+        {/* KPI Section */}  
+        <div className="px-6 py-4 bg-[hsl(214,35%,18%)] border-b border-[hsl(214,35%,30%)]">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-lg font-bold text-white">{personalCards.length}</div>
+              <div className="text-xs text-gray-400">Cartes</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-white">{collections.length}</div>
+              <div className="text-xs text-gray-400">Collections</div>
+            </div>
+            <div>
+              <div className="text-lg font-bold text-white">{userDecks?.length || 0}</div>
+              <div className="text-xs text-gray-400">Decks</div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="px-4">
         {/* User Profile Section */}
         {user && (
           <div className="flex flex-col items-center text-center mb-4 mt-2">

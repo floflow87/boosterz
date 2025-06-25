@@ -358,10 +358,34 @@ export default function UserProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden">
-      <HaloBlur />
-      
-      <Header title={`@${user.username}`} />
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
+      {/* Header identique à settings avec bouton retour */}
+      <div className="relative px-4 py-3 flex items-center justify-between bg-[hsl(214,35%,11%)] border-b border-[hsl(214,35%,30%)]">
+        <button 
+          onClick={() => setLocation(-1)}
+          className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white hover:bg-[hsl(214,35%,25%)] transition-colors relative z-10"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </button>
+        
+        <div className="flex-1 text-center">
+          <h1 className="text-xl font-bold font-luckiest text-white">
+            BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
+          </h1>
+        </div>
+        
+        <div className="flex items-center space-x-3">
+          <button className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+            <Bell className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={() => setLocation('/settings')}
+            className="w-10 h-10 rounded-full bg-[hsl(214,35%,22%)] flex items-center justify-center text-gray-400 hover:text-white transition-colors"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
 
       <main className="relative z-10 pb-24">
         {/* Header Profile - Reproduit l'image exacte */}
@@ -797,29 +821,44 @@ export default function UserProfile() {
               viewMode === "grid" ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {filteredMarketplaceCards.map((card) => (
-                    <CardDisplay
-                      key={card.id}
-                      card={card}
-                      viewMode="grid"
-                      showActions={false}
-                      showTradeInfo={true}
-                      variant="detailed"
-                      context="sale"
-                    />
+                    <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 border border-[hsl(214,35%,30%)]">
+                      <div className="aspect-[3/4] bg-gray-600 rounded mb-2 flex items-center justify-center">
+                        {card.imageUrl ? (
+                          <img src={card.imageUrl} alt={card.playerName} className="w-full h-full object-cover rounded" />
+                        ) : (
+                          <div className="text-gray-400 text-xs text-center">
+                            Photo non disponible
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-white font-medium text-sm">{card.playerName}</h4>
+                        <p className="text-gray-400 text-xs">{card.teamName} • {card.cardType}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-[hsl(9,85%,67%)] font-bold text-sm">{card.tradePrice}€</span>
+                          <span className="text-gray-400 text-xs">En vente</span>
+                        </div>
+                      </div>
+                    </div>
                   ))}
                 </div>
               ) : (
                 <div className="space-y-2">
                   {filteredMarketplaceCards.map((card) => (
-                    <CardDisplay
-                      key={card.id}
-                      card={card}
-                      viewMode="list"
-                      showActions={false}
-                      showTradeInfo={false}
-                      variant="detailed"
-                      context="sale"
-                    />
+                    <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)] flex items-center space-x-4">
+                      <div className="w-16 h-20 bg-gray-600 rounded flex items-center justify-center flex-shrink-0">
+                        {card.imageUrl ? (
+                          <img src={card.imageUrl} alt={card.playerName} className="w-full h-full object-cover rounded" />
+                        ) : (
+                          <div className="text-gray-400 text-xs text-center">Photo</div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="text-white font-medium text-sm">{card.playerName}</h4>
+                        <p className="text-gray-400 text-xs">{card.teamName} • {card.cardType}</p>
+                        <span className="text-[hsl(9,85%,67%)] font-bold text-sm">{card.tradePrice}€</span>
+                      </div>
+                    </div>
                   ))}
                 </div>
               )

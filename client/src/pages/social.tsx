@@ -1389,8 +1389,8 @@ export default function Social() {
                     <h4 className="text-white font-medium text-sm">{card.playerName}</h4>
                     <p className="text-gray-400 text-xs">{card.teamName} • {card.cardType}</p>
                     <div className="flex justify-between items-center">
-                      <span className="text-[hsl(9,85%,67%)] font-bold text-sm">{card.price}</span>
-                      <span className="text-gray-400 text-xs">par {card.seller}</span>
+                      <span className="text-[hsl(9,85%,67%)] font-bold text-sm">{card.tradePrice || 'Prix non défini'}€</span>
+                      <span className="text-gray-400 text-xs">En vente</span>
                     </div>
                   </div>
                 </div>

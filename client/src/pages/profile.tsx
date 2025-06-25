@@ -325,24 +325,6 @@ export default function Profile() {
       </div>
       
       <main className="pb-6">
-          
-          {/* Icônes à droite */}
-          <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors relative">
-              <Bell className="w-5 h-5 text-white" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            <button 
-              onClick={() => setLocation("/settings")}
-              className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors"
-            >
-              <Settings className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <main className="pb-6">
         {/* Header centré */}
         <div className="text-center px-6 py-8">
           {/* Avatar dynamique */}
