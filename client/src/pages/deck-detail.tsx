@@ -250,13 +250,13 @@ export default function DeckDetail() {
     }
   }, [deck]);
 
-  // Effet parallax sur l'image de bannière
+  // Effet parallax sur l'image de bannière (décalé)
   useEffect(() => {
     const handleScroll = () => {
       if (parallaxRef.current) {
         const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.5;
-        parallaxRef.current.style.transform = `translateY(${parallax}px)`;
+        const parallax = scrolled * 0.3; // Réduction de l'intensité
+        parallaxRef.current.style.transform = `translateY(${parallax + 20}px)`; // Décalage initial
       }
     };
 
@@ -464,10 +464,29 @@ export default function DeckDetail() {
                   style={{
                     backgroundImage: `url(${deck.coverImage})`,
                     backgroundPosition: `center ${deck.bannerPosition || 50}%`,
-                    transform: 'translateY(0px)'
+                    transform: 'translateY(20px)'
                   }}
                 />
                 <div className="absolute inset-0 bg-black/40" />
+                
+                {/* Étoiles filantes pour deck complet */}
+                {localCards.length === 12 && (
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {[...Array(8)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute w-1 h-8 bg-gradient-to-b from-yellow-400 via-orange-400 to-transparent opacity-80"
+                        style={{
+                          left: `${10 + Math.random() * 80}%`,
+                          top: `${Math.random() * 100}%`,
+                          transform: `rotate(${20 + Math.random() * 20}deg)`,
+                          animation: `shooting-star ${2 + Math.random() * 3}s ease-in-out infinite`,
+                          animationDelay: `${Math.random() * 4}s`
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
               </>
             )}
             <div className="flex items-center justify-between mb-4 relative z-10">
