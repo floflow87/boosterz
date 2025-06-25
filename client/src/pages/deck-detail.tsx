@@ -218,7 +218,11 @@ export default function DeckDetail() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  
+  // Récupérer l'utilisateur actuel
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/auth/me']
+  });
+
   const { data: deck, isLoading } = useQuery<DeckWithCards>({
     queryKey: [`/api/decks/${id}`],
     enabled: !!id,
@@ -231,6 +235,7 @@ export default function DeckDetail() {
   const [showDeletePanel, setShowDeletePanel] = useState(false);
   const [selectedCardToDelete, setSelectedCardToDelete] = useState<number | null>(null);
   const [longPressCard, setLongPressCard] = useState<number | null>(null);
+  const [focusedCard, setFocusedCard] = useState<number | null>(null);
   const [editName, setEditName] = useState('');
   const [editTheme, setEditTheme] = useState('');
   const [editCoverImage, setEditCoverImage] = useState<string | null>(null);
@@ -249,6 +254,9 @@ export default function DeckDetail() {
       setBannerPosition(deck.bannerPosition ?? 50);
     }
   }, [deck]);
+
+  // Vérifier si l'utilisateur actuel est le propriétaire du deck
+  const isOwnerView = currentUser?.user?.id === deck?.userId;
 
   // Configuration des capteurs pour le drag and drop
   const sensors = useSensors(

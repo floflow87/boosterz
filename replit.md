@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Enhanced deck viewing experience for non-owners
+  - Hidden edit/delete controls when viewing other users' decks
+  - Disabled drag & drop and card numbering for visitors
+  - Added 3D rotation effect when clicking cards in visitor mode
+  - Improved user experience with proper ownership detection
 - June 25, 2025. Prepared deployment configuration for boosterz.fr domain
   - Enhanced database configuration to support separate dev/prod environments
   - Added environment-specific database connection logic in db.ts
