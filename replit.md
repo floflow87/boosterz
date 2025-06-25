@@ -118,12 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 25, 2025. Fixed profile display and social interactions
-  - Added real deck count display using actual user decks from database
-  - Removed "Échanger" (trade) button from posts in "À la une" section
-  - Implemented persistent likes and comments system with database storage
-  - Added clickable usernames in posts for profile navigation
-  - Fixed real-time like/unlike functionality with proper state management
+- June 25, 2025. Complete profile system with real data and functional tabs
+  - Fixed deck count display in KPIs to show actual user decks from database
+  - Implemented "Decks" tab to display user's created decks with navigation to deck details
+  - Implemented "En vente" tab to show user's personal cards marked for sale
+  - Added API endpoints for user-specific decks and sale cards
+  - Enhanced card display with fallback images and improved layout
+  - Clickable usernames redirect to user profiles correctly
 - June 25, 2025. Implemented real counts display on user profiles
   - Added calculation of real collections count from user's actual collections
   - Added calculation of real cards count from owned cards across all collections

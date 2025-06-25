@@ -113,9 +113,9 @@ export default function Profile() {
     enabled: !!selectedCollection,
   });
 
-  // Récupérer les cartes en vente de l'utilisateur
-  const { data: saleCards = [] } = useQuery<Card[]>({
-    queryKey: [`/api/users/${userId}/marketplace`],
+  // Récupérer les cartes en vente de l'utilisateur (personal cards)
+  const { data: saleCards = [] } = useQuery({
+    queryKey: [`/api/users/${userId}/sale-cards`],
     enabled: !!userId && activeTab === 'vente',
   });
 
@@ -390,7 +390,7 @@ export default function Profile() {
             <div className="text-xs text-gray-400">Cartes</div>
           </div>
           <div>
-            <div className="text-lg font-bold text-white">{profileUser.collectionsCount}</div>
+            <div className="text-lg font-bold text-white">{userDecks.length}</div>
             <div className="text-xs text-gray-400">Decks</div>
           </div>
           <div>
@@ -677,9 +677,30 @@ export default function Profile() {
 
           {/* Onglet Decks */}
           <TabsContent value="decks" className="px-4 pt-4 space-y-4">
-            <div className="text-center py-8">
-              <div className="text-gray-400">Fonctionnalité Decks à venir</div>
-            </div>
+            {userDecks.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4">
+                {userDecks.map((deck) => (
+                  <div 
+                    key={deck.id} 
+                    onClick={() => setLocation(`/deck/${deck.id}`)}
+                    className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-white text-lg">{deck.name}</h4>
+                      <span className="text-xs text-gray-400">{deck.cardCount}/12 cartes</span>
+                    </div>
+                    
+                    <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center justify-center">
+                      <div className="text-gray-400 text-sm">Deck de {deck.cardCount} cartes</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-gray-400">Aucun deck créé</div>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </main>

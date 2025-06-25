@@ -1723,6 +1723,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get decks for a specific user
+  app.get("/api/users/:id/decks", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const userDecks = await db.select().from(decks).where(eq(decks.userId, userId));
+      res.json(userDecks);
+    } catch (error) {
+      console.error("Error fetching user decks:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
+  // Get sale cards for a specific user
+  app.get("/api/users/:id/sale-cards", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      const saleCards = await db.select().from(personalCards).where(
+        and(eq(personalCards.userId, userId), eq(personalCards.isForSale, true))
+      );
+      res.json(saleCards);
+    } catch (error) {
+      console.error("Error fetching user sale cards:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Create new deck
   app.post("/api/decks", authenticateToken, async (req: AuthRequest, res) => {
     try {
