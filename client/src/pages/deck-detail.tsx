@@ -367,44 +367,63 @@ export default function DeckDetail() {
           {/* Deck Header */}
           <div 
             className={cn(
-              "rounded-2xl p-6 mb-6",
+              "rounded-2xl p-6 mb-6 relative overflow-hidden",
               themeStyle.gradientClass
             )}
             style={{
               borderColor: themeStyle.accentColor
             }}
           >
-            <div className="flex items-center justify-between mb-4">
+            {/* Background Cover Image */}
+            {deck.coverImage && (
+              <>
+                <div 
+                  className="absolute inset-0 bg-cover bg-center"
+                  style={{
+                    backgroundImage: `url(${deck.coverImage})`,
+                    backgroundPosition: `center ${deck.bannerPosition || 50}%`
+                  }}
+                />
+                <div className="absolute inset-0 bg-black/40" />
+              </>
+            )}
+            <div className="flex items-center justify-between mb-4 relative z-10">
               <div>
                 <h1 className={cn(
                   "text-2xl font-bold font-luckiest mb-2",
-                  ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors) 
-                    ? "text-black" 
-                    : "text-white"
+                  deck.coverImage 
+                    ? "text-white drop-shadow-lg" 
+                    : ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors) 
+                      ? "text-black" 
+                      : "text-white"
                 )}>
                   {deck.name}
                 </h1>
                 <div className="text-sm">
                   <span className={cn(
-                    ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors) 
-                      ? "text-black/80" 
-                      : "text-white/80"
+                    deck.coverImage 
+                      ? "text-white/90 drop-shadow-lg"
+                      : ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors) 
+                        ? "text-black/80" 
+                        : "text-white/80"
                   )}>
                     {localCards.length}/12 cartes
                   </span>
                 </div>
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex gap-2 relative z-10">
 
                 <Button
                   variant="ghost"
                   size="sm"
                   className={cn(
                     "p-2",
-                    ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
-                      ? "text-black hover:bg-black/10"
-                      : "text-white hover:bg-white/10"
+                    deck.coverImage
+                      ? "text-white hover:bg-white/20 backdrop-blur-sm"
+                      : ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
+                        ? "text-black hover:bg-black/10"
+                        : "text-white hover:bg-white/10"
                   )}
                   onClick={() => setShowSharePanel(true)}
                 >
@@ -415,9 +434,11 @@ export default function DeckDetail() {
                   size="sm"
                   className={cn(
                     "p-2",
-                    ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
-                      ? "text-black hover:bg-black/10"
-                      : "text-white hover:bg-white/10"
+                    deck.coverImage
+                      ? "text-white hover:bg-white/20 backdrop-blur-sm"
+                      : ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
+                        ? "text-black hover:bg-black/10"
+                        : "text-white hover:bg-white/10"
                   )}
                   onClick={() => setShowEditPanel(true)}
                 >

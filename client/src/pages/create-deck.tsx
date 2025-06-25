@@ -208,7 +208,7 @@ export default function CreateDeck() {
       return;
     }
 
-    const selectedThemeData = themeOptions.find(t => t.id === selectedTheme);
+    const selectedThemeData = themeStyles[selectedTheme as keyof typeof themeStyles] || themeStyles["main+background"];
     
     const deckData = {
       name: deckName,
@@ -243,7 +243,7 @@ export default function CreateDeck() {
     ...personalCards.filter(c => !c.isSold).map(c => ({ type: 'personal', card: c }))
   ];
 
-  const selectedThemeData = themeOptions.find(t => t.id === selectedTheme);
+  const selectedThemeData = themeStyles[selectedTheme as keyof typeof themeStyles] || themeStyles["main+background"];
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
