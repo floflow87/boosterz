@@ -245,7 +245,7 @@ export default function UserProfile() {
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <div className="text-2xl font-bold text-white">{collections.length}</div>
-              <div className="text-xs text-gray-400">Collections</div>
+              <div className="text-xs text-gray-400">Decks</div>
             </div>
             <div>
               <div className="text-2xl font-bold text-white">{user.totalCards || 0}</div>

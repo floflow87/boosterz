@@ -1188,7 +1188,7 @@ export default function Social() {
                     
                     <div className="flex justify-between text-xs text-gray-400">
                       <span>{user.followersCount || 0} abonnés</span>
-                      <span>{user.collectionsCount || 0} collections</span>
+                      <span>{user.collectionsCount || 0} decks</span>
                     </div>
                   </div>
                 ))

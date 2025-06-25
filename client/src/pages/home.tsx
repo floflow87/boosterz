@@ -65,7 +65,7 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-2 text-sm text-white/80">
                 <Trophy className="w-4 h-4" />
-                <span>{collections?.length || 0} collection(s)</span>
+                <span>{collections?.length || 0} deck(s)</span>
                 <span>•</span>
                 <span>{personalCards.length || 0} carte(s) personnelle(s)</span>
               </div>

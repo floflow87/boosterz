@@ -443,7 +443,7 @@ export default function Collections() {
               </div>
               <div className="flex items-center space-x-1">
                 <span className="font-medium text-white">{collections?.length || 0}</span>
-                <span>collections</span>
+                <span>decks</span>
               </div>
               <div className="flex items-center space-x-1">
                 <span className="font-medium text-white">{user.followersCount || 0}</span>

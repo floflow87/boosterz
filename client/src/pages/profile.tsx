@@ -300,7 +300,7 @@ export default function Profile() {
           </div>
           <div>
             <div className="text-lg font-bold text-white">{profileUser.collectionsCount}</div>
-            <div className="text-xs text-gray-400">Collections</div>
+            <div className="text-xs text-gray-400">Decks</div>
           </div>
           <div>
             <div className="text-lg font-bold text-white">{profileUser.followersCount}</div>
