@@ -402,7 +402,7 @@ export default function DeckDetail() {
                   size="sm"
                   className={cn(
                     "p-2",
-                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors)
+                    ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
                       ? "text-black hover:bg-black/10"
                       : "text-white hover:bg-white/10"
                   )}
@@ -415,7 +415,7 @@ export default function DeckDetail() {
                   size="sm"
                   className={cn(
                     "p-2",
-                    ["white+sky", "white+red", "white+blue"].includes(deck.themeColors)
+                    ["white+sky", "white+red", "white+blue", "green+white"].includes(deck.themeColors)
                       ? "text-black hover:bg-black/10"
                       : "text-white hover:bg-white/10"
                   )}
