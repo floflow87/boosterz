@@ -118,6 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 25, 2025. Cleaned up marketplace to show only real cards for sale
+  - Removed all mock/fake cards from "Sur le marché" tab in social section
+  - Marketplace now displays only authentic personal cards marked isForSale: true
+  - Fixed filtering to exclude current user's own cards from marketplace
+  - Updated UI to show proper empty state when no cards are for sale
 - June 25, 2025. Fixed avatar upload and persistence system
   - Resolved avatar not persisting after page refresh by fixing /api/auth/me endpoint
   - Updated endpoint to fetch fresh user data from database instead of cached session data

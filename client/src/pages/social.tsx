@@ -548,70 +548,11 @@ export default function Social() {
     setShowAutocomplete(searchTerm.length > 0);
   }, [searchTerm]);
 
-  // Mock cards for sale data
-  const cardsForSale = [
-    {
-      id: 1,
-      playerName: "Kylian Mbappé",
-      teamName: "PSG",
-      cardType: "Base",
-      price: "15€",
-      imageUrl: null,
-      seller: "Alex_Collector"
-    },
-    {
-      id: 2,
-      playerName: "Lionel Messi",
-      teamName: "PSG", 
-      cardType: "Parallel Laser",
-      price: "45€",
-      imageUrl: null,
-      seller: "CardMaster92"
-    },
-    {
-      id: 3,
-      playerName: "Neymar Jr",
-      teamName: "PSG",
-      cardType: "Insert Keepers",
-      price: "30€",
-      imageUrl: null,
-      seller: "PSG_Fan"
-    },
-    {
-      id: 4,
-      playerName: "Gianluigi Donnarumma",
-      teamName: "PSG",
-      cardType: "Autograph",
-      price: "85€",
-      imageUrl: null,
-      seller: "GoalKeeper_King"
-    },
-    {
-      id: 5,
-      playerName: "Karim Benzema",
-      teamName: "Real Madrid",
-      cardType: "Parallel Numbered",
-      price: "120€",
-      imageUrl: null,
-      seller: "Madrid_Collector"
-    },
-    {
-      id: 6,
-      playerName: "Erling Haaland",
-      teamName: "Manchester City",
-      cardType: "Insert Hot Rookies",
-      price: "95€",
-      imageUrl: null,
-      seller: "City_Fan2023"
-    }
-  ];
-
-  // Filtrer les cartes à la vente selon la recherche
-  const filteredCardsForSale = cardsForSale.filter(card =>
-    card.playerName.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
-    card.teamName.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
-    card.cardType.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
-    card.seller.toLowerCase().includes(forSaleSearchTerm.toLowerCase())
+  // Filtrer les vraies cartes à la vente selon la recherche
+  const filteredCardsForSale = marketplaceCards.filter(card =>
+    card.playerName?.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
+    card.teamName?.toLowerCase().includes(forSaleSearchTerm.toLowerCase()) ||
+    card.cardType?.toLowerCase().includes(forSaleSearchTerm.toLowerCase())
   );
 
   const getActivityIcon = (type: string) => {
