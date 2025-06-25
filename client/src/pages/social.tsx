@@ -1172,13 +1172,13 @@ export default function Social() {
                               {currentUser?.user?.avatar ? (
                                 <img 
                                   src={currentUser.user.avatar} 
-                                  alt="Avatar" 
-                                  className="w-full h-full object-cover"
+                                  alt={`Avatar de ${currentUser.user.name || currentUser.user.username}`} 
+                                  className="w-full h-full object-cover rounded-full"
                                 />
                               ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                                <div className="w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                                   <span className="text-xs font-bold text-white">
-                                    {currentUser?.user?.username?.charAt(0)?.toUpperCase() || 'U'}
+                                    {currentUser?.user?.name?.charAt(0)?.toUpperCase() || currentUser?.user?.username?.charAt(0)?.toUpperCase() || 'U'}
                                   </span>
                                 </div>
                               )}
