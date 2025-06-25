@@ -612,55 +612,71 @@ export default function UserProfile() {
           </TabsContent>
 
           <TabsContent value="decks" className="space-y-4">
-            {deckPreviews.length > 0 ? (
-              <div className="grid grid-cols-1 gap-4">
-                {deckPreviews.map((deck: any) => (
+            {userDecks.length > 0 ? (
+              <div className="space-y-4">
+                {userDecks.map((deck: any) => (
                   <div 
                     key={deck.id} 
                     onClick={() => setLocation(`/deck/${deck.id}`)}
-                    className="rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform relative overflow-hidden"
+                    className="rounded-2xl p-4 cursor-pointer hover:scale-[1.02] transform transition-all duration-300 relative overflow-hidden"
                     style={{
-                      background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"
+                      background: deck.themeColors ? getThemeGradient(deck.themeColors) : "linear-gradient(135deg, #D4AF37 0%, #FFD700 100%)"
                     }}
                   >
                     <div className="flex items-center justify-between mb-3 relative z-10">
-                      <h4 className="font-bold text-lg font-luckiest" style={{
-                        color: deck.themeColors ? getThemeTextColor(deck.themeColors) : "#ffffff"
-                      }}>{deck.name}</h4>
-                      <span className="text-xs" style={{
-                        color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.cardCount}/12</span>
+                      <h4 className="font-bold text-lg font-luckiest uppercase text-white">{deck.name}</h4>
+                      <span className="text-xs text-white/80">{deck.cardCount || 0}/12</span>
                     </div>
                     
-                    {/* Preview des 3 premières cartes */}
-                    <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-3">
+                    {/* Preview des cartes du deck */}
+                    <div className="h-32 rounded-lg overflow-hidden bg-black/20 flex items-center p-3">
                       {deck.previewCards && deck.previewCards.length > 0 ? (
-                        <div className="flex space-x-3 w-full perspective-1000">
-                          {deck.previewCards.map((cardData: any, index: number) => (
+                        <div className="flex space-x-3 w-full">
+                          {deck.previewCards.slice(0, 3).map((cardData: any, index: number) => (
                             <div 
                               key={index}
-                              className="relative flex-1 transform hover:scale-105 transition-all duration-300 hover:z-10"
-                              style={{
-                                transform: `perspective(800px) rotateY(${index * 5}deg)`,
-                                marginLeft: index > 0 ? '-20px' : '0'
-                              }}
+                              className="relative flex-1 max-w-[80px]"
                             >
-                              <CardDisplay
-                                card={cardData.card}
-                                variant="compact"
-                                showActions={false}
-                              />
+                              <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 to-purple-900 rounded-lg overflow-hidden border border-white/20 shadow-lg">
+                                {cardData.card?.imageUrl ? (
+                                  <img 
+                                    src={cardData.card.imageUrl} 
+                                    alt={cardData.card.playerName}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-white text-xs text-center p-1">
+                                    {cardData.card?.playerName || 'Carte'}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           ))}
-                          {deck.previewCards.length < 3 && (
-                            <div className="flex-1 border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-xs">
-                              +{12 - deck.cardCount}
+                          
+                          {/* Afficher les emplacements vides si moins de 3 cartes */}
+                          {deck.previewCards.length < 3 && Array.from({ length: 3 - deck.previewCards.length }).map((_, index) => (
+                            <div 
+                              key={`empty-${index}`}
+                              className="relative flex-1 max-w-[80px]"
+                            >
+                              <div className="aspect-[3/4] bg-white/10 rounded-lg border-2 border-dashed border-white/30 flex items-center justify-center">
+                                <div className="text-white/40 text-xs">Vide</div>
+                              </div>
                             </div>
-                          )}
+                          ))}
                         </div>
                       ) : (
-                        <div className="w-full border-2 border-dashed border-gray-600 rounded-lg flex items-center justify-center text-gray-500 text-sm">
-                          Deck vide
+                        <div className="w-full flex space-x-3">
+                          {Array.from({ length: 3 }).map((_, index) => (
+                            <div 
+                              key={`placeholder-${index}`}
+                              className="relative flex-1 max-w-[80px]"
+                            >
+                              <div className="aspect-[3/4] bg-white/10 rounded-lg border-2 border-dashed border-white/30 flex items-center justify-center">
+                                <div className="text-white/40 text-xs">Vide</div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       )}
                     </div>
@@ -669,7 +685,10 @@ export default function UserProfile() {
               </div>
             ) : (
               <div className="text-center py-12">
-                <div className="text-gray-400">Aucun deck trouvé</div>
+                <div className="text-gray-400 mb-2">Aucun deck créé</div>
+                <p className="text-sm text-gray-500">
+                  Les decks apparaîtront ici une fois créés
+                </p>
               </div>
             )}
           </TabsContent>
