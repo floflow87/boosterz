@@ -1834,7 +1834,7 @@ export default function Social() {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="text-gray-400 hover:text-white transition-colors p-1">
-                        <MoreHorizontal className="w-6 h-6" />
+                        <MoreVertical className="w-6 h-6" />
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48 bg-[hsl(214,35%,18%)] border-gray-600">
@@ -1950,7 +1950,7 @@ export default function Social() {
                 </div>
 
                 {/* Description de vente */}
-                {selectedMarketplaceCard.saleDescription && (
+                {selectedMarketplaceCard.saleDescription && selectedMarketplaceCard.saleDescription.trim() !== '' && (
                   <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
                     <div className="text-white font-medium text-sm mb-2">Description</div>
                     <div className="text-gray-300 text-sm leading-relaxed">
