@@ -109,6 +109,7 @@ export default function Social() {
   const [followingStatus, setFollowingStatus] = useState<Record<number, boolean>>({});
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Comments state
   const [showComments, setShowComments] = useState<Set<number>>(new Set());
@@ -119,6 +120,7 @@ export default function Social() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedMarketplaceCard, setSelectedMarketplaceCard] = useState<any>(null);
+  const [showDropdownMenu, setShowDropdownMenu] = useState(false);
 
   // Get current user ID from authentication
   const { data: currentUser } = useQuery<CurrentUser>({
@@ -1831,77 +1833,81 @@ export default function Social() {
                 <h2 className="text-xl font-bold text-white">Détails de la carte</h2>
                 <div className="flex items-center gap-2">
                   {/* Menu actions */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="text-gray-400 hover:text-white transition-colors p-1">
-                        <MoreVertical className="w-6 h-6" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent 
-                      align="end" 
-                      className="min-w-[12rem] bg-gray-800 border border-gray-600 rounded-md shadow-lg"
-                      sideOffset={5}
+                  <div className="relative" ref={dropdownRef}>
+                    <button 
+                      className="text-gray-400 hover:text-white transition-colors p-1"
+                      onClick={() => setShowDropdownMenu(!showDropdownMenu)}
                     >
-                      <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
-                        onClick={() => {
-                          setSelectedMarketplaceCard(null);
-                          toast({
-                            title: "Fonctionnalité à venir",
-                            description: "La messagerie pour contacter les vendeurs sera bientôt disponible",
-                            className: "bg-blue-600 border-blue-600 text-white",
-                          });
-                        }}
-                      >
-                        <MessageCircle className="w-4 h-4 mr-2" />
-                        Contacter le vendeur
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
-                        onClick={() => {
-                          setSelectedMarketplaceCard(null);
-                          setLocation(`/profile/${selectedMarketplaceCard.userId}`);
-                        }}
-                      >
-                        <Eye className="w-4 h-4 mr-2" />
-                        Voir le profil
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
-                        onClick={() => {
-                          navigator.share?.({
-                            title: `Carte ${selectedMarketplaceCard.playerName}`,
-                            text: `Découvrez cette carte ${selectedMarketplaceCard.playerName} en vente`,
-                            url: window.location.href
-                          }).catch(() => {
-                            navigator.clipboard.writeText(window.location.href);
+                      <MoreVertical className="w-6 h-6" />
+                    </button>
+                    
+                    {showDropdownMenu && (
+                      <div className="absolute right-0 top-8 min-w-[12rem] bg-gray-800 border border-gray-600 rounded-md shadow-lg z-50">
+                        <div 
+                          className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
+                          onClick={() => {
+                            setShowDropdownMenu(false);
+                            setSelectedMarketplaceCard(null);
                             toast({
-                              title: "Lien copié",
-                              description: "Le lien de la carte a été copié dans le presse-papiers",
-                              className: "bg-green-600 border-green-600 text-white",
+                              title: "Fonctionnalité à venir",
+                              description: "La messagerie pour contacter les vendeurs sera bientôt disponible",
+                              className: "bg-blue-600 border-blue-600 text-white",
                             });
-                          });
-                        }}
-                      >
-                        <Share2 className="w-4 h-4 mr-2" />
-                        Partager
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        className="text-red-400 hover:bg-red-600/10 cursor-pointer px-3 py-2 flex items-center"
-                        onClick={() => {
-                          toast({
-                            title: "Signalement envoyé",
-                            description: "Cette carte a été signalée à l'équipe de modération",
-                            className: "bg-red-600 border-red-600 text-white",
-                          });
-                          setSelectedMarketplaceCard(null);
-                        }}
-                      >
-                        <Flag className="w-4 h-4 mr-2" />
-                        Signaler
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                          }}
+                        >
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Contacter le vendeur
+                        </div>
+                        <div 
+                          className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
+                          onClick={() => {
+                            setShowDropdownMenu(false);
+                            setSelectedMarketplaceCard(null);
+                            setLocation(`/profile/${selectedMarketplaceCard.userId}`);
+                          }}
+                        >
+                          <Eye className="w-4 h-4 mr-2" />
+                          Voir le profil
+                        </div>
+                        <div 
+                          className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
+                          onClick={() => {
+                            setShowDropdownMenu(false);
+                            navigator.share?.({
+                              title: `Carte ${selectedMarketplaceCard.playerName}`,
+                              text: `Découvrez cette carte ${selectedMarketplaceCard.playerName} en vente`,
+                              url: window.location.href
+                            }).catch(() => {
+                              navigator.clipboard.writeText(window.location.href);
+                              toast({
+                                title: "Lien copié",
+                                description: "Le lien de la carte a été copié dans le presse-papiers",
+                                className: "bg-green-600 border-green-600 text-white",
+                              });
+                            });
+                          }}
+                        >
+                          <Share2 className="w-4 h-4 mr-2" />
+                          Partager
+                        </div>
+                        <div 
+                          className="text-red-400 hover:bg-red-600/10 cursor-pointer px-3 py-2 flex items-center"
+                          onClick={() => {
+                            setShowDropdownMenu(false);
+                            toast({
+                              title: "Signalement envoyé",
+                              description: "Cette carte a été signalée à l'équipe de modération",
+                              className: "bg-red-600 border-red-600 text-white",
+                            });
+                            setSelectedMarketplaceCard(null);
+                          }}
+                        >
+                          <Flag className="w-4 h-4 mr-2" />
+                          Signaler
+                        </div>
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Bouton fermer */}
                   <button
