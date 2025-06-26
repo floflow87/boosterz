@@ -1837,9 +1837,13 @@ export default function Social() {
                         <MoreVertical className="w-6 h-6" />
                       </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48 bg-[hsl(214,35%,18%)] border-gray-600">
+                    <DropdownMenuContent 
+                      align="end" 
+                      className="min-w-[12rem] bg-gray-800 border border-gray-600 rounded-md shadow-lg"
+                      sideOffset={5}
+                    >
                       <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
                         onClick={() => {
                           setSelectedMarketplaceCard(null);
                           toast({
@@ -1853,7 +1857,7 @@ export default function Social() {
                         Contacter le vendeur
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
                         onClick={() => {
                           setSelectedMarketplaceCard(null);
                           setLocation(`/profile/${selectedMarketplaceCard.userId}`);
@@ -1863,7 +1867,7 @@ export default function Social() {
                         Voir le profil
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
                         onClick={() => {
                           navigator.share?.({
                             title: `Carte ${selectedMarketplaceCard.playerName}`,
@@ -1883,7 +1887,7 @@ export default function Social() {
                         Partager
                       </DropdownMenuItem>
                       <DropdownMenuItem 
-                        className="text-red-400 hover:bg-red-600/10 cursor-pointer"
+                        className="text-red-400 hover:bg-red-600/10 cursor-pointer px-3 py-2 flex items-center"
                         onClick={() => {
                           toast({
                             title: "Signalement envoyé",
