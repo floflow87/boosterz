@@ -1381,8 +1381,8 @@ export default function Social() {
               />
             </div>
             
-            {/* Cards for sale with search functionality - Clickable cards */}
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Cards for sale with collection-style grid */}
+            <div className="card-grid">
               {filteredCardsForSale.length === 0 ? (
                 <div className="col-span-full text-center py-8">
                   <div className="text-gray-400">
@@ -1393,41 +1393,45 @@ export default function Social() {
                 filteredCardsForSale.map((card) => (
                   <div 
                     key={card.id} 
-                    className="bg-[hsl(214,35%,22%)] rounded-lg p-3 border border-[hsl(214,35%,30%)] cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-all duration-200 hover:scale-105 hover:shadow-lg relative group"
+                    className="card-clickable bg-[hsl(214,35%,22%)] rounded-xl p-3 card-hover cursor-pointer group relative transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50"
                     onClick={() => setSelectedMarketplaceCard(card)}
                   >
                     {/* Badge "En vente" */}
-                    <div className="absolute top-2 right-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full font-bold text-xs z-10">
+                    <div className="absolute top-2 right-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full font-bold text-xs z-10 shadow-lg">
                       EN VENTE
                     </div>
                     
-                    <div className="aspect-[3/4] bg-gray-600 rounded mb-2 flex items-center justify-center overflow-hidden">
+                    <div className="aspect-[3/4] bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 
                           alt={card.playerName || 'Carte'} 
-                          className="w-full h-full object-cover rounded transform group-hover:scale-110 transition-transform duration-300" 
+                          className="w-full h-full object-cover rounded-lg transform group-hover:scale-110 transition-transform duration-300" 
                         />
                       ) : (
-                        <div className="text-gray-400 text-xs text-center p-4">
-                          <div className="text-sm font-bold mb-1">{card.playerName}</div>
-                          <div className="text-xs">{card.teamName}</div>
+                        <div className="text-white text-center p-4">
+                          <div className="text-sm font-bold mb-1 text-[hsl(9,85%,67%)]">{card.playerName}</div>
+                          <div className="text-xs text-gray-300">{card.teamName}</div>
+                          <div className="text-xs text-gray-400 mt-2">{card.cardType}</div>
                         </div>
                       )}
+                      
+                      {/* Overlay with hover effect */}
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg"></div>
                     </div>
                     
-                    <div className="space-y-1">
-                      <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
-                      <p className="text-gray-400 text-xs truncate">{card.teamName} • {card.cardType}</p>
-                      <div className="flex items-center justify-between">
+                    <div className="space-y-2">
+                      <h4 className="text-white font-bold text-sm truncate font-luckiest">{card.playerName}</h4>
+                      <p className="text-gray-400 text-xs truncate font-poppins">{card.teamName} • {card.cardType}</p>
+                      <div className="flex items-center justify-between pt-1">
                         <div className="flex items-center gap-1">
                           <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
                           <span className="text-[hsl(9,85%,67%)] font-bold text-sm">
                             {card.salePrice ? `${card.salePrice}€` : 'Prix à négocier'}
                           </span>
                         </div>
-                        <div className="text-gray-400 text-xs">
-                          Cliquer pour voir
+                        <div className="text-gray-500 text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          Voir détails
                         </div>
                       </div>
                     </div>
