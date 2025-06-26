@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingBag, ArrowLeftRight, Plus, Globe, Heart, MoreHorizontal, Trash2, Grid, List, Filter, PenTool, MoreVertical, UserX, MessageSquare, X, DollarSign } from "lucide-react";
+import { Users, UserPlus, UserCheck, Bell, Star, TrendingUp, Search, Eye, MessageCircle, Activity, ShoppingBag, ArrowLeftRight, Plus, Globe, Heart, MoreHorizontal, Trash2, Grid, List, Filter, PenTool, MoreVertical, UserX, MessageSquare, X, DollarSign, Share2, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1829,12 +1829,84 @@ export default function Social() {
               {/* Header du modal */}
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-white">Détails de la carte</h2>
-                <button
-                  onClick={() => setSelectedMarketplaceCard(null)}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
-                  <X className="w-6 h-6" />
-                </button>
+                <div className="flex items-center gap-2">
+                  {/* Menu actions */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="text-gray-400 hover:text-white transition-colors p-1">
+                        <MoreHorizontal className="w-6 h-6" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48 bg-[hsl(214,35%,18%)] border-gray-600">
+                      <DropdownMenuItem 
+                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {
+                          setSelectedMarketplaceCard(null);
+                          toast({
+                            title: "Fonctionnalité à venir",
+                            description: "La messagerie pour contacter les vendeurs sera bientôt disponible",
+                            className: "bg-blue-600 border-blue-600 text-white",
+                          });
+                        }}
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        Contacter le vendeur
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {
+                          setSelectedMarketplaceCard(null);
+                          setLocation(`/profile/${selectedMarketplaceCard.userId}`);
+                        }}
+                      >
+                        <Eye className="w-4 h-4 mr-2" />
+                        Voir le profil
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-white hover:bg-gray-700 cursor-pointer"
+                        onClick={() => {
+                          navigator.share?.({
+                            title: `Carte ${selectedMarketplaceCard.playerName}`,
+                            text: `Découvrez cette carte ${selectedMarketplaceCard.playerName} en vente`,
+                            url: window.location.href
+                          }).catch(() => {
+                            navigator.clipboard.writeText(window.location.href);
+                            toast({
+                              title: "Lien copié",
+                              description: "Le lien de la carte a été copié dans le presse-papiers",
+                              className: "bg-green-600 border-green-600 text-white",
+                            });
+                          });
+                        }}
+                      >
+                        <Share2 className="w-4 h-4 mr-2" />
+                        Partager
+                      </DropdownMenuItem>
+                      <DropdownMenuItem 
+                        className="text-red-400 hover:bg-red-600/10 cursor-pointer"
+                        onClick={() => {
+                          toast({
+                            title: "Signalement envoyé",
+                            description: "Cette carte a été signalée à l'équipe de modération",
+                            className: "bg-red-600 border-red-600 text-white",
+                          });
+                          setSelectedMarketplaceCard(null);
+                        }}
+                      >
+                        <Flag className="w-4 h-4 mr-2" />
+                        Signaler
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                  
+                  {/* Bouton fermer */}
+                  <button
+                    onClick={() => setSelectedMarketplaceCard(null)}
+                    className="text-gray-400 hover:text-white transition-colors p-1"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
               </div>
 
               {/* Image de la carte */}
@@ -1892,6 +1964,14 @@ export default function Social() {
                   <div className="text-white font-medium text-sm mb-3">Informations</div>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
+                      <span className="text-gray-400">Collection:</span>
+                      <span className="text-white">Score Ligue 1</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Saison:</span>
+                      <span className="text-white">{selectedMarketplaceCard.season || '23/24'}</span>
+                    </div>
+                    <div className="flex justify-between">
                       <span className="text-gray-400">Type de carte:</span>
                       <span className="text-white">{selectedMarketplaceCard.cardType}</span>
                     </div>
@@ -1910,45 +1990,7 @@ export default function Social() {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-3 pt-4">
-                  <Button 
-                    className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
-                    onClick={() => {
-                      // Action pour contacter le vendeur ou négocier
-                      setSelectedMarketplaceCard(null);
-                      toast({
-                        title: "Fonctionnalité à venir",
-                        description: "La messagerie pour contacter les vendeurs sera bientôt disponible",
-                        className: "bg-blue-600 border-blue-600 text-white",
-                      });
-                    }}
-                  >
-                    <MessageCircle className="w-4 h-4 mr-2" />
-                    Contacter le vendeur
-                  </Button>
-                </div>
 
-                <div className="flex gap-3">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
-                    onClick={() => setSelectedMarketplaceCard(null)}
-                  >
-                    Fermer
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="flex-1 border-blue-600 text-blue-400 hover:bg-blue-600/10"
-                    onClick={() => {
-                      // Action pour voir le profil du vendeur
-                      setSelectedMarketplaceCard(null);
-                      setLocation(`/profile/${selectedMarketplaceCard.userId}`);
-                    }}
-                  >
-                    Voir le profil
-                  </Button>
-                </div>
               </div>
             </div>
           </div>
