@@ -1,6 +1,6 @@
 import { 
   users, collections, cards, userCards, personalCards, conversations, messages, 
-  posts, activities, follows, decks, deckCards, postLikes, postComments, type User, type InsertUser,
+  posts, activities, follows, decks, deckCards, postLikes, postComments, notifications, type User, type InsertUser,
   type Collection, type InsertCollection, type Card, type InsertCard,
   type UserCard, type InsertUserCard, type PersonalCard, type InsertPersonalCard,
   type Conversation, type InsertConversation, type Message, type InsertMessage,
@@ -96,6 +96,12 @@ export interface IStorage {
   // Followers count
   getFollowersCount(userId: number): Promise<number>;
   getFollowingCount(userId: number): Promise<number>;
+  
+  // Notifications
+  createNotification(notification: { userId: number; fromUserId?: number; type: string; title: string; message: string; postId?: number; messageId?: number }): Promise<void>;
+  getNotifications(userId: number): Promise<any[]>;
+  markNotificationAsRead(notificationId: number): Promise<void>;
+  markAllNotificationsAsRead(userId: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -748,6 +754,57 @@ export class DatabaseStorage implements IStorage {
 
   async getDecks(userId: number): Promise<any[]> {
     return [];
+  }
+
+  // Notification methods
+  async createNotification(notification: { userId: number; fromUserId?: number; type: string; title: string; message: string; postId?: number; messageId?: number }): Promise<void> {
+    await db.insert(notifications).values({
+      userId: notification.userId,
+      fromUserId: notification.fromUserId,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      postId: notification.postId,
+      messageId: notification.messageId,
+      isRead: false
+    });
+  }
+
+  async getNotifications(userId: number): Promise<any[]> {
+    const notifs = await db
+      .select({
+        id: notifications.id,
+        type: notifications.type,
+        title: notifications.title,
+        message: notifications.message,
+        isRead: notifications.isRead,
+        createdAt: notifications.createdAt,
+        fromUserId: notifications.fromUserId,
+        postId: notifications.postId,
+        messageId: notifications.messageId,
+        fromUserName: users.name,
+        fromUserAvatar: users.avatar
+      })
+      .from(notifications)
+      .leftJoin(users, eq(notifications.fromUserId, users.id))
+      .where(eq(notifications.userId, userId))
+      .orderBy(desc(notifications.createdAt));
+    
+    return notifs;
+  }
+
+  async markNotificationAsRead(notificationId: number): Promise<void> {
+    await db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.id, notificationId));
+  }
+
+  async markAllNotificationsAsRead(userId: number): Promise<void> {
+    await db
+      .update(notifications)
+      .set({ isRead: true })
+      .where(eq(notifications.userId, userId));
   }
 }
 

@@ -125,10 +125,12 @@ export const follows = pgTable("follows", {
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
-  type: text("type").notNull(), // "new_card", "card_for_trade", "new_follower"
+  type: text("type").notNull(), // "like", "comment", "message", "follow"
   title: text("title").notNull(),
   message: text("message").notNull(),
   cardId: integer("card_id"),
+  postId: integer("post_id"),
+  messageId: integer("message_id"),
   fromUserId: integer("from_user_id"),
   isRead: boolean("is_read").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),

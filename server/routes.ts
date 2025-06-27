@@ -2193,6 +2193,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ====================
+  // NOTIFICATION ROUTES
+  // ====================
+
+  // Get user notifications
+  app.get("/api/notifications", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const notifications = await storage.getNotifications(userId);
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Mark notification as read
+  app.patch("/api/notifications/:id/read", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const notificationId = parseInt(req.params.id);
+      await storage.markNotificationAsRead(notificationId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
+  // Mark all notifications as read
+  app.patch("/api/notifications/read-all", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      await storage.markAllNotificationsAsRead(userId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      res.status(500).json({ message: "Erreur interne du serveur" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
