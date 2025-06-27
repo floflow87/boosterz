@@ -1439,15 +1439,15 @@ export default function Social() {
                 filteredCardsForSale.map((card) => (
                   <div 
                     key={card.id} 
-                    className="card-clickable rounded-lg card-hover cursor-pointer group relative transform transition-all duration-300 hover:scale-105 hover:shadow-xl overflow-hidden"
+                    className="card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-2 card-hover cursor-pointer group relative transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50"
                     onClick={() => setSelectedMarketplaceCard(card)}
                   >
                     {/* Badge "En vente" - plus petit */}
-                    <div className="absolute top-2 right-2 bg-[hsl(9,85%,67%)] text-white px-1.5 py-0.5 rounded-full font-bold text-xs z-10 shadow-lg">
+                    <div className="absolute top-1 right-1 bg-[hsl(9,85%,67%)] text-white px-1.5 py-0.5 rounded-full font-bold text-xs z-10 shadow-lg">
                       VENTE
                     </div>
                     
-                    <div className="aspect-[3/4] bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative">
+                    <div className="aspect-[3/4] bg-gradient-to-br from-gray-800 to-gray-900 rounded-md mb-2 flex items-center justify-center overflow-hidden relative">
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 
@@ -1463,12 +1463,14 @@ export default function Social() {
                       
                       {/* Overlay with hover effect */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
-                      
-                      {/* Texte descriptif en bas de l'image */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
-                        <h4 className="text-white font-bold text-xs truncate font-luckiest">{card.playerName}</h4>
-                        <p className="text-gray-300 text-xs truncate font-poppins">{card.teamName}</p>
-                        <div className="text-gray-400 text-xs flex justify-between items-center mt-1">
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <h4 className="text-white font-bold text-xs truncate font-luckiest">{card.playerName}</h4>
+                      <p className="text-gray-400 text-xs truncate font-poppins">{card.teamName}</p>
+                      <div className="text-gray-500 text-xs">
+                        <div>Score Ligue 1</div>
+                        <div className="flex justify-between items-center">
                           <span>{card.season || '23/24'}</span>
                           <span className="text-[hsl(9,85%,67%)] font-bold">
                             {card.salePrice ? `${card.salePrice}€` : 'Négoc.'}
