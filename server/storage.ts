@@ -714,6 +714,27 @@ export class DatabaseStorage implements IStorage {
 
   async removeCardFromDeck(deckId: number, cardPosition: number): Promise<void> {
     console.log(`Removing card at position ${cardPosition} from deck ${deckId}`);
+    
+    // Supprimer la carte à la position spécifiée
+    await db.delete(deckCards)
+      .where(and(eq(deckCards.deckId, deckId), eq(deckCards.position, cardPosition)));
+    
+    // Réorganiser les positions des cartes restantes
+    const remainingCards = await db.select()
+      .from(deckCards)
+      .where(eq(deckCards.deckId, deckId))
+      .orderBy(deckCards.position);
+    
+    // Mettre à jour les positions pour qu'elles soient consécutives à partir de 0
+    for (let i = 0; i < remainingCards.length; i++) {
+      if (remainingCards[i].position !== i) {
+        await db.update(deckCards)
+          .set({ position: i })
+          .where(eq(deckCards.id, remainingCards[i].id));
+      }
+    }
+    
+    console.log(`Card at position ${cardPosition} removed and positions reordered`);
   }
 
   async deleteDeck(deckId: number): Promise<boolean> {
