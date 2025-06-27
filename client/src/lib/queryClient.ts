@@ -21,6 +21,12 @@ export async function apiRequest(
       headers["Content-Type"] = "application/json";
     }
 
+    // Add authentication token if available
+    const token = localStorage.getItem('token') || localStorage.getItem('authToken');
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const res = await fetch(url, {
       method,
       headers,
