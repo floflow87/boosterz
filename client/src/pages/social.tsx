@@ -475,10 +475,10 @@ export default function Social() {
           content: result.comment.content,
           createdAt: result.comment.createdAt,
           user: {
-            id: result.comment.user.id,
-            name: result.comment.user.name,
-            username: result.comment.user.username,
-            avatar: result.comment.user.avatar
+            id: currentUser?.user?.id || result.comment.user.id,
+            name: currentUser?.user?.name || result.comment.user.name,
+            username: currentUser?.user?.username || result.comment.user.username,
+            avatar: currentUser?.user?.avatar || result.comment.user.avatar
           }
         }, ...(prev[postId] || [])]
       }));
