@@ -161,6 +161,11 @@ export default function Collections() {
     }
     
     return true;
+  }).sort((a, b) => {
+    // Trier les cartes vendues à la fin de la liste
+    if (a.isSold && !b.isSold) return 1;
+    if (!a.isSold && b.isSold) return -1;
+    return 0;
   });
 
   // Générer les suggestions d'autocomplétion
