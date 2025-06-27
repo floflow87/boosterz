@@ -2150,6 +2150,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const commentsCount = parseInt(commentsCountResult[0]?.count?.toString() || '0');
 
+      // Update the posts table with the new comment count
+      await db.update(posts)
+        .set({ commentsCount })
+        .where(eq(posts.id, postId));
+
       res.json({
         comment: commentWithUser[0],
         commentsCount
