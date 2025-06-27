@@ -1092,20 +1092,7 @@ export default function Social() {
                                   const comments = await response.json();
                                   setPostComments(prev => ({
                                     ...prev,
-                                    [post.id]: (comments || []).map((comment: any) => ({
-                                      id: comment.id,
-                                      content: comment.content,
-                                      author: comment.user?.name || 'Anonyme',
-                                      username: comment.user?.username,
-                                      avatar: comment.user?.avatar,
-                                      timestamp: new Date(comment.createdAt).toLocaleString('fr-FR', {
-                                        day: '2-digit',
-                                        month: '2-digit',
-                                        year: 'numeric',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                      })
-                                    }))
+                                    [post.id]: comments || []
                                   }));
                                 }
                               } catch (error) {
@@ -1203,16 +1190,16 @@ export default function Social() {
                               {postComments[post.id].map((comment) => (
                               <div key={comment.id} className="flex space-x-3">
                                 <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                  {(comment.user?.avatar || comment.avatar) ? (
+                                  {comment.user?.avatar ? (
                                     <img 
-                                      src={comment.user?.avatar || comment.avatar} 
-                                      alt={`Avatar de ${comment.user?.name || comment.author}`} 
+                                      src={comment.user.avatar} 
+                                      alt={`Avatar de ${comment.user.name}`} 
                                       className="w-full h-full object-cover rounded-full"
                                     />
                                   ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                                       <span className="text-xs font-bold text-white">
-                                        {(comment.user?.name || comment.author)?.charAt(0)?.toUpperCase() || 'U'}
+                                        {comment.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                                       </span>
                                     </div>
                                   )}
@@ -1221,10 +1208,10 @@ export default function Social() {
                                   <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
                                     <div className="flex items-center space-x-2 mb-1">
                                       <span className="text-white font-medium text-sm">
-                                        {comment.user?.name || comment.author}
+                                        {comment.user?.name}
                                       </span>
                                       <span className="text-gray-400 text-xs">
-                                        {formatTimeAgo(comment.user?.createdAt || comment.createdAt || comment.timestamp)}
+                                        {formatTimeAgo(comment.createdAt)}
                                       </span>
                                     </div>
                                     <p className="text-gray-200 text-sm">{comment.content}</p>
