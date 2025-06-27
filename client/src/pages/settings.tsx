@@ -25,14 +25,16 @@ export default function Settings() {
           <div className="space-y-2">
             {[
               { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile", action: undefined },
-              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null, action: () => setShowNotifications(true) },
+              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null, action: () => { console.log("Opening notifications modal"); setShowNotifications(true); } },
               { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null, action: undefined },
               { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null, action: undefined }
             ].map((item, index) => (
               <div 
                 key={index} 
                 className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${(item.path || item.action) ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   if (item.path) {
                     setLocation(item.path);
                   } else if (item.action) {
