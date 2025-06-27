@@ -231,6 +231,9 @@ export default function DeckDetail() {
   const { data: deck, isLoading } = useQuery<DeckWithCards>({
     queryKey: [`/api/decks/${id}`],
     enabled: !!id,
+    staleTime: 30000, // 30 secondes de cache
+    gcTime: 5 * 60 * 1000, // 5 minutes de garbage collection
+    refetchOnWindowFocus: false, // Ne pas refetch lors du focus de la fenêtre
   });
 
   const [localCards, setLocalCards] = useState<DeckWithCards['cards']>([]);
@@ -276,7 +279,7 @@ export default function DeckDetail() {
     })
   );
 
-  // Mutation pour sauvegarder les nouvelles positions
+  // Mutation pour sauvegarder les nouvelles positions avec optimisation
   const updatePositionsMutation = useMutation({
     mutationFn: async (newPositions: Array<{ cardId?: number; personalCardId?: number; position: number }>) => {
       const response = await fetch(`/api/decks/${id}/reorder`, {
@@ -288,7 +291,20 @@ export default function DeckDetail() {
       return response.json();
     },
     onSuccess: () => {
+      // Mise à jour silencieuse du cache sans refetch
       queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+    },
+    onError: (error, newPositions) => {
+      console.error('Erreur lors de la réorganisation:', error);
+      // En cas d'erreur, restaurer les positions d'origine
+      if (deck?.cards) {
+        setLocalCards([...deck.cards]);
+      }
+      toast({
+        title: "Erreur",
+        description: "Impossible de réorganiser les cartes",
+        variant: "destructive",
+      });
     }
   });
 
@@ -363,7 +379,7 @@ export default function DeckDetail() {
     }
   });
 
-  // Mutation pour supprimer une carte
+  // Mutation pour supprimer une carte avec mise à jour optimiste
   const removeCardMutation = useMutation({
     mutationFn: async (cardPosition: number) => {
       const response = await fetch(`/api/decks/${id}/cards/${cardPosition}`, {
@@ -373,21 +389,37 @@ export default function DeckDetail() {
       if (!response.ok) throw new Error('Failed to remove card');
       return response.json();
     },
-    onSuccess: () => {
-      // Forcer le rechargement complet des données
-      queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
-      queryClient.refetchQueries({ queryKey: [`/api/decks/${id}`] });
+    onMutate: async (cardPosition: number) => {
+      // Mise à jour optimiste - supprimer immédiatement la carte de l'affichage
+      const updatedCards = localCards
+        .filter(card => card.position !== cardPosition)
+        .map((card, index) => ({
+          ...card,
+          position: index // Réorganiser les positions
+        }));
       
+      setLocalCards(updatedCards);
+      setLongPressCard(null);
+      
+      // Afficher immédiatement le toast de succès
       toast({
         title: "Carte supprimée",
         description: "La carte a été retirée du deck avec succès",
         className: "bg-green-600 text-white border-green-700",
       });
-      
-      setLongPressCard(null);
     },
-    onError: (error) => {
+    onSuccess: () => {
+      // Mettre à jour le cache en arrière-plan sans refetch
+      queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+    },
+    onError: (error, cardPosition) => {
       console.error('Erreur lors de la suppression:', error);
+      
+      // En cas d'erreur, restaurer l'état original
+      if (deck?.cards) {
+        setLocalCards([...deck.cards]);
+      }
+      
       toast({
         title: "Erreur",
         description: "Impossible de supprimer la carte",

@@ -98,23 +98,18 @@ export default function Collections() {
     enabled: activeTab === "cards",
   });
 
-  // Query pour les decks de l'utilisateur (toujours chargés pour les KPIs)
-  const { data: userDecks = [], isLoading: decksLoading, refetch: refetchDecks } = useQuery<any[]>({
+  // Query pour les decks de l'utilisateur avec cache optimisé
+  const { data: userDecks = [], isLoading: decksLoading } = useQuery<any[]>({
     queryKey: ["/api/decks"],
-    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
-    gcTime: 10 * 60 * 1000, // Garde en cache 10 minutes
+    staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes
+    gcTime: 20 * 60 * 1000, // Garde en cache 20 minutes  
+    refetchOnWindowFocus: false, // Ne pas refetch au focus
+    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
   });
-
-  // Effet pour rafraîchir les decks quand on navigue vers l'onglet deck
-  useEffect(() => {
-    if (activeTab === "deck") {
-      refetchDecks();
-    }
-  }, [activeTab, refetchDecks]);
 
   // Query pour obtenir les détails complets des decks avec cartes pour prévisualisation
   const { data: deckPreviews = [] } = useQuery({
-    queryKey: ['/api/decks/previews'],
+    queryKey: ['/api/decks/previews', userDecks?.map(d => d.id).join(',')],
     queryFn: async () => {
       if (!userDecks?.length) return [];
       
@@ -138,6 +133,10 @@ export default function Collections() {
       return previews;
     },
     enabled: activeTab === "deck" && !!userDecks?.length,
+    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
+    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
+    refetchOnWindowFocus: false, // Ne pas refetch au focus
+    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
   });
 
   // Filtrer et rechercher les cartes personnelles

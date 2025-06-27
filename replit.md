@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Optimized deck preview loading performance with comprehensive caching and optimistic updates
+  - **Optimistic updates**: Implemented instant UI updates for card removal with automatic position reorganization
+  - **Aggressive caching**: Added 30-second cache for deck details, 10-minute cache for deck lists, 15-minute cache for preview data
+  - **Reduced network calls**: Eliminated unnecessary refetch operations during tab changes and window focus
+  - **Error handling**: Added automatic rollback for failed operations with clear user feedback
+  - **Smart cache keys**: Implemented deck ID-based cache invalidation for better performance
+  - Deck operations now feel instant while maintaining data consistency in background
 - June 27, 2025. Fixed complete price display system on collections page to remove all "$" symbols
   - **Grid view**: Removed DollarSign icon and repositioned price from bottom-center to bottom-right with dark background
   - **List view**: Removed DollarSign icon from trade price display 
