@@ -298,7 +298,7 @@ export default function Social() {
       
       // Mettre à jour immédiatement l'interface
       if (result.liked) {
-        setLikedPosts(prev => new Set([...prev, postId]));
+        setLikedPosts(prev => new Set([...Array.from(prev), postId]));
         console.log('Post liked successfully');
       } else {
         setLikedPosts(prev => {

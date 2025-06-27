@@ -246,6 +246,8 @@ export const deckCards = pgTable("deck_cards", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   collections: many(collections),
@@ -582,3 +584,5 @@ export type InsertDeck = z.infer<typeof insertDeckSchema>;
 export type Deck = typeof decks.$inferSelect;
 export type InsertDeckCard = z.infer<typeof insertDeckCardSchema>;
 export type DeckCard = typeof deckCards.$inferSelect;
+
+
