@@ -2082,21 +2082,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Invalid post ID" });
       }
 
-      const comments = await db.select({
+      const commentsData = await db.select({
         id: postComments.id,
         content: postComments.content,
         createdAt: postComments.createdAt,
-        user: {
-          id: users.id,
-          username: users.username,
-          name: users.name,
-          avatar: users.avatar
-        }
+        userId: users.id,
+        username: users.username,
+        name: users.name,
+        avatar: users.avatar
       })
       .from(postComments)
       .innerJoin(users, eq(postComments.userId, users.id))
       .where(eq(postComments.postId, postId))
       .orderBy(desc(postComments.createdAt));
+
+      // Restructurer les données pour inclure l'objet user
+      const comments = commentsData.map(comment => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        user: {
+          id: comment.userId,
+          username: comment.username,
+          name: comment.name,
+          avatar: comment.avatar
+        }
+      }));
 
       res.json(comments);
     } catch (error) {

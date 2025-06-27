@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Fixed comment and like counter systems with persistent database updates
+  - Fixed comment counter to automatically update posts.comments_count when new comments are added
+  - Fixed like counter to automatically update posts.likes_count when posts are liked/unliked
+  - Corrected comment API structure to properly return user data (name, avatar) for display
+  - Fixed JSX compilation errors in social component that were blocking application startup
+  - Comment and like counters now persist correctly across page refreshes and show real-time counts
 - June 27, 2025. Fixed comment system date formatting and avatar display issues
   - Resolved French date format parsing (DD/MM/YYYY HH:MM) to display proper timestamps like "Il y a 2h"
   - Fixed avatar display for both existing and newly posted comments throughout social feed
