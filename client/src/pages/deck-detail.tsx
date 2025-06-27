@@ -479,8 +479,8 @@ export default function DeckDetail() {
 
     if (!over || active.id === over.id) return;
 
-    const oldIndex = localCards.findIndex(card => `card-${card.position}-${card.cardId || card.personalCardId}` === active.id);
-    const newIndex = localCards.findIndex(card => `card-${card.position}-${card.cardId || card.personalCardId}` === over.id);
+    const oldIndex = localCards.findIndex(card => `card-${card.position}-${card.card.id}` === active.id);
+    const newIndex = localCards.findIndex(card => `card-${card.position}-${card.card.id}` === over.id);
 
     if (oldIndex !== -1 && newIndex !== -1) {
       const newCards = arrayMove(localCards, oldIndex, newIndex);
@@ -699,6 +699,17 @@ export default function DeckDetail() {
 
           {/* Cards Grid */}
           <div className="space-y-4">
+
+            {/* Overlay d'assistance pour le drag & drop */}
+            {isDragging && (
+              <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 pointer-events-none flex items-center justify-center">
+                <div className="bg-white/90 dark:bg-gray-800/90 rounded-lg px-6 py-3 shadow-xl">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">
+                    🎯 Glissez pour réorganiser vos cartes
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* Grille des cartes avec emplacements vides */}
             <DndContext
