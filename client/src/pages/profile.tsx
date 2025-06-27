@@ -652,6 +652,12 @@ export default function Profile() {
           </div>
         </Tabs>
       </main>
+      
+      {/* Modal de notifications */}
+      <NotificationsModal 
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
     </div>
   );
 }
