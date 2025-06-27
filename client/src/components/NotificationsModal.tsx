@@ -1,9 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, Users, Mail, CheckCheck } from "lucide-react";
+import { Heart, MessageCircle, Users, Mail, CheckCheck, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
@@ -140,51 +139,75 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md w-full bg-white dark:bg-gray-800 max-h-[80vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="flex items-center justify-between">
-            <span className="text-lg font-bold text-gray-900 dark:text-white">
-              Notifications
-            </span>
-            {unreadCount > 0 && (
-              <Badge variant="destructive" className="ml-2">
-                {unreadCount}
-              </Badge>
-            )}
-          </DialogTitle>
-          {unreadCount > 0 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleMarkAllAsRead}
-              disabled={markAllAsReadMutation.isPending}
-              className="self-end text-blue-600 hover:text-blue-800"
+      <DialogContent 
+        className="max-w-full w-full h-full bg-[hsl(216,46%,13%)] border-none p-0 m-0 rounded-none flex flex-col"
+        style={{ maxWidth: '100vw', maxHeight: '100vh' }}
+      >
+        {/* Header with close button */}
+        <div className="flex-shrink-0 p-4 border-b border-[hsl(214,35%,30%)]">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <h1 className="text-lg font-semibold text-white font-luckiest">
+                <span className="text-white">Booster</span>
+                <span className="text-[hsl(9,85%,67%)]">z</span>
+              </h1>
+            </div>
+            
+            <button 
+              onClick={onClose}
+              className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center text-[hsl(212,23%,69%)] hover:text-white transition-colors"
             >
-              <CheckCheck className="w-4 h-4 mr-1" />
-              Tout marquer comme lu
-            </Button>
-          )}
-        </DialogHeader>
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
-        <ScrollArea className="flex-1 pr-4">
+        {/* Content Header */}
+        <div className="flex-shrink-0 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <h2 className="text-xl font-bold text-white">Notifications</h2>
+              {unreadCount > 0 && (
+                <Badge variant="destructive" className="bg-[hsl(9,85%,67%)] text-white">
+                  {unreadCount}
+                </Badge>
+              )}
+            </div>
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleMarkAllAsRead}
+                disabled={markAllAsReadMutation.isPending}
+                className="text-[hsl(9,85%,67%)] hover:text-white hover:bg-[hsl(214,35%,22%)]"
+              >
+                <CheckCheck className="w-4 h-4 mr-2" />
+                Tout marquer comme lu
+              </Button>
+            )}
+          </div>
+        </div>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
           {isLoading ? (
             <div className="flex items-center justify-center h-32">
-              <div className="text-gray-500">Chargement...</div>
+              <div className="text-gray-400">Chargement...</div>
             </div>
           ) : notifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-32 text-gray-500">
+            <div className="flex flex-col items-center justify-center h-32 text-gray-400">
               <Mail className="w-8 h-8 mb-2 opacity-50" />
               <p>Aucune notification</p>
             </div>
           ) : (
-            <div className="space-y-1">
+            <div className="space-y-3">
               {notifications.map((notification: any) => (
                 <div
                   key={notification.id}
-                  className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                  className={`bg-[hsl(214,35%,22%)] rounded-lg border cursor-pointer transition-colors p-4 ${
                     notification.isRead
-                      ? "bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
-                      : "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-600"
+                      ? "border-[hsl(214,35%,30%)] opacity-75"
+                      : "border-[hsl(9,85%,67%)] shadow-sm"
                   }`}
                   onClick={() => !notification.isRead && handleMarkAsRead(notification.id)}
                 >
@@ -194,7 +217,7 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
                     </div>
                     
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center space-x-2 mb-1">
+                      <div className="flex items-center space-x-2 mb-2">
                         {notification.fromUser?.avatar ? (
                           <img
                             src={
@@ -203,26 +226,26 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
                                 : `${notification.fromUser.avatar}`
                             }
                             alt={notification.fromUser.name}
-                            className="w-6 h-6 rounded-full object-cover"
+                            className="w-8 h-8 rounded-full object-cover"
                           />
                         ) : (
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500 flex items-center justify-center text-white text-xs font-bold">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-yellow-500 flex items-center justify-center text-white text-sm font-bold">
                             {notification.fromUser?.name?.charAt(0) || "?"}
                           </div>
                         )}
-                        <span className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                        <span className="text-sm font-medium text-white truncate">
                           {notification.fromUser?.name || "Système"}
                         </span>
                         {!notification.isRead && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                          <div className="w-3 h-3 bg-[hsl(9,85%,67%)] rounded-full flex-shrink-0" />
                         )}
                       </div>
                       
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-1">
+                      <p className="text-sm text-gray-300 mb-2">
                         {notification.message}
                       </p>
                       
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                      <p className="text-xs text-gray-400">
                         {formatDistanceToNow(new Date(notification.createdAt), {
                           addSuffix: true,
                           locale: fr,
@@ -234,7 +257,7 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
               ))}
             </div>
           )}
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
