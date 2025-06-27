@@ -209,6 +209,11 @@ const themeStyles = {
     backgroundColor: "#3B82F6",
     accentColor: "#DC2626",
     gradientClass: "bg-gradient-radial from-blue-500 via-white to-red-600"
+  },
+  "full+black": {
+    backgroundColor: "#000000",
+    accentColor: "#FFFFFF",
+    gradientClass: "bg-black border-2 border-white"
   }
 };
 
@@ -809,6 +814,7 @@ export default function DeckDetail() {
                         {editTheme === "green+white" && "Vert & Blanc"}
                         {editTheme === "red+black" && "Rouge & Noir"}
                         {editTheme === "blue+white+red" && "Bleu Blanc Rouge"}
+                        {editTheme === "full+black" && "Full Black"}
                       </div>
                     </div>
                   </div>
@@ -849,6 +855,7 @@ export default function DeckDetail() {
                           {key === "green+white" && "Vert & Blanc"}
                           {key === "red+black" && "Rouge & Noir"}
                           {key === "blue+white+red" && "Bleu Blanc Rouge"}
+                          {key === "full+black" && "Full Black"}
                         </div>
                       </button>
                     ))}
