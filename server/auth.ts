@@ -117,8 +117,8 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   console.log('Auth middleware - authHeader:', authHeader);
   console.log('Auth middleware - token:', token);
 
-  // Development mode: authenticate with any token as user 1
-  if (token === 'test' || !token) {
+  // Development mode: for 'test' token only, use user 1  
+  if (token === 'test') {
     console.log('Using development mode authentication for user 1');
     try {
       const user = await storage.getUser(1);
