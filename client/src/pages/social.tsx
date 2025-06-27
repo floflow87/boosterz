@@ -1190,12 +1190,7 @@ export default function Social() {
                                         {comment.user?.name}
                                       </span>
                                       <span className="text-gray-400 text-xs">
-                                        {new Date(comment.createdAt).toLocaleDateString('fr-FR', {
-                                          day: 'numeric',
-                                          month: 'short',
-                                          hour: '2-digit',
-                                          minute: '2-digit'
-                                        })}
+                                        {formatTimeAgo(comment.createdAt)}
                                       </span>
                                     </div>
                                     <p className="text-gray-200 text-sm">{comment.content}</p>
@@ -1623,18 +1618,7 @@ export default function Social() {
                                                 const comments = await response.json();
                                                 setPostComments(prev => ({
                                                   ...prev,
-                                                  [post.id]: comments.map((c: any) => ({
-                                                    id: c.id,
-                                                    content: c.content,
-                                                    author: c.user.name,
-                                                    timestamp: new Date(c.createdAt).toLocaleString('fr-FR', {
-                                                      day: '2-digit',
-                                                      month: '2-digit',
-                                                      year: 'numeric',
-                                                      hour: '2-digit',
-                                                      minute: '2-digit'
-                                                    })
-                                                  }))
+                                                  [post.id]: comments
                                                 }));
                                               }
                                             } catch (error) {
