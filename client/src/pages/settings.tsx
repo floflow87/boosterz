@@ -24,15 +24,16 @@ export default function Settings() {
           
           <div className="space-y-2">
             {[
-              { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile" },
-              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", action: () => setShowNotifications(true) },
-              { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null },
-              { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null }
+              { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile", action: undefined },
+              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null, action: () => setShowNotifications(true) },
+              { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null, action: undefined },
+              { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null, action: undefined }
             ].map((item, index) => (
               <div 
                 key={index} 
                 className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${(item.path || item.action) ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
                 onClick={() => {
+                  console.log("Clicked item:", item.title, "action:", item.action);
                   if (item.path) {
                     setLocation(item.path);
                   } else if (item.action) {
