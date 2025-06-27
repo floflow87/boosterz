@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload, ChevronDown, ChevronUp } from "lucide-react";
@@ -266,12 +266,17 @@ export default function DeckDetail() {
   // Vérifier si l'utilisateur actuel est le propriétaire du deck
   const isOwnerView = currentUser?.user?.id === deck?.userId;
 
-  // Configuration des capteurs pour le drag and drop
+  // États pour le drag & drop
+  const [isDragging, setIsDragging] = useState(false);
+  const [draggedItem, setDraggedItem] = useState<string | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout>();
+
+  // Configuration optimisée des capteurs pour le drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 5, // Réduction de la distance pour plus de réactivité
-        tolerance: 5,
+        distance: 3, // Distance réduite pour plus de réactivité
+        tolerance: 3,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -279,7 +284,27 @@ export default function DeckDetail() {
     })
   );
 
-  // Mutation pour sauvegarder les nouvelles positions avec optimisation
+  // Fonction debounce pour les mutations
+  const debouncedUpdatePositions = useCallback((positions: Array<{ cardId?: number; personalCardId?: number; position: number }>) => {
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+    
+    debounceTimerRef.current = setTimeout(() => {
+      updatePositionsMutation.mutate(positions);
+    }, 300); // 300ms de debounce
+  }, []);
+
+  // Nettoyage du timer au démontage
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Mutation optimisée pour sauvegarder les nouvelles positions 
   const updatePositionsMutation = useMutation({
     mutationFn: async (newPositions: Array<{ cardId?: number; personalCardId?: number; position: number }>) => {
       const response = await fetch(`/api/decks/${id}/reorder`, {
@@ -290,18 +315,28 @@ export default function DeckDetail() {
       if (!response.ok) throw new Error('Failed to update positions');
       return response.json();
     },
-    onSuccess: () => {
-      // Mise à jour silencieuse du cache sans refetch
-      queryClient.invalidateQueries({ queryKey: [`/api/decks/${id}`] });
+    onMutate: async () => {
+      // Pas d'invalidation immédiate - l'UI a déjà été mise à jour
+      return { previousCards: deck?.cards };
     },
-    onError: (error, newPositions) => {
+    onSuccess: () => {
+      // Mise à jour douce du cache avec les nouvelles positions
+      queryClient.setQueryData(['/api/decks', id], (oldData: DeckWithCards | undefined) => {
+        if (!oldData) return oldData;
+        return {
+          ...oldData,
+          cards: localCards
+        };
+      });
+    },
+    onError: (error, variables, context) => {
       console.error('Erreur lors de la réorganisation:', error);
-      // En cas d'erreur, restaurer les positions d'origine
-      if (deck?.cards) {
-        setLocalCards([...deck.cards]);
+      // Restaurer l'état précédent en cas d'erreur
+      if (context?.previousCards) {
+        setLocalCards([...context.previousCards]);
       }
       toast({
-        title: "Erreur",
+        title: "Erreur", 
         description: "Impossible de réorganiser les cartes",
         variant: "destructive",
       });
@@ -428,9 +463,18 @@ export default function DeckDetail() {
     }
   });
 
-  // Gestionnaire de fin de drag
-  const handleDragEnd = (event: DragEndEvent) => {
+  // Gestion optimisée du début de drag
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    setIsDragging(true);
+    setDraggedItem(event.active.id as string);
+  }, []);
+
+  // Gestionnaire optimisé de fin de drag
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
+    
+    setIsDragging(false);
+    setDraggedItem(null);
 
     if (!over || active.id === over.id) return;
 
@@ -440,7 +484,7 @@ export default function DeckDetail() {
     if (oldIndex !== -1 && newIndex !== -1) {
       const newCards = arrayMove(localCards, oldIndex, newIndex);
       
-      // Mettre à jour les positions
+      // Mettre à jour les positions immédiatement pour l'UI
       const updatedCards = newCards.map((card, index) => ({
         ...card,
         position: index
@@ -455,10 +499,10 @@ export default function DeckDetail() {
         position: index
       }));
 
-      // Sauvegarder les nouvelles positions
-      updatePositionsMutation.mutate(newPositions);
+      // Utiliser le debounce pour les mutations
+      debouncedUpdatePositions(newPositions);
     }
-  };
+  }, [localCards, debouncedUpdatePositions]);
 
 
 
