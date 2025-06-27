@@ -69,6 +69,11 @@ const themeStyles = {
     backgroundColor: "#3B82F6",
     accentColor: "#DC2626",
     gradientClass: "bg-gradient-radial from-blue-500 via-white to-red-600"
+  },
+  "full+black": {
+    backgroundColor: "#000000",
+    accentColor: "#FFFFFF",
+    gradientClass: "bg-black border-2 border-white"
   }
 };
 
@@ -312,6 +317,7 @@ export default function CreateDeck() {
                       {selectedTheme === "green+white" && "Vert & Blanc"}
                       {selectedTheme === "red+black" && "Rouge & Noir"}
                       {selectedTheme === "blue+white+red" && "Bleu Blanc Rouge"}
+                      {selectedTheme === "full+black" && "Full Black"}
                     </div>
                   </div>
                 </div>
