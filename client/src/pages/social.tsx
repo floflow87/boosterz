@@ -1216,10 +1216,7 @@ export default function Social() {
                                         {comment.user?.name || comment.author}
                                       </span>
                                       <span className="text-gray-400 text-xs">
-                                        {comment.user?.createdAt || comment.createdAt || comment.timestamp ? 
-                                          formatTimeAgo(comment.user?.createdAt || comment.createdAt || comment.timestamp) : 
-                                          'Date inconnue'
-                                        }
+                                        {formatTimeAgo(comment.user?.createdAt || comment.createdAt || comment.timestamp)}
                                       </span>
                                     </div>
                                     <p className="text-gray-200 text-sm">{comment.content}</p>
