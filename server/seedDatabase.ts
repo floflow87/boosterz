@@ -415,7 +415,7 @@ const insertIntergalactic = [
 ];
 
 // Cartes d'autographes EXACTES selon la checklist Excel Score Ligue 1 23/24
-const autographCards: AutoCard[] = [
+const autographeCards: AutoCard[] = [
   // Les variantes selon la checklist: /199, /99, /49, /25, /10, /5, /3, /2
   { id: 1, playerName: "Dragan Stojković", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
   { id: 2, playerName: "Fabrizio Ravanelli", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
@@ -699,9 +699,9 @@ export async function seedDatabase() {
       });
     }
 
-    // 4. Create Autograph cards with player-specific variants (excluding /1)
-    console.log("✍️ Creating player-specific autograph variants...");
-    for (const autoCard of autographCards) {
+    // 4. Create Autographe cards with player-specific variants (excluding /1)
+    console.log("✍️ Creating player-specific autographe variants...");
+    for (const autoCard of autographeCards) {
       // Each player has their own specific numberings from the file
       for (const numbering of autoCard.numberings) {
         // Skip 1/1 cards (they go to special 1/1 tab)
@@ -711,19 +711,19 @@ export async function seedDatabase() {
           if (num === "/2" || num === "/3") return "Super Rare";
           if (num === "/10") return "Ultra Rare";
           if (num === "/25" || num === "/49") return "Rare";
-          if (num === "/99" || num === "/199") return "Autograph";
-          return "Autograph";
+          if (num === "/99" || num === "/199") return "Autographe";
+          return "Autographe";
         };
 
         const getVariantType = (num: string) => {
-          if (num === "/2") return "Autograph Gold";
-          if (num === "/3") return "Autograph Red";
-          if (num === "/10") return "Autograph Silver";
-          if (num === "/25") return "Autograph Blue";
-          if (num === "/49") return "Autograph Green";
-          if (num === "/99") return "Autograph Bronze";
-          if (num === "/199") return "Autograph Numbered";
-          return "Autograph Numbered";
+          if (num === "/2") return "Autographe Gold";
+          if (num === "/3") return "Autographe Red";
+          if (num === "/10") return "Autographe Silver";
+          if (num === "/25") return "Autographe Blue";
+          if (num === "/49") return "Autographe Green";
+          if (num === "/99") return "Autographe Bronze";
+          if (num === "/199") return "Autographe Numbered";
+          return "Autographe Numbered";
         };
 
         cardsToInsert.push({
