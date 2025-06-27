@@ -6,6 +6,7 @@ import { Heart, MessageCircle, Users, Mail, CheckCheck, ArrowLeft, Settings } fr
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
+import { useLocation } from "wouter";
 
 interface NotificationData {
   id: number;
@@ -44,6 +45,7 @@ const getNotificationIcon = (type: string) => {
 
 export default function NotificationsModal({ isOpen, onClose }: NotificationsModalProps) {
   const queryClient = useQueryClient();
+  const [, setLocation] = useLocation();
 
   // Fetch notifications (with mock data for now)
   const { data: notifications = [], isLoading } = useQuery({
@@ -143,6 +145,15 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
         className="max-w-full w-full h-full bg-[hsl(216,46%,13%)] border-none p-0 m-0 rounded-none flex flex-col"
         style={{ maxWidth: '100vw', maxHeight: '100vh' }}
       >
+        {/* Main color halo effect */}
+        <div
+          className="absolute top-0 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, hsl(9, 85%, 67%) 0%, transparent 70%)',
+            transform: 'translate(-50%, -50%)',
+          }}
+        />
+        
         {/* Header - identical to other pages */}
         <header className="relative z-10 flex items-center justify-between p-4 pt-4">
           <div className="flex items-center space-x-3">
@@ -160,6 +171,7 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
           
           <div className="flex items-center space-x-3">
             <button 
+              onClick={() => setLocation('/settings')}
               className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
             >
               <Settings className="w-5 h-5 text-[hsl(212,23%,69%)]" />
