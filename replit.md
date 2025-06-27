@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Fixed complete price display system on collections page to remove all "$" symbols
+  - **Grid view**: Removed DollarSign icon and repositioned price from bottom-center to bottom-right with dark background
+  - **List view**: Removed DollarSign icon from trade price display 
+  - **Modal detail view**: Fixed price formatting to show proper "€" symbol without "$" prefix
+  - **Action buttons**: Replaced DollarSign icon with Plus icon for "Mettre en vente" action
+  - All price displays now show clean format like "25€" instead of "$25€" throughout collections interface
 - June 27, 2025. Completed card price display fixes and French spelling corrections
   - **Fixed "$" symbol removal**: Removed "$" symbol from ALL price displays in grid, list, and card views
   - **Corrected price positioning**: Moved price display from bottom-center to bottom-right corner in grid view

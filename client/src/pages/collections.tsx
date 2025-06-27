@@ -851,9 +851,10 @@ export default function Collections() {
                         )}
                         <p className="text-gray-500 text-xs">{card.cardType}</p>
                         {!card.isSold && card.isForTrade && card.tradePrice && (
-                          <div className="flex items-center gap-1 mt-2">
-                            <DollarSign className="w-3 h-3 text-primary" />
-                            <span className="text-primary text-xs font-medium">{card.tradePrice}€</span>
+                          <div className="absolute bottom-2 right-2">
+                            <span className="bg-black/80 text-white px-2 py-1 rounded text-xs font-bold shadow-lg">
+                              {card.tradePrice?.replace('$', '')}€
+                            </span>
                           </div>
                         )}
                       </div>
@@ -892,8 +893,7 @@ export default function Collections() {
                       </div>
                       {!card.isSold && card.isForTrade && card.tradePrice && (
                         <div className="flex items-center gap-2">
-                          <DollarSign className="w-4 h-4 text-primary" />
-                          <span className="text-primary font-medium">{card.tradePrice}€</span>
+                          <span className="text-primary font-medium">{card.tradePrice?.replace('$', '')}€</span>
                         </div>
                       )}
                     </div>
@@ -1218,7 +1218,7 @@ export default function Collections() {
                         
                         {selectedCard.tradePrice && !selectedCard.tradeOnly && (
                           <div className="text-green-400 font-bold">
-                            {selectedCard.tradePrice}
+                            {selectedCard.tradePrice?.replace('$', '')}€
                           </div>
                         )}
                         
@@ -1280,7 +1280,7 @@ export default function Collections() {
                             className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                           >
                             <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                              <DollarSign className="w-4 h-4 text-white" />
+                              <Plus className="w-4 h-4 text-white" />
                             </div>
                             Mettre en vente
                           </button>
