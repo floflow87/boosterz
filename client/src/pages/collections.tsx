@@ -1620,25 +1620,80 @@ export default function Collections() {
             {/* Card Image */}
             <div 
               className="max-w-full max-h-full flex items-center justify-center cursor-pointer select-none"
-              style={{ perspective: '1000px' }}
+              style={{ 
+                perspective: '1200px',
+                transformStyle: 'preserve-3d'
+              }}
               onMouseMove={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                const rotateX = (e.clientY - centerY) / 20;
-                const rotateY = (e.clientX - centerX) / 20;
-                setRotationStyle({ rotateX: -rotateX, rotateY });
+                if (!isCardRotated) {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const centerX = rect.left + rect.width / 2;
+                  const centerY = rect.top + rect.height / 2;
+                  
+                  // Normaliser les coordonnées entre -1 et 1
+                  const normalizedX = (e.clientX - centerX) / (rect.width / 2);
+                  const normalizedY = (e.clientY - centerY) / (rect.height / 2);
+                  
+                  // Limiter et ajuster la rotation pour un effet plus naturel
+                  const maxRotation = 25;
+                  const rotateY = normalizedX * maxRotation;
+                  const rotateX = -normalizedY * maxRotation;
+                  
+                  setRotationStyle({ 
+                    rotateX: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), 
+                    rotateY: Math.max(-maxRotation, Math.min(maxRotation, rotateY))
+                  });
+                }
               }}
               onMouseLeave={() => {
-                setRotationStyle({ rotateX: 5, rotateY: -15 });
+                if (!isCardRotated) {
+                  setRotationStyle({ rotateX: 0, rotateY: 0 });
+                }
               }}
               onClick={(e) => {
                 e.stopPropagation();
                 setIsCardRotated(!isCardRotated);
+                if (!isCardRotated) {
+                  // Rotation fixe quand cliqué
+                  setRotationStyle({ rotateX: 15, rotateY: 35 });
+                } else {
+                  // Retour à la position neutre
+                  setRotationStyle({ rotateX: 0, rotateY: 0 });
+                }
               }}
               onTouchStart={(e) => {
                 e.stopPropagation();
                 setIsCardRotated(!isCardRotated);
+                if (!isCardRotated) {
+                  setRotationStyle({ rotateX: 15, rotateY: 35 });
+                } else {
+                  setRotationStyle({ rotateX: 0, rotateY: 0 });
+                }
+              }}
+              onTouchMove={(e) => {
+                if (!isCardRotated && e.touches.length === 1) {
+                  const touch = e.touches[0];
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const centerX = rect.left + rect.width / 2;
+                  const centerY = rect.top + rect.height / 2;
+                  
+                  const normalizedX = (touch.clientX - centerX) / (rect.width / 2);
+                  const normalizedY = (touch.clientY - centerY) / (rect.height / 2);
+                  
+                  const maxRotation = 20; // Un peu moins que sur desktop pour mobile
+                  const rotateY = normalizedX * maxRotation;
+                  const rotateX = -normalizedY * maxRotation;
+                  
+                  setRotationStyle({ 
+                    rotateX: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), 
+                    rotateY: Math.max(-maxRotation, Math.min(maxRotation, rotateY))
+                  });
+                }
+              }}
+              onTouchEnd={() => {
+                if (!isCardRotated) {
+                  setRotationStyle({ rotateX: 0, rotateY: 0 });
+                }
               }}
             >
               <img
@@ -1647,11 +1702,11 @@ export default function Collections() {
                 className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                 style={{
                   filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
-                  transform: isCardRotated 
-                    ? `rotateY(45deg) rotateX(15deg) scale(1.05)`
-                    : `rotateY(${rotationStyle.rotateY}deg) rotateX(${rotationStyle.rotateX}deg)`,
+                  transform: `perspective(1200px) rotateX(${rotationStyle.rotateX}deg) rotateY(${rotationStyle.rotateY}deg) scale(${isCardRotated ? 1.05 : 1})`,
                   transformStyle: 'preserve-3d',
-                  transition: isCardRotated ? 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' : 'transform 0.1s ease-out',
+                  transition: isCardRotated 
+                    ? 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' 
+                    : 'transform 0.15s ease-out',
                   background: `linear-gradient(
                     ${45 + rotationStyle.rotateY}deg, 
                     rgba(255,255,255,0.1) 0%, 
@@ -1663,7 +1718,7 @@ export default function Collections() {
                     0 0 0 16px rgba(255,215,0,0.1),
                     ${20 + rotationStyle.rotateY / 2}px ${20 + rotationStyle.rotateX / 2}px 60px rgba(0,0,0,0.8),
                     inset -5px -5px 15px rgba(0,0,0,0.3),
-                    inset 5px 5px 15px rgba(255,255,255,${0.1 + Math.abs(rotationStyle.rotateX) / 1000})
+                    inset 5px 5px 15px rgba(255,255,255,${0.1 + Math.abs(rotationStyle.rotateX) / 100})
                   `,
                   touchAction: 'manipulation',
                   userSelect: 'none',
