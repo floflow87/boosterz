@@ -501,6 +501,17 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   saleDescription: true,
   isForSale: true,
   condition: true,
+}).extend({
+  // Rendre la plupart des champs optionnels sauf userId et cardType
+  playerName: z.string().optional(),
+  teamName: z.string().optional(),
+  reference: z.string().optional(),
+  numbering: z.string().optional(),
+  season: z.string().optional(),
+  imageUrl: z.string().optional(),
+  salePrice: z.string().optional(),
+  saleDescription: z.string().optional(),
+  condition: z.string().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
