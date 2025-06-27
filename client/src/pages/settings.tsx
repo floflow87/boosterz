@@ -1,11 +1,14 @@
+import { useState } from "react";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
+import NotificationsModal from "@/components/NotificationsModal";
 import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Settings() {
   const [, setLocation] = useLocation();
+  const [showNotifications, setShowNotifications] = useState(false);
 
   return (
     <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20 relative overflow-hidden">
@@ -22,14 +25,20 @@ export default function Settings() {
           <div className="space-y-2">
             {[
               { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile" },
-              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null },
+              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", action: () => setShowNotifications(true) },
               { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null },
               { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null }
             ].map((item, index) => (
               <div 
                 key={index} 
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${item.path ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
-                onClick={() => item.path && setLocation(item.path)}
+                className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${(item.path || item.action) ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
+                onClick={() => {
+                  if (item.path) {
+                    setLocation(item.path);
+                  } else if (item.action) {
+                    item.action();
+                  }
+                }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -115,6 +124,12 @@ export default function Settings() {
       </div>
       
       <Navigation />
+      
+      {/* Modal de notifications */}
+      <NotificationsModal 
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
     </div>
   );
 }

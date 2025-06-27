@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Settings, Heart, MessageCircle, Share2, Bell } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import NotificationsModal from "@/components/NotificationsModal";
 
 interface User {
   id: number;
@@ -90,6 +91,7 @@ export default function Profile() {
   const [commentInputs, setCommentInputs] = useState<Record<number, string>>({});
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [postCommentsCount, setPostCommentsCount] = useState<Record<number, number>>({});
+  const [showNotifications, setShowNotifications] = useState(false);
 
   const { data: profileUser, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: [`/api/users/${userId}`],
@@ -318,7 +320,10 @@ export default function Profile() {
           
           {/* Icônes à droite */}
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors relative">
+            <button 
+              onClick={() => setShowNotifications(true)}
+              className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,28%)] transition-colors relative"
+            >
               <Bell className="w-5 h-5 text-white" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
