@@ -2012,7 +2012,7 @@ export default function Social() {
                     onClick={() => setLocation(`/profile/${selectedMarketplaceCard.userId}`)}
                     className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,77%)] font-medium text-sm transition-colors cursor-pointer underline"
                   >
-                    {selectedMarketplaceCard.sellerName || 'Vendeur'}
+                    {selectedMarketplaceCard.sellerName || selectedMarketplaceCard.userName || 'Max la menace'} @{selectedMarketplaceCard.sellerUsername || selectedMarketplaceCard.username || 'maxlamenace'}
                   </button>
                 </div>
 
