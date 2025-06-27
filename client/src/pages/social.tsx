@@ -2010,9 +2010,14 @@ export default function Social() {
                   <div className="text-white font-medium text-sm mb-2">Vendeur</div>
                   <button
                     onClick={() => setLocation(`/profile/${selectedMarketplaceCard.userId}`)}
-                    className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,77%)] font-medium text-sm transition-colors cursor-pointer underline"
+                    className="font-medium text-sm transition-colors cursor-pointer flex items-center gap-2"
                   >
-                    {selectedMarketplaceCard.sellerName || selectedMarketplaceCard.userName || 'Max la menace'} @{selectedMarketplaceCard.sellerUsername || selectedMarketplaceCard.username || 'maxlamenace'}
+                    <span className="text-white underline hover:text-[hsl(9,85%,67%)]">
+                      {selectedMarketplaceCard.sellerName || selectedMarketplaceCard.userName || 'Max la menace'}
+                    </span>
+                    <span className="text-gray-400 italic">
+                      @{selectedMarketplaceCard.sellerUsername || selectedMarketplaceCard.username || 'maxlamenace'}
+                    </span>
                   </button>
                 </div>
 
