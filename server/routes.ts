@@ -64,16 +64,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user!.id;
       
+      console.log("Creating personal card for user:", userId);
+      console.log("Request body:", req.body);
+      
       // Valider les données avec le schéma Zod
       const validatedData = insertPersonalCardSchema.parse({
         ...req.body,
         userId
       });
 
+      console.log("Validated data:", validatedData);
+
       const personalCard = await storage.createPersonalCard(validatedData);
+      console.log("Created personal card:", personalCard);
+      
       res.status(201).json(personalCard);
     } catch (error) {
       console.error("Error creating personal card:", error);
+      if (error instanceof Error) {
+        console.error("Error details:", error.message);
+        console.error("Error stack:", error.stack);
+      }
       res.status(500).json({ error: "Failed to create personal card" });
     }
   });

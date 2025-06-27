@@ -146,21 +146,30 @@ export default function AddCard() {
   // Add personal card mutation
   const addPersonalCardMutation = useMutation({
     mutationFn: async (cardData: any) => {
-      return apiRequest("POST", "/api/personal-cards", cardData);
+      console.log("Client: Sending card data to server:", cardData);
+      const result = await apiRequest("POST", "/api/personal-cards", cardData);
+      console.log("Client: Received response from server:", result);
+      return result;
     },
     onSuccess: (newCard: any) => {
+      console.log("Client: Card successfully added:", newCard);
       toast({
         title: "Carte ajoutée",
         description: "La carte a été ajoutée dans 'Mes cartes' !",
         className: "bg-green-600 text-white border-green-700"
       });
-      // Clear relevant queries to refresh data
+      
+      // Invalidate all related cache keys to ensure fresh data
+      console.log("Client: Invalidating cache keys...");
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      // Navigate back to collections page to see the card in "Mes cartes"
+      queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      // Navigate back to collections page
       setLocation("/collections");
     },
     onError: (error: any) => {
-      console.error("Error adding personal card:", error);
+      console.error("Client: Error adding personal card:", error);
       toast({
         title: "Erreur",
         description: error?.message || "Impossible d'ajouter la carte. Vérifie tes informations.",
@@ -376,6 +385,20 @@ export default function AddCard() {
                 </p>
               </div>
 
+              {/* Saison */}
+              <div>
+                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
+                <Select value={season} onValueChange={setSeason}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Sélectionne la saison" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
+                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               {/* Type de carte */}
               <div>
                 <Label htmlFor="cardType" className="text-white mb-2 block">Type de carte *</Label>
@@ -489,20 +512,6 @@ export default function AddCard() {
                   className="bg-zinc-800 border-zinc-700 text-white"
                   placeholder="Ex: 125/199"
                 />
-              </div>
-
-              {/* Saison */}
-              <div>
-                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
-                <Select value={season} onValueChange={setSeason}>
-                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                    <SelectValue placeholder="Sélectionne la saison" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700">
-                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
-                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
 
               {/* État */}
