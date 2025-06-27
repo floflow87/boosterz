@@ -275,33 +275,51 @@ export default function Chat() {
                   key={message.id}
                   className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
                 >
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
-                      isOwn
-                        ? "bg-[hsl(9,85%,67%)] text-white"
-                        : "bg-gray-700 text-white"
-                    }`}
-                  >
-                    {message.content.startsWith('[IMAGE:') ? (
-                      <div>
-                        <ImagePreview
-                          src={message.content.match(/\[IMAGE:(.*?)\]/)?.[1] || ''}
-                          alt="Image partagée"
-                          className="max-w-full h-auto rounded-lg mb-2"
-                        />
-                        <p className="text-xs text-gray-300">
-                          {message.content.replace(/\[IMAGE:.*?\]/, '')}
-                        </p>
+                  <div className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${isOwn ? "flex-row-reverse space-x-reverse" : ""}`}>
+                    {!isOwn && (
+                      <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        {(displayUser as any)?.avatar ? (
+                          <img 
+                            src={(displayUser as any).avatar} 
+                            alt={displayUser.name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-xs font-bold text-white">
+                            {displayUser.name?.charAt(0) || displayUser.username?.charAt(0)}
+                          </span>
+                        )}
                       </div>
-                    ) : (
-                      <p className="text-sm">{message.content}</p>
                     )}
-                    <p className={`text-xs mt-1 ${isOwn ? "text-white/70" : "text-gray-400"}`}>
-                      {new Date(message.createdAt).toLocaleTimeString("fr-FR", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+                    
+                    <div
+                      className={`px-4 py-2 rounded-2xl ${
+                        isOwn
+                          ? "bg-[hsl(9,85%,67%)] text-white"
+                          : "bg-gray-700 text-white"
+                      }`}
+                    >
+                      {message.content.startsWith('[IMAGE:') ? (
+                        <div>
+                          <ImagePreview
+                            src={message.content.match(/\[IMAGE:(.*?)\]/)?.[1] || ''}
+                            alt="Image partagée"
+                            className="max-w-full h-auto rounded-lg mb-2"
+                          />
+                          <p className="text-xs text-gray-300">
+                            {message.content.replace(/\[IMAGE:.*?\]/, '')}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-sm">{message.content}</p>
+                      )}
+                      <p className={`text-xs mt-1 ${isOwn ? "text-white/70" : "text-gray-400"}`}>
+                        {new Date(message.createdAt).toLocaleTimeString("fr-FR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
                   </div>
                 </div>
               );

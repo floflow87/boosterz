@@ -266,9 +266,12 @@ export default function Collections() {
       }
     });
 
-    // Update the completions state
-    setCollectionCompletions(newCompletions);
-  }, [collections, collectionCompletions]);
+    // Update the completions state only if it has changed
+    setCollectionCompletions(prev => {
+      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newCompletions);
+      return hasChanged ? newCompletions : prev;
+    });
+  }, [collections]);
 
   // Effect to check for first collection milestone when user first loads the app
   useEffect(() => {
