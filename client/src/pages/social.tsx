@@ -122,6 +122,7 @@ export default function Social() {
   const queryClient = useQueryClient();
   const [selectedMarketplaceCard, setSelectedMarketplaceCard] = useState<any>(null);
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
 
   // Get current user ID from authentication
   const { data: currentUser } = useQuery<CurrentUser>({

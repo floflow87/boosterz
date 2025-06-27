@@ -21,9 +21,10 @@ interface HeaderProps {
   title: string;
   showBackButton?: boolean;
   onBack?: () => void;
+  onNotificationClick?: () => void;
 }
 
-export default function Header({ title, showBackButton = false, onBack }: HeaderProps) {
+export default function Header({ title, showBackButton = false, onBack, onNotificationClick }: HeaderProps) {
   const [, setLocation] = useLocation();
 
   const handleBack = () => {
@@ -63,7 +64,7 @@ export default function Header({ title, showBackButton = false, onBack }: Header
       
       <div className="flex items-center space-x-3">
         <button 
-          onClick={() => setLocation('/notifications')}
+          onClick={onNotificationClick || (() => setLocation('/notifications'))}
           className="relative w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
         >
           <Bell className="w-5 h-5 text-[hsl(212,23%,69%)]" />

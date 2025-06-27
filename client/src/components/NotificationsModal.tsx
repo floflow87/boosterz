@@ -178,7 +178,7 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
             </div>
           ) : (
             <div className="space-y-1">
-              {notifications.map((notification: NotificationData) => (
+              {notifications.map((notification: any) => (
                 <div
                   key={notification.id}
                   className={`p-3 rounded-lg border cursor-pointer transition-colors ${
