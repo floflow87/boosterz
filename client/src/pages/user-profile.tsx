@@ -593,17 +593,20 @@ export default function UserProfile() {
                     )}
                     
                     <div className="space-y-1">
+                      {/* Nom du joueur */}
                       {card.playerName && (
                         <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
                       )}
+                      
+                      {/* Équipe */}
                       {card.teamName && (
                         <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
                       )}
                       
                       {/* Collection et Prix sur la même ligne */}
-                      <div className="flex items-center justify-between mt-2">
+                      <div className="flex items-center justify-between mt-1">
                         <div className="text-gray-500 text-xs truncate">
-                          {card.collectionName || card.cardType || 'Score Ligue 1'}
+                          {card.collectionName || 'Score Ligue 1'}
                         </div>
                         {card.salePrice && (
                           <div className="text-[hsl(9,85%,67%)] text-xs font-bold">
@@ -613,11 +616,9 @@ export default function UserProfile() {
                       </div>
                       
                       {/* Saison en dessous */}
-                      {card.season && (
-                        <div className="text-gray-500 text-xs">
-                          {card.season}
-                        </div>
-                      )}
+                      <div className="text-gray-500 text-xs">
+                        {card.season || '23/24'}
+                      </div>
                     </div>
                   </div>
                 ))}
