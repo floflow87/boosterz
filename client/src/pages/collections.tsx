@@ -712,30 +712,68 @@ export default function Collections() {
         {/* Cards Tab Content - Personal Cards */}
         {activeTab === "cards" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins">Mes cartes</h3>
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes cartes</h3>
               
-              <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
-                <button
-                  onClick={() => setViewMode("list")}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "list" 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-2 rounded-md transition-all ${
-                    viewMode === "grid" 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
+              {/* Controls Row - Filter Tabs and View Icons */}
+              <div className="flex items-center justify-between">
+                {/* Filter Tabs */}
+                <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setSaleFilter('all')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'all' 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Toutes
+                  </button>
+                  <button
+                    onClick={() => setSaleFilter('available')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'available' 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    En vente
+                  </button>
+                  <button
+                    onClick={() => setSaleFilter('sold')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'sold' 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    Vendues
+                  </button>
+                </div>
+
+                {/* View Mode Icons */}
+                <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "list" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <List className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-2 rounded-md transition-all ${
+                      viewMode === "grid" 
+                        ? "bg-primary text-primary-foreground" 
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <Grid className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -773,41 +811,7 @@ export default function Collections() {
               )}
             </div>
 
-            {/* Filter Buttons with Add Button */}
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
-                <button
-                  onClick={() => setSaleFilter('all')}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
-                    saleFilter === 'all' 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  Toutes
-                </button>
-                <button
-                  onClick={() => setSaleFilter('available')}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
-                    saleFilter === 'available' 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  En vente
-                </button>
-                <button
-                  onClick={() => setSaleFilter('sold')}
-                  className={`px-3 py-1 rounded text-xs transition-all ${
-                    saleFilter === 'sold' 
-                      ? "bg-primary text-primary-foreground" 
-                      : "text-gray-400 hover:text-white"
-                  }`}
-                >
-                  Vendues
-                </button>
-              </div>
-            </div>
+
 
             {personalCardsLoading ? (
               <div className="flex justify-center py-8">
