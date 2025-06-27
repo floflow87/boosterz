@@ -83,33 +83,6 @@
   }
 }
 
-/* Trophy rainbow border animation */
-@keyframes rainbow-border {
-  0% { border-color: #ef4444; }
-  16.66% { border-color: #f97316; }
-  33.33% { border-color: #eab308; }
-  50% { border-color: #22c55e; }
-  66.66% { border-color: #3b82f6; }
-  83.33% { border-color: #8b5cf6; }
-  100% { border-color: #ef4444; }
-}
-
-.border-rainbow {
-  animation: rainbow-border 3s linear infinite;
-}
-
-.bg-rainbow {
-  background: linear-gradient(45deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6);
-  background-size: 400% 400%;
-  animation: rainbow-bg 3s ease infinite;
-}
-
-@keyframes rainbow-bg {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 @keyframes glitter-star {
   0%, 100% {
     opacity: 0;

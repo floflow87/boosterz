@@ -1685,7 +1685,19 @@ export default function Collections() {
         onClose={() => setCurrentMilestone(null)}
       />
 
-
+      {/* Development Test Button - Hidden in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          onClick={() => {
+            const milestone = MilestoneTestTriggers.getRandomMilestone();
+            setCurrentMilestone(milestone);
+          }}
+          className="fixed bottom-20 right-4 z-50 w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-110"
+          title="Test Milestone Celebration"
+        >
+          <Star className="w-6 h-6" />
+        </button>
+      )}
 
       <Navigation />
     </div>

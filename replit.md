@@ -118,13 +118,6 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 27, 2025. Restored original settings page functionality as requested
-  - Removed complex 6-section settings page structure that was replacing original functionality
-  - Restored simple profile editing page with form for name, username, email, bio and avatar upload
-  - Kept BOOSTERZ header design with proper halo effects and navigation
-  - Maintained trophy avatar integration but removed complex trophy section menu
-  - Settings page now functions as profile editing interface as originally intended
-  - Trophy system components remain available for future integration but not in settings replacement
 - June 27, 2025. Optimized profile page performance and enhanced marketplace-style "En vente" section
   - Implemented Promise.all for parallel comment loading instead of sequential API calls, improving post loading speed
   - Redesigned "En vente" section using marketplace component styling with hover effects and transition animations
