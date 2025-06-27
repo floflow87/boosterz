@@ -93,15 +93,14 @@ export default function Collections() {
     enabled: activeTab === "cards",
   });
 
-  // Query pour les decks de l'utilisateur
+  // Query pour les decks de l'utilisateur (toujours chargés pour les KPIs)
   const { data: userDecks = [], isLoading: decksLoading, refetch: refetchDecks } = useQuery<any[]>({
     queryKey: ["/api/decks"],
-    staleTime: 0, // Force refresh des données
-    gcTime: 0, // Pas de cache persistant
-    enabled: activeTab === "deck",
+    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
+    gcTime: 10 * 60 * 1000, // Garde en cache 10 minutes
   });
 
-  // Effet pour rafraîchir les decks quand on change d'onglet
+  // Effet pour rafraîchir les decks quand on navigue vers l'onglet deck
   useEffect(() => {
     if (activeTab === "deck") {
       refetchDecks();
@@ -537,16 +536,10 @@ export default function Collections() {
               <div className="flex items-center space-x-1">
                 <span className="font-medium text-white">
                   {(() => {
-                    // Compter les cartes des collections
-                    const collectionCards = collections?.reduce((total, collection) => {
-                      const completion = getCollectionCompletion(collection);
-                      return total + completion.ownedCards;
-                    }, 0) || 0;
-                    
-                    // Compter les cartes personnelles (excepté les vendues)
-                    const personalCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
-                    
-                    return collectionCards + personalCardsCount;
+                    // Compter uniquement les cartes personnelles affichées dans l'onglet "Cartes"
+                    // (en excluant les vendues pour correspondre au filtrage de l'onglet)
+                    const visibleCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
+                    return visibleCardsCount;
                   })()}
                 </span>
                 <span>cartes</span>
