@@ -807,14 +807,6 @@ export default function Collections() {
                   Vendues
                 </button>
               </div>
-              
-              <button
-                onClick={() => setLocation("/add-card")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-              >
-                <Plus className="w-4 h-4" />
-                Ajouter
-              </button>
             </div>
 
             {personalCardsLoading ? (
@@ -1742,6 +1734,16 @@ export default function Collections() {
 
       {/* Development Test Button - Hidden in production */}
 
+      {/* Floating Add Card Button */}
+      <button
+        onClick={() => setLocation("/add-card")}
+        className="fixed bottom-6 right-6 w-16 h-16 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 hover:scale-110"
+        style={{
+          boxShadow: '0 4px 20px rgba(240, 101, 67, 0.3), 0 0 0 0 rgba(240, 101, 67, 0.4)',
+        }}
+      >
+        <Plus className="w-8 h-8" />
+      </button>
 
       <Navigation />
     </div>
