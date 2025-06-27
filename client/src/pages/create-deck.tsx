@@ -317,7 +317,7 @@ export default function CreateDeck() {
                       {selectedTheme === "green+white" && "Vert & Blanc"}
                       {selectedTheme === "red+black" && "Rouge & Noir"}
                       {selectedTheme === "blue+white+red" && "Bleu Blanc Rouge"}
-                      {selectedTheme === "full+black" && "Full Black"}
+                      {selectedTheme === "full+black" && "Full noir"}
                     </div>
                   </div>
                 </div>
@@ -358,6 +358,7 @@ export default function CreateDeck() {
                         {key === "green+white" && "Vert & Blanc"}
                         {key === "red+black" && "Rouge & Noir"}
                         {key === "blue+white+red" && "Bleu Blanc Rouge"}
+                        {key === "full+black" && "Full noir"}
                       </div>
                     </button>
                   ))}

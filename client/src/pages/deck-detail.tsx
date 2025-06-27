@@ -814,7 +814,7 @@ export default function DeckDetail() {
                         {editTheme === "green+white" && "Vert & Blanc"}
                         {editTheme === "red+black" && "Rouge & Noir"}
                         {editTheme === "blue+white+red" && "Bleu Blanc Rouge"}
-                        {editTheme === "full+black" && "Full Black"}
+                        {editTheme === "full+black" && "Full noir"}
                       </div>
                     </div>
                   </div>
@@ -855,7 +855,7 @@ export default function DeckDetail() {
                           {key === "green+white" && "Vert & Blanc"}
                           {key === "red+black" && "Rouge & Noir"}
                           {key === "blue+white+red" && "Bleu Blanc Rouge"}
-                          {key === "full+black" && "Full Black"}
+                          {key === "full+black" && "Full noir"}
                         </div>
                       </button>
                     ))}
