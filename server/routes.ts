@@ -695,6 +695,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const updateData: any = {};
       
+      if (isForSale !== undefined) updateData.isForSale = isForSale;
       if (isForTrade !== undefined) updateData.isForTrade = isForTrade;
       if (tradePrice !== undefined) updateData.tradePrice = tradePrice;
       if (tradeDescription !== undefined) updateData.tradeDescription = tradeDescription;
