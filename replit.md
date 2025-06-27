@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Optimized profile page performance and enhanced marketplace-style "En vente" section
+  - Implemented Promise.all for parallel comment loading instead of sequential API calls, improving post loading speed
+  - Redesigned "En vente" section using marketplace component styling with hover effects and transition animations
+  - Added full-screen lateral modal for card details matching marketplace design pattern
+  - Integrated real card images (imageUrl) with fallback display for cards without images
+  - Enhanced card presentation with professional hover states, badges, and visual feedback
+  - "En vente" section now displays authentic card data with clickable details and consistent marketplace UX
 - June 27, 2025. Fixed comment and like counter systems with persistent database updates
   - Fixed comment counter to automatically update posts.comments_count when new comments are added
   - Fixed like counter to automatically update posts.likes_count when posts are liked/unliked

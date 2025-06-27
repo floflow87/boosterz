@@ -602,41 +602,53 @@ export default function Profile() {
 
             {/* En vente Tab Content */}
             <TabsContent value="marketplace" className="space-y-4">
-              {saleCards.length > 0 ? (
-                <div className="grid grid-cols-2 gap-4">
+              {saleCards && saleCards.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {saleCards.map((card) => (
                     <div 
                       key={card.id} 
-                      className="bg-[hsl(214,35%,22%)] rounded-lg p-3 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-all duration-200 transform hover:scale-105"
+                      className="group bg-[hsl(214,35%,22%)] rounded-lg overflow-hidden relative cursor-pointer 
+                      transition-all duration-300 transform hover:scale-105 hover:bg-[hsl(214,35%,25%)]
+                      hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50"
                       onClick={() => setSelectedCard(card)}
                     >
-                      <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 rounded mb-2 flex items-center justify-center overflow-hidden">
-                        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                          En vente
-                        </div>
-                        <div className="text-gray-300 text-xs text-center font-medium">
-                          {card.playerName || 'Carte'}
-                        </div>
-                        {/* Badge de rareté ou type */}
-                        <div className="absolute bottom-2 left-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded text-xs font-bold">
-                          {card.cardType || 'Base'}
+                      {/* Badge "En vente" */}
+                      <div className="absolute top-1 right-1 bg-[hsl(9,85%,67%)] text-white px-1.5 py-0.5 rounded-full font-bold text-xs z-10 shadow-lg">
+                        VENTE
+                      </div>
+                      
+                      <div className="aspect-[3/4] bg-gradient-to-br from-gray-800 to-gray-900 rounded-md mb-2 flex items-center justify-center overflow-hidden relative">
+                        {card.imageUrl ? (
+                          <img 
+                            src={card.imageUrl} 
+                            alt={card.playerName || 'Carte'} 
+                            className="w-full h-full object-cover rounded-md transform group-hover:scale-110 transition-transform duration-300" 
+                          />
+                        ) : (
+                          <div className="text-white text-center p-2">
+                            <div className="text-xs font-bold mb-1 text-[hsl(9,85%,67%)]">{card.playerName}</div>
+                            <div className="text-xs text-gray-300">{card.teamName}</div>
+                          </div>
+                        )}
+                        
+                        {/* Overlay with hover effect */}
+                        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
+                          <div className="opacity-0 group-hover:opacity-100 text-white text-xs font-bold bg-black bg-opacity-50 px-2 py-1 rounded transition-opacity duration-300">
+                            Voir détails
+                          </div>
                         </div>
                       </div>
-                      <div className="space-y-1">
+                      
+                      <div className="p-3 space-y-1">
                         <h4 className="text-white font-medium text-sm truncate">{card.playerName || 'Nom du joueur'}</h4>
                         <p className="text-gray-400 text-xs truncate">{card.teamName || 'Équipe'}</p>
                         <div className="flex justify-between items-center">
                           <span className="text-[hsl(9,85%,67%)] font-bold text-sm">
-                            {card.salePrice ? `${card.salePrice}€` : "Prix non défini"}
+                            {card.salePrice ? `${card.salePrice}€` : "Prix à négocier"}
                           </span>
-                          <div className="flex flex-col items-end">
-                            <span className="text-yellow-400 text-xs">
-                              {card.condition || 'Non défini'}
-                            </span>
-                            <span className="text-gray-500 text-xs">
-                              #{card.cardNumber || 'N/A'}
-                            </span>
-                          </div>
+                          <span className="text-yellow-400 text-xs">
+                            {card.condition || 'Condition non définie'}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -684,85 +696,122 @@ export default function Profile() {
         </Tabs>
       </main>
       
-      {/* Modal de détail de carte */}
+      {/* Modal pleine fenêtre pour les détails de carte */}
       {selectedCard && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-[hsl(216,46%,13%)] rounded-lg max-w-md w-full p-6 relative animate-in slide-in-from-right-4">
-            <button 
-              onClick={() => setSelectedCard(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
-            >
-              ×
-            </button>
-            
-            <div className="space-y-4">
-              <div className="text-center">
-                <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg mb-4 mx-auto max-w-[200px] flex items-center justify-center relative overflow-hidden">
-                  <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                    En vente
-                  </div>
-                  <div className="text-gray-300 text-sm font-medium">
-                    {selectedCard.playerName}
-                  </div>
-                  <div className="absolute bottom-2 left-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded text-xs font-bold">
-                    {selectedCard.cardType || 'Base'}
-                  </div>
-                </div>
-                
-                <h3 className="text-xl font-bold text-white">{selectedCard.playerName}</h3>
-                <p className="text-gray-400">{selectedCard.teamName}</p>
+        <>
+          {/* Overlay */}
+          <div 
+            className="fixed inset-0 bg-black/70 z-50" 
+            onClick={() => setSelectedCard(null)}
+          />
+          
+          {/* Modal latéral qui glisse depuis la droite */}
+          <div className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto">
+            <div className="p-6">
+              {/* Header du modal */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-white">Détails de la carte</h2>
+                <button
+                  onClick={() => setSelectedCard(null)}
+                  className="text-gray-400 hover:text-white transition-colors p-1"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Prix :</span>
-                  <span className="text-[hsl(9,85%,67%)] font-bold text-lg">
-                    {selectedCard.salePrice ? `${selectedCard.salePrice}€` : "Prix non défini"}
-                  </span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Condition :</span>
-                  <span className="text-yellow-400 font-medium">
-                    {selectedCard.condition || 'Non défini'}
-                  </span>
-                </div>
-                
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Numéro :</span>
-                  <span className="text-white">#{selectedCard.cardNumber || 'N/A'}</span>
-                </div>
-                
-                {selectedCard.description && (
-                  <div className="space-y-2">
-                    <span className="text-gray-400">Description :</span>
-                    <p className="text-white text-sm bg-[hsl(214,35%,22%)] p-3 rounded">
-                      {selectedCard.description}
-                    </p>
+
+              {/* Image de la carte */}
+              <div className="aspect-[3/4] bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl overflow-hidden mb-6 relative">
+                {selectedCard.imageUrl ? (
+                  <img 
+                    src={selectedCard.imageUrl} 
+                    alt={selectedCard.playerName || 'Carte'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-white">
+                    <div className="text-center p-4">
+                      <div className="text-lg font-bold mb-2">{selectedCard.playerName}</div>
+                      <div className="text-sm text-gray-300">{selectedCard.teamName}</div>
+                      <div className="text-xs text-gray-400 mt-1">{selectedCard.cardType}</div>
+                    </div>
                   </div>
                 )}
+                
+                {/* Badge "En vente" */}
+                <div className="absolute top-4 right-4 bg-[hsl(9,85%,67%)] text-white px-3 py-2 rounded-full text-sm font-bold">
+                  EN VENTE
+                </div>
               </div>
-              
-              <div className="flex space-x-3 pt-4">
-                <button 
-                  className="flex-1 bg-[hsl(9,85%,67%)] text-white py-2 px-4 rounded-lg font-medium hover:bg-[hsl(9,85%,60%)] transition-colors"
-                  onClick={() => {
-                    // TODO: Logique de contact/achat
-                    console.log("Contacter le vendeur pour:", selectedCard);
-                  }}
-                >
-                  Contacter le vendeur
-                </button>
-                <button 
-                  onClick={() => setSelectedCard(null)}
-                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-500 transition-colors"
-                >
-                  Fermer
-                </button>
+
+              {/* Informations de la carte */}
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-2">{selectedCard.playerName}</h3>
+                  <p className="text-gray-400 text-lg mb-1">{selectedCard.teamName}</p>
+                  <p className="text-gray-500">{selectedCard.cardType}</p>
+                </div>
+
+                {/* Prix de vente */}
+                <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
+                  <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
+                  <div className="text-green-400 font-bold text-2xl">
+                    {selectedCard.salePrice ? `${selectedCard.salePrice}€` : 'Prix à négocier'}
+                  </div>
+                </div>
+
+                {/* Condition */}
+                {selectedCard.condition && (
+                  <div className="bg-yellow-600/10 rounded-lg p-4 border border-yellow-600/20">
+                    <div className="text-yellow-400 font-medium text-sm mb-1">Condition</div>
+                    <div className="text-yellow-400 font-bold">{selectedCard.condition}</div>
+                  </div>
+                )}
+
+                {/* Description de vente */}
+                {selectedCard.saleDescription && selectedCard.saleDescription.trim() !== '' && (
+                  <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                    <div className="text-white font-medium text-sm mb-2">Description</div>
+                    <div className="text-gray-300 text-sm leading-relaxed">{selectedCard.saleDescription}</div>
+                  </div>
+                )}
+
+                {/* Informations supplémentaires */}
+                <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                  <div className="text-white font-medium text-sm mb-3">Informations de la carte</div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Numéro de carte:</span>
+                      <span className="text-white">#{selectedCard.cardNumber || 'N/A'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Type:</span>
+                      <span className="text-white">{selectedCard.cardType || 'Base'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Rareté:</span>
+                      <span className="text-white">{selectedCard.rarity || 'Commune'}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="space-y-3 pt-4">
+                  <button className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                    Contacter le vendeur
+                  </button>
+                  <button 
+                    onClick={() => setSelectedCard(null)}
+                    className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
+                  >
+                    Fermer
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Modal de notifications */}
