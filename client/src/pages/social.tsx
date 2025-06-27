@@ -178,7 +178,7 @@ export default function Social() {
 
   // Initialiser les likes et commentaires des posts avec les vraies données
   useEffect(() => {
-    const allPosts = [...feed, ...myPosts];
+    const allPosts = [...(feed || []), ...(myPosts || [])];
     if (allPosts.length > 0) {
       const likes: Record<number, number> = {};
       const comments: Record<number, number> = {};
@@ -204,7 +204,7 @@ export default function Social() {
         setPostCommentsCount(prev => ({ ...prev, ...comments }));
       }
     }
-  }, [feed, myPosts]); // Depend on actual posts data, not just length
+  }, [feed?.length, myPosts?.length]); // Only depend on array lengths to avoid infinite loops
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({

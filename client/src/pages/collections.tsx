@@ -57,7 +57,7 @@ export default function Collections() {
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [selectedCard, setSelectedCard] = useState<(Card & Partial<PersonalCard>) | PersonalCard | null>(null);
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [isCardRotated, setIsCardRotated] = useState(false);
   const [rotationStyle, setRotationStyle] = useState({ rotateX: 0, rotateY: 0 });
@@ -1262,7 +1262,7 @@ export default function Collections() {
                           Marquer comme vendue
                         </button>
                         
-                        {selectedCard.isForTrade ? (
+                        {(selectedCard.isForSale || selectedCard.isForTrade) ? (
                           <button 
                             onClick={handleRemoveFromSale}
                             className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
