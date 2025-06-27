@@ -11,12 +11,12 @@ interface CollectionCompletion {
 }
 
 interface MilestoneData {
-  type: 'completion' | 'streak' | 'rare_find' | 'first_collection' | 'speed_collector';
-  percentage: number;
+  type: 'collection' | 'autographs' | 'specials' | 'social';
+  count: number;
   collectionName: string;
   achievement: string;
   description: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  rarity: 'beginner' | 'common' | 'advanced' | 'rare' | 'epic' | 'legendary';
 }
 
 class MilestoneDetector {

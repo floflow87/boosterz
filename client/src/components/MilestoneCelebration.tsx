@@ -3,12 +3,12 @@ import { Trophy, Star, Crown, Sparkles, Zap, Award, Gift, Target } from "lucide-
 import { motion, AnimatePresence } from "framer-motion";
 
 interface MilestoneData {
-  type: 'completion' | 'streak' | 'rare_find' | 'first_collection' | 'speed_collector';
-  percentage: number;
+  type: 'collection' | 'autographs' | 'specials' | 'social';
+  count: number;
   collectionName: string;
   achievement: string;
   description: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  rarity: 'beginner' | 'common' | 'advanced' | 'rare' | 'epic' | 'legendary';
 }
 
 interface MilestoneCelebrationProps {
