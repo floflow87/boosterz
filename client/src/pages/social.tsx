@@ -1987,16 +1987,6 @@ export default function Social() {
                   <p className="text-gray-500">{selectedMarketplaceCard.cardType}</p>
                 </div>
 
-                {/* Description de vente */}
-                {selectedMarketplaceCard.saleDescription && selectedMarketplaceCard.saleDescription.trim() !== '' && (
-                  <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                    <div className="text-white font-medium text-sm mb-2">Description</div>
-                    <div className="text-gray-300 text-sm leading-relaxed">
-                      {selectedMarketplaceCard.saleDescription}
-                    </div>
-                  </div>
-                )}
-
                 {/* Vendeur */}
                 <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
                   <div className="text-white font-medium text-sm mb-2">Vendeur</div>
@@ -2014,12 +2004,22 @@ export default function Social() {
                 </div>
 
                 {/* Prix de vente */}
-                <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                  <div className="text-white font-medium text-sm mb-2">Prix de vente</div>
-                  <div className="text-[hsl(9,85%,67%)] text-lg font-bold">
+                <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
+                  <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
+                  <div className="text-green-400 font-bold text-2xl">
                     {selectedMarketplaceCard.salePrice ? `${selectedMarketplaceCard.salePrice}€` : 'Prix à négocier'}
                   </div>
                 </div>
+
+                {/* Description de vente */}
+                {selectedMarketplaceCard.saleDescription && selectedMarketplaceCard.saleDescription.trim() !== '' && (
+                  <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                    <div className="text-white font-medium text-sm mb-2">Description</div>
+                    <div className="text-gray-300 text-sm leading-relaxed">
+                      {selectedMarketplaceCard.saleDescription}
+                    </div>
+                  </div>
+                )}
 
                 {/* Informations techniques */}
                 <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
