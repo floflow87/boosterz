@@ -14,7 +14,7 @@ import avatarImage from "@assets/image_1750196240581.png";
 import cardStackIcon from "@assets/image_1750351528484.png";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
-import type { User, Collection, Card } from "@shared/schema";
+import type { User, Collection, Card, PersonalCard } from "@shared/schema";
 import MilestoneCelebration from "@/components/MilestoneCelebration";
 import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
 import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
@@ -57,7 +57,7 @@ export default function Collections() {
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
-  const [selectedCard, setSelectedCard] = useState<(Card & Partial<PersonalCard>) | PersonalCard | null>(null);
+  const [selectedCard, setSelectedCard] = useState<any>(null);
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [isCardRotated, setIsCardRotated] = useState(false);
   const [rotationStyle, setRotationStyle] = useState({ rotateX: 0, rotateY: 0 });
