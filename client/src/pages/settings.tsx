@@ -22,6 +22,14 @@ export default function Settings() {
         <div className="space-y-4">
           <h2 className="text-xl font-bold font-luckiest">Paramètres</h2>
           
+          {/* Bouton de test temporaire */}
+          <button 
+            onClick={() => setShowNotifications(true)}
+            className="bg-red-500 text-white p-2 rounded"
+          >
+            TEST NOTIFICATIONS
+          </button>
+          
           <div className="space-y-2">
             {[
               { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile", action: undefined },
@@ -33,7 +41,6 @@ export default function Settings() {
                 key={index} 
                 className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${(item.path || item.action) ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
                 onClick={() => {
-                  console.log("Clicked item:", item.title, "action:", item.action);
                   if (item.path) {
                     setLocation(item.path);
                   } else if (item.action) {
