@@ -375,20 +375,6 @@ export default function AddCard() {
                 </p>
               </div>
 
-              {/* Saison */}
-              <div>
-                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
-                <Select value={season} onValueChange={setSeason}>
-                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                    <SelectValue placeholder="Sélectionne la saison" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700">
-                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
-                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
               {/* Type de carte */}
               <div>
                 <Label htmlFor="cardType" className="text-white mb-2 block">Type de carte *</Label>
