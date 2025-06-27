@@ -22,14 +22,6 @@ export default function Settings() {
         <div className="space-y-4">
           <h2 className="text-xl font-bold font-luckiest">Paramètres</h2>
           
-          {/* Bouton de test temporaire */}
-          <button 
-            onClick={() => setShowNotifications(true)}
-            className="bg-red-500 text-white p-2 rounded"
-          >
-            TEST NOTIFICATIONS
-          </button>
-          
           <div className="space-y-2">
             {[
               { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile", action: undefined },
