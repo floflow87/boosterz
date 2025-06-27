@@ -94,10 +94,10 @@ export default function AddCard() {
       return Array.from(playersMap.values()).map(player => ({
         playerName: player.playerName,
         teamName: player.teamName,
-        hasAutograph: player.cardTypes.has('Autograph Numbered') || 
-                     player.cardTypes.has('Autograph Gold') ||
-                     player.cardTypes.has('Autograph Red') ||
-                     player.cardTypes.has('Autograph Silver'),
+        hasAutograph: player.cardTypes.has('Autographe Numbered') || 
+                     player.cardTypes.has('Autographe Gold') ||
+                     player.cardTypes.has('Autographe Red') ||
+                     player.cardTypes.has('Autographe Silver'),
         hasInsert: Array.from(player.cardTypes).some(type => type.includes('Insert'))
       }));
     },
