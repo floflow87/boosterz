@@ -118,13 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 27, 2025. Integrated trophy system as submenu within settings page
-  - Created comprehensive settings page with 6 sections: Profil, Trophées, Notifications, Confidentialité, Apparence, À propos
-  - Added sidebar navigation with section icons for easy access to different settings categories
-  - Trophy section now accessible via "Trophées" tab in settings instead of replacing entire settings page
-  - Implemented proper settings page structure with profile editing, notification preferences, and privacy controls
-  - Added theme selection options and about page with version information
-  - Settings page maintains consistent BOOSTERZ design language with proper navigation and header
+- June 27, 2025. Restored original settings page functionality as requested
+  - Removed complex 6-section settings page structure that was replacing original functionality
+  - Restored simple profile editing page with form for name, username, email, bio and avatar upload
+  - Kept BOOSTERZ header design with proper halo effects and navigation
+  - Maintained trophy avatar integration but removed complex trophy section menu
+  - Settings page now functions as profile editing interface as originally intended
+  - Trophy system components remain available for future integration but not in settings replacement
 - June 27, 2025. Optimized profile page performance and enhanced marketplace-style "En vente" section
   - Implemented Promise.all for parallel comment loading instead of sequential API calls, improving post loading speed
   - Redesigned "En vente" section using marketplace component styling with hover effects and transition animations
