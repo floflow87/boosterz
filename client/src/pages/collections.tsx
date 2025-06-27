@@ -17,6 +17,7 @@ import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_175036
 import type { User, Collection, Card } from "@shared/schema";
 import MilestoneCelebration from "@/components/MilestoneCelebration";
 import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
+import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
 
 const getThemeGradient = (themeColors: string) => {
   const themeStyles: Record<string, string> = {
@@ -279,6 +280,27 @@ export default function Collections() {
       setCurrentMilestone(firstCollectionMilestone);
     }
   }, [collections]); // Only run when collections first load
+
+  // Development helper: Add test milestone triggers
+  useEffect(() => {
+    // Add global functions for testing milestones
+    if (typeof window !== 'undefined') {
+      (window as any).testMilestone = (type?: string) => {
+        const milestone = MilestoneTestTriggers.createTestMilestone(type as any || 'completion');
+        setCurrentMilestone(milestone);
+      };
+
+      (window as any).testRandomMilestone = () => {
+        const milestone = MilestoneTestTriggers.getRandomMilestone();
+        setCurrentMilestone(milestone);
+      };
+
+      (window as any).testCompletionMilestone = (percentage: number) => {
+        const milestone = MilestoneTestTriggers.createCompletionMilestone(percentage);
+        setCurrentMilestone(milestone);
+      };
+    }
+  }, []);
 
   // Mutation pour mettre à jour les paramètres de vente
   const updateSaleSettingsMutation = useMutation({
@@ -1662,6 +1684,20 @@ export default function Collections() {
         milestone={currentMilestone}
         onClose={() => setCurrentMilestone(null)}
       />
+
+      {/* Development Test Button - Hidden in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <button
+          onClick={() => {
+            const milestone = MilestoneTestTriggers.getRandomMilestone();
+            setCurrentMilestone(milestone);
+          }}
+          className="fixed bottom-20 right-4 z-50 w-12 h-12 bg-purple-600 hover:bg-purple-700 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300 hover:scale-110"
+          title="Test Milestone Celebration"
+        >
+          <Star className="w-6 h-6" />
+        </button>
+      )}
 
       <Navigation />
     </div>
