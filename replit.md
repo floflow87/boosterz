@@ -118,6 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Added comprehensive trophy system with dedicated page in settings
+  - Created complete "Trophées" tab in settings below profile section with Trophy icon
+  - Implemented full trophy page with categorized achievements (Collection, Social, Trading, Achievements)
+  - Added progress tracking system with completion percentages and visual indicators
+  - Designed rarity system with common, rare, epic, and legendary trophy types
+  - Included filtering by category and comprehensive statistics display
+  - Trophy page features proper achievement descriptions, unlock dates, and progress bars
+  - Integrated seamlessly with existing navigation and app architecture
 - June 27, 2025. Optimized profile page performance and enhanced marketplace-style "En vente" section
   - Implemented Promise.all for parallel comment loading instead of sequential API calls, improving post loading speed
   - Redesigned "En vente" section using marketplace component styling with hover effects and transition animations

@@ -43,10 +43,7 @@ export default function Settings() {
             {/* Trophées */}
             <div 
               className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
-              onClick={() => {
-                // TODO: Créer la page des trophées
-                console.log("Navigation vers les trophées");
-              }}
+              onClick={() => setLocation("/trophies")}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
