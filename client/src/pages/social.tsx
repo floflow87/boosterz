@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { User as UserType, Collection, Card, Post } from "@shared/schema";
 import CardDisplay from "@/components/card-display";
+import NotificationsModal from "@/components/NotificationsModal";
 
 interface CurrentUser {
   user: {
