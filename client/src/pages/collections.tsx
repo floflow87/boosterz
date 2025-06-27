@@ -31,13 +31,18 @@ const getThemeGradient = (themeColors: string) => {
     "gold+black": "linear-gradient(135deg, #fbbf24 0%, #000000 100%)",
     "green+white": "linear-gradient(135deg, #22c55e 0%, #ffffff 100%)",
     "red+black": "linear-gradient(135deg, #dc2626 0%, #000000 100%)",
-    "blue+white+red": "linear-gradient(135deg, #3b82f6 0%, #ffffff 50%, #dc2626 100%)"
+    "blue+white+red": "linear-gradient(135deg, #3b82f6 0%, #ffffff 50%, #dc2626 100%)",
+    "full+black": "#000000"
   };
   return themeStyles[themeColors] || "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)";
 };
 
 const getThemeTextColor = (themeColors: string) => {
   const lightThemes = ["white+sky", "white+red", "white+blue", "green+white"];
+  // Le thème full+black doit toujours afficher le texte en blanc
+  if (themeColors === "full+black") {
+    return "#ffffff";
+  }
   return lightThemes.includes(themeColors) ? "#000000" : "#ffffff";
 };
 
