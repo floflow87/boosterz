@@ -41,28 +41,20 @@ export default function Settings() {
             </div>
 
             {/* Notifications */}
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors">
-              <button 
-                className="w-full text-left"
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  console.log("🔔 NOTIFICATIONS BUTTON CLICKED!");
-                  setShowNotifications(true);
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Bell className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-                    <div>
-                      <h3 className="font-bold font-poppins">Notifications</h3>
-                      <p className="text-sm text-[hsl(212,23%,69%)]">Gérer les alertes</p>
-                    </div>
+            <div 
+              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+              onClick={() => setShowNotifications(true)}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Bell className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                  <div>
+                    <h3 className="font-bold font-poppins">Notifications</h3>
+                    <p className="text-sm text-[hsl(212,23%,69%)]">Gérer les alertes</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
                 </div>
-              </button>
+                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+              </div>
             </div>
 
             {/* Confidentialité */}
