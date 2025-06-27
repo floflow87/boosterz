@@ -679,7 +679,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const personalCardId = parseInt(req.params.id);
       const userId = req.user!.id;
-      const { salePrice, saleDescription, tradeOnly, isForTrade, tradePrice, tradeDescription, isSold } = req.body;
+      const { salePrice, saleDescription, tradeOnly, isForTrade, isForSale, tradePrice, tradeDescription, isSold } = req.body;
       
       console.log(`PATCH /api/personal-cards/${personalCardId}/sale-settings called by user ${userId}`, req.body);
       

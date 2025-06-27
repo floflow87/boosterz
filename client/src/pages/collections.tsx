@@ -325,6 +325,7 @@ export default function Collections() {
       console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
       // Utiliser la route pour cartes personnelles
       return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
+        isForSale: true,
         isForTrade: true,
         tradePrice: price,
         tradeDescription: description,
@@ -361,6 +362,7 @@ export default function Collections() {
   const removeFromSaleMutation = useMutation({
     mutationFn: async (cardId: number) => {
       return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
+        isForSale: false,
         isForTrade: false,
         tradePrice: null,
         tradeDescription: null,
@@ -451,6 +453,7 @@ export default function Collections() {
     try {
       await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}/sale-settings`, {
         isSold: true,
+        isForSale: false,
         isForTrade: false
       });
       
