@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Users, CreditCard, MessageCircle, ShoppingCart } from "lucide-react";
+import { Users, Layers, MessageCircle, ShoppingCart } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import LoadingScreen from "@/components/LoadingScreen";
 
 const navItems = [
   { id: "community", icon: Users, label: "Communauté", path: "/social" },
-  { id: "collections", icon: CreditCard, label: "Cartes", path: "/collections" },
+  { id: "collections", icon: Layers, label: "Cartes", path: "/collections" },
   { id: "messages", icon: MessageCircle, label: "Messages", path: "/conversations" },
   { id: "shop", icon: ShoppingCart, label: "Boutique", path: "/shop" },
 ];
