@@ -20,6 +20,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -703,17 +704,30 @@ export default function DeckDetail() {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
               <SortableContext
-                items={localCards.map(card => `card-${card.position}-${card.cardId || card.personalCardId}`)}
+                items={localCards.map(card => `card-${card.position}-${card.type === 'collection' ? card.card.id : card.card.id}`)}
                 strategy={rectSortingStrategy}
               >
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                <div className={cn(
+                  "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 transition-all duration-200",
+                  isDragging ? "transform scale-[0.98] opacity-90" : ""
+                )}
+                >
                   {localCards.map((deckCard, index) => (
-                    <div key={`card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`} className="relative group">
+                    <div 
+                      key={`card-${deckCard.position}-${deckCard.card.id}`} 
+                      className={cn(
+                        "relative group transition-all duration-200",
+                        isDragging && draggedItem === `card-${deckCard.position}-${deckCard.card.id}` ? 
+                          "opacity-50 scale-105 z-50" : 
+                          "opacity-100 scale-100"
+                      )}
+                    >
                       <SortableCard
-                        id={`card-${deckCard.position}-${deckCard.cardId || deckCard.personalCardId}`}
+                        id={`card-${deckCard.position}-${deckCard.card.id}`}
                         cardData={deckCard}
                         index={index}
                         isSelected={longPressCard === deckCard.position}
