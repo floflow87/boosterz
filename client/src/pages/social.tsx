@@ -16,11 +16,11 @@ import { Textarea } from "@/components/ui/textarea";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
+import NotificationsModal from "@/components/NotificationsModal";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { User as UserType, Collection, Card, Post } from "@shared/schema";
 import CardDisplay from "@/components/card-display";
-import NotificationsModal from "@/components/NotificationsModal";
 
 interface CurrentUser {
   user: {
@@ -102,6 +102,7 @@ export default function Social() {
   const [taggedPeople, setTaggedPeople] = useState<string[]>([]);
   const [searchPeople, setSearchPeople] = useState("");
   const [activeTab, setActiveTab] = useState("featured");
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [profileSearchTerm, setProfileSearchTerm] = useState("");
   const [saleFilter, setSaleFilter] = useState<"all" | "available" | "sold">("all");
@@ -122,7 +123,6 @@ export default function Social() {
   const queryClient = useQueryClient();
   const [selectedMarketplaceCard, setSelectedMarketplaceCard] = useState<any>(null);
   const [showDropdownMenu, setShowDropdownMenu] = useState(false);
-  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
 
   // Get current user ID from authentication
   const { data: currentUser } = useQuery<CurrentUser>({
@@ -953,7 +953,7 @@ export default function Social() {
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white relative overflow-hidden">
       <HaloBlur />
       
-      <Header title="Communauté" />
+      <Header title="Communauté" onNotificationClick={() => setIsNotificationsModalOpen(true)} />
 
       <main className="relative z-10 px-4 pb-24">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -2043,6 +2043,12 @@ export default function Social() {
           </div>
         </>
       )}
+
+      {/* Notifications Modal */}
+      <NotificationsModal 
+        isOpen={isNotificationsModalOpen}
+        onClose={() => setIsNotificationsModalOpen(false)}
+      />
 
       <Navigation />
     </div>
