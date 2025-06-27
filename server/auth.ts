@@ -113,11 +113,16 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   // Fallback to Bearer token authentication
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
+  
+  console.log('Auth middleware - authHeader:', authHeader);
+  console.log('Auth middleware - token:', token);
 
   // Development mode: authenticate with any token as user 1
   if (token === 'test' || !token) {
+    console.log('Using development mode authentication for user 1');
     try {
       const user = await storage.getUser(1);
+      console.log('Dev mode - retrieved user:', user);
       if (user) {
         req.user = {
           id: user.id,
@@ -125,6 +130,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
           email: user.email,
           name: user.name
         };
+        console.log('Dev mode - set req.user:', req.user);
         return next();
       }
     } catch (error) {

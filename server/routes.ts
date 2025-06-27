@@ -2060,12 +2060,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user's liked posts
   app.get("/api/posts/likes", authenticateToken, async (req: AuthRequest, res) => {
     try {
-      const userId = req.user!.id;
+      console.log('GET /api/posts/likes - req.user:', req.user);
+      
+      if (!req.user) {
+        console.log('No user found in request');
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      const userId = req.user.id;
+      console.log('Fetching likes for user:', userId);
+      
       const userLikes = await db.select({ postId: postLikes.postId })
         .from(postLikes)
         .where(eq(postLikes.userId, userId));
       
       const likedPostIds = userLikes.map(like => like.postId);
+      console.log('User likes found:', likedPostIds);
       res.json(likedPostIds);
     } catch (error) {
       console.error("Erreur lors de la récupération des likes:", error);
