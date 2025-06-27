@@ -1987,14 +1987,6 @@ export default function Social() {
                   <p className="text-gray-500">{selectedMarketplaceCard.cardType}</p>
                 </div>
 
-                {/* Prix de vente */}
-                <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                  <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                  <div className="text-green-400 font-bold text-2xl">
-                    {selectedMarketplaceCard.salePrice ? `${selectedMarketplaceCard.salePrice}€` : 'Prix à négocier'}
-                  </div>
-                </div>
-
                 {/* Description de vente */}
                 {selectedMarketplaceCard.saleDescription && selectedMarketplaceCard.saleDescription.trim() !== '' && (
                   <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
@@ -2019,6 +2011,14 @@ export default function Social() {
                       @{selectedMarketplaceCard.sellerUsername || selectedMarketplaceCard.username || 'maxlamenace'}
                     </span>
                   </button>
+                </div>
+
+                {/* Prix de vente */}
+                <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                  <div className="text-white font-medium text-sm mb-2">Prix de vente</div>
+                  <div className="text-[hsl(9,85%,67%)] text-lg font-bold">
+                    {selectedMarketplaceCard.salePrice ? `${selectedMarketplaceCard.salePrice}€` : 'Prix à négocier'}
+                  </div>
                 </div>
 
                 {/* Informations techniques */}
