@@ -22,7 +22,7 @@ export async function apiRequest(
     }
 
     // Add authentication token if available
-    const token = localStorage.getItem('token') || localStorage.getItem('authToken') || 'test';
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token') || 'test';
     headers["Authorization"] = `Bearer ${token}`;
 
     console.log(`Making ${method} request to:`, url);
