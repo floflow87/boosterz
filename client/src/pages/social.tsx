@@ -586,8 +586,15 @@ export default function Social() {
     }
   };
 
-  const formatTimeAgo = (dateString: string) => {
+  const formatTimeAgo = (dateString: string | Date) => {
+    if (!dateString) return 'Date inconnue';
+    
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date:', dateString);
+      return 'Date invalide';
+    }
+    
     const now = new Date();
     const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
@@ -1190,7 +1197,11 @@ export default function Social() {
                                         {comment.user?.name}
                                       </span>
                                       <span className="text-gray-400 text-xs">
-                                        {formatTimeAgo(comment.createdAt)}
+                                        {(() => {
+                                          console.log('Comment data:', comment);
+                                          console.log('Comment createdAt:', comment.createdAt);
+                                          return formatTimeAgo(comment.createdAt);
+                                        })()}
                                       </span>
                                     </div>
                                     <p className="text-gray-200 text-sm">{comment.content}</p>
