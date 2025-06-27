@@ -161,17 +161,19 @@ export default function Social() {
   });
 
   // Charger les likes de l'utilisateur au démarrage
-  const { data: userLikes = [] } = useQuery<number[]>({
+  const { data: userLikes = [], isLoading: likesLoading } = useQuery<number[]>({
     queryKey: ['/api/posts/likes'],
     enabled: !!currentUser?.user?.id,
+    staleTime: 30000, // Cache for 30 seconds to avoid refetching
   });
 
-  // Mettre à jour les likes quand les données arrivent
+  // Mettre à jour les likes quand les données arrivent - uniquement quand les données sont chargées
   useEffect(() => {
-    // Toujours initialiser le Set, même s'il est vide
-    setLikedPosts(new Set(userLikes));
-    console.log('Initializing liked posts with:', userLikes);
-  }, [userLikes]);
+    if (!likesLoading && userLikes !== undefined) {
+      setLikedPosts(new Set(userLikes));
+      console.log('Initializing liked posts with:', userLikes, 'Loading:', likesLoading);
+    }
+  }, [userLikes, likesLoading]);
 
   // Initialiser les likes et commentaires des posts avec les vraies données
   useEffect(() => {
@@ -311,6 +313,9 @@ export default function Social() {
       // Mettre à jour le compteur de likes
       setPostLikes(prev => ({ ...prev, [postId]: result.likesCount }));
       console.log(`Updated likes count for post ${postId}: ${result.likesCount}`);
+      
+      // Invalider le cache pour assurer la persistance
+      queryClient.invalidateQueries({ queryKey: ['/api/posts/likes'] });
     } catch (error) {
       console.error('Erreur complète:', error);
     }
