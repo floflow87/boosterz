@@ -118,6 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Prepared SSL certificate configuration for boosterz.fr deployment
+  - Created comprehensive SSL setup documentation (ssl-setup.md) with Let's Encrypt integration
+  - Configured production-ready Nginx reverse proxy (nginx-boosterz.conf) with security headers
+  - Built automated deployment script (deploy-ssl.sh) for one-click HTTPS setup
+  - Added pre-deployment checklist (pre-deployment-checklist.md) with DNS and server requirements
+  - Script includes PostgreSQL database setup, PM2 process management, and fail2ban security
+  - HTTPS configuration supports automatic certificate renewal and security best practices
+  - Ready for production deployment with professional SSL/TLS setup for boosterz.fr domain
 - June 27, 2025. Added comprehensive trophy system with dedicated page in settings
   - Created complete "Trophées" tab in settings below profile section with Trophy icon
   - Implemented full trophy page with categorized achievements (Collection, Social, Trading, Achievements)
