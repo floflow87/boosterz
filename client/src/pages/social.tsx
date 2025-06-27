@@ -589,7 +589,26 @@ export default function Social() {
   const formatTimeAgo = (dateString: string | Date) => {
     if (!dateString) return 'Date inconnue';
     
-    const date = new Date(dateString);
+    let date: Date;
+    
+    // Handle French date format (DD/MM/YYYY HH:MM)
+    if (typeof dateString === 'string' && dateString.includes('/')) {
+      const parts = dateString.split(' ');
+      if (parts.length === 2) {
+        const [datePart, timePart] = parts;
+        const [day, month, year] = datePart.split('/');
+        const [hour, minute] = timePart.split(':');
+        
+        // Create ISO format string (YYYY-MM-DDTHH:MM)
+        const isoString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`;
+        date = new Date(isoString);
+      } else {
+        date = new Date(dateString);
+      }
+    } else {
+      date = new Date(dateString);
+    }
+    
     if (isNaN(date.getTime())) {
       console.error('Invalid date:', dateString);
       return 'Date invalide';
@@ -1176,16 +1195,16 @@ export default function Social() {
                               {postComments[post.id].map((comment) => (
                               <div key={comment.id} className="flex space-x-3">
                                 <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                  {comment.user?.avatar ? (
+                                  {(comment.user?.avatar || comment.avatar) ? (
                                     <img 
-                                      src={comment.user.avatar} 
-                                      alt={`Avatar de ${comment.user.name}`} 
+                                      src={comment.user?.avatar || comment.avatar} 
+                                      alt={`Avatar de ${comment.user?.name || comment.author}`} 
                                       className="w-full h-full object-cover rounded-full"
                                     />
                                   ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
                                       <span className="text-xs font-bold text-white">
-                                        {comment.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                        {(comment.user?.name || comment.author)?.charAt(0)?.toUpperCase() || 'U'}
                                       </span>
                                     </div>
                                   )}
@@ -1194,14 +1213,13 @@ export default function Social() {
                                   <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
                                     <div className="flex items-center space-x-2 mb-1">
                                       <span className="text-white font-medium text-sm">
-                                        {comment.user?.name}
+                                        {comment.user?.name || comment.author}
                                       </span>
                                       <span className="text-gray-400 text-xs">
-                                        {(() => {
-                                          console.log('Comment data:', comment);
-                                          console.log('Comment createdAt:', comment.createdAt);
-                                          return formatTimeAgo(comment.createdAt);
-                                        })()}
+                                        {comment.user?.createdAt || comment.createdAt || comment.timestamp ? 
+                                          formatTimeAgo(comment.user?.createdAt || comment.createdAt || comment.timestamp) : 
+                                          'Date inconnue'
+                                        }
                                       </span>
                                     </div>
                                     <p className="text-gray-200 text-sm">{comment.content}</p>
