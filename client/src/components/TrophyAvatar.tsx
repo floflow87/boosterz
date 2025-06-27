@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 interface TrophyAvatarProps {
   userId?: number;
   avatar?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   className?: string;
 }
 
@@ -36,7 +36,8 @@ const MILESTONE_CONFIG = {
 const sizeClasses = {
   sm: "w-8 h-8",
   md: "w-12 h-12", 
-  lg: "w-16 h-16"
+  lg: "w-16 h-16",
+  xl: "w-20 h-20"
 };
 
 export default function TrophyAvatar({ userId, avatar, size = "md", className = "" }: TrophyAvatarProps) {

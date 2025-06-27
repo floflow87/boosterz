@@ -377,11 +377,11 @@ export default function Profile() {
         {/* Header centré */}
         <div className="text-center px-6 py-8">
           {/* Avatar dynamique avec système de trophées */}
-          <div className="mx-auto mb-3">
+          <div className="flex justify-center mb-3">
             <TrophyAvatar 
               userId={profileUser.id}
               avatar={profileUser.avatar || undefined}
-              size="md"
+              size="xl"
             />
           </div>
 
