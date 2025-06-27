@@ -339,6 +339,11 @@ export default function Collections() {
       queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
       queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
       
+      // Vider les champs uniquement après succès
+      setSalePrice('');
+      setSaleDescription('');
+      setTradeOnly(false);
+      
       toast({
         title: "Paramètres sauvegardés",
         description: "Les paramètres de vente ont été mis à jour.",
@@ -350,6 +355,7 @@ export default function Collections() {
       setSelectedCard(null);
     },
     onError: (error) => {
+      console.error("Error saving sale settings:", error);
       toast({
         title: "Erreur",
         description: "Impossible de sauvegarder les paramètres.",
@@ -522,11 +528,6 @@ export default function Collections() {
       description: saleDescription,
       tradeOnly: tradeOnly
     });
-    
-    setSalePrice('');
-    setSaleDescription('');
-    setTradeOnly(false);
-    setShowTradePanel(false);
   };
 
   if (userLoading || collectionsLoading) {
