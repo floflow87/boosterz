@@ -92,6 +92,7 @@ export default function Profile() {
   const [postComments, setPostComments] = useState<Record<number, Comment[]>>({});
   const [postCommentsCount, setPostCommentsCount] = useState<Record<number, number>>({});
   const [showNotifications, setShowNotifications] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<any>(null);
 
   const { data: profileUser, isLoading: isUserLoading, error: userError } = useQuery({
     queryKey: [`/api/users/${userId}`],
@@ -136,26 +137,38 @@ export default function Profile() {
     }
   }, [userLikedPosts]);
 
-  // Charger les compteurs de commentaires pour chaque post
+  // Charger les compteurs de commentaires pour tous les posts en une fois
   useEffect(() => {
-    if (posts.length > 0) {
-      posts.forEach(async (post) => {
+    const loadCommentsForAllPosts = async () => {
+      if (posts && posts.length > 0) {
         try {
-          const response = await fetch(`/api/posts/${post.id}/comments`);
-          const comments = await response.json();
-          setPostCommentsCount(prev => ({
-            ...prev,
-            [post.id]: comments.length
-          }));
-          setPostComments(prev => ({
-            ...prev,
-            [post.id]: comments
-          }));
+          // Charger tous les commentaires en parallèle
+          const commentsPromises = posts.map(async (post) => {
+            const response = await fetch(`/api/posts/${post.id}/comments`);
+            const comments = await response.json();
+            return { postId: post.id, comments };
+          });
+
+          const allComments = await Promise.all(commentsPromises);
+          
+          // Mettre à jour les états en une seule fois
+          const newCommentsCount = {};
+          const newComments = {};
+          
+          allComments.forEach(({ postId, comments }) => {
+            newCommentsCount[postId] = comments.length;
+            newComments[postId] = comments;
+          });
+          
+          setPostCommentsCount(newCommentsCount);
+          setPostComments(newComments);
         } catch (error) {
           console.error('Erreur lors du chargement des commentaires:', error);
         }
-      });
-    }
+      }
+    };
+
+    loadCommentsForAllPosts();
   }, [posts]);
 
   const followMutation = useMutation({
@@ -592,20 +605,38 @@ export default function Profile() {
               {saleCards.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4">
                   {saleCards.map((card) => (
-                    <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3">
-                      <div className="aspect-[3/4] bg-gray-600 rounded mb-2 flex items-center justify-center">
-                        <div className="text-gray-400 text-xs text-center">
+                    <div 
+                      key={card.id} 
+                      className="bg-[hsl(214,35%,22%)] rounded-lg p-3 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-all duration-200 transform hover:scale-105"
+                      onClick={() => setSelectedCard(card)}
+                    >
+                      <div className="relative aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 rounded mb-2 flex items-center justify-center overflow-hidden">
+                        <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                          En vente
+                        </div>
+                        <div className="text-gray-300 text-xs text-center font-medium">
                           {card.playerName || 'Carte'}
+                        </div>
+                        {/* Badge de rareté ou type */}
+                        <div className="absolute bottom-2 left-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded text-xs font-bold">
+                          {card.cardType || 'Base'}
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <h4 className="text-white font-medium text-sm">{card.playerName || 'Nom du joueur'}</h4>
-                        <p className="text-gray-400 text-xs">{card.teamName || 'Équipe'}</p>
+                        <h4 className="text-white font-medium text-sm truncate">{card.playerName || 'Nom du joueur'}</h4>
+                        <p className="text-gray-400 text-xs truncate">{card.teamName || 'Équipe'}</p>
                         <div className="flex justify-between items-center">
                           <span className="text-[hsl(9,85%,67%)] font-bold text-sm">
-                            {card.salePrice || "Prix non défini"}
+                            {card.salePrice ? `${card.salePrice}€` : "Prix non défini"}
                           </span>
-                          <span className="text-green-400 text-xs">En vente</span>
+                          <div className="flex flex-col items-end">
+                            <span className="text-yellow-400 text-xs">
+                              {card.condition || 'Non défini'}
+                            </span>
+                            <span className="text-gray-500 text-xs">
+                              #{card.cardNumber || 'N/A'}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -653,6 +684,87 @@ export default function Profile() {
         </Tabs>
       </main>
       
+      {/* Modal de détail de carte */}
+      {selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-[hsl(216,46%,13%)] rounded-lg max-w-md w-full p-6 relative animate-in slide-in-from-right-4">
+            <button 
+              onClick={() => setSelectedCard(null)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
+            >
+              ×
+            </button>
+            
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 rounded-lg mb-4 mx-auto max-w-[200px] flex items-center justify-center relative overflow-hidden">
+                  <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-bold">
+                    En vente
+                  </div>
+                  <div className="text-gray-300 text-sm font-medium">
+                    {selectedCard.playerName}
+                  </div>
+                  <div className="absolute bottom-2 left-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded text-xs font-bold">
+                    {selectedCard.cardType || 'Base'}
+                  </div>
+                </div>
+                
+                <h3 className="text-xl font-bold text-white">{selectedCard.playerName}</h3>
+                <p className="text-gray-400">{selectedCard.teamName}</p>
+              </div>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Prix :</span>
+                  <span className="text-[hsl(9,85%,67%)] font-bold text-lg">
+                    {selectedCard.salePrice ? `${selectedCard.salePrice}€` : "Prix non défini"}
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Condition :</span>
+                  <span className="text-yellow-400 font-medium">
+                    {selectedCard.condition || 'Non défini'}
+                  </span>
+                </div>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Numéro :</span>
+                  <span className="text-white">#{selectedCard.cardNumber || 'N/A'}</span>
+                </div>
+                
+                {selectedCard.description && (
+                  <div className="space-y-2">
+                    <span className="text-gray-400">Description :</span>
+                    <p className="text-white text-sm bg-[hsl(214,35%,22%)] p-3 rounded">
+                      {selectedCard.description}
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="flex space-x-3 pt-4">
+                <button 
+                  className="flex-1 bg-[hsl(9,85%,67%)] text-white py-2 px-4 rounded-lg font-medium hover:bg-[hsl(9,85%,60%)] transition-colors"
+                  onClick={() => {
+                    // TODO: Logique de contact/achat
+                    console.log("Contacter le vendeur pour:", selectedCard);
+                  }}
+                >
+                  Contacter le vendeur
+                </button>
+                <button 
+                  onClick={() => setSelectedCard(null)}
+                  className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg font-medium hover:bg-gray-500 transition-colors"
+                >
+                  Fermer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal de notifications */}
       <NotificationsModal 
         isOpen={showNotifications}
