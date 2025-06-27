@@ -1,306 +1,420 @@
-import { useState } from "react";
+import { useMemo } from "react";
+import { ArrowLeft, Trophy, Medal, Star, Award } from "lucide-react";
+import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import Header from "@/components/header";
-import Navigation from "@/components/navigation";
-import HaloBlur from "@/components/halo-blur";
-import { Trophy, Star, Award, Target, Zap, Crown, Medal, Flame } from "lucide-react";
 
-// Types pour les trophées
-interface Trophy {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
-  category: 'collection' | 'social' | 'trading' | 'achievement';
-  unlocked: boolean;
-  progress?: number;
-  maxProgress?: number;
-  unlockedAt?: Date;
-}
+// Configuration des jalons
+const MILESTONE_CONFIG = {
+  collection: [
+    { id: "first_card", count: 1, title: "Première carte", description: "Ajouter votre première carte à votre collection", rarity: "débutant", color: "gray" },
+    { id: "ten_cards", count: 10, title: "Collectionneur", description: "Posséder 10 cartes dans votre collection", rarity: "commun", color: "green" },
+    { id: "twentyfive_cards", count: 25, title: "Collectionneur Assidu", description: "Posséder 25 cartes dans votre collection", rarity: "avancé", color: "blue" },
+    { id: "fifty_cards", count: 50, title: "Expert Collectionneur", description: "Posséder 50 cartes dans votre collection", rarity: "rare", color: "purple" },
+    { id: "hundred_cards", count: 100, title: "Maître Collectionneur", description: "Posséder 100 cartes dans votre collection", rarity: "épique", color: "gold" },
+    { id: "twohundred_cards", count: 200, title: "Légende Collectionneur", description: "Posséder 200 cartes dans votre collection", rarity: "légendaire", color: "rainbow" },
+  ],
+  autographs: [
+    { id: "first_auto", count: 1, title: "Premier Autographe", description: "Obtenir votre premier autographe", rarity: "débutant", color: "gray" },
+    { id: "ten_autos", count: 10, title: "Chasseur d'Autographes", description: "Obtenir 10 autographes", rarity: "commun", color: "green" },
+    { id: "twentyfive_autos", count: 25, title: "Expert en Autographes", description: "Obtenir 25 autographes", rarity: "avancé", color: "blue" },
+    { id: "fifty_autos", count: 50, title: "Maître des Autographes", description: "Obtenir 50 autographes", rarity: "rare", color: "purple" },
+    { id: "hundred_autos", count: 100, title: "Légende des Autographes", description: "Obtenir 100 autographes", rarity: "épique", color: "gold" },
+    { id: "twohundred_autos", count: 200, title: "Dieu des Autographes", description: "Obtenir 200 autographes", rarity: "légendaire", color: "rainbow" },
+  ],
+  specials: [
+    { id: "first_special", count: 1, title: "Première Spéciale", description: "Obtenir votre première carte spéciale", rarity: "rare", color: "purple" },
+    { id: "ten_specials", count: 10, title: "Chasseur de Spéciales", description: "Obtenir 10 cartes spéciales", rarity: "épique", color: "gold" },
+    { id: "fifty_specials", count: 50, title: "Maître des Spéciales", description: "Obtenir 50 cartes spéciales", rarity: "légendaire", color: "rainbow" },
+  ],
+  social: [
+    { id: "first_follower", count: 1, title: "Premier Abonné", description: "Obtenir votre premier abonné", rarity: null, color: "gray" },
+    { id: "ten_followers", count: 10, title: "Influenceur Débutant", description: "Obtenir 10 abonnés", rarity: null, color: "green" },
+    { id: "fifty_followers", count: 50, title: "Influenceur", description: "Obtenir 50 abonnés", rarity: null, color: "blue" },
+    { id: "hundred_followers", count: 100, title: "Star", description: "Obtenir 100 abonnés", rarity: null, color: "purple" },
+    { id: "twohundred_followers", count: 200, title: "Célébrité", description: "Obtenir 200 abonnés", rarity: null, color: "gold" },
+    { id: "fivehundred_followers", count: 500, title: "Légende Sociale", description: "Obtenir 500 abonnés", rarity: null, color: "rainbow" },
+  ]
+};
 
-// Données des trophées (à remplacer par une API)
-const getMockTrophies = (): Trophy[] => [
-  {
-    id: '1',
-    title: 'Premier Collectionneur',
-    description: 'Créer votre première collection',
-    icon: 'trophy',
-    rarity: 'common',
-    category: 'collection',
-    unlocked: true,
-    unlockedAt: new Date('2025-01-15')
-  },
-  {
-    id: '2',
-    title: 'Perfectionniste',
-    description: 'Compléter une collection à 100%',
-    icon: 'crown',
-    rarity: 'legendary',
-    category: 'collection',
-    unlocked: true,
-    unlockedAt: new Date('2025-02-20')
-  },
-  {
-    id: '3',
-    title: 'Explorateur',
-    description: 'Découvrir 50 cartes différentes',
-    icon: 'star',
-    rarity: 'rare',
-    category: 'collection',
-    unlocked: true,
-    progress: 50,
-    maxProgress: 50,
-    unlockedAt: new Date('2025-01-28')
-  },
-  {
-    id: '4',
-    title: 'Sociable',
-    description: 'Avoir 10 abonnés',
-    icon: 'award',
-    rarity: 'rare',
-    category: 'social',
-    unlocked: false,
-    progress: 3,
-    maxProgress: 10
-  },
-  {
-    id: '5',
-    title: 'Influenceur',
-    description: 'Recevoir 100 likes sur vos posts',
-    icon: 'flame',
-    rarity: 'epic',
-    category: 'social',
-    unlocked: false,
-    progress: 24,
-    maxProgress: 100
-  },
-  {
-    id: '6',
-    title: 'Maître Échangeur',
-    description: 'Réaliser 20 échanges de cartes',
-    icon: 'zap',
-    rarity: 'epic',
-    category: 'trading',
-    unlocked: false,
-    progress: 2,
-    maxProgress: 20
-  },
-  {
-    id: '7',
-    title: 'Vitesse de l\'Éclair',
-    description: 'Ajouter 10 cartes en moins d\'une heure',
-    icon: 'zap',
-    rarity: 'rare',
-    category: 'achievement',
-    unlocked: false,
-    progress: 0,
-    maxProgress: 10
-  },
-  {
-    id: '8',
-    title: 'Légendaire',
-    description: 'Obtenir 5 cartes légendaires',
-    icon: 'medal',
-    rarity: 'legendary',
-    category: 'collection',
-    unlocked: false,
-    progress: 1,
-    maxProgress: 5
+const COLOR_STYLES = {
+  gray: { text: "text-gray-400", bg: "bg-gray-400/10", progress: "bg-gray-400" },
+  green: { text: "text-green-400", bg: "bg-green-400/10", progress: "bg-green-400" },
+  blue: { text: "text-blue-400", bg: "bg-blue-400/10", progress: "bg-blue-400" },
+  purple: { text: "text-purple-400", bg: "bg-purple-400/10", progress: "bg-purple-400" },
+  gold: { text: "text-yellow-400", bg: "bg-yellow-400/10", progress: "bg-yellow-400" },
+  rainbow: { 
+    text: "text-transparent bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 bg-clip-text", 
+    bg: "bg-gradient-to-r from-red-400/10 via-yellow-400/10 via-green-400/10 via-blue-400/10 to-purple-400/10", 
+    progress: "bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400" 
   }
-];
-
-const getIconComponent = (iconName: string) => {
-  const icons = {
-    trophy: Trophy,
-    star: Star,
-    award: Award,
-    crown: Crown,
-    zap: Zap,
-    flame: Flame,
-    medal: Medal,
-    target: Target
-  };
-  return icons[iconName as keyof typeof icons] || Trophy;
-};
-
-const getRarityColor = (rarity: string) => {
-  const colors = {
-    common: 'from-gray-400 to-gray-600',
-    rare: 'from-blue-400 to-blue-600', 
-    epic: 'from-purple-400 to-purple-600',
-    legendary: 'from-yellow-400 to-yellow-600'
-  };
-  return colors[rarity as keyof typeof colors] || colors.common;
-};
-
-const getRarityBorder = (rarity: string) => {
-  const borders = {
-    common: 'border-gray-500',
-    rare: 'border-blue-500',
-    epic: 'border-purple-500',
-    legendary: 'border-yellow-500'
-  };
-  return borders[rarity as keyof typeof borders] || borders.common;
 };
 
 export default function Trophies() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [, setLocation] = useLocation();
 
-  // Utiliser les données mock pour le moment
-  const trophies = getMockTrophies();
+  // Récupération des données utilisateur
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/users/me'],
+  });
 
-  const categories = [
-    { id: 'all', name: 'Tous', icon: Trophy },
-    { id: 'collection', name: 'Collection', icon: Star },
-    { id: 'social', name: 'Social', icon: Award },
-    { id: 'trading', name: 'Échanges', icon: Target },
-    { id: 'achievement', name: 'Exploits', icon: Zap }
+  // Récupération des cartes personnelles pour les statistiques
+  const { data: personalCards } = useQuery({
+    queryKey: ['/api/personal-cards'],
+  });
+
+  // Calcul des statistiques
+  const stats = useMemo(() => {
+    if (!personalCards || !currentUser) return { totalCards: 0, autographsCount: 0, specialsCount: 0, followersCount: 0 };
+
+    const totalCards = personalCards.length;
+    const autographsCount = personalCards.filter((card: any) => card.cardType?.includes('AUTO')).length;
+    const specialsCount = personalCards.filter((card: any) => card.cardType && !card.cardType.includes('AUTO') && card.cardType !== 'BASE').length;
+    const followersCount = currentUser.followersCount || 0;
+
+    return { totalCards, autographsCount, specialsCount, followersCount };
+  }, [personalCards, currentUser]);
+
+  // Calcul du niveau d'avatar
+  const avatarLevel = useMemo(() => {
+    const allMilestones = [
+      ...MILESTONE_CONFIG.collection,
+      ...MILESTONE_CONFIG.autographs,
+      ...MILESTONE_CONFIG.specials
+    ];
+
+    let highestColor = null;
+    for (const milestone of allMilestones) {
+      let currentCount = 0;
+      if (milestone.id.includes('card')) currentCount = stats.totalCards;
+      else if (milestone.id.includes('auto')) currentCount = stats.autographsCount;
+      else if (milestone.id.includes('special')) currentCount = stats.specialsCount;
+
+      if (currentCount >= milestone.count && milestone.rarity) {
+        highestColor = milestone.color;
+      }
+    }
+
+    return highestColor;
+  }, [stats]);
+
+  // Fonction pour calculer la progression d'un jalon
+  const getMilestoneProgress = (milestone: any) => {
+    let currentCount = 0;
+    if (milestone.id.includes('card')) currentCount = stats.totalCards;
+    else if (milestone.id.includes('auto')) currentCount = stats.autographsCount;
+    else if (milestone.id.includes('special')) currentCount = stats.specialsCount;
+    else if (milestone.id.includes('follower')) currentCount = stats.followersCount;
+
+    const progress = Math.min(currentCount, milestone.count);
+    const isUnlocked = currentCount >= milestone.count;
+    const progressPercentage = (progress / milestone.count) * 100;
+
+    return { progress, isUnlocked, progressPercentage, currentCount };
+  };
+
+  // Calcul des statistiques globales
+  const allMilestones = [
+    ...MILESTONE_CONFIG.collection,
+    ...MILESTONE_CONFIG.autographs,
+    ...MILESTONE_CONFIG.specials,
+    ...MILESTONE_CONFIG.social
   ];
 
-  const filteredTrophies = selectedCategory === 'all' 
-    ? trophies 
-    : trophies.filter(trophy => trophy.category === selectedCategory);
+  const unlockedCount = allMilestones.filter(milestone => {
+    const { isUnlocked } = getMilestoneProgress(milestone);
+    return isUnlocked;
+  }).length;
 
-  const unlockedCount = trophies.filter(t => t.unlocked).length;
-  const totalCount = trophies.length;
+  const totalCount = allMilestones.length;
+  const completionRate = Math.round((unlockedCount / totalCount) * 100);
 
   return (
-    <div className="min-h-screen bg-[hsl(214,35%,11%)] text-white pb-20 relative overflow-hidden">
-      <HaloBlur />
-      <Header title="Trophées" />
-      
-      <div className="relative z-10 p-4 space-y-6">
-        {/* Statistiques */}
-        <div className="bg-[hsl(214,35%,22%)] rounded-lg p-6">
-          <div className="text-center space-y-2">
-            <div className="flex justify-center">
-              <Trophy className="w-12 h-12 text-[hsl(9,85%,67%)]" />
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
+      {/* Header */}
+      <div className="sticky top-0 bg-[hsl(216,46%,13%)] border-b border-[hsl(214,35%,22%)] z-10">
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setLocation("/settings")}
+              className="p-2 rounded-full bg-[hsl(214,35%,22%)] hover:bg-[hsl(214,35%,25%)] transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            <div>
+              <h1 className="text-2xl font-bold text-white font-['Luckiest_Guy']">TROPHÉES</h1>
+              <p className="text-sm text-[hsl(212,23%,69%)]">
+                {unlockedCount}/{totalCount} jalons atteints ({completionRate}%)
+              </p>
             </div>
-            <h2 className="text-2xl font-bold font-luckiest text-[hsl(9,85%,67%)]">
-              {unlockedCount}/{totalCount}
-            </h2>
-            <p className="text-[hsl(212,23%,69%)]">Trophées débloqués</p>
-            <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
-              <div 
-                className="bg-gradient-to-r from-[hsl(9,85%,67%)] to-[hsl(9,85%,77%)] h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(unlockedCount / totalCount) * 100}%` }}
-              />
+          </div>
+          <div className="relative">
+            {/* Avatar avec décoration */}
+            <div className="relative w-12 h-12">
+              {avatarLevel && (
+                <div className={`absolute inset-0 rounded-full p-0.5 ${
+                  avatarLevel === 'rainbow' 
+                    ? 'bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 animate-pulse' 
+                    : `border-2 ${COLOR_STYLES[avatarLevel as keyof typeof COLOR_STYLES]?.progress.replace('bg-', 'border-')}`
+                }`}>
+                  <div className="w-full h-full bg-[hsl(216,46%,13%)] rounded-full"></div>
+                </div>
+              )}
+              <Trophy className="w-8 h-8 text-[hsl(31,84%,55%)] absolute inset-2" />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Filtres par catégorie */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-bold font-luckiest">Catégories</h3>
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {categories.map((category) => {
-              const IconComponent = category.icon;
+      {/* Statistiques générales */}
+      <div className="px-4 py-4">
+        <div className="grid grid-cols-4 gap-3">
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-[hsl(31,84%,55%)]">{stats.totalCards}</div>
+            <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
+          </div>
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-purple-400">{stats.autographsCount}</div>
+            <div className="text-xs text-[hsl(212,23%,69%)]">Autos</div>
+          </div>
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-blue-400">{stats.specialsCount}</div>
+            <div className="text-xs text-[hsl(212,23%,69%)]">Spéciales</div>
+          </div>
+          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 text-center">
+            <div className="text-xl font-bold text-green-400">{stats.followersCount}</div>
+            <div className="text-xs text-[hsl(212,23%,69%)]">Abonnés</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Progression par catégorie */}
+      <div className="px-4 pb-6 space-y-6">
+        {/* Collection */}
+        <div>
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center">
+            <Trophy className="w-5 h-5 mr-2 text-[hsl(31,84%,55%)]" />
+            Collection
+          </h2>
+          <div className="space-y-3">
+            {MILESTONE_CONFIG.collection.map((milestone) => {
+              const { progress, isUnlocked, progressPercentage } = getMilestoneProgress(milestone);
+              const colorStyle = COLOR_STYLES[milestone.color as keyof typeof COLOR_STYLES];
+
               return (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
-                    selectedCategory === category.id
-                      ? 'bg-[hsl(9,85%,67%)] text-white'
-                      : 'bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)] hover:bg-[hsl(214,35%,25%)]'
+                <div
+                  key={milestone.id}
+                  className={`p-4 rounded-lg border transition-all ${
+                    isUnlocked
+                      ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg}`
+                      : "bg-[hsl(214,35%,18%)] border-[hsl(214,35%,20%)]"
                   }`}
                 >
-                  <IconComponent className="w-4 h-4" />
-                  <span className="font-poppins text-sm">{category.name}</span>
-                </button>
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className={`font-medium ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                      {milestone.title}
+                    </h3>
+                    {milestone.rarity && (
+                      <span className={`text-xs px-2 py-1 rounded-full ${colorStyle.bg} ${colorStyle.text}`}>
+                        {milestone.rarity}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className={`text-sm mb-3 ${isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}`}>
+                    {milestone.description}
+                  </p>
+
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className={isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}>
+                        Progression
+                      </span>
+                      <span className={isUnlocked ? 'text-white' : 'text-gray-400'}>
+                        {progress}/{milestone.count}
+                      </span>
+                    </div>
+                    <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          isUnlocked ? colorStyle.progress : 'bg-gray-600'
+                        }`}
+                        style={{ width: `${progressPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
         </div>
 
-        {/* Liste des trophées */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-bold font-luckiest">
-            {selectedCategory === 'all' ? 'Tous les trophées' : 
-             categories.find(c => c.id === selectedCategory)?.name}
-          </h3>
-          
-          <div className="grid gap-4">
-            {filteredTrophies.map((trophy) => {
-              const IconComponent = getIconComponent(trophy.icon);
-              const isUnlocked = trophy.unlocked;
-              
+        {/* Autographes */}
+        <div>
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center">
+            <Medal className="w-5 h-5 mr-2 text-purple-400" />
+            Autographes
+          </h2>
+          <div className="space-y-3">
+            {MILESTONE_CONFIG.autographs.map((milestone) => {
+              const { progress, isUnlocked, progressPercentage } = getMilestoneProgress(milestone);
+              const colorStyle = COLOR_STYLES[milestone.color as keyof typeof COLOR_STYLES];
+
               return (
                 <div
-                  key={trophy.id}
-                  className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 border-2 transition-all ${
-                    isUnlocked 
-                      ? `${getRarityBorder(trophy.rarity)} shadow-lg` 
-                      : 'border-transparent opacity-75'
+                  key={milestone.id}
+                  className={`p-4 rounded-lg border transition-all ${
+                    isUnlocked
+                      ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg}`
+                      : "bg-[hsl(214,35%,18%)] border-[hsl(214,35%,20%)]"
                   }`}
                 >
-                  <div className="flex items-start space-x-4">
-                    {/* Icône */}
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                      isUnlocked 
-                        ? `bg-gradient-to-br ${getRarityColor(trophy.rarity)}`
-                        : 'bg-[hsl(214,35%,30%)]'
-                    }`}>
-                      <IconComponent className={`w-6 h-6 ${
-                        isUnlocked ? 'text-white' : 'text-[hsl(212,23%,69%)]'
-                      }`} />
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className={`font-medium ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                      {milestone.title}
+                    </h3>
+                    {milestone.rarity && (
+                      <span className={`text-xs px-2 py-1 rounded-full ${colorStyle.bg} ${colorStyle.text}`}>
+                        {milestone.rarity}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className={`text-sm mb-3 ${isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}`}>
+                    {milestone.description}
+                  </p>
+
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className={isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}>
+                        Progression
+                      </span>
+                      <span className={isUnlocked ? 'text-white' : 'text-gray-400'}>
+                        {progress}/{milestone.count}
+                      </span>
                     </div>
+                    <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          isUnlocked ? colorStyle.progress : 'bg-gray-600'
+                        }`}
+                        style={{ width: `${progressPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
 
-                    {/* Contenu */}
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className={`font-bold font-poppins ${
-                          isUnlocked ? 'text-white' : 'text-[hsl(212,23%,69%)]'
-                        }`}>
-                          {trophy.title}
-                        </h4>
-                        <div className="flex items-center space-x-1">
-                          <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                            trophy.rarity === 'legendary' ? 'bg-yellow-500/20 text-yellow-400' :
-                            trophy.rarity === 'epic' ? 'bg-purple-500/20 text-purple-400' :
-                            trophy.rarity === 'rare' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-gray-500/20 text-gray-400'
-                          }`}>
-                            {trophy.rarity === 'legendary' ? 'Légendaire' :
-                             trophy.rarity === 'epic' ? 'Épique' :
-                             trophy.rarity === 'rare' ? 'Rare' : 'Commun'}
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <p className="text-sm text-[hsl(212,23%,69%)] mb-3">
-                        {trophy.description}
-                      </p>
+        {/* Cartes Spéciales */}
+        <div>
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center">
+            <Star className="w-5 h-5 mr-2 text-blue-400" />
+            Cartes Spéciales
+          </h2>
+          <div className="space-y-3">
+            {MILESTONE_CONFIG.specials.map((milestone) => {
+              const { progress, isUnlocked, progressPercentage } = getMilestoneProgress(milestone);
+              const colorStyle = COLOR_STYLES[milestone.color as keyof typeof COLOR_STYLES];
 
-                      {/* Progression */}
-                      {trophy.maxProgress && (
-                        <div className="space-y-1">
-                          <div className="flex justify-between text-xs text-[hsl(212,23%,69%)]">
-                            <span>Progression</span>
-                            <span>{trophy.progress || 0}/{trophy.maxProgress}</span>
-                          </div>
-                          <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
-                            <div 
-                              className={`h-2 rounded-full transition-all duration-300 ${
-                                isUnlocked 
-                                  ? `bg-gradient-to-r ${getRarityColor(trophy.rarity)}`
-                                  : 'bg-[hsl(212,23%,69%)]'
-                              }`}
-                              style={{ 
-                                width: `${Math.min(((trophy.progress || 0) / trophy.maxProgress) * 100, 100)}%` 
-                              }}
-                            />
-                          </div>
-                        </div>
-                      )}
+              return (
+                <div
+                  key={milestone.id}
+                  className={`p-4 rounded-lg border transition-all ${
+                    isUnlocked
+                      ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg}`
+                      : "bg-[hsl(214,35%,18%)] border-[hsl(214,35%,20%)]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className={`font-medium ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                      {milestone.title}
+                    </h3>
+                    {milestone.rarity && (
+                      <span className={`text-xs px-2 py-1 rounded-full ${colorStyle.bg} ${colorStyle.text}`}>
+                        {milestone.rarity}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <p className={`text-sm mb-3 ${isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}`}>
+                    {milestone.description}
+                  </p>
 
-                      {/* Date de déblocage */}
-                      {isUnlocked && trophy.unlockedAt && (
-                        <p className="text-xs text-[hsl(212,23%,69%)] mt-2">
-                          Débloqué le {trophy.unlockedAt.toLocaleDateString('fr-FR')}
-                        </p>
-                      )}
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className={isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}>
+                        Progression
+                      </span>
+                      <span className={isUnlocked ? 'text-white' : 'text-gray-400'}>
+                        {progress}/{milestone.count}
+                      </span>
+                    </div>
+                    <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          isUnlocked ? colorStyle.progress : 'bg-gray-600'
+                        }`}
+                        style={{ width: `${progressPercentage}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Social (sans trophées) */}
+        <div>
+          <h2 className="text-lg font-semibold text-white mb-3 flex items-center">
+            <Award className="w-5 h-5 mr-2 text-green-400" />
+            Social (Jalons uniquement)
+          </h2>
+          <div className="space-y-3">
+            {MILESTONE_CONFIG.social.map((milestone) => {
+              const { progress, isUnlocked, progressPercentage } = getMilestoneProgress(milestone);
+              const colorStyle = COLOR_STYLES[milestone.color as keyof typeof COLOR_STYLES];
+
+              return (
+                <div
+                  key={milestone.id}
+                  className={`p-4 rounded-lg border transition-all ${
+                    isUnlocked
+                      ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg}`
+                      : "bg-[hsl(214,35%,18%)] border-[hsl(214,35%,20%)]"
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className={`font-medium ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                      {milestone.title}
+                    </h3>
+                    <span className="text-xs px-2 py-1 rounded-full bg-gray-600/20 text-gray-400">
+                      Jalon
+                    </span>
+                  </div>
+                  
+                  <p className={`text-sm mb-3 ${isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}`}>
+                    {milestone.description}
+                  </p>
+
+                  <div className="mb-2">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className={isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}>
+                        Progression
+                      </span>
+                      <span className={isUnlocked ? 'text-white' : 'text-gray-400'}>
+                        {progress}/{milestone.count}
+                      </span>
+                    </div>
+                    <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          isUnlocked ? colorStyle.progress : 'bg-gray-600'
+                        }`}
+                        style={{ width: `${progressPercentage}%` }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -309,8 +423,6 @@ export default function Trophies() {
           </div>
         </div>
       </div>
-      
-      <Navigation />
     </div>
   );
 }
