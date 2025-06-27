@@ -376,21 +376,13 @@ export default function Profile() {
       <main className="pb-6">
         {/* Header centré */}
         <div className="text-center px-6 py-8">
-          {/* Avatar dynamique */}
-          <div className="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden border-2 border-orange-400">
-            {profileUser.avatar && (profileUser.avatar.startsWith('data:image') || profileUser.avatar.startsWith('http')) ? (
-              <img 
-                src={profileUser.avatar} 
-                alt={profileUser.name}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-                <span className="text-white text-lg font-bold">
-                  {profileUser.name.charAt(0).toUpperCase()}
-                </span>
-              </div>
-            )}
+          {/* Avatar dynamique avec système de trophées */}
+          <div className="mx-auto mb-3">
+            <TrophyAvatar 
+              userId={profileUser.id}
+              avatar={profileUser.avatar || undefined}
+              size="md"
+            />
           </div>
 
           {/* Nom avec taille ajustée */}

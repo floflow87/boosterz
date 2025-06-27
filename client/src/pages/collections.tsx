@@ -528,11 +528,9 @@ export default function Collections() {
         {user && (
           <div className="flex flex-col items-center text-center mb-4 mt-2">
             <TrophyAvatar 
-              user={user}
-              personalCards={personalCards || []}
+              userId={user.id}
+              avatar={user.avatar || undefined}
               size="lg"
-              showBorder={true}
-              fallbackImage={avatarImage}
             />
             <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
