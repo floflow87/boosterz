@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Heart, MessageCircle, Users, Mail, CheckCheck, X } from "lucide-react";
+import { Heart, MessageCircle, Users, Mail, CheckCheck, ArrowLeft, Settings } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { apiRequest } from "@/lib/queryClient";
@@ -143,24 +143,29 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
         className="max-w-full w-full h-full bg-[hsl(216,46%,13%)] border-none p-0 m-0 rounded-none flex flex-col"
         style={{ maxWidth: '100vw', maxHeight: '100vh' }}
       >
-        {/* Header with close button */}
-        <div className="flex-shrink-0 p-4 border-b border-[hsl(214,35%,30%)]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <h1 className="text-lg font-semibold text-white font-luckiest">
-                <span className="text-white">Booster</span>
-                <span className="text-[hsl(9,85%,67%)]">z</span>
-              </h1>
-            </div>
-            
+        {/* Header - identical to other pages */}
+        <header className="relative z-10 flex items-center justify-between p-4 pt-4">
+          <div className="flex items-center space-x-3">
             <button 
               onClick={onClose}
-              className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center text-[hsl(212,23%,69%)] hover:text-white transition-colors"
+              className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
             >
-              <X className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+            </button>
+            <h1 className="text-lg font-semibold text-white font-luckiest">
+              <span className="text-white">Booster</span>
+              <span className="text-[hsl(9,85%,67%)]">z</span>
+            </h1>
+          </div>
+          
+          <div className="flex items-center space-x-3">
+            <button 
+              className="w-10 h-10 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center"
+            >
+              <Settings className="w-5 h-5 text-[hsl(212,23%,69%)]" />
             </button>
           </div>
-        </div>
+        </header>
 
         {/* Content Header */}
         <div className="flex-shrink-0 p-4">
