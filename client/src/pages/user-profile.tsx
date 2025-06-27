@@ -593,20 +593,20 @@ export default function UserProfile() {
                     )}
                     
                     <div className="space-y-1">
-                      {/* Nom du joueur */}
+                      {/* Nom du joueur en haut */}
                       {card.playerName && (
-                        <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
+                        <h4 className="text-white font-bold text-sm truncate uppercase">{card.playerName}</h4>
                       )}
                       
-                      {/* Équipe */}
+                      {/* Équipe en dessous */}
                       {card.teamName && (
-                        <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
+                        <p className="text-gray-300 text-xs truncate">{card.teamName}</p>
                       )}
                       
-                      {/* Collection et Prix sur la même ligne */}
+                      {/* Collection (gauche) et Prix (droite) sur la même ligne */}
                       <div className="flex items-center justify-between mt-1">
-                        <div className="text-gray-500 text-xs truncate">
-                          {card.collectionName || 'Score Ligue 1'}
+                        <div className="text-gray-400 text-xs truncate">
+                          Score Ligue 1
                         </div>
                         {card.salePrice && (
                           <div className="text-[hsl(9,85%,67%)] text-xs font-bold">
@@ -615,9 +615,9 @@ export default function UserProfile() {
                         )}
                       </div>
                       
-                      {/* Saison en dessous */}
-                      <div className="text-gray-500 text-xs">
-                        {card.season || '23/24'}
+                      {/* Saison en bas */}
+                      <div className="text-gray-400 text-xs">
+                        23/24
                       </div>
                     </div>
                   </div>
