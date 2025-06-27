@@ -1188,36 +1188,36 @@ export default function Social() {
                           {postComments[post.id] && postComments[post.id].length > 0 && (
                             <div className="space-y-3 mb-4">
                               {postComments[post.id].map((comment) => (
-                              <div key={comment.id} className="flex space-x-3">
-                                <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                                  {comment.user?.avatar ? (
-                                    <img 
-                                      src={comment.user.avatar} 
-                                      alt={`Avatar de ${comment.user.name}`} 
-                                      className="w-full h-full object-cover rounded-full"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
-                                      <span className="text-xs font-bold text-white">
-                                        {comment.user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                                      </span>
+                                <div key={comment.id} className="flex space-x-3">
+                                  <div className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                                    {comment.user?.avatar ? (
+                                      <img 
+                                        src={comment.user.avatar} 
+                                        alt={`Avatar de ${comment.user.name}`} 
+                                        className="w-full h-full object-cover rounded-full"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center">
+                                        <span className="text-xs font-bold text-white">
+                                          {comment.user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
+                                      <div className="flex items-center space-x-2 mb-1">
+                                        <span className="text-white font-medium text-sm">
+                                          {comment.user?.name}
+                                        </span>
+                                        <span className="text-gray-400 text-xs">
+                                          {formatTimeAgo(comment.createdAt)}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-200 text-sm">{comment.content}</p>
                                     </div>
-                                  )}
-                                </div>
-                                <div className="flex-1">
-                                  <div className="bg-[hsl(214,35%,18%)] rounded-lg px-3 py-2">
-                                    <div className="flex items-center space-x-2 mb-1">
-                                      <span className="text-white font-medium text-sm">
-                                        {comment.user?.name}
-                                      </span>
-                                      <span className="text-gray-400 text-xs">
-                                        {formatTimeAgo(comment.createdAt)}
-                                      </span>
-                                    </div>
-                                    <p className="text-gray-200 text-sm">{comment.content}</p>
                                   </div>
                                 </div>
-                              </div>
                               ))}
                             </div>
                           )}
