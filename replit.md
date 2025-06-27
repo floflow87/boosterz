@@ -118,15 +118,16 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 27, 2025. Moved card prices to bottom-right position and corrected French spelling
-  - Removed "$" symbol from all price displays throughout the application
-  - Moved price display from bottom-center to bottom-right corner of cards for better visual balance
-  - Corrected all instances of "autograph" to proper French spelling "autographe" in:
+- June 27, 2025. Completed card price display fixes and French spelling corrections
+  - **Fixed "$" symbol removal**: Removed "$" symbol from ALL price displays in grid, list, and card views
+  - **Corrected price positioning**: Moved price display from bottom-center to bottom-right corner in grid view
+  - **Fixed list view prices**: Removed "$" symbols from trade prices in list view sections
+  - **French spelling corrections**: Changed all instances of "autograph" to "autographe" in:
     - Server seed database (variable names, card types, rarities)
     - Client-side player filtering logic for autographe detection
     - Card type recognition system
-  - Updated card display component to show prices without currency symbols
-  - Enhanced card price positioning with improved styling and shadow effects
+  - **Enhanced styling**: Improved card price positioning with better shadow effects and background
+  - All card views (grid, list, card detail) now display prices without currency symbols correctly
 - June 27, 2025. Prepared SSL certificate configuration for boosterz.fr deployment
   - Created comprehensive SSL setup documentation (ssl-setup.md) with Let's Encrypt integration
   - Configured production-ready Nginx reverse proxy (nginx-boosterz.conf) with security headers

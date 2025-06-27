@@ -193,7 +193,7 @@ export default function CardDisplay({
                 <div className="flex items-center text-xs">
                   <Handshake className="w-3 h-3 mr-1 text-blue-400" />
                   <span className="text-blue-400">Vente & Trade</span>
-                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice?.replace('$', '')}</span>
                 </div>
               )}
               {card.isForTrade && card.tradeOnly && (
@@ -205,7 +205,7 @@ export default function CardDisplay({
               {card.tradePrice && !card.isForTrade && (
                 <div className="flex items-center text-xs">
                   <span className="text-green-400">À vendre:</span>
-                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice}</span>
+                  <span className="ml-2 text-green-400 font-bold">{card.tradePrice?.replace('$', '')}</span>
                 </div>
               )}
             </div>
@@ -341,7 +341,7 @@ export default function CardDisplay({
         {card.tradePrice && !card.tradeOnly && (
           <div className="absolute bottom-2 right-2">
             <span className="bg-black/80 text-white px-2 py-1 rounded text-xs font-bold shadow-lg">
-              {card.tradePrice}
+              {card.tradePrice?.replace('$', '')}
             </span>
           </div>
         )}
