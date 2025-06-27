@@ -8,6 +8,7 @@ import { ArrowLeft, Settings, Heart, MessageCircle, Share2, Bell } from "lucide-
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import NotificationsModal from "@/components/NotificationsModal";
+import TrophyAvatar from "@/components/TrophyAvatar";
 
 interface User {
   id: number;
@@ -124,6 +125,12 @@ export default function Profile() {
 
   const { data: currentUser } = useQuery({
     queryKey: ["/api/users/me"],
+  });
+
+  // Query pour les cartes personnelles du profil visité (pour le TrophyAvatar)
+  const { data: personalCards = [] } = useQuery({
+    queryKey: [`/api/users/${userId}/personal-cards`],
+    enabled: !!userId,
   });
 
   // Récupérer les likes des posts

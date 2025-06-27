@@ -18,6 +18,7 @@ import type { User, Collection, Card } from "@shared/schema";
 import MilestoneCelebration from "@/components/MilestoneCelebration";
 import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
 import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
+import TrophyAvatar from "@/components/TrophyAvatar";
 
 const getThemeGradient = (themeColors: string) => {
   const themeStyles: Record<string, string> = {
@@ -526,21 +527,13 @@ export default function Collections() {
         {/* User Profile Section */}
         {user && (
           <div className="flex flex-col items-center text-center mb-4 mt-2">
-            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg relative">
-              {user.avatar ? (
-                <img 
-                  src={user.avatar} 
-                  alt="Avatar utilisateur"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
-                />
-              ) : (
-                <img 
-                  src={avatarImage} 
-                  alt="Avatar par défaut"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
-                />
-              )}
-            </div>
+            <TrophyAvatar 
+              user={user}
+              personalCards={personalCards || []}
+              size="lg"
+              showBorder={true}
+              fallbackImage={avatarImage}
+            />
             <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
               <div className="flex items-center space-x-1">
