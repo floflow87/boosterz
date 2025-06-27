@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Heart, MessageCircle, Users, Mail, CheckCheck, ArrowLeft, Settings } from "lucide-react";
@@ -139,18 +138,16 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
 
   const unreadCount = notifications.filter((n: any) => !n.isRead).length;
 
+  if (!isOpen) return null;
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent 
-        className={`max-w-full w-full h-full bg-[hsl(216,46%,13%)] border-none p-0 m-0 rounded-none flex flex-col transform transition-transform duration-500 ease-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
-        style={{ 
-          maxWidth: '100vw', 
-          maxHeight: '100vh',
-          animation: isOpen ? 'slideInFromRight 0.4s ease-out' : 'slideOutToRight 0.4s ease-in'
-        }}
-      >
+    <div 
+      className="fixed inset-0 bg-[hsl(216,46%,13%)] z-50"
+      style={{
+        animation: 'slideInFromRight 0.4s ease-out'
+      }}
+    >
+      <div className="w-full h-full flex flex-col">
         {/* Enhanced main color halo effect */}
         <div
           className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-30 blur-3xl pointer-events-none animate-pulse"
@@ -291,7 +288,7 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+      </div>
+    </div>
   );
 }
