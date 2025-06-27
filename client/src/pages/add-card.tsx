@@ -235,15 +235,16 @@ export default function AddCard() {
       season: season || null,
       imageUrl: editedImage || null,
       condition: condition || null,
-      salePrice: isForSale ? salePrice : null,
+      salePrice: isForSale ? parseFloat(salePrice) || null : null,
       saleDescription: isForSale ? saleDescription : null,
       isForSale: isForSale,
-      tradePrice: isForSale ? salePrice : null,
+      tradePrice: isForSale ? parseFloat(salePrice) || null : null,
       tradeDescription: isForSale ? saleDescription : null,
       isForTrade: isForSale,
       tradeOnly: false,
     };
 
+    console.log("Submitting card data:", cardData);
     addPersonalCardMutation.mutate(cardData);
   };
 
