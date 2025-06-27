@@ -210,7 +210,7 @@ class MilestoneDetector {
     }
 
     const rareTypes = [
-      { type: 'autograph', rarity: 'legendary' as const, title: 'Autographe Trouvé!', desc: 'Tu as déniché un autographe rare!' },
+      { type: 'autographe', rarity: 'legendary' as const, title: 'Autographe Trouvé!', desc: 'Tu as déniché un autographe rare!' },
       { type: 'insert', rarity: 'epic' as const, title: 'Carte Insert!', desc: 'Une carte spéciale ajoutée à ta collection!' },
       { type: 'parallel', rarity: 'rare' as const, title: 'Parallèle Brillante!', desc: 'Une carte parallèle scintillante!' }
     ];

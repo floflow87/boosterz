@@ -44,7 +44,7 @@ export const cards = pgTable("cards", {
   reference: text("reference").notNull(), // Ex: "004" - remplace cardNumber
   playerName: text("player_name"),
   teamName: text("team_name"),
-  cardType: text("card_type").notNull(), // "base", "base_numbered", "insert", "autograph", "numbered", "special_1_1"
+  cardType: text("card_type").notNull(), // "base", "base_numbered", "insert", "autographe", "numbered", "special_1_1"
   cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", "intergalactic_hit", etc.
   season: text("season"), // "22/23", "23/24", etc.
   imageUrl: text("image_url"),
