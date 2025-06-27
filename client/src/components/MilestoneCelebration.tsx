@@ -111,7 +111,7 @@ export default function MilestoneCelebration({ milestone, onClose }: MilestoneCe
       }, 5000);
       return () => clearTimeout(timer);
     }
-  }, [milestone, onClose]);
+  }, [milestone]);
 
   if (!milestone) return null;
 
