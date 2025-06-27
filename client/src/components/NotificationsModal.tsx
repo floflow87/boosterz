@@ -142,15 +142,31 @@ export default function NotificationsModal({ isOpen, onClose }: NotificationsMod
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className="max-w-full w-full h-full bg-[hsl(216,46%,13%)] border-none p-0 m-0 rounded-none flex flex-col"
-        style={{ maxWidth: '100vw', maxHeight: '100vh' }}
+        className={`max-w-full w-full h-full bg-[hsl(216,46%,13%)] border-none p-0 m-0 rounded-none flex flex-col transform transition-transform duration-500 ease-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        style={{ 
+          maxWidth: '100vw', 
+          maxHeight: '100vh',
+          animation: isOpen ? 'slideInFromRight 0.4s ease-out' : 'slideOutToRight 0.4s ease-in'
+        }}
       >
-        {/* Main color halo effect */}
+        {/* Enhanced main color halo effect */}
         <div
-          className="absolute top-0 left-0 w-64 h-64 rounded-full opacity-20 blur-3xl pointer-events-none"
+          className="absolute top-0 left-0 w-80 h-80 rounded-full opacity-30 blur-3xl pointer-events-none animate-pulse"
           style={{
-            background: 'radial-gradient(circle, hsl(9, 85%, 67%) 0%, transparent 70%)',
-            transform: 'translate(-50%, -50%)',
+            background: 'radial-gradient(circle, hsl(9, 85%, 67%) 0%, hsl(9, 85%, 67%) 20%, transparent 70%)',
+            transform: 'translate(-60%, -60%)',
+            animationDuration: '4s',
+          }}
+        />
+        
+        {/* Secondary halo for more depth */}
+        <div
+          className="absolute top-0 left-0 w-96 h-96 rounded-full opacity-15 blur-3xl pointer-events-none"
+          style={{
+            background: 'radial-gradient(circle, hsl(25, 90%, 60%) 0%, transparent 60%)',
+            transform: 'translate(-70%, -70%)',
           }}
         />
         
