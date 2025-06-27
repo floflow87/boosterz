@@ -1468,15 +1468,14 @@ export default function Social() {
                     <div className="space-y-1">
                       <h4 className="text-white font-bold text-xs truncate font-luckiest">{card.playerName}</h4>
                       <p className="text-gray-400 text-xs truncate font-poppins">{card.teamName}</p>
-                      <div className="flex items-center gap-1">
-                        <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
-                        <span className="text-[hsl(9,85%,67%)] font-bold text-xs">
-                          {card.salePrice ? `${card.salePrice}€` : 'Négoc.'}
-                        </span>
-                      </div>
                       <div className="text-gray-500 text-xs">
                         <div>Score Ligue 1</div>
-                        <div>{card.season || '23/24'}</div>
+                        <div className="flex justify-between items-center">
+                          <span>{card.season || '23/24'}</span>
+                          <span className="text-[hsl(9,85%,67%)] font-bold">
+                            {card.salePrice ? `${card.salePrice}€` : 'Négoc.'}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2005,6 +2004,17 @@ export default function Social() {
                     </div>
                   </div>
                 )}
+
+                {/* Vendeur */}
+                <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                  <div className="text-white font-medium text-sm mb-2">Vendeur</div>
+                  <button
+                    onClick={() => setLocation(`/profile/${selectedMarketplaceCard.userId}`)}
+                    className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,77%)] font-medium text-sm transition-colors cursor-pointer underline"
+                  >
+                    {selectedMarketplaceCard.sellerName || 'Vendeur'}
+                  </button>
+                </div>
 
                 {/* Informations techniques */}
                 <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
