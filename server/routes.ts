@@ -2043,6 +2043,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const likesCount = parseInt(likesCountResult[0]?.count?.toString() || '0');
       console.log(`Post ${postId} now has ${likesCount} likes, user ${userId} liked: ${liked}`);
 
+      // Mettre à jour le compteur de likes dans la table posts
+      await db.update(posts)
+        .set({ likesCount })
+        .where(eq(posts.id, postId));
+
+      console.log(`Updated likes_count in posts table for post ${postId}: ${likesCount}`);
+
       res.json({ liked, likesCount });
     } catch (error) {
       console.error("Erreur lors du like/unlike:", error);
