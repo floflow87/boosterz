@@ -19,6 +19,7 @@ import Shop from "@/pages/shop";
 import Settings from "@/pages/settings";
 import Profile from "@/pages/profile";
 import ProfileEdit from "@/pages/profile-edit";
+import Trophies from "@/pages/trophies";
 import UserProfile from "@/pages/user-profile";
 import Feed from "@/pages/feed";
 import Welcome from "@/pages/welcome";
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
+      <Route path="/trophies" component={Trophies} />
       <Route path="/profile" component={ProfileEdit} />
       <Route path="/profile/:userId" component={Profile} />
       <Route path="/user/:userId" component={UserProfile} />

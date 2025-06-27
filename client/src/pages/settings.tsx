@@ -3,7 +3,7 @@ import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
 import NotificationsModal from "@/components/NotificationsModal";
-import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight } from "lucide-react";
+import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight, Trophy } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Settings() {
@@ -34,6 +34,26 @@ export default function Settings() {
                   <div>
                     <h3 className="font-bold font-poppins">Profil</h3>
                     <p className="text-sm text-[hsl(212,23%,69%)]">Modifier vos informations</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+              </div>
+            </div>
+
+            {/* Trophées */}
+            <div 
+              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+              onClick={() => {
+                // TODO: Créer la page des trophées
+                console.log("Navigation vers les trophées");
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Trophy className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                  <div>
+                    <h3 className="font-bold font-poppins">Trophées</h3>
+                    <p className="text-sm text-[hsl(212,23%,69%)]">Vos accomplissements</p>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
