@@ -23,37 +23,72 @@ export default function Settings() {
           <h2 className="text-xl font-bold font-luckiest">Paramètres</h2>
           
           <div className="space-y-2">
-            {[
-              { icon: User, title: "Profil", subtitle: "Modifier vos informations", path: "/profile", action: undefined },
-              { icon: Bell, title: "Notifications", subtitle: "Gérer les alertes", path: null, action: () => { console.log("Opening notifications modal"); setShowNotifications(true); } },
-              { icon: Shield, title: "Confidentialité", subtitle: "Contrôle des données", path: null, action: undefined },
-              { icon: HelpCircle, title: "Aide & Support", subtitle: "FAQ et contact", path: null, action: undefined }
-            ].map((item, index) => (
-              <div 
-                key={index} 
-                className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 ${(item.path || item.action) ? 'cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors' : ''}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (item.path) {
-                    setLocation(item.path);
-                  } else if (item.action) {
-                    item.action();
-                  }
-                }}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3">
-                    <item.icon className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-                    <div>
-                      <h3 className="font-bold font-poppins">{item.title}</h3>
-                      <p className="text-sm text-[hsl(212,23%,69%)]">{item.subtitle}</p>
-                    </div>
+            {/* Profil */}
+            <div 
+              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+              onClick={() => setLocation("/profile")}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <User className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                  <div>
+                    <h3 className="font-bold font-poppins">Profil</h3>
+                    <p className="text-sm text-[hsl(212,23%,69%)]">Modifier vos informations</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
                 </div>
+                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
               </div>
-            ))}
+            </div>
+
+            {/* Notifications */}
+            <div 
+              className="bg-[hsl(214,35%,22%)] rounded-lg p-4 cursor-pointer hover:bg-[hsl(214,35%,25%)] transition-colors"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log("Opening notifications modal");
+                setShowNotifications(true);
+              }}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Bell className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                  <div>
+                    <h3 className="font-bold font-poppins">Notifications</h3>
+                    <p className="text-sm text-[hsl(212,23%,69%)]">Gérer les alertes</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+              </div>
+            </div>
+
+            {/* Confidentialité */}
+            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Shield className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                  <div>
+                    <h3 className="font-bold font-poppins">Confidentialité</h3>
+                    <p className="text-sm text-[hsl(212,23%,69%)]">Contrôle des données</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+              </div>
+            </div>
+
+            {/* Aide & Support */}
+            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <HelpCircle className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                  <div>
+                    <h3 className="font-bold font-poppins">Aide & Support</h3>
+                    <p className="text-sm text-[hsl(212,23%,69%)]">FAQ et contact</p>
+                  </div>
+                </div>
+                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
+              </div>
+            </div>
           </div>
         </div>
 
