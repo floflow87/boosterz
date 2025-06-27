@@ -859,18 +859,7 @@ export default function Profile() {
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="space-y-3 pt-4">
-                  <button className="w-full bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
-                    Contacter le vendeur
-                  </button>
-                  <button 
-                    onClick={() => setSelectedCard(null)}
-                    className="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200"
-                  >
-                    Fermer
-                  </button>
-                </div>
+
               </div>
             </div>
           </div>

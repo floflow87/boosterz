@@ -1452,7 +1452,7 @@ export default function Social() {
                         <img 
                           src={card.imageUrl} 
                           alt={card.playerName || 'Carte'} 
-                          className="w-full h-full object-cover rounded-md transform group-hover:scale-110 transition-transform duration-300" 
+                          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300" 
                         />
                       ) : (
                         <div className="text-white text-center p-2">
@@ -1462,7 +1462,7 @@ export default function Social() {
                       )}
                       
                       {/* Overlay with hover effect */}
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md"></div>
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300"></div>
                     </div>
                     
                     <div className="space-y-1">
