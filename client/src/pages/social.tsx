@@ -168,9 +168,9 @@ export default function Social() {
 
   // Mettre à jour les likes quand les données arrivent
   useEffect(() => {
-    if (userLikes.length > 0) {
-      setLikedPosts(new Set(userLikes));
-    }
+    // Toujours initialiser le Set, même s'il est vide
+    setLikedPosts(new Set(userLikes));
+    console.log('Initializing liked posts with:', userLikes);
   }, [userLikes]);
 
   // Initialiser les likes et commentaires des posts avec les vraies données
