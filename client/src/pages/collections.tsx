@@ -1734,16 +1734,19 @@ export default function Collections() {
 
       {/* Development Test Button - Hidden in production */}
 
-      {/* Floating Add Card Button */}
-      <button
-        onClick={() => setLocation("/add-card")}
-        className="fixed bottom-6 right-6 w-16 h-16 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 hover:scale-110"
-        style={{
-          boxShadow: '0 4px 20px rgba(240, 101, 67, 0.3), 0 0 0 0 rgba(240, 101, 67, 0.4)',
-        }}
-      >
-        <Plus className="w-8 h-8" />
-      </button>
+      {/* Floating Add Card Button - Only in "Mes cartes" tab and when no fullscreen modal */}
+      {activeTab === "cards" && !showCardFullscreen && (
+        <button
+          onClick={() => setLocation("/add-card")}
+          className="fixed bottom-20 right-4 w-10 h-10 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] active:bg-[hsl(9,85%,55%)] text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 hover:scale-110 active:scale-95"
+          style={{
+            borderRadius: '12px',
+            boxShadow: '0 4px 16px rgba(240, 101, 67, 0.25), 0 0 0 0 rgba(240, 101, 67, 0.3)',
+          }}
+        >
+          <Plus className="w-5 h-5" />
+        </button>
+      )}
 
       <Navigation />
     </div>
