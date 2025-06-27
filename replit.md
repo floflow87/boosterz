@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Fixed comment system date formatting and avatar display issues
+  - Resolved French date format parsing (DD/MM/YYYY HH:MM) to display proper timestamps like "Il y a 2h"
+  - Fixed avatar display for both existing and newly posted comments throughout social feed
+  - Corrected user name and avatar assignment for new comments to show current user's data instead of profile owner's
+  - Enhanced comment data processing to handle multiple data structures (nested user object vs flat fields)
+  - Comments now display authentic user avatars and proper French-formatted timestamps consistently
 - June 25, 2025. Enhanced marketplace display with authentic user cards for sale
   - Removed all dummy/fake cards from marketplace and user profile "En vente" tabs
   - Implemented real card sales system using personal_cards table with is_for_sale flag

@@ -180,20 +180,28 @@ export default function Social() {
       const likes: Record<number, number> = {};
       const comments: Record<number, number> = {};
       allPosts.forEach(post => {
-        // Utiliser le likesCount du serveur ou garder la valeur existante si elle est plus récente
-        const currentLikeCount = postLikes[post.id];
+        // Always use server data for initial load, but preserve user interactions
         const serverLikeCount = post.likesCount || 0;
-        likes[post.id] = currentLikeCount !== undefined ? currentLikeCount : serverLikeCount;
-        
-        // Même logique pour les commentaires
-        const currentCommentCount = postCommentsCount[post.id];
         const serverCommentCount = post.commentsCount || 0;
-        comments[post.id] = currentCommentCount !== undefined ? currentCommentCount : serverCommentCount;
+        
+        // Only initialize if we don't have data yet
+        if (postLikes[post.id] === undefined) {
+          likes[post.id] = serverLikeCount;
+        }
+        if (postCommentsCount[post.id] === undefined) {
+          comments[post.id] = serverCommentCount;
+        }
       });
-      setPostLikes(prev => ({ ...prev, ...likes }));
-      setPostCommentsCount(prev => ({ ...prev, ...comments }));
+      
+      // Only update if we have new data to set
+      if (Object.keys(likes).length > 0) {
+        setPostLikes(prev => ({ ...prev, ...likes }));
+      }
+      if (Object.keys(comments).length > 0) {
+        setPostCommentsCount(prev => ({ ...prev, ...comments }));
+      }
     }
-  }, [feed.length, myPosts.length]); // Only depend on array lengths to avoid infinite loops
+  }, [feed, myPosts]); // Depend on actual posts data, not just length
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
