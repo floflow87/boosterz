@@ -603,21 +603,17 @@ export default function UserProfile() {
                         <p className="text-gray-300 text-xs truncate">{card.teamName}</p>
                       )}
                       
-                      {/* Collection (gauche) et Prix (droite) sur la même ligne */}
+                      {/* Collection et Saison (gauche) et Prix (droite) sur la même ligne */}
                       <div className="flex items-center justify-between mt-1">
                         <div className="text-gray-400 text-xs truncate">
-                          Score Ligue 1
+                          <div>Score Ligue 1</div>
+                          <div>23/24</div>
                         </div>
                         {card.salePrice && (
                           <div className="text-[hsl(9,85%,67%)] text-xs font-bold">
                             {card.salePrice}€
                           </div>
                         )}
-                      </div>
-                      
-                      {/* Saison en bas */}
-                      <div className="text-gray-400 text-xs">
-                        23/24
                       </div>
                     </div>
                   </div>
