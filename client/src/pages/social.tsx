@@ -1253,8 +1253,18 @@ export default function Social() {
                       className="w-full text-left px-4 py-3 hover:bg-[hsl(214,35%,25%)] transition-colors border-b border-[hsl(214,35%,30%)] last:border-b-0"
                     >
                       <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                          {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
+                          {user.avatar ? (
+                            <img 
+                              src={user.avatar} 
+                              alt={`Avatar de ${user.name || user.username}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold text-xs">
+                              {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
+                            </div>
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center space-x-2">
@@ -1303,8 +1313,18 @@ export default function Social() {
                   <div key={user.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-4 border border-[hsl(214,35%,30%)]">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center space-x-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold">
-                          {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                          {user.avatar ? (
+                            <img 
+                              src={user.avatar} 
+                              alt={`Avatar de ${user.name || user.username}`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center text-white font-bold">
+                              {user.name?.charAt(0)?.toUpperCase() || user.username?.charAt(0)?.toUpperCase() || 'U'}
+                            </div>
+                          )}
                         </div>
                         <div>
                           <button 
@@ -1381,8 +1401,8 @@ export default function Social() {
               />
             </div>
             
-            {/* Cards for sale with same size as collections */}
-            <div className="card-grid">
+            {/* Cards for sale - 2 per line on mobile, more on larger screens */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
               {filteredCardsForSale.length === 0 ? (
                 <div className="col-span-full text-center py-8">
                   <div className="text-gray-400">
@@ -1393,45 +1413,44 @@ export default function Social() {
                 filteredCardsForSale.map((card) => (
                   <div 
                     key={card.id} 
-                    className="card-clickable bg-[hsl(214,35%,22%)] rounded-xl p-3 card-hover cursor-pointer group relative transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50"
+                    className="card-clickable bg-[hsl(214,35%,22%)] rounded-lg p-2 card-hover cursor-pointer group relative transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50"
                     onClick={() => setSelectedMarketplaceCard(card)}
                   >
-                    {/* Badge "En vente" */}
-                    <div className="absolute top-2 right-2 bg-[hsl(9,85%,67%)] text-white px-2 py-1 rounded-full font-bold text-xs z-10 shadow-lg">
+                    {/* Badge "En vente" - plus petit */}
+                    <div className="absolute top-1 right-1 bg-[hsl(9,85%,67%)] text-white px-1.5 py-0.5 rounded-full font-bold text-xs z-10 shadow-lg">
                       VENTE
                     </div>
                     
-                    <div className="aspect-[3/4] bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
+                    <div className="aspect-[3/4] bg-gradient-to-br from-gray-800 to-gray-900 rounded-md mb-2 flex items-center justify-center overflow-hidden relative">
                       {card.imageUrl ? (
                         <img 
                           src={card.imageUrl} 
                           alt={card.playerName || 'Carte'} 
-                          className="w-full h-full object-cover rounded-lg transform group-hover:scale-110 transition-transform duration-300" 
+                          className="w-full h-full object-cover rounded-md transform group-hover:scale-110 transition-transform duration-300" 
                         />
                       ) : (
-                        <div className="text-white text-center p-4">
-                          <div className="text-sm font-bold mb-1 text-[hsl(9,85%,67%)]">{card.playerName}</div>
+                        <div className="text-white text-center p-2">
+                          <div className="text-xs font-bold mb-1 text-[hsl(9,85%,67%)]">{card.playerName}</div>
                           <div className="text-xs text-gray-300">{card.teamName}</div>
-                          <div className="text-xs text-gray-400 mt-2">{card.cardType}</div>
                         </div>
                       )}
                       
                       {/* Overlay with hover effect */}
-                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-lg"></div>
+                      <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 rounded-md"></div>
                     </div>
                     
-                    <div className="space-y-2">
-                      <h4 className="text-white font-bold text-sm truncate font-luckiest">{card.playerName}</h4>
+                    <div className="space-y-1">
+                      <h4 className="text-white font-bold text-xs truncate font-luckiest">{card.playerName}</h4>
                       <p className="text-gray-400 text-xs truncate font-poppins">{card.teamName}</p>
-                      <div className="flex items-center gap-1 pt-1">
+                      <div className="flex items-center gap-1">
                         <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
-                        <span className="text-[hsl(9,85%,67%)] font-bold text-sm">
-                          {card.salePrice ? `${card.salePrice}€` : 'Prix à négocier'}
+                        <span className="text-[hsl(9,85%,67%)] font-bold text-xs">
+                          {card.salePrice ? `${card.salePrice}€` : 'Négoc.'}
                         </span>
                       </div>
                       <div className="text-gray-500 text-xs">
-                        <div>Collection: Score Ligue 1</div>
-                        <div>Saison: {card.season || '23/24'}</div>
+                        <div>Score Ligue 1</div>
+                        <div>{card.season || '23/24'}</div>
                       </div>
                     </div>
                   </div>

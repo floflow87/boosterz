@@ -317,7 +317,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const followedUserIds = followedUsers.map(f => f.followingId);
       
-      // Get posts from followed users UNIQUEMENT
+      // Get posts from followed users UNIQUEMENT - optimized query without subqueries
       const feedPosts = await db.select({
         id: posts.id,
         userId: posts.userId,
@@ -326,8 +326,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         cardId: posts.cardId,
         createdAt: posts.createdAt,
         updatedAt: posts.updatedAt,
-        likesCount: sql<number>`(SELECT COUNT(*)::int FROM post_likes WHERE post_id = ${posts.id})`,
-        commentsCount: sql<number>`(SELECT COUNT(*)::int FROM post_comments WHERE post_id = ${posts.id})`,
+        likesCount: posts.likesCount, // Use the cached count from the posts table
+        commentsCount: posts.commentsCount, // Use the cached count from the posts table
         user: {
           id: users.id,
           username: users.username,
@@ -344,7 +344,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         )
       )
       .orderBy(desc(posts.createdAt))
-      .limit(50);
+      .limit(20); // Reduce limit for faster loading
       
       console.log(`Found ${feedPosts.length} posts from followed users`);
       res.json(feedPosts);
