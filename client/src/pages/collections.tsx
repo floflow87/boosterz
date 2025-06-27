@@ -323,14 +323,26 @@ export default function Collections() {
       tradeOnly: boolean;
     }) => {
       console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
-      // Utiliser la route pour cartes personnelles
-      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
+      
+      const requestData = {
         isForSale: true,
         isForTrade: true,
         tradePrice: price,
         tradeDescription: description,
         tradeOnly
-      });
+      };
+      
+      console.log("Request data:", requestData);
+      console.log("Making request to:", `/api/personal-cards/${cardId}/sale-settings`);
+      
+      try {
+        const result = await apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, requestData);
+        console.log("API response received:", result);
+        return result;
+      } catch (error) {
+        console.error("API request failed:", error);
+        throw error;
+      }
     },
     onSuccess: (updatedCard) => {
       // Mettre à jour les cartes personnelles
