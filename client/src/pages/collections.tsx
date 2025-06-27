@@ -852,7 +852,7 @@ export default function Collections() {
                         <p className="text-gray-500 text-xs">{card.cardType}</p>
                         {!card.isSold && card.isForTrade && card.tradePrice && (
                           <div className="absolute bottom-2 right-2">
-                            <span className="bg-black/80 text-white px-2 py-1 rounded text-xs font-bold shadow-lg">
+                            <span className="text-primary text-xs font-medium">
                               {card.tradePrice?.replace('$', '')}€
                             </span>
                           </div>
@@ -1217,7 +1217,7 @@ export default function Collections() {
                         </div>
                         
                         {selectedCard.tradePrice && !selectedCard.tradeOnly && (
-                          <div className="text-green-400 font-bold">
+                          <div className="text-green-400 font-medium">
                             {selectedCard.tradePrice?.replace('$', '')}€
                           </div>
                         )}
