@@ -128,7 +128,7 @@ export default function Social() {
     retry: false,
   });
   
-  console.log('Current user data:', currentUser);
+
 
   const currentUserId = currentUser?.user?.id?.toString() || "1";
   const userId = "999"; // Pour les profils consultés (maxlamenace)
@@ -171,7 +171,6 @@ export default function Social() {
   useEffect(() => {
     if (!likesLoading && userLikes !== undefined) {
       setLikedPosts(new Set(userLikes));
-      console.log('Initializing liked posts with:', userLikes, 'Loading:', likesLoading);
     }
   }, [userLikes, likesLoading]);
 
@@ -501,6 +500,10 @@ export default function Social() {
         ...prev,
         [postId]: result.commentsCount
       }));
+
+      // Invalider le cache pour forcer la mise à jour des données
+      queryClient.invalidateQueries({ queryKey: ["/api/users/feed"] });
+      queryClient.invalidateQueries({ queryKey: [`/api/users/${currentUserId}/posts`] });
 
       // Vider l'input
       setCommentInputs(prev => ({
