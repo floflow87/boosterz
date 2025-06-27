@@ -160,9 +160,10 @@ export default function AddCard() {
       setLocation("/collections");
     },
     onError: (error: any) => {
+      console.error("Error adding personal card:", error);
       toast({
         title: "Erreur",
-        description: "Impossible d'ajouter la carte. Vérifie tes informations.",
+        description: error?.message || "Impossible d'ajouter la carte. Vérifie tes informations.",
         variant: "destructive",
       });
     },
@@ -234,6 +235,9 @@ export default function AddCard() {
       season: season || null,
       imageUrl: editedImage || null,
       condition: condition || null,
+      salePrice: isForSale ? salePrice : null,
+      saleDescription: isForSale ? saleDescription : null,
+      isForSale: isForSale,
       tradePrice: isForSale ? salePrice : null,
       tradeDescription: isForSale ? saleDescription : null,
       isForTrade: isForSale,

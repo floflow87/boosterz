@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 27, 2025. Fixed drag & drop system optimization and resolved card addition bug
+  - **Drag & drop improvements**: Added 3px activation distance, 300ms debounce for mutations, visual overlay with help message
+  - **Performance optimization**: Implemented optimistic updates with automatic position reorganization
+  - **Fixed card addition**: Corrected data mapping in add-card form to match database schema (salePrice/saleDescription fields)
+  - **Enhanced error handling**: Added detailed error logging and user feedback for failed card additions
+  - **Resolved infinite loops**: Fixed TrophyAvatar component with proper array checks to prevent React update cycles
+  - Card addition system now works properly with improved user experience and visual feedback
 - June 27, 2025. Optimized deck preview loading performance with comprehensive caching and optimistic updates
   - **Optimistic updates**: Implemented instant UI updates for card removal with automatic position reorganization
   - **Aggressive caching**: Added 30-second cache for deck details, 10-minute cache for deck lists, 15-minute cache for preview data

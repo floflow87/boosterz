@@ -49,7 +49,7 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
 
   // Calcul du niveau d'avatar
   const avatarLevel = useMemo(() => {
-    if (!personalCards) return null;
+    if (!personalCards || !Array.isArray(personalCards)) return null;
 
     const totalCards = personalCards.length;
     const autographsCount = personalCards.filter((card: any) => card.cardType?.includes('AUTO')).length;
