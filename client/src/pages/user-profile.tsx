@@ -599,13 +599,23 @@ export default function UserProfile() {
                       {card.teamName && (
                         <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
                       )}
-                      <p className="text-gray-500 text-xs">{card.cardType}</p>
                       
-                      {/* Prix de vente */}
-                      {card.salePrice && (
-                        <div className="flex items-center gap-1 mt-2">
-                          <DollarSign className="w-3 h-3 text-[hsl(9,85%,67%)]" />
-                          <span className="text-[hsl(9,85%,67%)] text-xs font-medium">{card.salePrice}€</span>
+                      {/* Collection et Prix sur la même ligne */}
+                      <div className="flex items-center justify-between mt-2">
+                        <div className="text-gray-500 text-xs truncate">
+                          {card.collectionName || card.cardType || 'Score Ligue 1'}
+                        </div>
+                        {card.salePrice && (
+                          <div className="text-[hsl(9,85%,67%)] text-xs font-bold">
+                            {card.salePrice}€
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Saison en dessous */}
+                      {card.season && (
+                        <div className="text-gray-500 text-xs">
+                          {card.season}
                         </div>
                       )}
                     </div>
