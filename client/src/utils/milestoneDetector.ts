@@ -1,7 +1,7 @@
 interface Collection {
   id: number;
   name: string;
-  season?: string;
+  season?: string | null;
 }
 
 interface CollectionCompletion {

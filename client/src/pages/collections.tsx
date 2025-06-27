@@ -15,6 +15,8 @@ import cardStackIcon from "@assets/image_1750351528484.png";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
 import type { User, Collection, Card } from "@shared/schema";
+import MilestoneCelebration from "@/components/MilestoneCelebration";
+import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
 
 const getThemeGradient = (themeColors: string) => {
   const themeStyles: Record<string, string> = {
@@ -63,6 +65,11 @@ export default function Collections() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  // Milestone celebration state
+  const [currentMilestone, setCurrentMilestone] = useState<MilestoneData | null>(null);
+  const [collectionCompletions, setCollectionCompletions] = useState<Record<number, any>>({});
+  
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -219,7 +226,59 @@ export default function Collections() {
     ? (cardsResponse?.cards || [])
     : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
 
+  // Effect to check for milestones when collections data changes
+  useEffect(() => {
+    if (!collections || collections.length === 0) return;
 
+    // Calculate all collection completions
+    const newCompletions: Record<number, any> = {};
+    
+    collections.forEach(collection => {
+      const completion = getCollectionCompletion(collection);
+      newCompletions[collection.id] = completion;
+
+      // Check for milestones if we have previous data to compare
+      const previousCompletion = collectionCompletions[collection.id];
+      
+      if (previousCompletion && completion.percentage !== previousCompletion.percentage) {
+        // Check for completion milestones
+        const milestone = MilestoneDetector.checkAllMilestones(
+          collection as any,
+          completion,
+          previousCompletion,
+          collections as any,
+          newCompletions
+        );
+
+        if (milestone) {
+          setCurrentMilestone(milestone);
+        }
+      }
+    });
+
+    // Update the completions state
+    setCollectionCompletions(newCompletions);
+  }, [collections, collectionCompletions]);
+
+  // Effect to check for first collection milestone when user first loads the app
+  useEffect(() => {
+    if (!collections || collections.length === 0) return;
+    
+    // Check for first collection milestone only once
+    const completions: Record<number, any> = {};
+    collections.forEach(collection => {
+      completions[collection.id] = getCollectionCompletion(collection);
+    });
+
+    const firstCollectionMilestone = MilestoneDetector.checkFirstCollectionMilestone(
+      collections as any,
+      completions
+    );
+
+    if (firstCollectionMilestone) {
+      setCurrentMilestone(firstCollectionMilestone);
+    }
+  }, [collections]); // Only run when collections first load
 
   // Mutation pour mettre à jour les paramètres de vente
   const updateSaleSettingsMutation = useMutation({
@@ -1597,6 +1656,12 @@ export default function Collections() {
           </div>
         </div>
       )}
+
+      {/* Milestone Celebration Modal */}
+      <MilestoneCelebration 
+        milestone={currentMilestone}
+        onClose={() => setCurrentMilestone(null)}
+      />
 
       <Navigation />
     </div>
