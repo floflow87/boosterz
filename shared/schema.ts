@@ -505,7 +505,7 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   // Rendre la plupart des champs optionnels sauf userId et cardType
   playerName: z.string().optional(),
   teamName: z.string().optional(),
-  reference: z.string().optional(),
+  reference: z.string().nullable().optional(),
   numbering: z.string().optional(),
   season: z.string().optional(),
   imageUrl: z.string().optional(),
