@@ -24,6 +24,7 @@ import UserProfile from "@/pages/user-profile";
 import Feed from "@/pages/feed";
 import Welcome from "@/pages/welcome";
 import Landing from "@/pages/landing";
+import Register from "@/pages/register";
 import CardExamples from "@/pages/card-examples";
 import AddCard from "@/pages/add-card";
 import CreateDeck from "@/pages/create-deck";
@@ -34,10 +35,51 @@ function Router() {
   const authToken = localStorage.getItem('authToken');
   const onboardingCompleted = localStorage.getItem('onboarding_completed');
   
-  // Check authentication state
-  if (!authToken) {
-    return <Landing />;
-  }
+  // Special routes that don't require authentication
+  return (
+    <Switch>
+      <Route path="/register" component={Register} />
+      {(() => {
+        // Check authentication state for other routes
+        if (!authToken) {
+          return <Route component={Landing} />;
+        }
+        
+        // Check if user needs onboarding
+        if (!onboardingCompleted) {
+          return <Route component={Welcome} />;
+        }
+        
+        // Authenticated routes
+        return (
+          <>
+            <Route path="/" component={Social} />
+            <Route path="/home" component={Home} />
+            <Route path="/collections" component={Collections} />
+            <Route path="/collection/:id" component={CollectionDetail} />
+            <Route path="/all-cards" component={AllCards} />
+            <Route path="/social" component={Social} />
+            <Route path="/profile/:userId" component={Profile} />
+            <Route path="/feed" component={Feed} />
+            <Route path="/conversations" component={Conversations} />
+            <Route path="/chat/:userId" component={Chat} />
+            <Route path="/community" component={Community} />
+            <Route path="/shop" component={Shop} />
+            <Route path="/settings" component={Settings} />
+            <Route path="/trophies" component={Trophies} />
+            <Route path="/profile" component={ProfileEdit} />
+            <Route path="/user/:userId" component={UserProfile} />
+            <Route path="/add-card" component={AddCard} />
+            <Route path="/decks" component={Home} />
+            <Route path="/create-deck" component={CreateDeck} />
+            <Route path="/deck/:id" component={DeckDetail} />
+            <Route path="/card-examples" component={CardExamples} />
+            <Route component={NotFound} />
+          </>
+        );
+      })()}
+    </Switch>
+  );
   
   // Check if user needs onboarding
   if (!onboardingCompleted) {

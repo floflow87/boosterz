@@ -81,11 +81,11 @@ export default function Collections() {
   const { toast } = useToast();
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["/api/users/1"],
+    queryKey: ["/api/users/999"],
   });
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ["/api/users/1/collections"],
+    queryKey: ["/api/users/999/collections"],
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
     refetchOnWindowFocus: false,

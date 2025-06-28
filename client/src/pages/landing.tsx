@@ -172,17 +172,24 @@ export default function Landing() {
 
             <div className="mt-6 text-center">
               <button
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setFormData({ username: "", email: "", name: "", password: "" });
-                }}
+                onClick={() => setLocation('/register')}
                 className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,60%)] transition-colors"
               >
-                {isLogin ? "Pas encore de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
+                Se créer un compte
               </button>
+              
+              <div className="mt-4">
+                <button
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setFormData({ username: "", email: "", name: "", password: "" });
+                  }}
+                  className="text-gray-400 hover:text-white transition-colors text-sm"
+                >
+                  {isLogin ? "Autre mode de connexion" : "Retour à la connexion"}
+                </button>
+              </div>
             </div>
-
-            
           </div>
         </div>
       </div>
