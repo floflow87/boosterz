@@ -1287,102 +1287,97 @@ export default function CollectionDetail() {
       {/* Card Detail Modal - Fullscreen with slide animation */}
       {selectedCard && (
         <div 
-          className="fixed inset-0 bg-black/70 z-50"
-          onClick={() => setSelectedCard(null)}
+          className="fixed inset-0 bg-black z-50"
+          style={{
+            animation: 'slideInFromRight 0.4s ease-out'
+          }}
         >
-          <div 
-            className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              animation: 'slideInFromRight 0.4s ease-out'
-            }}
-          >
-              <div className="w-full h-full flex flex-col">
-                {/* Header - Fixed */}
-                <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
-                  <div className="flex-1">
-                    <h2 className="text-lg font-bold text-white">
-                      {selectedCard.playerName || 'Joueur Inconnu'}
-                    </h2>
-                    <p className="text-gray-400 text-sm">
-                      {selectedCard.teamName || 'Équipe Inconnue'}
-                    </p>
-                    <div className="flex gap-2 text-xs text-blue-400 mt-1">
-                      {collection?.name && <span>Collection: {collection.name}</span>}
-                      {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        console.log("Options button clicked");
-                        setShowOptionsPanel(true);
-                      }}
-                      className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
-                      type="button"
-                    >
-                      <MoreVertical className="w-6 h-6" />
-                    </button>
-                    <button
-                      onClick={() => setSelectedCard(null)}
-                      className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
+          <div className="w-full h-full flex flex-col">
+            {/* Header - Fixed */}
+            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-white">
+                  {selectedCard.playerName || 'Joueur Inconnu'}
+                </h2>
+                <p className="text-gray-400 text-sm">
+                  {selectedCard.teamName || 'Équipe Inconnue'}
+                </p>
+                <div className="flex gap-2 text-xs text-blue-400 mt-1">
+                  {collection?.name && <span>Collection: {collection.name}</span>}
+                  {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
                 </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Options button clicked");
+                    setShowOptionsPanel(true);
+                  }}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
+                  type="button"
+                >
+                  <MoreVertical className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setSelectedCard(null)}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+            
+            {/* Content - Scrollable content */}
+            <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
+              {(() => {
+                const currentCard = getCurrentCard();
+                const variants = getCardVariants(selectedCard);
                 
-                {/* Content - Scrollable content */}
-                <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
-                  {(() => {
-                    const currentCard = getCurrentCard();
-                    const variants = getCardVariants(selectedCard);
-                    
-                    return (
-                      <div className="p-6 space-y-6">
-                        {/* Card Carousel with Touch Support */}
-                        <div className="w-full max-w-md mx-auto relative">
-                          {(() => {
-                            const variants = getCardVariants(selectedCard);
-                            if (variants.length <= 1) {
-                              return currentCard?.imageUrl ? (
-                                <div 
-                                  className="relative w-full h-96 perspective-1000"
-                                  style={{ perspective: '1000px' }}
-                                >
-                                  <img 
-                                    src={currentCard.imageUrl} 
-                                    alt={`${currentCard.playerName} card`}
-                                    className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
-                                    style={{
-                                      transformStyle: 'preserve-3d',
-                                      willChange: 'transform',
-                                      animation: 'card-auto-float 12s ease-in-out infinite'
-                                    }}
-                                  />
-                                  {/* Featured Star on Photo */}
-                                  {currentCard.isFeatured && (
-                                    <div className="absolute top-3 right-3 z-20">
-                                      <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
-                                        <Star className="w-4 h-4 text-white fill-current" />
-                                      </div>
-                                    </div>
-                                  )}
+                return (
+                  <div className="p-6 space-y-6">
+                    {/* Card Carousel with Touch Support */}
+                    <div className="w-full max-w-md mx-auto relative">
+                      {(() => {
+                        const variants = getCardVariants(selectedCard);
+                        if (variants.length <= 1) {
+                          return currentCard?.imageUrl ? (
+                            <div 
+                              className="relative w-full h-96 perspective-1000"
+                              style={{ perspective: '1000px' }}
+                            >
+                              <img 
+                                src={currentCard.imageUrl} 
+                                alt={`${currentCard.playerName} card`}
+                                className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                                style={{
+                                  transformStyle: 'preserve-3d',
+                                  willChange: 'transform',
+                                  animation: 'card-auto-float 12s ease-in-out infinite'
+                                }}
+                              />
+                              {/* Featured Star on Photo */}
+                              {currentCard.isFeatured && (
+                                <div className="absolute top-3 right-3 z-20">
+                                  <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
+                                    <Star className="w-4 h-4 text-white fill-current" />
+                                  </div>
                                 </div>
-                              ) : (
-                                <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
-                                  <HelpCircle className="w-16 h-16 text-gray-400" />
-                                </div>
-                              );
-                            }
+                              )}
+                            </div>
+                          ) : (
+                            <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
+                              <HelpCircle className="w-16 h-16 text-gray-400" />
+                            </div>
+                          );
+                        }
 
-                            // Carousel pour multiple variantes
-                            const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
-                            
-                            return (
-                              <div 
+                        // Carousel pour multiple variantes
+                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        
+                        return (
+                          <div 
                             className="relative w-full h-96 overflow-hidden rounded-lg"
                             onTouchStart={(e) => {
                               const touch = e.touches[0];
@@ -1522,6 +1517,8 @@ export default function CollectionDetail() {
                         <p className="text-gray-300">Rareté: {selectedCard.cardType?.includes('Insert') ? 'Insert' : 'Base'}</p>
                       </div>
                     </div>
+
+
                   </div>
                 );
               })()}
