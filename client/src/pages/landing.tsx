@@ -83,12 +83,6 @@ export default function Landing() {
               La plateforme de collection de cartes football Score Ligue 1
             </p>
             
-            <div className="text-center mb-6">
-              <p className="text-lg text-gray-300 mb-4">
-                Plus de 2853 cartes disponibles
-              </p>
-            </div>
-
             <div className="grid grid-cols-2 gap-4 mb-8">
               {features.map((feature, index) => (
                 <div key={index} className="text-center">

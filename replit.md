@@ -118,6 +118,9 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 28, 2025. Cleaned up authentication page interface
+  - Removed additional text "Plus de 2853 cartes disponibles" below main title for cleaner design
+  - Simplified authentication page layout focusing on core branding and functionality
 - June 27, 2025. Fixed drag & drop system optimization and resolved card addition bug
   - **Drag & drop improvements**: Added 3px activation distance, 300ms debounce for mutations, visual overlay with help message
   - **Performance optimization**: Implemented optimistic updates with automatic position reorganization
