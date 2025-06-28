@@ -534,18 +534,20 @@ export default function Collections() {
     if (!card) return;
     
     try {
-      // Créer une nouvelle carte avec les mêmes données
+      // Créer une nouvelle carte avec les mêmes données selon le schéma personalCards
       const duplicateData = {
         playerName: card.playerName,
         teamName: card.teamName,
         cardType: card.cardType,
         reference: card.reference,
         numbering: card.numbering,
-        imageUrl: card.imageUrl,
-        collectionId: card.collectionId,
         season: card.season,
-        condition: "excellent", // Condition par défaut
-        isOwned: true
+        imageUrl: card.imageUrl,
+        condition: card.condition || "excellent", // Utiliser la condition existante ou "excellent" par défaut
+        isForSale: false,
+        isSold: false,
+        isForTrade: false,
+        tradeOnly: false
       };
 
       console.log("Duplicating card with data:", duplicateData);
