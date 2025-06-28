@@ -104,18 +104,8 @@ export default function Register() {
     >
       {/* Background effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96">
-          <HaloBlur 
-            className="w-full h-full opacity-20" 
-            style={{ background: 'radial-gradient(circle, hsl(var(--primary)) 0%, transparent 70%)' }}
-          />
-        </div>
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64">
-          <HaloBlur 
-            className="w-full h-full opacity-15"
-            style={{ background: 'radial-gradient(circle, hsl(var(--accent)) 0%, transparent 70%)' }}
-          />
-        </div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 opacity-20 bg-blue-500 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 opacity-15 bg-orange-500 rounded-full blur-2xl"></div>
       </div>
 
       <div className="relative z-10 max-w-md mx-auto">
