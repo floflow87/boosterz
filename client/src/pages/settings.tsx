@@ -3,7 +3,7 @@ import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
 import NotificationsModal from "@/components/NotificationsModal";
-import { User, Bell, Shield, HelpCircle, LogOut, ChevronRight, Trophy } from "lucide-react";
+import { User, Bell, LogOut, ChevronRight, Trophy, HelpCircle } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function Settings() {
@@ -74,33 +74,7 @@ export default function Settings() {
               </div>
             </div>
 
-            {/* Confidentialité */}
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Shield className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-                  <div>
-                    <h3 className="font-bold font-poppins">Confidentialité</h3>
-                    <p className="text-sm text-[hsl(212,23%,69%)]">Contrôle des données</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
-              </div>
-            </div>
 
-            {/* Aide & Support */}
-            <div className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <HelpCircle className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-                  <div>
-                    <h3 className="font-bold font-poppins">Aide & Support</h3>
-                    <p className="text-sm text-[hsl(212,23%,69%)]">FAQ et contact</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-5 h-5 text-[hsl(212,23%,69%)]" />
-              </div>
-            </div>
           </div>
         </div>
 
@@ -110,10 +84,7 @@ export default function Settings() {
           
           <div className="space-y-2">
             {[
-              { title: "Mode sombre", subtitle: "Toujours activé", toggle: true },
-              { title: "Notifications push", subtitle: "Alertes en temps réel", toggle: true },
-              { title: "Sons", subtitle: "Effets sonores", toggle: false },
-              { title: "Synchronisation", subtitle: "Sauvegarde automatique", toggle: true }
+              { title: "Mode sombre", subtitle: "Toujours activé", toggle: true }
             ].map((pref, index) => (
               <div key={index} className="bg-[hsl(214,35%,22%)] rounded-lg p-4">
                 <div className="flex items-center justify-between">

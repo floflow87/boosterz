@@ -118,6 +118,10 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 28, 2025. Simplified settings page by removing unnecessary options
+  - **Removed sections**: Confidentialité, Aide & Support, Notifications push, Sons, Synchronisation
+  - **Kept essentials**: Profil, Trophées, Notifications, Mode sombre, Visite guidée, Déconnexion
+  - **Result**: Cleaner interface focused on core functionality
 - June 28, 2025. Configured dual database architecture for dev/prod separation
   - **Development environment**: Continues using Neon database on Replit for development
   - **Production environment**: Configured to use Supabase database when deployed
