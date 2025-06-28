@@ -1,62 +1,51 @@
-# 🚀 Configuration Finale - Application Prête pour Production
+# Configuration Production - Étapes Finales
 
-## ✅ Problèmes Résolus
+## 1. Créer l'utilisateur principal en production
 
-L'application est maintenant entièrement fonctionnelle avec :
-- ✅ Connexion Supabase corrigée avec driver PostgreSQL
-- ✅ Architecture duale dev/prod automatique
-- ✅ Base de données initialisée avec 14 tables
-- ✅ Authentification robuste avec fallback
-- ✅ Pages profil et paramètres opérationnelles
+Exécute cette commande pour créer l'utilisateur avec le champ `isActive` :
 
-## 🎯 Étapes Finales de Déploiement
-
-### 1. Redéployez l'Application
-Lance un nouveau déploiement maintenant que les corrections sont appliquées.
-
-### 2. Variables d'Environnement Production
-Assure-toi que ces variables sont configurées lors du déploiement :
-```
-SUPABASE_DATABASE_URL=postgresql://postgres.cqfzgjefafqwcjzvfnaq:5sXK3P6jx8To@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
-NODE_ENV=production
-```
-
-### 3. Premier Utilisateur Production
-Après déploiement, crée le premier utilisateur via l'API :
 ```bash
-curl -X POST https://ton-app.replit.app/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "admin",
-    "email": "admin@example.com", 
-    "name": "Administrateur",
-    "password": "motdepassesecurise"
-  }'
+NODE_ENV=production npx tsx scripts/create-supabase-user.ts
 ```
 
-## 📊 Vérifications Post-Déploiement
+## 2. Identifiants de connexion
 
-### ✅ Tests à Effectuer
-1. **Page d'accueil** : Se charge correctement
-2. **Inscription** : Création de compte fonctionne
-3. **Connexion** : Authentification opérationnelle 
-4. **Profil** : Page paramètres accessible
-5. **Base de données** : Logs montrent "Production (Supabase)"
+Une fois le script exécuté avec succès, tu pourras te connecter avec :
 
-### 🔍 Logs à Vérifier
-Dans les logs de déploiement, chercher :
+- **Email** : `florent@yopmail.com`
+- **Mot de passe** : `Test123456`
+- **Username** : `Floflow87`
+
+## 3. Système d'administration
+
+Le système `isActive` est maintenant en place :
+
+### Pour désactiver un utilisateur :
+```sql
+UPDATE users SET is_active = false WHERE id = [USER_ID];
 ```
-🗄️ Database: Production (Supabase)
-✅ Connection successful!
-📋 Tables found: 14
+
+### Pour réactiver un utilisateur :
+```sql
+UPDATE users SET is_active = true WHERE id = [USER_ID];
 ```
 
-## 🏆 Résultat Final
+## 4. Vérification
 
-Ton application BOOSTERZ est prête avec :
-- **Base de données** : Supabase production sécurisée
-- **Authentification** : Système complet fonctionnel
-- **Interface** : Toutes les pages accessibles
-- **Performance** : Drivers optimisés pour production
+Après avoir créé l'utilisateur, vérifie que :
+- La connexion fonctionne avec les identifiants ci-dessus
+- L'utilisateur a bien `isActive = true` dans la base
+- L'application fonctionne normalement
 
-L'application est maintenant déployable en production avec une architecture professionnelle !
+## Notes importantes
+
+- Tous les nouveaux utilisateurs créés auront `isActive = true` par défaut
+- Les utilisateurs avec `isActive = false` recevront "Compte désactivé" lors de la connexion
+- Le contrôle d'accès se fait automatiquement via le système d'authentification
+
+## En cas de problème
+
+Si le script échoue, vérifier :
+1. Que `SUPABASE_DATABASE_URL` est bien configuré
+2. Que la base Supabase a bien toutes les tables créées
+3. Exécuter d'abord le script de migration si nécessaire
