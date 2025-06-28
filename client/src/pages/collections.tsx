@@ -1618,6 +1618,7 @@ export default function Collections() {
                               toast({
                                 title: "Post créé !",
                                 description: "Ton post a été ajouté à la une.",
+                                className: "bg-green-600 border-green-600 text-white",
                               });
                             } catch (error) {
                               toast({
