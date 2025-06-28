@@ -22,15 +22,7 @@ export async function apiRequest(
     }
 
     // Add authentication token if available
-    let token = localStorage.getItem('authToken') || localStorage.getItem('token');
-    
-    // Auto-restore for user 999 if no token is available
-    if (!token) {
-      const workingToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjk5OSwiaWF0IjoxNzUxMDg2Mjc1LCJleHAiOjE3NTE2OTEwNzV9.VS4pE8ziJFS-lG3iQkGx51PoF2Fzc82wHsq2dDYvfUM";
-      localStorage.setItem('authToken', workingToken);
-      token = workingToken;
-    }
-    
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token') || 'test';
     headers["Authorization"] = `Bearer ${token}`;
 
     console.log(`Making ${method} request to:`, url);

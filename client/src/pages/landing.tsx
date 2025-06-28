@@ -21,36 +21,25 @@ export default function Landing() {
   const authMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-      return await apiRequest("POST", endpoint, data);
+      
+      // For login, send username as email field since backend expects email field
+      const requestData = isLogin 
+        ? { email: data.username, password: data.password }
+        : data;
+      
+      return await apiRequest("POST", endpoint, requestData);
     },
     onSuccess: (response: any) => {
-      console.log('Auth success response:', response);
+      console.log('Login success response:', response);
       localStorage.setItem('authToken', response.token);
       
-      if (!isLogin) {
-        // New user - show onboarding
-        toast({
-          title: "Compte créé avec succès !",
-          description: `Bienvenue ${formData.name || formData.username} !`,
-          className: "bg-green-600 border-green-600 text-white",
-        });
-      } else {
-        // Existing user - complete onboarding
-        localStorage.setItem('onboarding_completed', 'true');
-        toast({
-          title: "Connexion réussie !",
-          description: "Bienvenue dans votre collection",
-          className: "bg-green-600 border-green-600 text-white",
-        });
-      }
-      
-      // Force page reload to trigger auth state
-      window.location.href = '/';
+      // Force page reload to trigger router re-evaluation
+      window.location.href = '/collections';
     },
     onError: (error: any) => {
       toast({
-        title: "Erreur d'authentification",
-        description: error.message || "Vérifiez vos informations",
+        title: "Erreur",
+        description: error.message || "Une erreur est survenue",
         variant: "destructive"
       });
     }
@@ -58,11 +47,21 @@ export default function Landing() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isLogin && (!formData.name || !formData.email)) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs obligatoires",
+        variant: "destructive"
+      });
+      return;
+    }
+
     authMutation.mutate(formData);
   };
 
   const features = [
-    { icon: Star, title: "Collectionnez", description: "Cartes officielles Ligue 1" },
+    { icon: Star, title: "Collectionnez", description: "Plus de 600 cartes uniques" },
     { icon: Users, title: "Échangez", description: "Communauté active de collectionneurs" },
     { icon: Trophy, title: "Progressez", description: "Complétez vos collections" },
     { icon: TrendingUp, title: "Vendez", description: "Marketplace intégré" }
@@ -79,30 +78,56 @@ export default function Landing() {
             <h1 className="text-4xl md:text-5xl font-bold font-luckiest mb-4 text-white">
               BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
             </h1>
-
           </div>
 
-          {/* Right side - Login form */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-            <h2 className="text-2xl font-bold mb-6 text-center">
-              {isLogin ? "Se connecter" : "Créer un compte"}
-            </h2>
-            
+          {/* Right side - Auth form */}
+          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50 backdrop-blur-sm">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold mb-2">
+                {isLogin ? "Connexion" : "Inscription"}
+              </h2>
+              <p className="text-gray-400">
+                {isLogin ? "Accédez à vos collections" : "Créez votre compte gratuit"}
+              </p>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isLogin && (
-                <div>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors"
-                    placeholder="Nom complet"
-                    required={!isLogin}
-                  />
-                </div>
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Nom complet *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors"
+                      placeholder="Votre nom complet"
+                      required={!isLogin}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Email *
+                    </label>
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors"
+                      placeholder="votre@email.com"
+                      required={!isLogin}
+                    />
+                  </div>
+                </>
               )}
 
               <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Nom d'utilisateur
+                </label>
                 <input
                   type="text"
                   value={formData.username}
@@ -113,20 +138,10 @@ export default function Landing() {
                 />
               </div>
 
-              {!isLogin && (
-                <div>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-[hsl(9,85%,67%)] transition-colors"
-                    placeholder="Email"
-                    required={!isLogin}
-                  />
-                </div>
-              )}
-
               <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Mot de passe
+                </label>
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -157,24 +172,17 @@ export default function Landing() {
 
             <div className="mt-6 text-center">
               <button
-                onClick={() => setLocation('/register')}
+                onClick={() => {
+                  setIsLogin(!isLogin);
+                  setFormData({ username: "", email: "", name: "", password: "" });
+                }}
                 className="text-[hsl(9,85%,67%)] hover:text-[hsl(9,85%,60%)] transition-colors"
               >
-                Se créer un compte
+                {isLogin ? "Pas encore de compte ? S'inscrire" : "Déjà un compte ? Se connecter"}
               </button>
-              
-              <div className="mt-4">
-                <button
-                  onClick={() => {
-                    setIsLogin(!isLogin);
-                    setFormData({ username: "", email: "", name: "", password: "" });
-                  }}
-                  className="text-gray-400 hover:text-white transition-colors text-sm"
-                >
-                  {isLogin ? "Autre mode de connexion" : "Retour à la connexion"}
-                </button>
-              </div>
             </div>
+
+            
           </div>
         </div>
       </div>

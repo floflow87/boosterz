@@ -114,35 +114,12 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
   
-  console.log('🔐 Auth middleware - authHeader:', authHeader);
-  console.log('🔐 Auth middleware - token:', token ? `${token.substring(0, 20)}...` : 'none');
-
-  // TEMPORARILY DISABLED: Auto-authenticate as user 999 when no token is provided
-  // This allows proper login with different accounts
-  /*
-  if (!token) {
-    console.log('⚡ No token provided - auto-authenticating as user 999');
-    try {
-      const user = await storage.getUser(999);
-      if (user) {
-        req.user = {
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          name: user.name
-        };
-        console.log('✅ Auto-authenticated user 999:', user.username);
-        return next();
-      }
-    } catch (error) {
-      console.error('Auto-auth error:', error);
-    }
-  }
-  */
+  console.log('Auth middleware - authHeader:', authHeader);
+  console.log('Auth middleware - token:', token);
 
   // Development mode: for 'test' token only, use user 1  
   if (token === 'test') {
-    console.log('🔧 Development mode: using test token for user 1');
+    console.log('Using development mode authentication for user 1');
     try {
       const user = await storage.getUser(1);
       console.log('Dev mode - retrieved user:', user);
@@ -153,7 +130,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
           email: user.email,
           name: user.name
         };
-        console.log('✅ Dev mode - set req.user:', req.user);
+        console.log('Dev mode - set req.user:', req.user);
         return next();
       }
     } catch (error) {
@@ -161,26 +138,21 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
     }
   }
 
-  if (token && token !== 'test') {
-    try {
-      const user = await AuthService.getUserByToken(token);
-      if (!user) {
-        console.log('❌ User not found for token');
-        return res.status(404).json({ message: 'User not found' });
-      }
-
-      req.user = user;
-      console.log('✅ Token authenticated user:', user.username, 'ID:', user.id);
-      return next();
-    } catch (error) {
-      console.error('❌ Token verification failed:', error);
-      return res.status(403).json({ message: 'Invalid token' });
-    }
+  if (!token) {
+    return res.status(401).json({ message: 'No token provided' });
   }
 
-  // Fallback: still no authentication 
-  console.log('❌ No valid authentication method found');
-  return res.status(401).json({ message: 'No token provided' });
+  try {
+    const user = await AuthService.getUserByToken(token);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Invalid token' });
+  }
 };
 
 // Optional authentication middleware (doesn't fail if no token)
