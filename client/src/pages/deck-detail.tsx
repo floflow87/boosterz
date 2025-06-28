@@ -488,17 +488,27 @@ export default function DeckDetail() {
 
   // Gestionnaire optimisé de fin de drag
   const handleDragEnd = useCallback((event: DragEndEvent) => {
+    console.log('Drag end event:', event);
     const { active, over } = event;
     
     setIsDragging(false);
     setDraggedItem(null);
 
-    if (!over || active.id === over.id) return;
+    if (!over || active.id === over.id) {
+      console.log('No valid drag operation - either no drop target or same position');
+      return;
+    }
 
+    console.log('Active:', active.id, 'Over:', over.id);
+    console.log('Current localCards:', localCards);
+    
     const oldIndex = localCards.findIndex(card => `card-${card.position}-${card.card.id}` === active.id);
     const newIndex = localCards.findIndex(card => `card-${card.position}-${card.card.id}` === over.id);
 
+    console.log('Found indices - Old:', oldIndex, 'New:', newIndex);
+
     if (oldIndex !== -1 && newIndex !== -1) {
+      console.log('Performing card reorder...');
       const newCards = arrayMove(localCards, oldIndex, newIndex);
       
       // Mettre à jour les positions immédiatement pour l'UI
@@ -507,6 +517,7 @@ export default function DeckDetail() {
         position: index
       }));
 
+      console.log('Updated cards order:', updatedCards);
       setLocalCards(updatedCards);
 
       // Préparer les données pour l'API
@@ -516,8 +527,12 @@ export default function DeckDetail() {
         position: index
       }));
 
+      console.log('Positions to send to API:', newPositions);
+      
       // Utiliser le debounce pour les mutations
       debouncedUpdatePositions(newPositions);
+    } else {
+      console.log('Could not find card indices for reordering');
     }
   }, [localCards, debouncedUpdatePositions]);
 
@@ -729,10 +744,10 @@ export default function DeckDetail() {
 
             {/* Grille des cartes avec emplacements vides */}
             <DndContext
-              sensors={sensors}
+              sensors={isOwnerView ? sensors : []}
               collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
+              onDragStart={isOwnerView ? handleDragStart : undefined}
+              onDragEnd={isOwnerView ? handleDragEnd : undefined}
             >
               <SortableContext
                 items={localCards.map(card => `card-${card.position}-${card.type === 'collection' ? card.card.id : card.card.id}`)}
