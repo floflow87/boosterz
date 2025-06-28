@@ -354,82 +354,56 @@ export default function AddCard() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
-        {/* Progress Steps */}
-        <div className="flex items-center mb-8 space-x-4">
-          {["import", "edit", "details", "confirmation"].map((step, index) => (
-            <div key={step} className="flex items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                currentStep === step ? "bg-[hsl(9,85%,67%)] text-white" : 
-                ["import", "edit", "details", "confirmation"].indexOf(currentStep) > index ? "bg-green-500 text-white" : "bg-zinc-700 text-zinc-400"
-              }`}>
-                {index + 1}
-              </div>
-              {index < 3 && <div className="w-12 h-1 bg-zinc-700 mx-2" />}
-            </div>
-          ))}
-        </div>
-
-        {/* Step Content */}
-        {currentStep === "import" && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Importer ta carte</h2>
-            <p className="text-zinc-400 mb-8">Prends une photo ou importe une image de ta carte</p>
+        {/* Formulaire unifié */}
+        <div className="space-y-6">
+          {/* Section photo en première ligne */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <h3 className="text-lg font-semibold mb-4 text-white">Photo de la carte</h3>
             
-            <div className="space-y-4">
-              <Button
-                onClick={() => fileInputRef.current?.click()}
-                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-8 py-3"
-              >
-                <Upload className="h-5 w-5 mr-2" />
-                Choisir une image
-              </Button>
-              
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileImport}
-                className="hidden"
-              />
-            </div>
-          </div>
-        )}
-
-        {currentStep === "edit" && editedImage && (
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Vérifier l'image</h2>
-            <div className="mb-8 flex justify-center">
-              <div className="w-80 h-96 bg-zinc-800 rounded-lg border border-zinc-700 overflow-hidden flex items-center justify-center">
+            {editedImage ? (
+              <div className="flex items-center gap-4">
                 <img
                   src={editedImage}
-                  alt="Card preview"
-                  className="max-w-full max-h-full object-contain"
+                  alt="Carte"
+                  className="w-24 h-24 object-cover rounded-lg border border-zinc-700"
                 />
+                <div className="flex-1">
+                  <Button
+                    onClick={() => fileInputRef.current?.click()}
+                    variant="outline"
+                    className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+                  >
+                    <Camera className="h-4 w-4 mr-2" />
+                    Modifier l'image
+                  </Button>
+                </div>
               </div>
-            </div>
-            <div className="flex gap-4 justify-center">
-              <Button
-                variant="outline"
-                onClick={handlePrevStep}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
-              >
-                Retour
-              </Button>
-              <Button
-                onClick={handleNextStep}
-                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
-              >
-                Continuer
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {currentStep === "details" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Détails de la carte</h2>
+            ) : (
+              <div className="text-center">
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  Ajouter une image
+                </Button>
+              </div>
+            )}
             
-            <div className="grid gap-6 max-w-2xl">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileImport}
+              className="hidden"
+            />
+          </div>
+          
+          {/* Informations de la carte */}
+          <div className="bg-zinc-900 rounded-lg p-6 border border-zinc-800">
+            <h3 className="text-lg font-semibold mb-4 text-white">Informations de la carte</h3>
+            
+            <div className="grid gap-6">
               {/* Collection pour l'autocomplétion */}
               <div>
                 <Label htmlFor="collection" className="text-white mb-2 block">Collection (pour l'autocomplétion des joueurs)</Label>
@@ -644,76 +618,29 @@ export default function AddCard() {
                 )}
               </div>
             </div>
-
-            <div className="flex gap-4 mt-8">
-              <Button
-                variant="outline"
-                onClick={handlePrevStep}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
-              >
-                Retour
-              </Button>
-              <Button
-                onClick={handleNextStep}
-                disabled={!cardType}
-                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white disabled:opacity-50"
-              >
-                Continuer
-              </Button>
-            </div>
           </div>
-        )}
-
-        {currentStep === "confirmation" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6">Confirmer l'ajout</h2>
-            
-            <div className="bg-zinc-800 rounded-lg p-6 mb-6">
-              <div className="grid md:grid-cols-2 gap-6">
-                {editedImage && (
-                  <div className="flex justify-center">
-                    <div className="w-64 h-80 bg-zinc-700 rounded-lg border border-zinc-600 overflow-hidden flex items-center justify-center">
-                      <img
-                        src={editedImage}
-                        alt="Card preview"
-                        className="max-w-full max-h-full object-contain"
-                      />
-                    </div>
-                  </div>
-                )}
-                
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold">Détails de la carte</h3>
-                  {playerName && <p><span className="text-zinc-400">Joueur:</span> {playerName}</p>}
-                  {teamName && <p><span className="text-zinc-400">Équipe:</span> {teamName}</p>}
-                  <p><span className="text-zinc-400">Type:</span> {cardTypes.find(ct => ct.type === cardType)?.label}</p>
-                  {season && <p><span className="text-zinc-400">Saison:</span> {season}</p>}
-                  {reference && <p><span className="text-zinc-400">Référence:</span> {reference}</p>}
-                  {numbering && <p><span className="text-zinc-400">Numérotation:</span> {numbering}</p>}
-                  {condition && <p><span className="text-zinc-400">État:</span> {condition}</p>}
-                  {isForSale && salePrice && <p><span className="text-zinc-400">Prix:</span> {salePrice}€</p>}
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <Button
-                variant="outline"
-                onClick={handlePrevStep}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
-              >
-                Retour
-              </Button>
-              <Button
-                onClick={handleSubmitCard}
-                disabled={addPersonalCardMutation.isPending}
-                className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
-              >
-                {addPersonalCardMutation.isPending ? "Ajout en cours..." : "Ajouter la carte"}
-              </Button>
-            </div>
+          
+          {/* Bouton de soumission */}
+          <div className="flex gap-4 justify-end">
+            <Button
+              variant="outline"
+              onClick={handleCancel}
+              className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={handleSubmitCard}
+              disabled={(isEditMode ? updateCardMutation.isPending : addPersonalCardMutation.isPending) || !cardType}
+              className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white disabled:opacity-50"
+            >
+              {isEditMode 
+                ? (updateCardMutation.isPending ? "Modification..." : "Modifier la carte")
+                : (addPersonalCardMutation.isPending ? "Ajout en cours..." : "Ajouter la carte")
+              }
+            </Button>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
