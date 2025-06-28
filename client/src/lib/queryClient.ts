@@ -22,12 +22,8 @@ export async function apiRequest(
     }
 
     // Add authentication token if available
-    const token = localStorage.getItem('authToken') || localStorage.getItem('token') || 'test';
+    const token = localStorage.getItem('token') || localStorage.getItem('authToken') || 'test';
     headers["Authorization"] = `Bearer ${token}`;
-
-    console.log(`Making ${method} request to:`, url);
-    console.log('Headers:', headers);
-    console.log('Body:', data ? JSON.stringify(data) : 'undefined');
 
     const res = await fetch(url, {
       method,
@@ -37,18 +33,11 @@ export async function apiRequest(
       signal: controller.signal,
     });
 
-    console.log('Response status:', res.status);
-    console.log('Response headers:', Object.fromEntries(res.headers.entries()));
-
     clearTimeout(timeoutId);
     await throwIfResNotOk(res);
-    
-    const result = await res.json();
-    console.log('Response body:', result);
-    return result;
+    return await res.json();
   } catch (error) {
     clearTimeout(timeoutId);
-    console.error('Detailed fetch error:', error);
     if ((error as Error).name === 'AbortError') {
       throw new Error('Request timeout - server took too long to respond');
     }
