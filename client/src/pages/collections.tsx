@@ -476,9 +476,10 @@ export default function Collections() {
         teamName: card.teamName,
         cardType: card.cardType,
         reference: card.reference,
-        numbering: card.numbering,
+        numbering: "", // Vider la numérotation pour re-remplir
         season: card.season,
         condition: card.condition,
+        imageUrl: card.imageUrl, // Copier l'image
         isForSale: false, // Nouvelle carte non en vente par défaut
         isForTrade: false,
         tradeOnly: false

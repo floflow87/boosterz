@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Camera, X, Upload } from "lucide-react";
-import type { PersonalCard } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import type { PersonalCard, Card } from "@shared/schema";
 
 interface EditCardModalProps {
   card: PersonalCard | null;
@@ -19,7 +20,17 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
   const [condition, setCondition] = useState("Mint");
   const [imageUrl, setImageUrl] = useState("");
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [playerSuggestions, setPlayerSuggestions] = useState<string[]>([]);
+  const [teamSuggestions, setTeamSuggestions] = useState<string[]>([]);
+  const [showPlayerSuggestions, setShowPlayerSuggestions] = useState(false);
+  const [showTeamSuggestions, setShowTeamSuggestions] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Récupérer toutes les cartes pour l'autocomplétion
+  const { data: allCards } = useQuery<Card[]>({
+    queryKey: ["/api/cards/all"],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   // Initialize form data when card prop changes
   useEffect(() => {
@@ -35,6 +46,44 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
       setImagePreview(card.imageUrl || null);
     }
   }, [card]);
+
+  // Fonction de recherche pour les joueurs
+  const searchPlayers = (input: string) => {
+    if (!allCards || input.length < 2) {
+      setPlayerSuggestions([]);
+      setShowPlayerSuggestions(false);
+      return;
+    }
+
+    const uniquePlayers = Array.from(new Set(
+      allCards
+        .filter(card => card.playerName && card.playerName.toLowerCase().includes(input.toLowerCase()))
+        .map(card => card.playerName)
+        .filter((name): name is string => name !== null)
+    )).slice(0, 8);
+
+    setPlayerSuggestions(uniquePlayers);
+    setShowPlayerSuggestions(uniquePlayers.length > 0);
+  };
+
+  // Fonction de recherche pour les équipes
+  const searchTeams = (input: string) => {
+    if (!allCards || input.length < 2) {
+      setTeamSuggestions([]);
+      setShowTeamSuggestions(false);
+      return;
+    }
+
+    const uniqueTeams = Array.from(new Set(
+      allCards
+        .filter(card => card.teamName && card.teamName.toLowerCase().includes(input.toLowerCase()))
+        .map(card => card.teamName)
+        .filter((name): name is string => name !== null)
+    )).slice(0, 8);
+
+    setTeamSuggestions(uniqueTeams);
+    setShowTeamSuggestions(uniqueTeams.length > 0);
+  };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -64,6 +113,8 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
     };
 
     onUpdate(updates);
+    // Fermer automatiquement le modal après la soumission
+    onClose();
   };
 
   if (!isOpen || !card) return null;
@@ -115,31 +166,75 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
           </div>
 
           {/* Nom du joueur */}
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-slate-200 mb-2">
               Nom du joueur
             </label>
             <input
               type="text"
               value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
+              onChange={(e) => {
+                setPlayerName(e.target.value);
+                searchPlayers(e.target.value);
+              }}
+              onFocus={() => playerName.length >= 2 && searchPlayers(playerName)}
+              onBlur={() => setTimeout(() => setShowPlayerSuggestions(false), 200)}
               className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Kylian Mbappé"
             />
+            {showPlayerSuggestions && playerSuggestions.length > 0 && (
+              <div className="absolute z-10 w-full bg-slate-700 border border-slate-600 rounded-lg mt-1 max-h-40 overflow-y-auto">
+                {playerSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setPlayerName(suggestion);
+                      setShowPlayerSuggestions(false);
+                    }}
+                    className="w-full text-left p-2 hover:bg-slate-600 text-white first:rounded-t-lg last:rounded-b-lg"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Équipe */}
-          <div>
+          <div className="relative">
             <label className="block text-sm font-medium text-slate-200 mb-2">
               Équipe
             </label>
             <input
               type="text"
               value={teamName}
-              onChange={(e) => setTeamName(e.target.value)}
+              onChange={(e) => {
+                setTeamName(e.target.value);
+                searchTeams(e.target.value);
+              }}
+              onFocus={() => teamName.length >= 2 && searchTeams(teamName)}
+              onBlur={() => setTimeout(() => setShowTeamSuggestions(false), 200)}
               className="w-full p-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Ex: Paris Saint-Germain"
             />
+            {showTeamSuggestions && teamSuggestions.length > 0 && (
+              <div className="absolute z-10 w-full bg-slate-700 border border-slate-600 rounded-lg mt-1 max-h-40 overflow-y-auto">
+                {teamSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => {
+                      setTeamName(suggestion);
+                      setShowTeamSuggestions(false);
+                    }}
+                    className="w-full text-left p-2 hover:bg-slate-600 text-white first:rounded-t-lg last:rounded-b-lg"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Type de carte */}
