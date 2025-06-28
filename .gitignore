@@ -3,6 +3,7 @@ node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+package-lock.json
 
 # Environment variables
 .env
@@ -62,3 +63,40 @@ jspm_packages/
 
 # Optional REPL history
 .node_repl_history
+
+# Replit specific files
+.replit
+.replit.nix
+replit.nix
+
+# Attached assets (user uploads)
+attached_assets/
+
+# Scripts directory (contains sensitive user creation scripts)
+scripts/
+
+# Cookie files
+cookies.txt
+
+# SSL and deployment configurations
+*.conf
+deploy-ssl.sh
+ssl-setup.md
+
+# Development guides (keep README.md)
+database-setup.md
+deployment-guide.md
+https-deployment-guide.md
+DEPLOYMENT-GUIDE.md
+PRODUCTION-FIX.md
+SETUP-FINAL.md
+NEXT-STEPS.md
+
+# Backup files
+*.backup.ts
+vite.config.backup.ts
+
+# Deployment configs
+vercel.json
+railway.json
+nginx-*.conf
