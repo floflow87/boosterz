@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Camera, X, Upload } from "lucide-react";
 import type { PersonalCard } from "@shared/schema";
 
@@ -22,7 +22,7 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize form data when card prop changes
-  useState(() => {
+  useEffect(() => {
     if (card) {
       setPlayerName(card.playerName || "");
       setTeamName(card.teamName || "");
@@ -34,7 +34,7 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
       setImageUrl(card.imageUrl || "");
       setImagePreview(card.imageUrl || null);
     }
-  });
+  }, [card]);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

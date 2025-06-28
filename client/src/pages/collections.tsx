@@ -1862,7 +1862,7 @@ export default function Collections() {
           setShowEditCardModal(false);
           setCardToEdit(null);
         }}
-        onUpdate={(updates) => {
+        onUpdate={(updates: Partial<PersonalCard>) => {
           if (cardToEdit) {
             updateCardMutation.mutate({ cardId: cardToEdit.id, updates });
           }
