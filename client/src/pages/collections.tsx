@@ -23,7 +23,7 @@ import 'swiper/css/pagination';
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace" | "deck">("collections");
+  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -67,8 +67,25 @@ export default function Collections() {
     staleTime: 5 * 60 * 1000,
   });
 
+  const { data: cards } = useQuery({
+    queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
+    enabled: !!selectedCollection && activeTab === "cards",
+  });
+
   const getCollectionCompletion = (collection: Collection) => {
-    if (!personalCards) return { ownedCards: 0, totalCards: collection.totalCards || 2853, percentage: 0 };
+    // Utiliser d'abord les données de la collection si disponibles
+    if (collection.totalCards && collection.ownedCards !== undefined) {
+      return {
+        totalCards: collection.totalCards,
+        ownedCards: collection.ownedCards,
+        percentage: Math.round((collection.ownedCards / collection.totalCards) * 100)
+      };
+    }
+    
+    // Sinon calculer depuis les cartes personnelles
+    if (!personalCards || !Array.isArray(personalCards)) {
+      return { totalCards: 2853, ownedCards: 0, percentage: 0 };
+    }
     
     const ownedCards = personalCards.filter((card: any) => 
       card.collectionId === collection.id && !card.isSold
@@ -112,21 +129,21 @@ export default function Collections() {
             <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
             
             <div className="flex space-x-4 text-center justify-center max-w-80 mx-auto">
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1 ml-[0px] mr-[0px] pl-[24px] pr-[24px]">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg flex-1 ml-[0px] mr-[0px] pl-[24px] pr-[24px]">
                 <CreditCard className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
                 <div className="text-lg font-bold text-white">
-                  {personalCards?.filter((card: any) => !card.isSold).length || 0}
+                  {(Array.isArray(personalCards) ? personalCards.filter((card: any) => !card.isSold).length : 0)}
                 </div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
               </div>
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg flex-1">
                 <Trophy className="w-4 h-4 text-green-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-white">{collections?.length || 0}</div>
+                <div className="text-lg font-bold text-white">{(Array.isArray(collections) ? collections.length : 0)}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Collections</div>
               </div>
-              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg flex-1">
                 <Users className="w-4 h-4 text-blue-400 mx-auto mb-1" />
-                <div className="text-lg font-bold text-white">{user.followersCount || 0}</div>
+                <div className="text-lg font-bold text-white">{user?.followersCount || 0}</div>
                 <div className="text-xs text-[hsl(212,23%,69%)]">Abonnés</div>
               </div>
             </div>
@@ -134,41 +151,40 @@ export default function Collections() {
         )}
 
         {/* Navigation Tabs */}
-        <div className="overflow-x-auto scrollbar-hide mb-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <div className="flex space-x-2 bg-[hsl(214,35%,22%)] rounded-xl p-1 min-w-max">
-            <button
+        <div className="sticky top-0 z-50 pb-3 mb-3 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '58px' }}>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <button 
+              onClick={() => setActiveTab("cards")}
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "cards" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+              style={activeTab === "cards" ? { backgroundColor: '#F37261' } : {}}
+            >
+              <Star className="w-3 h-3 mr-1 inline" />
+              Cartes ajoutées
+            </button>
+            <button 
               onClick={() => setActiveTab("collections")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "collections" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+                  ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
-              <Layers className="w-4 h-4" />
+              <Users className="w-3 h-3 mr-1 inline" />
               Collections
             </button>
-
-            <button
-              onClick={() => setActiveTab("cards")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "cards" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <CardIcon className="w-4 h-4" />
-              Cartes
-            </button>
-
-            <button
+            <button 
               onClick={() => setActiveTab("deck")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "deck" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+                  ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
-              <TrendingUp className="w-4 h-4" />
+              <TrendingUp className="w-3 h-3 mr-1 inline" />
               Decks
             </button>
           </div>
@@ -196,17 +212,17 @@ export default function Collections() {
               
               <div className="text-center mb-3">
                 <div className="text-xs text-gray-300 mb-1">
-                  <span className="text-[hsl(9,85%,67%)] font-bold">{personalCards?.filter((card: any) => !card.isSold).length || 0}</span> / 2853 cartes
+                  <span className="text-[hsl(9,85%,67%)] font-bold">{(Array.isArray(personalCards) ? personalCards.filter((card: any) => !card.isSold).length : 0)}</span> / 2853 cartes
                 </div>
                 <div className="text-xs text-gray-300">
-                  {((personalCards?.filter((card: any) => !card.isSold).length || 0) / 2853 * 100).toFixed(1)}% complété
+                  {((Array.isArray(personalCards) ? personalCards.filter((card: any) => !card.isSold).length : 0) / 2853 * 100).toFixed(1)}% complété
                 </div>
               </div>
               
               <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                 <div 
                   className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                  style={{ width: `${((personalCards?.filter((card: any) => !card.isSold).length || 0) / 2853 * 100)}%` }}
+                  style={{ width: `${((Array.isArray(personalCards) ? personalCards.filter((card: any) => !card.isSold).length : 0) / 2853 * 100)}%` }}
                 />
               </div>
             </div>
@@ -282,33 +298,127 @@ export default function Collections() {
 
         {/* Cards Tab Content */}
         {activeTab === "cards" && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Cartes</h3>
-            
-            {personalCardsLoading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[hsl(9,85%,67%)] mx-auto"></div>
+          <>
+            {/* Controls */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "grid" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("carousel")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "carousel" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("gallery")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "gallery" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
               </div>
-            ) : personalCards && personalCards.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
-                {personalCards.filter((card: any) => !card.isSold).map((card: any) => (
-                  <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3">
-                    <h4 className="font-bold text-white text-sm">{card.playerName}</h4>
-                    <p className="text-gray-300 text-xs">{card.teamName}</p>
-                    {card.tradePrice && (
-                      <p className="text-green-400 text-xs mt-1">{card.tradePrice}€</p>
-                    )}
-                  </div>
+              
+              <div className="flex items-center space-x-2">
+                <button className="p-2 bg-[hsl(214,35%,22%)] rounded-lg">
+                  <Search className="w-4 h-4 text-[hsl(212,23%,69%)]" />
+                </button>
+                <button className="p-2 bg-[hsl(214,35%,22%)] rounded-lg">
+                  <Filter className="w-4 h-4 text-[hsl(212,23%,69%)]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Collection Selector */}
+            <div className="mb-4">
+              <select
+                value={selectedCollection || ""}
+                onChange={(e) => setSelectedCollection(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full bg-[hsl(214,35%,22%)] text-white rounded-lg p-3 border border-gray-600 font-poppins"
+              >
+                <option value="">Toutes les collections</option>
+                {collections?.map((collection) => (
+                  <option key={collection.id} value={collection.id}>
+                    {collection.name} ({getCollectionCompletion(collection).ownedCards}/{getCollectionCompletion(collection).totalCards})
+                  </option>
                 ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <CreditCard className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <div className="text-gray-400 mb-2 text-lg">Aucune carte</div>
-                <p className="text-[hsl(212,23%,69%)] text-sm">Ajoutez vos premières cartes pour commencer votre collection.</p>
+              </select>
+            </div>
+
+            {/* Collections Grid */}
+            {!selectedCollection && (
+              <div className="collection-grid mb-6">
+                {collections?.map((collection) => {
+                  const completion = getCollectionCompletion(collection);
+                  return (
+                    <div 
+                      key={collection.id}
+                      onClick={() => setSelectedCollection(collection.id)}
+                      className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50 relative group"
+                    >
+                      <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center relative">
+                        {collection.name === 'SCORE LIGUE 1' ? (
+                          <>
+                            <img 
+                              src="/attached_assets/image%2029_1750232088999.png" 
+                              alt="Score Ligue 1 logo"
+                              className="w-16 h-16 object-contain mx-auto mb-2"
+                            />
+                            <h3 className="font-bold text-white text-xs font-luckiest">{collection.name}</h3>
+                            <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                          </>
+                        ) : (
+                          <>
+                            <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
+                            <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                          </>
+                        )}
+                      </div>
+                      <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
+                        {completion.ownedCards} cartes possédées
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                        <div 
+                          className="progress-bar h-1.5 rounded-full bg-[hsl(9,85%,67%)]" 
+                          style={{ width: `${completion.percentage}%` }}
+                        />
+                      </div>
+                      <div className="text-xs text-[hsl(9,85%,67%)] font-poppins mt-1">
+                        {completion.percentage}% complété
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
-          </div>
+
+            {/* Personal Cards Display when no collection selected */}
+            {!selectedCollection && personalCards && personalCards.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-bold text-white font-poppins">Mes Cartes Personnelles</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {personalCards.filter((card: any) => !card.isSold).map((card: any) => (
+                    <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3">
+                      <h4 className="font-bold text-white text-sm">{card.playerName}</h4>
+                      <p className="text-gray-300 text-xs">{card.teamName}</p>
+                      {card.tradePrice && (
+                        <p className="text-green-400 text-xs mt-1">{card.tradePrice}€</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Decks Tab Content */}
