@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Camera, Upload } from "lucide-react";
+import { ArrowLeft, Camera, Upload, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +16,8 @@ interface Player {
   hasInsert?: boolean;
 }
 
+type Step = "import" | "edit" | "details" | "confirmation";
+
 export default function AddCard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -26,6 +28,9 @@ export default function AddCard() {
   const editCardData = isEditMode ? 
     JSON.parse(decodeURIComponent(new URLSearchParams(window.location.search).get('edit') || '{}')) 
     : null;
+  
+  // Step management - Toujours afficher le formulaire principal
+  const [currentStep, setCurrentStep] = useState<Step>("details");
   
   // Form data - pour les cartes personnelles
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
@@ -52,7 +57,7 @@ export default function AddCard() {
     { type: "base", label: "Base" },
     { type: "base_numbered", label: "Base Numérotée" },
     { type: "insert", label: "Insert" },
-    { type: "autographe", label: "Autographe" },
+    { type: "autograph", label: "Autographe" },
     { type: "numbered", label: "Numérotée" },
     { type: "special_1_1", label: "Spéciale 1/1" }
   ];
@@ -61,6 +66,159 @@ export default function AddCard() {
   const { data: collections = [] } = useQuery<any[]>({
     queryKey: ["/api/users/1/collections"],
     staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch cards from selected collection for player suggestions
+  const { data: collectionCards = [] } = useQuery<any[]>({
+    queryKey: [`/api/collections/${selectedCollectionId}/cards`],
+    enabled: !!selectedCollectionId,
+    select: (data: any) => {
+      const cards = Array.isArray(data) ? data : (data?.cards || []);
+      return cards;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Fetch all players including autographs and inserts
+  const { data: allPlayers = [] } = useQuery<Player[]>({
+    queryKey: ["/api/cards/all"],
+    select: (data: any[]) => {
+      const playersMap = new Map();
+      data?.forEach?.(card => {
+        if (card.playerName && card.teamName) {
+          const key = `${card.playerName}-${card.teamName}`;
+          if (!playersMap.has(key)) {
+            playersMap.set(key, {
+              playerName: card.playerName,
+              teamName: card.teamName,
+              cardTypes: new Set()
+            });
+          }
+          // Ajouter le type de carte pour ce joueur
+          playersMap.get(key).cardTypes.add(card.cardType);
+        }
+      });
+      // Convertir en array et inclure tous les types de cartes
+      return Array.from(playersMap.values()).map(player => ({
+        playerName: player.playerName,
+        teamName: player.teamName,
+        hasAutograph: player.cardTypes.has('Autographe Numbered') || 
+                     player.cardTypes.has('Autographe Gold') ||
+                     player.cardTypes.has('Autographe Red') ||
+                     player.cardTypes.has('Autographe Silver'),
+        hasInsert: [...player.cardTypes].some(type => type.includes('Insert'))
+      }));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  // Get players from selected collection or all players as fallback
+  const playersForSuggestions = selectedCollectionId ? 
+    collectionCards.map(card => ({
+      playerName: card.playerName,
+      teamName: card.teamName
+    })).filter(player => player.playerName && player.teamName)
+      .reduce((acc, player) => {
+        const key = `${player.playerName}-${player.teamName}`;
+        if (!acc.find(p => `${p.playerName}-${p.teamName}` === key)) {
+          acc.push(player);
+        }
+        return acc;
+      }, [] as Player[])
+    : allPlayers;
+
+  // Get unique teams from current player source
+  const teamSet = new Set(playersForSuggestions.map(p => p.teamName));
+  const allTeams = Array.from(teamSet).sort();
+
+  // Filter players based on search
+  const getPlayerSuggestions = () => {
+    if (!playerName) return [];
+    
+    return playersForSuggestions.filter(player => {
+      const nameMatch = player.playerName.toLowerCase().includes(playerName.toLowerCase());
+      const teamMatch = !teamName || player.teamName.toLowerCase().includes(teamName.toLowerCase());
+      return nameMatch && teamMatch;
+    }).slice(0, 10);
+  };
+
+  // Filter teams
+  const getTeamSuggestions = () => {
+    if (!teamName) return [];
+    
+    return allTeams.filter(team =>
+      team.toLowerCase().includes(teamName.toLowerCase())
+    ).slice(0, 10);
+  };
+
+  // Add personal card mutation
+  const addPersonalCardMutation = useMutation({
+    mutationFn: async (cardData: any) => {
+      console.log("Client: Sending card data to server:", cardData);
+      const result = await apiRequest("POST", "/api/personal-cards", cardData);
+      console.log("Client: Received response from server:", result);
+      return result;
+    },
+    onSuccess: (newCard: any) => {
+      console.log("Client: Card successfully added:", newCard);
+      toast({
+        title: "Carte ajoutée",
+        description: "La carte a été ajoutée dans 'Mes cartes' !",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      // Invalidate all related cache keys to ensure fresh data
+      console.log("Client: Invalidating cache keys...");
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      // Navigate back to collections page
+      setLocation("/collections");
+    },
+    onError: (error: any) => {
+      console.error("Client: Error adding personal card:", error);
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible d'ajouter la carte. Vérifie tes informations.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Mutation pour mettre à jour une carte existante
+  const updateCardMutation = useMutation({
+    mutationFn: async (cardData: any) => {
+      console.log("Client: Updating card with data:", cardData);
+      const result = await apiRequest("PATCH", `/api/personal-cards/${editCardData.id}`, cardData);
+      console.log("Client: Received update response from server:", result);
+      return result;
+    },
+    onSuccess: (updatedCard: any) => {
+      console.log("Client: Card successfully updated:", updatedCard);
+      toast({
+        title: "Carte modifiée",
+        description: "La carte a été modifiée avec succès !",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      // Invalidate all related cache keys to ensure fresh data
+      console.log("Client: Invalidating cache keys...");
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      // Rediriger vers les collections
+      setTimeout(() => setLocation("/collections"), 500);
+    },
+    onError: (error: any) => {
+      console.error("Client: Error updating card:", error);
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de modifier la carte. Vérifie tes informations.",
+        variant: "destructive",
+      });
+    },
   });
 
   // Initialiser les données en mode édition
@@ -86,60 +244,6 @@ export default function AddCard() {
     }
   }, [isEditMode, editCardData, collections]);
 
-  // Add personal card mutation
-  const addPersonalCardMutation = useMutation({
-    mutationFn: async (cardData: any) => {
-      return apiRequest("POST", "/api/personal-cards", cardData);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Carte ajoutée",
-        description: "La carte a été ajoutée dans 'Mes cartes' !",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
-      setTimeout(() => setLocation("/collections"), 500);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erreur",
-        description: error?.message || "Impossible d'ajouter la carte. Vérifie tes informations.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Mutation pour mettre à jour une carte existante
-  const updateCardMutation = useMutation({
-    mutationFn: async (cardData: any) => {
-      return apiRequest("PATCH", `/api/personal-cards/${editCardData.id}`, cardData);
-    },
-    onSuccess: () => {
-      toast({
-        title: "Carte modifiée",
-        description: "La carte a été modifiée avec succès !",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
-      setTimeout(() => setLocation("/collections"), 500);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erreur",
-        description: error?.message || "Impossible de modifier la carte. Vérifie tes informations.",
-        variant: "destructive",
-      });
-    },
-  });
-
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -148,8 +252,42 @@ export default function AddCard() {
         const result = e.target?.result as string;
         setOriginalImage(result);
         setEditedImage(result);
+        setCurrentStep("edit");
       };
       reader.readAsDataURL(file);
+    }
+  };
+
+  const handleNextStep = () => {
+    switch (currentStep) {
+      case "import":
+        if (!originalImage) return;
+        setCurrentStep("edit");
+        break;
+      case "edit":
+        setCurrentStep("details");
+        break;
+      case "details":
+        if (!cardType) return;
+        setCurrentStep("confirmation");
+        break;
+      case "confirmation":
+        handleSubmitCard();
+        break;
+    }
+  };
+
+  const handlePrevStep = () => {
+    switch (currentStep) {
+      case "edit":
+        setCurrentStep("import");
+        break;
+      case "details":
+        setCurrentStep("edit");
+        break;
+      case "confirmation":
+        setCurrentStep("details");
+        break;
     }
   };
 
@@ -181,6 +319,8 @@ export default function AddCard() {
       tradeOnly: false,
     };
 
+    console.log("Submitting card data:", cardData);
+    
     // Utiliser la mutation appropriée selon le mode
     if (isEditMode) {
       updateCardMutation.mutate(cardData);
@@ -286,30 +426,23 @@ export default function AddCard() {
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-sm text-zinc-400 mt-1">
+                  Sélectionne une collection pour voir uniquement ses joueurs dans l'autocomplétion
+                </p>
               </div>
 
-              {/* Nom du joueur */}
+              {/* Saison */}
               <div>
-                <Label htmlFor="playerName" className="text-white mb-2 block">Nom du joueur</Label>
-                <Input
-                  id="playerName"
-                  value={playerName}
-                  onChange={(e) => setPlayerName(e.target.value)}
-                  placeholder="Ex: Lionel Messi"
-                  className="bg-zinc-800 border-zinc-700 text-white"
-                />
-              </div>
-
-              {/* Nom de l'équipe */}
-              <div>
-                <Label htmlFor="teamName" className="text-white mb-2 block">Nom de l'équipe</Label>
-                <Input
-                  id="teamName"
-                  value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  placeholder="Ex: Paris Saint-Germain"
-                  className="bg-zinc-800 border-zinc-700 text-white"
-                />
+                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
+                <Select value={season} onValueChange={setSeason}>
+                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                    <SelectValue placeholder="Sélectionne la saison" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-zinc-800 border-zinc-700">
+                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
+                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Type de carte */}
@@ -333,18 +466,74 @@ export default function AddCard() {
                 </Select>
               </div>
 
-              {/* Saison */}
-              <div>
-                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
-                <Select value={season} onValueChange={setSeason}>
-                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                    <SelectValue placeholder="Sélectionne la saison" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700">
-                    <SelectItem value="22/23" className="text-white hover:bg-zinc-700">2022/23</SelectItem>
-                    <SelectItem value="23/24" className="text-white hover:bg-zinc-700">2023/24</SelectItem>
-                  </SelectContent>
-                </Select>
+              {/* Nom du joueur */}
+              <div className="relative">
+                <Label htmlFor="playerName" className="text-white mb-2 block">Nom du joueur</Label>
+                <Input
+                  id="playerName"
+                  value={playerName}
+                  onChange={(e) => {
+                    setPlayerName(e.target.value);
+                    setShowPlayerSuggestions(e.target.value.length > 0);
+                  }}
+                  onFocus={() => setShowPlayerSuggestions(playerName.length > 0)}
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: Kylian Mbappé"
+                />
+                {showPlayerSuggestions && getPlayerSuggestions().length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {getPlayerSuggestions().map((player, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 cursor-pointer hover:bg-zinc-700 text-white"
+                        onClick={() => {
+                          setPlayerName(player.playerName);
+                          setTeamName(player.teamName);
+                          setShowPlayerSuggestions(false);
+                        }}
+                      >
+                        <div className="font-medium">{player.playerName}</div>
+                        <div className="text-sm text-zinc-400">{player.teamName}</div>
+                        <div className="text-xs text-zinc-500 flex gap-2 mt-1">
+                          {player.hasAutograph && <span className="bg-green-600 px-1 rounded">AUTO</span>}
+                          {player.hasInsert && <span className="bg-orange-600 px-1 rounded">INSERT</span>}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Équipe */}
+              <div className="relative">
+                <Label htmlFor="teamName" className="text-white mb-2 block">Équipe</Label>
+                <Input
+                  id="teamName"
+                  value={teamName}
+                  onChange={(e) => {
+                    setTeamName(e.target.value);
+                    setShowTeamSuggestions(e.target.value.length > 0);
+                  }}
+                  onFocus={() => setShowTeamSuggestions(teamName.length > 0)}
+                  className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: Paris Saint-Germain"
+                />
+                {showTeamSuggestions && getTeamSuggestions().length > 0 && (
+                  <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {getTeamSuggestions().map((team, index) => (
+                      <div
+                        key={index}
+                        className="px-3 py-2 cursor-pointer hover:bg-zinc-700 text-white"
+                        onClick={() => {
+                          setTeamName(team);
+                          setShowTeamSuggestions(false);
+                        }}
+                      >
+                        {team}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Référence */}
@@ -354,8 +543,8 @@ export default function AddCard() {
                   id="reference"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
-                  placeholder="Ex: #123"
                   className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: #001"
                 />
               </div>
 
@@ -366,14 +555,14 @@ export default function AddCard() {
                   id="numbering"
                   value={numbering}
                   onChange={(e) => setNumbering(e.target.value)}
-                  placeholder="Ex: 123/199, 1/1"
                   className="bg-zinc-800 border-zinc-700 text-white"
+                  placeholder="Ex: 125/199"
                 />
               </div>
 
               {/* État */}
               <div>
-                <Label htmlFor="condition" className="text-white mb-2 block">État de la carte</Label>
+                <Label htmlFor="condition" className="text-white mb-2 block">État</Label>
                 <Select value={condition} onValueChange={setCondition}>
                   <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
                     <SelectValue placeholder="Sélectionne l'état" />
@@ -382,10 +571,51 @@ export default function AddCard() {
                     <SelectItem value="mint" className="text-white hover:bg-zinc-700">Mint</SelectItem>
                     <SelectItem value="near_mint" className="text-white hover:bg-zinc-700">Near Mint</SelectItem>
                     <SelectItem value="excellent" className="text-white hover:bg-zinc-700">Excellent</SelectItem>
-                    <SelectItem value="good" className="text-white hover:bg-zinc-700">Good</SelectItem>
-                    <SelectItem value="played" className="text-white hover:bg-zinc-700">Played</SelectItem>
+                    <SelectItem value="good" className="text-white hover:bg-zinc-700">Bon</SelectItem>
+                    <SelectItem value="played" className="text-white hover:bg-zinc-700">Usagé</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Prix de vente */}
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="isForSale"
+                    checked={isForSale}
+                    onChange={(e) => setIsForSale(e.target.checked)}
+                    className="rounded"
+                  />
+                  <Label htmlFor="isForSale" className="text-white">Carte à vendre</Label>
+                </div>
+                
+                {isForSale && (
+                  <>
+                    <div>
+                      <Label htmlFor="salePrice" className="text-white mb-2 block">Prix de vente (€)</Label>
+                      <Input
+                        id="salePrice"
+                        value={salePrice}
+                        onChange={(e) => setSalePrice(e.target.value)}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                        placeholder="Ex: 25.00"
+                        type="number"
+                        step="0.01"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="saleDescription" className="text-white mb-2 block">Description de vente</Label>
+                      <Input
+                        id="saleDescription"
+                        value={saleDescription}
+                        onChange={(e) => setSaleDescription(e.target.value)}
+                        className="bg-zinc-800 border-zinc-700 text-white"
+                        placeholder="Description de la carte à vendre"
+                      />
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
