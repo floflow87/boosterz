@@ -17,6 +17,7 @@ async function createSupabaseUser() {
       password: await bcrypt.hash('Test123456', 12),
       bio: 'Passionné de cartes de football et supporter de l\'OM !',
       isPublic: true,
+      isActive: true,
       followersCount: 0,
       followingCount: 0,
       totalCards: 0,
