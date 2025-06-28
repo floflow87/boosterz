@@ -118,14 +118,16 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 28, 2025. Added IsActive field for minimal user access control
+- June 28, 2025. Completed IsActive administration system with Supabase production setup
   - **User model enhancement**: Added isActive boolean field (default: true) to users table
   - **Authentication system**: Modified auth middleware to check isActive status before granting access
   - **Access control**: Users with isActive=false receive "Compte désactivé" error and cannot authenticate
   - **Admin functionality**: Minimal admin system where isActive controls user access to the application
-  - **Script enhancement**: Updated create-supabase-user.ts to include isActive field for production users
-  - **Database migration**: Added is_active column to development database with DEFAULT true NOT NULL
-  - Benefits: Simple user management system without complex admin interface, easy to toggle user access
+  - **Production setup**: Successfully configured SUPABASE_DATABASE_URL and created production user
+  - **Database migration**: Added is_active column to both development (Neon) and production (Supabase) databases
+  - **User creation**: Created main user (ID: 1, Floflow87) in Supabase with proper bcrypt password hash
+  - **SQL management**: Admin can toggle user access via UPDATE users SET is_active = true/false WHERE id = [USER_ID]
+  - Benefits: Simple user management system without complex admin interface, dual environment setup, production-ready
 - June 28, 2025. Simplified settings page by removing unnecessary options
   - **Removed sections**: Confidentialité, Aide & Support, Notifications push, Sons, Synchronisation
   - **Kept essentials**: Profil, Trophées, Notifications, Mode sombre, Visite guidée, Déconnexion
