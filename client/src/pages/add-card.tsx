@@ -12,6 +12,8 @@ import { useToast } from "@/hooks/use-toast";
 interface Player {
   playerName: string;
   teamName: string;
+  hasAutograph?: boolean;
+  hasInsert?: boolean;
 }
 
 type Step = "import" | "edit" | "details" | "confirmation";
@@ -104,7 +106,7 @@ export default function AddCard() {
                      player.cardTypes.has('Autographe Gold') ||
                      player.cardTypes.has('Autographe Red') ||
                      player.cardTypes.has('Autographe Silver'),
-        hasInsert: Array.from(player.cardTypes).some(type => type.includes('Insert'))
+        hasInsert: [...player.cardTypes].some(type => type.includes('Insert'))
       }));
     },
     staleTime: 5 * 60 * 1000,
@@ -318,7 +320,13 @@ export default function AddCard() {
     };
 
     console.log("Submitting card data:", cardData);
-    addPersonalCardMutation.mutate(cardData);
+    
+    // Utiliser la mutation appropriée selon le mode
+    if (isEditMode) {
+      updateCardMutation.mutate(cardData);
+    } else {
+      addPersonalCardMutation.mutate(cardData);
+    }
   };
 
   const handleCancel = () => {
@@ -340,7 +348,7 @@ export default function AddCard() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Retour
             </Button>
-            <h1 className="text-xl font-bold">Ajouter une carte</h1>
+            <h1 className="text-xl font-bold">{isEditMode ? "Modifier une carte" : "Ajouter une carte"}</h1>
           </div>
         </div>
       </div>
