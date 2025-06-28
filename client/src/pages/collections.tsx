@@ -1817,6 +1817,7 @@ export default function CollectionDetail() {
             setSelectedTradeCard(null);
           }}
         />
+        />
       )}
     </div>
   );
