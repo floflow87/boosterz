@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy, Settings } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -57,6 +57,8 @@ export default function Collections() {
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
+  const [showEditCardModal, setShowEditCardModal] = useState(false);
+  const [cardToEdit, setCardToEdit] = useState<PersonalCard | null>(null);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [isCardRotated, setIsCardRotated] = useState(false);
@@ -560,6 +562,12 @@ export default function Collections() {
 
   const handleDuplicateCard = (card: PersonalCard) => {
     duplicateCardMutation.mutate(card);
+  };
+
+  const handleEditCard = (card: PersonalCard) => {
+    setCardToEdit(card);
+    setShowEditCardModal(true);
+    setShowOptionsPanel(false);
   };
 
   const confirmDeleteCard = () => {
@@ -1389,6 +1397,16 @@ export default function Collections() {
                     </button>
                     
                     <button 
+                      onClick={() => handleEditCard(selectedCard as PersonalCard)}
+                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                    >
+                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <Settings className="w-4 h-4 text-white" />
+                      </div>
+                      Modifier la carte
+                    </button>
+                    
+                    <button 
                       onClick={() => handleDuplicateCard(selectedCard as PersonalCard)}
                       className="w-full p-2 text-white hover:bg-purple-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
@@ -1400,9 +1418,9 @@ export default function Collections() {
                     
                     <button 
                       onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
-                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                      <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
                         <Plus className="w-4 h-4 text-white" />
                       </div>
                       Ajouter à la collection
