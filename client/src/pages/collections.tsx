@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
-
+import CardAddModal from "@/components/card-add-modal";
 import CardDisplay from "../components/card-display";
 import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest, queryClient } from "@/lib/queryClient";
@@ -14,73 +14,31 @@ import avatarImage from "@assets/image_1750196240581.png";
 import cardStackIcon from "@assets/image_1750351528484.png";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
-import type { User, Collection, Card, PersonalCard } from "@shared/schema";
-import MilestoneCelebration from "@/components/MilestoneCelebration";
-import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
-import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
-import TrophyAvatar from "@/components/TrophyAvatar";
-
-const getThemeGradient = (themeColors: string) => {
-  const themeStyles: Record<string, string> = {
-    "main+background": "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)",
-    "white+sky": "linear-gradient(135deg, #ffffff 0%, #0ea5e9 100%)",
-    "red+navy": "linear-gradient(135deg, #dc2626 0%, #1e3a8a 100%)",
-    "navy+bronze": "linear-gradient(135deg, #1e3a8a 0%, #a3a3a3 100%)",
-    "white+red": "linear-gradient(135deg, #ffffff 0%, #dc2626 100%)",
-    "white+blue": "linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)",
-    "gold+black": "linear-gradient(135deg, #fbbf24 0%, #000000 100%)",
-    "green+white": "linear-gradient(135deg, #22c55e 0%, #ffffff 100%)",
-    "red+black": "linear-gradient(135deg, #dc2626 0%, #000000 100%)",
-    "blue+white+red": "linear-gradient(135deg, #3b82f6 0%, #ffffff 50%, #dc2626 100%)",
-    "full+black": "#000000"
-  };
-  return themeStyles[themeColors] || "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)";
-};
-
-const getThemeTextColor = (themeColors: string) => {
-  const lightThemes = ["white+sky", "white+red", "white+blue", "green+white"];
-  // Le thème full+black doit toujours afficher le texte en blanc
-  if (themeColors === "full+black") {
-    return "#ffffff";
-  }
-  return lightThemes.includes(themeColors) ? "#000000" : "#ffffff";
-};
-
+import type { User, Collection, Card } from "@shared/schema";
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Pagination } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/pagination';
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"collections" | "cards" | "marketplace" | "deck">("collections");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
-
+  const [showAddModal, setShowAddModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
-  const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
-  const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
-  const [selectedCard, setSelectedCard] = useState<any>(null);
-  const [showCardFullscreen, setShowCardFullscreen] = useState(false);
-  const [isCardRotated, setIsCardRotated] = useState(false);
-  const [rotationStyle, setRotationStyle] = useState({ rotateX: 0, rotateY: 0 });
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
-  const [showFeaturedPanel, setShowFeaturedPanel] = useState(false);
-  const [featuredDescription, setFeaturedDescription] = useState("");
   const [salePrice, setSalePrice] = useState('');
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
-  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  
-  // Milestone celebration state
-  const [currentMilestone, setCurrentMilestone] = useState<MilestoneData | null>(null);
-  const [collectionCompletions, setCollectionCompletions] = useState<Record<number, any>>({});
-  
+  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('available');
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // Récupérer l'utilisateur authentifié
   const { data: authUser, isLoading: authLoading } = useQuery({
     queryKey: ["/api/auth/me"],
   });
@@ -94,125 +52,12 @@ export default function Collections() {
   });
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ["/api/users", userId, "collections"],
+    queryKey: [`/api/users/${userId}/collections`],
+    enabled: !!userId,
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
     refetchOnWindowFocus: false,
-    enabled: !!userId,
   });
-
-  // Query pour les cartes personnelles
-  const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery<any[]>({
-    queryKey: ["/api/personal-cards"],
-    staleTime: 5 * 60 * 1000,
-    enabled: activeTab === "cards",
-  });
-
-  // Query pour les decks de l'utilisateur avec cache optimisé
-  const { data: userDecks = [], isLoading: decksLoading } = useQuery<any[]>({
-    queryKey: ["/api/decks"],
-    staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes
-    gcTime: 20 * 60 * 1000, // Garde en cache 20 minutes  
-    refetchOnWindowFocus: false, // Ne pas refetch au focus
-    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
-  });
-
-  // Query pour obtenir les détails complets des decks avec cartes pour prévisualisation
-  const { data: deckPreviews = [] } = useQuery({
-    queryKey: ['/api/decks/previews', userDecks?.map(d => d.id).join(',')],
-    queryFn: async () => {
-      if (!userDecks?.length) return [];
-      
-      const previews = await Promise.all(
-        userDecks.map(async (deck: any) => {
-          try {
-            const response = await fetch(`/api/decks/${deck.id}`);
-            if (response.ok) {
-              const deckWithCards = await response.json();
-              return {
-                ...deck,
-                previewCards: deckWithCards.cards.slice(0, 3)
-              };
-            }
-            return { ...deck, previewCards: [] };
-          } catch {
-            return { ...deck, previewCards: [] };
-          }
-        })
-      );
-      return previews;
-    },
-    enabled: activeTab === "deck" && !!userDecks?.length,
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
-    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
-    refetchOnWindowFocus: false, // Ne pas refetch au focus
-    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
-  });
-
-  // Filtrer et rechercher les cartes personnelles
-  const filteredPersonalCards = personalCards.filter(card => {
-    // Filtre par statut de vente
-    if (saleFilter === 'available') {
-      // En vente : cartes avec isForTrade=true ET un prix, mais pas vendues
-      if (!card.isForTrade || !card.tradePrice || card.isSold) return false;
-    } else if (saleFilter === 'sold') {
-      // Vendues : seulement les cartes avec isSold=true
-      if (!card.isSold) return false;
-    } 
-    // Pour 'all', on affiche toutes les cartes sans filtrage par statut de vente
-    
-    // Filtre par recherche
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      const playerMatch = card.playerName?.toLowerCase().includes(query);
-      const teamMatch = card.teamName?.toLowerCase().includes(query);
-      return playerMatch || teamMatch;
-    }
-    
-    return true;
-  }).sort((a, b) => {
-    // Trier les cartes vendues à la fin de la liste
-    if (a.isSold && !b.isSold) return 1;
-    if (!a.isSold && b.isSold) return -1;
-    return 0;
-  });
-
-  // Générer les suggestions d'autocomplétion
-  const generateSuggestions = (query: string) => {
-    if (!query.trim()) return [];
-    
-    const suggestions = new Set<string>();
-    const queryLower = query.toLowerCase();
-    
-    personalCards.forEach(card => {
-      if (card.playerName && card.playerName.toLowerCase().includes(queryLower)) {
-        suggestions.add(card.playerName);
-      }
-      if (card.teamName && card.teamName.toLowerCase().includes(queryLower)) {
-        suggestions.add(card.teamName);
-      }
-    });
-    
-    return Array.from(suggestions).slice(0, 5);
-  };
-
-  // Mettre à jour les suggestions quand la recherche change
-  // Gérer le paramètre tab dans l'URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tabParam = urlParams.get('tab');
-    if (tabParam === 'decks') {
-      setActiveTab('deck');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (personalCards.length === 0) return;
-    
-    const suggestions = generateSuggestions(searchQuery);
-    setSearchSuggestions(suggestions);
-    setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
-  }, [searchQuery]);
 
   // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
   const getCollectionCompletion = (collection: Collection) => {
@@ -229,196 +74,15 @@ export default function Collections() {
     return { totalCards: 0, ownedCards: 0, percentage: 0 };
   };
 
-  // Query for all user cards when no collection is selected
-  const { data: allUserCardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
-    queryKey: ["/api/cards/all"],
-    enabled: !selectedCollection && activeTab === "cards",
-  });
-
-  // Query for specific collection cards
-  const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
-    queryKey: [`/api/collections/${selectedCollection}/cards`],
+  const { data: cards } = useQuery<Card[]>({
+    queryKey: selectedCollection ? [`/api/collections/${selectedCollection}/cards`] : ["/api/cards/all"],
     enabled: !!selectedCollection && activeTab === "cards",
   });
 
-  // Extract cards from response - use all user cards if no collection selected
-  const cards = selectedCollection 
-    ? (cardsResponse?.cards || [])
-    : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
-
-  // Effect to check for milestones when collections data changes
-  useEffect(() => {
-    if (!collections || collections.length === 0) return;
-
-    // Calculate all collection completions
-    const newCompletions: Record<number, any> = {};
-    
-    collections.forEach(collection => {
-      const completion = getCollectionCompletion(collection);
-      newCompletions[collection.id] = completion;
-
-      // Check for milestones if we have previous data to compare
-      const previousCompletion = collectionCompletions[collection.id];
-      
-      if (previousCompletion && completion.percentage !== previousCompletion.percentage) {
-        // Check for completion milestones
-        const milestone = MilestoneDetector.checkAllMilestones(
-          collection as any,
-          completion,
-          previousCompletion,
-          collections as any,
-          newCompletions
-        );
-
-        if (milestone) {
-          setCurrentMilestone(milestone);
-        }
-      }
-    });
-
-    // Update the completions state only if it has changed
-    setCollectionCompletions(prev => {
-      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newCompletions);
-      return hasChanged ? newCompletions : prev;
-    });
-  }, [collections]);
-
-  // Effect to check for first collection milestone when user first loads the app
-  useEffect(() => {
-    if (!collections || collections.length === 0) return;
-    
-    // Check for first collection milestone only once
-    const completions: Record<number, any> = {};
-    collections.forEach(collection => {
-      completions[collection.id] = getCollectionCompletion(collection);
-    });
-
-    const firstCollectionMilestone = MilestoneDetector.checkFirstCollectionMilestone(
-      collections as any,
-      completions
-    );
-
-    if (firstCollectionMilestone) {
-      setCurrentMilestone(firstCollectionMilestone);
-    }
-  }, [collections]); // Only run when collections first load
-
-  // Development helper: Add test milestone triggers
-  useEffect(() => {
-    // Add global functions for testing milestones
-    if (typeof window !== 'undefined') {
-      (window as any).testMilestone = (type?: string) => {
-        const milestone = MilestoneTestTriggers.createTestMilestone(type as any || 'completion');
-        setCurrentMilestone(milestone);
-      };
-
-      (window as any).testRandomMilestone = () => {
-        const milestone = MilestoneTestTriggers.getRandomMilestone();
-        setCurrentMilestone(milestone);
-      };
-
-      (window as any).testCompletionMilestone = (percentage: number) => {
-        const milestone = MilestoneTestTriggers.createCompletionMilestone(percentage);
-        setCurrentMilestone(milestone);
-      };
-    }
-  }, []);
-
-  // Mutation pour mettre à jour les paramètres de vente
-  const updateSaleSettingsMutation = useMutation({
-    mutationFn: async ({ cardId, price, description, tradeOnly }: {
-      cardId: number;
-      price: string;
-      description: string;
-      tradeOnly: boolean;
-    }) => {
-      console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
-      
-      const requestData = {
-        isForSale: true,
-        isForTrade: true,
-        tradePrice: price,
-        tradeDescription: description,
-        tradeOnly
-      };
-      
-      console.log("Request data:", requestData);
-      console.log("Making request to:", `/api/personal-cards/${cardId}/sale-settings`);
-      
-      try {
-        const result = await apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, requestData);
-        console.log("API response received:", result);
-        return result;
-      } catch (error) {
-        console.error("API request failed:", error);
-        throw error;
-      }
-    },
-    onSuccess: (updatedCard) => {
-      // Mettre à jour les cartes personnelles
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      
-      // Vider les champs uniquement après succès
-      setSalePrice('');
-      setSaleDescription('');
-      setTradeOnly(false);
-      
-      toast({
-        title: "Paramètres sauvegardés",
-        description: "Les paramètres de vente ont été mis à jour.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowTradePanel(false);
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    },
-    onError: (error) => {
-      console.error("Error saving sale settings:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder les paramètres.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Mutation pour retirer de la vente
-  const removeFromSaleMutation = useMutation({
-    mutationFn: async (cardId: number) => {
-      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
-        isForSale: false,
-        isForTrade: false,
-        tradePrice: null,
-        tradeDescription: null,
-        tradeOnly: false
-      });
-    },
-    onSuccess: (updatedCard) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      
-      toast({
-        title: "Carte retirée de la vente",
-        description: "La carte n'est plus disponible à la vente.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de retirer la carte de la vente.",
-        variant: "destructive",
-      });
-    },
+  const { data: marketplaceCards } = useQuery<Card[]>({
+    queryKey: ["/api/cards/marketplace"],
+    enabled: activeTab === "marketplace",
+    staleTime: 1 * 60 * 1000, // 1 minute
   });
 
   const deleteCollectionMutation = useMutation({
@@ -444,74 +108,27 @@ export default function Collections() {
     }
   });
 
-  // Mutation pour supprimer une carte
-  const deleteCardMutation = useMutation({
-    mutationFn: async (cardId: number) => {
-      return apiRequest("DELETE", `/api/personal-cards/${cardId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      
-      toast({
-        title: "Carte supprimée",
-        description: "La carte a été supprimée avec succès.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowDeleteCardModal(false);
-      setCardToDelete(null);
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    },
-    onError: () => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la carte.",
-        variant: "destructive"
-      });
+  const handleCollectionClick = (collectionId: number) => {
+    if (activeTab === "collections") {
+      setLocation(`/collection/${collectionId}`);
+    } else {
+      setSelectedCollection(collectionId);
     }
-  });
+  };
 
-  const handleMarkAsSold = async () => {
-    if (!selectedCard) return;
+  const handleDeleteCollection = (collection: Collection, e: React.MouseEvent) => {
+    e.stopPropagation();
     
-    try {
-      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}/sale-settings`, {
-        isSold: true,
-        isForSale: false,
-        isForTrade: false
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
+    // Protéger la collection Score Ligue 1 2023/24
+    if (collection.id === 1 || collection.name?.includes("SCORE LIGUE 1")) {
       toast({
-        title: "Carte marquée comme vendue",
-        description: "La carte est maintenant disponible dans l'onglet 'Vendues'.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de marquer la carte comme vendue.",
+        title: "Action non autorisée",
+        description: "La collection Score Ligue 1 2023/24 ne peut pas être supprimée.",
         variant: "destructive"
       });
+      return;
     }
-  };
-
-  const handleRemoveFromSale = () => {
-    if (!selectedCard) return;
-    removeFromSaleMutation.mutate(selectedCard.id);
-  };
-
-  const handleDeleteCollection = (collection: Collection) => {
+    
     setCollectionToDelete(collection);
     setShowDeleteModal(true);
   };
@@ -522,37 +139,54 @@ export default function Collections() {
     }
   };
 
-  const handleDeleteCard = (card: Card) => {
-    setCardToDelete(card);
-    setShowDeleteCardModal(true);
-    setShowOptionsPanel(false);
-  };
-
-  const confirmDeleteCard = () => {
-    if (cardToDelete) {
-      deleteCardMutation.mutate(cardToDelete.id);
-    }
-  };
-
-  const handleTabChange = (tab: "collections" | "cards" | "deck") => {
-    setActiveTab(tab);
-    if (tab === "collections") {
-      setSelectedCollection(null);
-    }
-  };
-
-  const handleSaveSaleSettings = () => {
+  const handleSaveSaleSettings = async () => {
     if (!selectedCard) return;
     
-    updateSaleSettingsMutation.mutate({
-      cardId: selectedCard.id,
-      price: salePrice,
-      description: saleDescription,
-      tradeOnly: tradeOnly
-    });
+    try {
+      const response = await fetch(`/api/cards/${selectedCard.id}/sale-settings`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          salePrice,
+          saleDescription,
+          tradeOnly
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de la sauvegarde');
+      }
+      
+      setShowTradePanel(false);
+      setSalePrice('');
+      setSaleDescription('');
+      setTradeOnly(false);
+      
+      toast({
+        title: "Paramètres sauvegardés",
+        description: "Les paramètres de vente ont été mis à jour.",
+      });
+      
+      // Actualiser les données du marketplace
+      await queryClient.invalidateQueries({ queryKey: ['/api/cards/marketplace'] });
+      
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les paramètres.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (userLoading || collectionsLoading) {
+    return <LoadingScreen />;
+  }
+
+  if (userLoading || collectionsLoading || authLoading) {
     return <LoadingScreen />;
   }
 
@@ -564,373 +198,701 @@ export default function Collections() {
         {/* User Profile Section */}
         {currentUser && (
           <div className="flex flex-col items-center text-center mb-4 mt-2">
-            <TrophyAvatar 
-              userId={currentUser.id}
-              avatar={currentUser.avatar || undefined}
-              size="lg"
-            />
-            <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{currentUser.name || currentUser.username}</h2>
-            <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">
-                  {(() => {
-                    // Compter uniquement les cartes personnelles affichées dans l'onglet "Cartes"
-                    // (en excluant les vendues pour correspondre au filtrage de l'onglet)
-                    const visibleCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
-                    return visibleCardsCount;
-                  })()}
-                </span>
-                <span>cartes</span>
+            <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mb-3 shadow-lg relative">
+              {user.avatar ? (
+                <img 
+                  src={user.avatar} 
+                  alt="Avatar utilisateur"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
+                />
+              ) : (
+                <img 
+                  src={avatarImage} 
+                  alt="Avatar par défaut"
+                  className="w-20 h-20 rounded-full object-cover border-2 border-white"
+                />
+              )}
+            </div>
+            <h2 className="text-xl font-bold text-white font-luckiest tracking-wide">{user.name}</h2>
+            <p className="text-[hsl(212,23%,69%)] text-sm font-poppins mb-3">@{user.username}</p>
+            
+            <div className="flex space-x-4 text-center justify-center max-w-80 mx-auto">
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1 ml-[0px] mr-[0px] pl-[24px] pr-[24px]">
+                <CreditCard className="w-4 h-4 text-yellow-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-white">
+                  {collections?.reduce((total, collection) => {
+                    const completion = getCollectionCompletion(collection);
+                    return total + completion.ownedCards;
+                  }, 0) || 0}
+                </div>
+                <div className="text-xs text-[hsl(212,23%,69%)]">Cartes</div>
               </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{userDecks?.length || 0}</span>
-                <span>decks</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user?.followersCount || 0}</span>
-                <span>abonnés</span>
+              <div className="bg-[hsl(214,35%,22%)] p-3 rounded-lg border border-[hsl(9,85%,67%)]/30 flex-1">
+                <Trophy className="w-4 h-4 text-green-400 mx-auto mb-1" />
+                <div className="text-lg font-bold text-white">{collections?.length || 0}</div>
+                <div className="text-xs text-[hsl(212,23%,69%)]">Collections</div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Navigation Tabs - Horizontal Scroll */}
-        <div className="overflow-x-auto scrollbar-hide mb-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <div className="flex space-x-2 bg-[hsl(214,35%,22%)] rounded-xl p-1 min-w-max">
-            <button
-              onClick={() => handleTabChange("cards")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+        {/* Navigation Tabs */}
+        <div className="sticky top-0 z-50 pb-3 mb-3 bg-[hsl(216,46%,13%)] pt-2 -mx-4 px-4" style={{ height: '58px' }}>
+          <div className="flex space-x-3 overflow-x-auto scrollbar-hide min-h-[44px] items-center px-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <button 
+              onClick={() => setActiveTab("cards")}
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "cards" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
+              style={activeTab === "cards" ? { backgroundColor: '#F37261' } : {}}
             >
-              <CardIcon className="w-4 h-4" />
-              Cartes
+              <Star className="w-3 h-3 mr-1 inline" />
+              Cartes ajoutées
             </button>
-
-            <button
-              onClick={() => handleTabChange("collections")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
+            <button 
+              onClick={() => setActiveTab("collections")}
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
                 activeTab === "collections" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+                  ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
-              <Layers className="w-4 h-4" />
+              <Users className="w-3 h-3 mr-1 inline" />
               Collections
             </button>
-
-            <button
-              onClick={() => handleTabChange("deck")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "deck" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+            <button 
+              onClick={() => setActiveTab("marketplace")}
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "marketplace" 
+                  ? "bg-purple-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
             >
-              <BookOpen className="w-4 h-4" />
+              <TrendingUp className="w-3 h-3 mr-1 inline" />
+              A la vente
+            </button>
+            <button 
+              onClick={() => setActiveTab("deck")}
+              className={`px-5 py-2.5 rounded-full text-xs font-medium whitespace-nowrap transition-all duration-300 ${
+                activeTab === "deck" 
+                  ? "bg-orange-600 text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+            >
+              <Package className="w-3 h-3 mr-1 inline" />
               Decks
             </button>
-
           </div>
         </div>
 
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Collections</h3>
-            {/* Add Collection Button - Moved to top */}
-            <div 
-              onClick={() => setLocation("/add-card")}
-              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
-            >
-              <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="font-bold text-white font-poppins text-base">Nouvelle Collection</h3>
-            </div>
-
-            {collections?.map((collection) => {
-              const completion = getCollectionCompletion(collection);
-              return (
-                <div key={collection.id}>
-                  <div 
-                    onClick={() => {
-                      setLocation(`/collection/${collection.id}`);
-                    }}
-                    className="w-full bg-gradient-radial from-[hsl(214,35%,22%)] from-0% to-[hsl(216,46%,13%)] to-100% rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02] border-2 border-yellow-500/50 hover:border-yellow-400/70"
-                  >
+          <div className="relative pb-4 wallet-container">
+            <style>{`
+              .wallet-container {
+                perspective: 1000px;
+              }
+              
+              .collections-scroll {
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                scroll-behavior: smooth;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+              }
+              
+              .collections-scroll::-webkit-scrollbar {
+                display: none;
+              }
+              
+              .collections-swiper {
+                overflow: visible;
+                padding: 0 16px;
+              }
+              
+              .collections-swiper .swiper-slide {
+                height: auto;
+              }
+              
+              .collections-swiper .swiper-pagination {
+                position: static !important;
+                bottom: auto !important;
+                left: auto !important;
+                transform: none !important;
+                width: auto !important;
+                margin-top: 20px;
+                text-align: center;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet {
+                background: rgba(255, 255, 255, 0.3) !important;
+                opacity: 1 !important;
+                width: 8px !important;
+                height: 8px !important;
+                margin: 0 4px !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active {
+                background: hsl(9, 85%, 67%) !important;
+                transform: scale(1.2) !important;
+              }
+              
+              .collection-wallet-item {
+                transform-style: preserve-3d;
+                transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                min-width: 320px;
+                max-width: 320px;
+                flex-shrink: 0;
+                width: 320px;
+                scroll-snap-align: start;
+              }
+              
+              .collection-wallet-item:hover {
+                transform: translateY(-8px) rotateY(5deg) scale(1.02);
+                box-shadow: 0 12px 40px rgba(243, 114, 97, 0.25);
+              }
+              
+              .collection-wallet-item:nth-child(even):hover {
+                transform: translateY(-8px) rotateY(-5deg) scale(1.02);
+              }
+              
+              .wallet-card-display {
+                position: relative;
+                overflow: hidden;
+                background: linear-gradient(135deg, hsl(216,46%,13%) 0%, hsl(214,35%,15%) 50%, hsl(214,35%,20%) 100%);
+              }
+              
+              .wallet-card-stack {
+                position: relative;
+                transform-style: preserve-3d;
+              }
+              
+              .wallet-card-layer {
+                position: absolute;
+                transition: all 0.3s ease;
+                border-radius: 20px;
+                background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(1) {
+                transform: translateX(-8px) translateY(-4px) rotateZ(-3deg);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(2) {
+                transform: translateX(0px) translateY(-2px) rotateZ(0deg);
+              }
+              
+              .collection-wallet-item:hover .wallet-card-layer:nth-child(3) {
+                transform: translateX(8px) translateY(-6px) rotateZ(3deg);
+              }
+              
+              .collections-swiper {
+                padding-bottom: 40px !important;
+                overflow: visible !important;
+              }
+              
+              .collections-swiper .swiper-wrapper {
+                transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+              }
+              
+              .collections-swiper .swiper-slide {
+                transition: transform 0.3s ease, opacity 0.3s ease !important;
+              }
+              
+              .collections-swiper .swiper-pagination {
+                bottom: 10px !important;
+                position: absolute !important;
+                left: 50% !important;
+                transform: translateX(-50%) !important;
+                width: auto !important;
+                display: flex !important;
+                justify-content: center !important;
+                gap: 8px !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet {
+                width: 8px !important;
+                height: 8px !important;
+                border-radius: 50% !important;
+                background: rgba(255, 255, 255, 0.3) !important;
+                opacity: 1 !important;
+                margin: 0 !important;
+                transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active {
+                background: #F37261 !important;
+                transform: scale(1.2) !important;
+              }
+              
+              .collections-swiper .swiper-pagination-bullet-active-main {
+                background: #F37261 !important;
+                transform: scale(1.4) !important;
+              }
+            `}</style>
+            
+            <div className="collections-scroll">
+              <Swiper
+                slidesPerView="auto"
+                spaceBetween={20}
+                freeMode={{
+                  enabled: true,
+                  momentum: true,
+                  momentumRatio: 0.85,
+                  momentumBounce: true,
+                  momentumBounceRatio: 0.1,
+                  momentumVelocityRatio: 1.0,
+                  sticky: true,
+                  minimumVelocity: 0.02,
+                }}
+                resistance={true}
+                resistanceRatio={0.15}
+                speed={350}
+                touchRatio={1.2}
+                touchAngle={45}
+                grabCursor={true}
+                centeredSlides={false}
+                slidesOffsetBefore={16}
+                slidesOffsetAfter={16}
+                pagination={{
+                  clickable: true,
+                  dynamicBullets: true,
+                  dynamicMainBullets: 3,
+                  hideOnClick: false,
+                  type: 'bullets'
+                }}
+                modules={[FreeMode, Pagination]}
+                className="collections-swiper"
+              >
+                {collections?.map((collection) => (
+                  <SwiperSlide key={collection.id} className="!w-80">
+                    <div 
+                      onClick={() => handleCollectionClick(collection.id)}
+                      className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl overflow-hidden cursor-pointer group relative"
+                    >
                     {/* Header with title and delete button */}
-                    <div className="p-4 pb-3">
+                    <div className="p-6 pb-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
-                          <p className="text-white/60 text-sm italic">{collection.season || 'Saison non spécifiée'}</p>
+                          <h3 className="font-bold text-white font-poppins text-xl">{collection.name}</h3>
+                          <p className="text-white/60 text-base italic">{collection.season}</p>
                         </div>
                         <div className="flex items-center gap-3">
                           {!collection.name?.includes("SCORE LIGUE 1") && (
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteCollection(collection);
-                              }}
+                              onClick={(e) => handleDeleteCollection(collection, e)}
                               className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
                               title="Supprimer la collection"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-5 h-5" />
                             </button>
                           )}
                         </div>
                       </div>
                     </div>
 
-                    {/* Card display area */}
-                    <div className="h-32 relative flex items-center justify-center overflow-hidden px-4 pb-3">
-                      <div className="relative w-full max-w-md h-32 flex items-center justify-center">
-                        {/* Main card with golden cards image and effects */}
-                        <div className="relative w-32 h-32 bg-gradient-to-br from-yellow-900/30 via-yellow-800/40 to-amber-900/50 rounded-2xl p-3 shadow-2xl flex items-center justify-center border border-yellow-500/20 group hover:scale-105 transition-all duration-300">
-                          {/* Golden glow effect */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-amber-500/5 to-yellow-600/10 rounded-2xl animate-pulse"></div>
-                          
-                          {/* Shimmer effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent rounded-2xl transform -skew-x-12 animate-shimmer"></div>
-                          
+                    {/* Card carousel area with wallet-style display */}
+                    <div className="h-40 relative flex items-center justify-center overflow-hidden px-6 pb-3 wallet-card-display">
+                      {/* Wallet-style card stack container */}
+                      <div className="relative w-full max-w-md h-32 flex items-center justify-center wallet-card-stack">
+                        {/* Background card layers for wallet effect */}
+                        <div className="wallet-card-layer w-24 h-32 bg-white/10" style={{ zIndex: 1 }}></div>
+                        <div className="wallet-card-layer w-24 h-32 bg-white/15" style={{ zIndex: 2 }}></div>
+                        <div className="wallet-card-layer w-24 h-32 bg-white/20" style={{ zIndex: 3 }}></div>
+                        
+                        {/* Main card with golden cards image */}
+                        <div className="relative w-32 h-32 bg-gradient-to-br from-[hsl(216,46%,13%)] via-[hsl(214,35%,15%)] to-[hsl(214,35%,20%)] rounded-2xl p-3 shadow-2xl flex items-center justify-center" style={{ zIndex: 4 }}>
                           <img 
                             src={goldenCardsIcon}
                             alt="Golden trading cards"
-                            className="w-24 h-24 object-contain rounded-lg relative z-10 filter drop-shadow-lg group-hover:drop-shadow-2xl transition-all duration-300"
-                            style={{
-                              filter: 'drop-shadow(0 0 20px rgba(251, 191, 36, 0.3)) brightness(1.1) contrast(1.1)'
-                            }}
+                            className="w-28 h-28 object-contain rounded-[20px] shadow-[0_0_20px_rgba(0,0,0,0.4)]"
                           />
-                          
-                          {/* Sparkle effects */}
-                          <div className="absolute top-2 right-2 w-2 h-2 bg-yellow-400 rounded-full animate-ping opacity-75"></div>
-                          <div className="absolute bottom-3 left-3 w-1.5 h-1.5 bg-amber-300 rounded-full animate-pulse delay-300"></div>
-                          <div className="absolute top-1/2 left-2 w-1 h-1 bg-yellow-500 rounded-full animate-pulse delay-700"></div>
                         </div>
                       </div>
                     </div>
                     
                     {/* Progress bar */}
-                    <div className="px-4 pb-4">
+                    <div className="px-6 pb-4">
                       <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                         <div 
                           className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${completion.percentage}%` }}
+                          style={{ width: `${getCollectionCompletion(collection).percentage}%` }}
                         ></div>
                       </div>
                       <div className="flex justify-between text-xs text-white/60 mt-1">
-                        <span>{completion.percentage}% complété</span>
-                        <span>{completion.ownedCards} cartes acquises</span>
+                        <span>{getCollectionCompletion(collection).percentage}% complété</span>
+                        <span>{getCollectionCompletion(collection).ownedCards} cartes acquises</span>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                  </SwiperSlide>
+                ))}
+
+                {/* Add Collection Button */}
+                <SwiperSlide className="!w-80">
+                  <div 
+                    onClick={() => setShowAddModal(true)}
+                    className="collection-wallet-item w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-8 flex flex-col items-center justify-center text-center h-full"
+                  >
+                    <div className="w-16 h-16 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Plus className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="font-bold text-white mb-2 font-poppins text-xl">Nouvelle Collection</h3>
+                    <p className="text-[hsl(212,23%,69%)] text-base">Ajouter une collection à votre bibliothèque</p>
+                  </div>
+                </SwiperSlide>
+              </Swiper>
+            </div>
           </div>
         )}
 
-
-
-        {/* Cards Tab Content - Personal Cards */}
+        {/* Cards Tab Content */}
         {activeTab === "cards" && (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes cartes</h3>
+          <>
+            {/* Controls */}
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "grid" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <LayoutGrid className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("carousel")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "carousel" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <Layers className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("gallery")}
+                  className={`p-2 rounded-lg ${
+                    viewMode === "gallery" ? "bg-[hsl(9,85%,67%)] text-white" : "bg-[hsl(214,35%,22%)] text-[hsl(212,23%,69%)]"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+              </div>
               
-              {/* Controls Row - Filter Tabs and View Icons */}
-              <div className="flex items-center justify-between">
-                {/* Filter Tabs */}
-                <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
-                  <button
-                    onClick={() => setSaleFilter('all')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'all' 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
+              <div className="flex items-center space-x-2">
+                <button className="p-2 bg-[hsl(214,35%,22%)] rounded-lg">
+                  <Search className="w-4 h-4 text-[hsl(212,23%,69%)]" />
+                </button>
+                <button className="p-2 bg-[hsl(214,35%,22%)] rounded-lg">
+                  <Filter className="w-4 h-4 text-[hsl(212,23%,69%)]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Collection Selector */}
+            <div className="mb-4">
+              <select
+                value={selectedCollection || ""}
+                onChange={(e) => setSelectedCollection(e.target.value ? parseInt(e.target.value) : null)}
+                className="w-full bg-[hsl(214,35%,22%)] text-white rounded-lg p-3 border border-gray-600 font-poppins"
+              >
+                <option value="">Toutes les collections</option>
+                {collections?.map((collection) => (
+                  <option key={collection.id} value={collection.id}>
+                    {collection.name} ({collection.ownedCards}/{collection.totalCards})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Collections Grid */}
+            {!selectedCollection && (
+              <div className="collection-grid mb-6">
+                {collections?.map((collection) => (
+                  <div 
+                    key={collection.id}
+                    onClick={() => setSelectedCollection(collection.id)}
+                    className="bg-[hsl(214,35%,22%)] rounded-xl p-4 card-hover cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 border-transparent hover:border-[hsl(9,85%,67%)]/50 relative group"
                   >
-                    Toutes
+                    <div className="bg-[hsl(9,85%,67%)] rounded-lg p-3 mb-3 text-center relative">
+                      {collection.name === 'SCORE LIGUE 1' ? (
+                        <>
+                          <img 
+                            src="/attached_assets/image%2029_1750232088999.png" 
+                            alt="Score Ligue 1 logo"
+                            className="w-16 h-16 object-contain mx-auto mb-2"
+                          />
+                          <h3 className="font-bold text-white text-xs font-luckiest">{collection.name}</h3>
+                          <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                        </>
+                      ) : (
+                        <>
+                          <h3 className="font-bold text-white text-sm font-luckiest">{collection.name}</h3>
+                          <p className="text-xs text-white opacity-90 font-poppins">{collection.season}</p>
+                        </>
+                      )}
+                      {!collection.name?.includes("SCORE LIGUE 1") && (
+                        <button
+                          onClick={(e) => handleDeleteCollection(collection, e)}
+                          className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 p-1 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200 text-xs"
+                          title="Supprimer la collection"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-xs text-[hsl(212,23%,69%)] font-poppins">
+                      {getCollectionCompletion(collection).ownedCards} cartes possédées
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-1.5 mt-1">
+                      <div 
+                        className="progress-bar h-1.5 rounded-full" 
+                        style={{ width: `${getCollectionCompletion(collection).percentage}%` }}
+                      />
+                    </div>
+                    <div className="text-xs text-[hsl(9,85%,67%)] font-poppins mt-1">
+                      {getCollectionCompletion(collection).percentage}% complété
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Cards Display */}
+            {selectedCollection && cards && (
+              <>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-bold text-white font-poppins">
+                    {collections?.find(c => c.id === selectedCollection)?.name}
+                  </h3>
+                  <button
+                    onClick={() => setSelectedCollection(null)}
+                    className="text-[hsl(9,85%,67%)] text-sm font-poppins"
+                  >
+                    Voir toutes
                   </button>
+                </div>
+
+                {viewMode === "grid" ? (
+                  <div className="card-grid">
+                    {cards.map((card) => (
+                      <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-2 card-hover relative">
+                        {card.isOwned && card.imageUrl ? (
+                          <img 
+                            src={card.imageUrl} 
+                            alt={`${card.playerName} card`}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                        ) : (
+                          <div className="w-full h-32 bg-gray-600 rounded-lg flex items-center justify-center opacity-50">
+                            <span className="text-gray-400 text-xs font-poppins">#{card.reference}</span>
+                          </div>
+                        )}
+                        <div className="text-xs mt-1 text-center font-poppins">
+                          <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
+                            {card.isOwned ? card.playerName : '?????'}
+                          </div>
+                          <div className="text-[hsl(212,23%,69%)]">{card.reference}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : viewMode === "carousel" ? (
+                  <div className="overflow-x-auto pb-4">
+                    <div className="flex space-x-4 px-2" style={{ width: 'max-content' }}>
+                      {cards.map((card, index) => (
+                        <div 
+                          key={card.id} 
+                          className="flex-shrink-0 group cursor-pointer"
+                          style={{ perspective: '1000px' }}
+                        >
+                          <div className="bg-[hsl(214,35%,22%)] rounded-lg p-3 w-40 transition-all duration-300 hover:scale-110 hover:rotate-y-12 hover:shadow-2xl transform-gpu group-hover:z-10 relative">
+                            <div className="w-full h-48 bg-gray-600 rounded-lg flex items-center justify-center opacity-50 mb-2">
+                              <span className="text-gray-400 text-xs font-poppins">#{card.reference}</span>
+                            </div>
+                            <div className="text-center font-poppins">
+                              <div className={`font-medium text-sm ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
+                                {card.isOwned ? card.playerName : '?????'}
+                              </div>
+                              <div className="text-[hsl(212,23%,69%)] text-xs">{card.reference}</div>
+                              {card.cardType !== "Base" && (
+                                <div className="text-[hsl(9,85%,67%)] text-xs mt-1">{card.cardType}</div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {cards.map((card) => (
+                      <div key={card.id} className="bg-[hsl(214,35%,22%)] rounded-lg p-3 flex items-center space-x-3">
+                        <div className="w-16 h-20 bg-gray-600 rounded flex-shrink-0">
+                          <div className="w-full h-full flex items-center justify-center opacity-50">
+                            <span className="text-gray-400 text-xs">{card.reference}</span>
+                          </div>
+                        </div>
+                        <div className="flex-1 font-poppins">
+                          <div className={`font-medium ${card.isOwned ? 'text-white' : 'text-[hsl(212,23%,69%)]'}`}>
+                            {card.isOwned ? card.playerName : 'Carte manquante'}
+                          </div>
+                          <div className="text-[hsl(212,23%,69%)] text-sm">{card.reference}</div>
+                          {card.isRookieCard && (
+                            <div className="text-[hsl(9,85%,67%)] text-xs">RC</div>
+                          )}
+                        </div>
+                        <div className={`w-3 h-3 rounded-full ${card.isOwned ? 'bg-green-500' : 'bg-gray-500'}`} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Add Card Button */}
+            <div className="fixed bottom-20 right-4 flex flex-col space-y-2">
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="w-12 h-12 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center shadow-lg"
+              >
+                <Camera className="w-6 h-6 text-white" />
+              </button>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="w-12 h-12 bg-[hsl(214,35%,22%)] rounded-full flex items-center justify-center shadow-lg"
+              >
+                <Plus className="w-6 h-6 text-white" />
+              </button>
+            </div>
+          </>
+        )}
+
+        {/* Marketplace Tab Content */}
+        {activeTab === "marketplace" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white font-poppins">Mes cartes à la vente</h3>
+              
+              {/* Filtres */}
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 bg-[hsl(214,35%,22%)] rounded-lg p-1">
                   <button
                     onClick={() => setSaleFilter('available')}
                     className={`px-3 py-1 rounded text-xs transition-all ${
                       saleFilter === 'available' 
-                        ? "bg-primary text-primary-foreground" 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
-                    En vente
+                    Disponibles
                   </button>
                   <button
                     onClick={() => setSaleFilter('sold')}
                     className={`px-3 py-1 rounded text-xs transition-all ${
                       saleFilter === 'sold' 
-                        ? "bg-primary text-primary-foreground" 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
                     Vendues
                   </button>
-                </div>
-
-                {/* View Mode Icons */}
-                <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
                   <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "list" 
-                        ? "bg-primary text-primary-foreground" 
+                    onClick={() => setSaleFilter('all')}
+                    className={`px-3 py-1 rounded text-xs transition-all ${
+                      saleFilter === 'all' 
+                        ? "bg-[hsl(9,85%,67%)] text-white" 
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
-                    <List className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "grid" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <Grid className="w-4 h-4" />
+                    Toutes
                   </button>
                 </div>
-              </div>
-            </div>
-
-            {/* Search Bar with Autocomplete */}
-            <div className="relative mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par joueur ou équipe..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setShowSuggestions(searchSuggestions.length > 0)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,15%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-              </div>
               
-              {/* Autocomplete Suggestions */}
-              {showSuggestions && searchSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-[hsl(214,35%,18%)] border border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
-                  {searchSuggestions.map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setSearchQuery(suggestion);
-                        setShowSuggestions(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-white hover:bg-[hsl(214,35%,25%)] transition-colors border-b border-gray-700 last:border-b-0"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-
-
-            {personalCardsLoading ? (
-              <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewMode("list")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "list" 
+                      ? "bg-[hsl(9,85%,67%)] text-white" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  <List className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode("grid")}
+                  className={`p-2 rounded-md transition-all ${
+                    viewMode === "grid" 
+                      ? "bg-[hsl(9,85%,67%)] text-white" 
+                      : "text-gray-400 hover:text-white"
+                  }`}
+                >
+                  <Grid className="w-4 h-4" />
+                </button>
               </div>
-            ) : filteredPersonalCards && filteredPersonalCards.length > 0 ? (
+            </div>
+            
+            {marketplaceCards && marketplaceCards.length > 0 ? (
               viewMode === "grid" ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {filteredPersonalCards.map((card: any) => (
-                    <div 
-                      key={card.id} 
-                      className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer relative ${card.isSold ? 'opacity-75' : ''}`}
-                      onClick={() => setSelectedCard(card)}
-                    >
-                      {card.isSold && (
-                        <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center z-10">
-                          <div className="bg-yellow-500 text-black px-3 py-1 rounded-full font-bold text-sm">
-                            VENDUE
-                          </div>
-                        </div>
-                      )}
-                      {card.imageUrl && (
-                        <img 
-                          src={card.imageUrl} 
-                          alt={`${card.playerName || 'Carte'}`}
-                          className={`w-full h-32 object-cover rounded-md mb-2 ${card.isSold ? 'grayscale' : ''}`}
-                        />
-                      )}
-                      <div className="space-y-1">
-                        {card.playerName && (
-                          <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
-                        )}
-                        {card.teamName && (
-                          <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
-                        )}
-                        <p className="text-gray-500 text-xs">{card.cardType}</p>
-                        {!card.isSold && card.isForTrade && card.tradePrice && (
-                          <div className="absolute bottom-2 right-2">
-                            <span className="text-primary text-xs font-medium">
-                              {card.tradePrice?.replace('$', '')}€
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {marketplaceCards
+                    .filter(card => {
+                      if (saleFilter === 'available') return card.isForTrade && !card.isSold;
+                      if (saleFilter === 'sold') return card.isSold;
+                      return card.isForTrade || card.isSold;
+                    })
+                    .map((card) => (
+                    <CardDisplay
+                      key={card.id}
+                      card={card}
+                      viewMode="grid"
+                      showActions={true}
+                      showTradeInfo={true}
+                      variant="detailed"
+                      context="sale"
+                      onCardClick={() => setSelectedCard(card)}
+                    />
                   ))}
                 </div>
               ) : (
-                // List view
                 <div className="space-y-3">
-                  {filteredPersonalCards.map((card: any) => (
-                    <div 
-                      key={card.id} 
-                      className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer flex items-center gap-4 relative ${card.isSold ? 'opacity-75' : ''}`}
-                      onClick={() => setSelectedCard(card)}
-                    >
-                      {card.isSold && (
-                        <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded-full font-bold text-xs z-10">
-                          VENDUE
-                        </div>
-                      )}
-                      {card.imageUrl && (
-                        <img 
-                          src={card.imageUrl} 
-                          alt={`${card.playerName || 'Carte'}`}
-                          className={`w-20 h-28 object-cover rounded-md flex-shrink-0 ${card.isSold ? 'grayscale' : ''}`}
-                        />
-                      )}
-                      <div className="flex-1 space-y-1">
-                        {card.playerName && (
-                          <h4 className="text-white font-medium">{card.playerName}</h4>
-                        )}
-                        {card.teamName && (
-                          <p className="text-gray-400 text-sm">{card.teamName}</p>
-                        )}
-                        <p className="text-gray-500 text-sm">{card.cardType}</p>
-                      </div>
-                      {!card.isSold && card.isForTrade && card.tradePrice && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-primary font-medium">{card.tradePrice?.replace('$', '')}€</span>
-                        </div>
-                      )}
-                    </div>
+                  {marketplaceCards
+                    .filter(card => {
+                      if (saleFilter === 'available') return card.isForTrade && !card.isSold;
+                      if (saleFilter === 'sold') return card.isSold;
+                      return card.isForTrade || card.isSold;
+                    })
+                    .map((card) => (
+                    <CardDisplay
+                      key={card.id}
+                      card={card}
+                      viewMode="list"
+                      showActions={true}
+                      showTradeInfo={true}
+                      variant="detailed"
+                      context="sale"
+                      onCardClick={() => setSelectedCard(card)}
+                    />
                   ))}
                 </div>
               )
             ) : (
               <div className="text-center py-12">
-                <CardIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <div className="text-gray-400 mb-2 text-lg">Aucune carte trouvée</div>
+                <TrendingUp className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <div className="text-gray-400 mb-2 text-lg">Aucune carte en vente</div>
                 <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  {searchQuery ? "Aucune carte ne correspond à votre recherche." : "Ajoute tes cartes personnelles pour les organiser et les mettre en vente."}
+                  Mettez vos cartes en vente depuis vos collections pour commencer à trader avec la communauté.
                 </p>
+                <button 
+                  onClick={() => setActiveTab("collections")}
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                >
+                  Voir mes collections
+                </button>
               </div>
             )}
           </div>
@@ -941,150 +903,21 @@ export default function Collections() {
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
             
-            {/* Add Deck Button */}
-            <div 
-              onClick={() => setLocation("/create-deck")}
-              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
-            >
-              <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-white" />
+            <div className="text-center py-12">
+              <div className="mb-6">
+                <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
               </div>
-              <h3 className="font-bold text-white font-poppins text-base">Nouveau Deck</h3>
+              <div className="text-gray-400 mb-4 text-lg">
+                Vous n'avez pas créé de deck.
+              </div>
+              <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
+                Créez votre premier deck de cartes et montrez à votre communauté.
+              </p>
+              <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                <Plus className="w-4 h-4 mr-2 inline" />
+                Créer mon premier deck
+              </button>
             </div>
-
-            {/* Decks List */}
-            {decksLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 animate-pulse">
-                    <div className="h-4 bg-gray-700 rounded mb-2"></div>
-                    <div className="h-20 bg-gray-700 rounded"></div>
-                  </div>
-                ))}
-              </div>
-            ) : userDecks.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="mb-6">
-                  <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                </div>
-                <div className="text-gray-400 mb-4 text-lg">
-                  Tu n'as pas encore créé de deck.
-                </div>
-                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  Crée ton premier deck de cartes et montre-le à ta communauté.
-                </p>
-                <button 
-                  onClick={() => setLocation("/create-deck")}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-medium transition-colors"
-                >
-                  <Plus className="w-4 h-4 mr-2 inline" />
-                  Créer mon premier deck
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4">
-                {(deckPreviews.length > 0 ? deckPreviews : userDecks).map((deck: any) => (
-                  <div 
-                    key={deck.id} 
-                    onClick={() => {
-                      // Vérifier que le deck existe avant la navigation
-                      queryClient.invalidateQueries({ queryKey: [`/api/decks/${deck.id}`] });
-                      setLocation(`/deck/${deck.id}`);
-                    }}
-                    className="rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform relative overflow-hidden"
-                    style={{
-                      background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"
-                    }}
-                  >
-                    {/* Effet d'étoiles filantes pour les decks complets */}
-                    {deck.previewCards && deck.previewCards.length === 9 && (
-                      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        {Array.from({length: 8}).map((_, i) => (
-                          <div
-                            key={i}
-                            className="absolute w-px h-8 bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-70"
-                            style={{
-                              top: `${-10 + Math.random() * 20}%`,
-                              left: `${Math.random() * 100}%`,
-                              transform: `rotate(${20 + Math.random() * 20}deg)`,
-                              animation: `shooting-star ${2 + Math.random() * 3}s ease-in-out infinite`,
-                              animationDelay: `${Math.random() * 4}s`
-                            }}
-                          />
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between mb-3 relative z-10">
-                      <h4 className="font-bold text-lg font-luckiest" style={{
-                        color: deck.themeColors ? getThemeTextColor(deck.themeColors) : "#ffffff"
-                      }}>{deck.name}</h4>
-                      <span className="text-xs" style={{
-                        color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.cardCount}/12</span>
-                    </div>
-                    
-                    {/* Preview des cartes */}
-                    <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-3">
-                      {deck.previewCards && deck.previewCards.length > 0 ? (
-                        <div className={`flex w-full perspective-1000 ${
-                          deck.previewCards.length === 1 ? 'justify-center' : 
-                          deck.previewCards.length === 2 ? 'justify-center space-x-4' : 
-                          'space-x-3'
-                        }`}>
-                          {deck.previewCards.map((cardData: any, index: number) => {
-                            // Calculer la transformation selon le nombre de cartes
-                            let transform = '';
-                            if (deck.previewCards.length === 1) {
-                              transform = 'rotateY(0deg) rotateX(10deg)';
-                            } else if (deck.previewCards.length === 2) {
-                              transform = `rotateY(${index === 0 ? -10 : 10}deg) rotateX(10deg)`;
-                            } else {
-                              transform = `rotateY(${-15 + index * 15}deg) rotateX(10deg)`;
-                            }
-                            
-                            return (
-                              <div 
-                                key={index} 
-                                className={`h-24 relative transform-gpu ${
-                                  deck.previewCards.length === 1 ? 'w-20' :
-                                  deck.previewCards.length === 2 ? 'w-20' :
-                                  'flex-1'
-                                }`}
-                                style={{
-                                  transform,
-                                  transformStyle: 'preserve-3d'
-                                }}
-                              >
-                                {cardData.card.imageUrl ? (
-                                  <div className="w-full h-full rounded-lg overflow-hidden shadow-lg border-2 border-white/20 relative">
-                                    <img 
-                                      src={cardData.card.imageUrl} 
-                                      alt={cardData.card.playerName}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="w-full h-full rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2 shadow-lg border-2 border-white/20">
-                                    <div>
-                                      <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
-                                      <div className="text-xs opacity-80">{cardData.card.teamName}</div>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center w-full text-white font-bold">
-                          Deck vide - Voir le deck
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         )}
 
@@ -1103,12 +936,6 @@ export default function Collections() {
                   <p className="text-gray-400 text-sm">
                     {selectedCard.teamName || 'Équipe Inconnue'}
                   </p>
-                  <div className="flex gap-2 text-xs text-blue-400 mt-1">
-                    {collections?.find(c => c.id === selectedCard.collectionId)?.name && (
-                      <span>Collection: {collections.find(c => c.id === selectedCard.collectionId)?.name}</span>
-                    )}
-                    {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
-                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
@@ -1136,7 +963,7 @@ export default function Collections() {
                 {/* Card Container avec marges augmentées */}
                 <div className="max-w-lg mx-auto min-h-full pb-20">
                   {/* Card Image avec effet 3D */}
-                  <div className="aspect-[3/4.5] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
+                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
                     {selectedCard.imageUrl ? (
                       <img 
                         src={selectedCard.imageUrl} 
@@ -1146,10 +973,6 @@ export default function Collections() {
                           animation: 'card-auto-float 8s ease-in-out infinite',
                           transformStyle: 'preserve-3d',
                           filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
-                        }}
-                        onClick={() => {
-                          setShowCardFullscreen(true);
-                          setIsCardRotated(false);
                         }}
                       />
                     ) : (
@@ -1161,26 +984,6 @@ export default function Collections() {
                   
                   {/* Card Info */}
                   <div className="space-y-4 text-white">
-                    {/* Collection Info - First */}
-                    {selectedCard.collectionId && (
-                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-                        <div className="text-primary font-medium text-sm mb-1">Collection</div>
-                        <div className="text-white font-semibold">
-                          {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Collection inconnue'}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Sale Description - If available */}
-                    {selectedCard.saleDescription && (
-                      <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                        <div className="text-primary font-medium text-sm mb-2">Description de la vente</div>
-                        <div className="text-gray-300 text-sm leading-relaxed">
-                          {selectedCard.saleDescription}
-                        </div>
-                      </div>
-                    )}
-
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <div className="text-gray-400">Référence</div>
@@ -1198,51 +1001,17 @@ export default function Collections() {
                         <div className="text-white">{selectedCard.numbering}</div>
                       </div>
                     )}
-
-                    {/* Sale Price */}
-                    {selectedCard.salePrice ? (
-                      <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                        <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                        <div className="text-green-400 font-bold text-lg">
-                          {selectedCard.salePrice}€
-                        </div>
-                        {selectedCard.isSold && (
-                          <div className="text-yellow-400 font-medium text-sm mt-1">
-                            ✓ Vendue
-                          </div>
-                        )}
-                      </div>
-                    ) : selectedCard.tradePrice ? (
-                      <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                        <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                        <div className="text-green-400 font-bold text-lg">
-                          {selectedCard.tradePrice}€
-                        </div>
-                      </div>
-                    ) : selectedCard.isForTrade ? (
-                      <div className="bg-blue-600/10 rounded-lg p-4 border border-blue-600/20">
-                        <div className="text-blue-400 font-medium text-sm">
-                          Disponible à l'échange
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="bg-gray-600/10 rounded-lg p-4 border border-gray-600/20">
-                        <div className="text-gray-400 font-medium text-sm">
-                          Pas disponible à la vente
-                        </div>
-                      </div>
-                    )}
                     
                     {/* Trade Info */}
                     {selectedCard.isForTrade && (
                       <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4 space-y-2">
-                        <div className="text-primary font-medium text-sm">
+                        <div className="text-[hsl(9,85%,67%)] font-medium text-sm">
                           {selectedCard.tradeOnly ? "Échange uniquement" : "Vente & Échange"}
                         </div>
                         
                         {selectedCard.tradePrice && !selectedCard.tradeOnly && (
-                          <div className="text-green-400 font-medium">
-                            {selectedCard.tradePrice?.replace('$', '')}€
+                          <div className="text-green-400 font-bold">
+                            {selectedCard.tradePrice}
                           </div>
                         )}
                         
@@ -1272,96 +1041,31 @@ export default function Collections() {
                     
                     <h3 className="text-lg font-bold text-white mb-4 text-center">Actions</h3>
                     
-                    {!selectedCard.isSold && (
-                      <>
-
-                        <button 
-                          onClick={handleMarkAsSold}
-                          className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                        >
-                          <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                            <Check className="w-4 h-4 text-white" />
-                          </div>
-                          Marquer comme vendue
-                        </button>
-                        
-                        {(selectedCard.isForSale || selectedCard.isForTrade) ? (
-                          <button 
-                            onClick={handleRemoveFromSale}
-                            className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                          >
-                            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                              <X className="w-4 h-4 text-white" />
-                            </div>
-                            Retirer de la vente
-                          </button>
-                        ) : (
-                          <button 
-                            onClick={() => {
-                              setShowOptionsPanel(false);
-                              setShowTradePanel(true);
-                            }}
-                            className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                          >
-                            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                              <Plus className="w-4 h-4 text-white" />
-                            </div>
-                            Mettre en vente
-                          </button>
-                        )}
-                        
-                        <button 
-                          onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                        >
-                          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                            <Trash2 className="w-4 h-4 text-white" />
-                          </div>
-                          Supprimer la carte
-                        </button>
-                      </>
-                    )}
-                    
-                    {selectedCard.isSold && (
-                      <>
-                        <div className="w-full p-2 text-gray-400 rounded-lg font-medium text-center">
-                          <div className="text-yellow-400 font-bold mb-2">✓ Carte vendue</div>
-                          <div className="text-sm">Aucune action disponible</div>
-                        </div>
-                        
-                        <button 
-                          onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                        >
-                          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                            <Trash2 className="w-4 h-4 text-white" />
-                          </div>
-                          Supprimer la carte
-                        </button>
-                      </>
-                    )}
-                    
                     <button 
                       onClick={() => {
                         setShowOptionsPanel(false);
-                        setShowFeaturedPanel(true);
+                        setShowTradePanel(true);
                       }}
-                      className="w-full p-2 text-white hover:bg-yellow-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-4 text-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,67%)]/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
-                      <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
-                        <Star className="w-4 h-4 text-white" />
+                      <div className="w-8 h-8 bg-[hsl(9,85%,67%)] rounded-lg flex items-center justify-center">
+                        <Edit className="w-4 h-4 text-white" />
                       </div>
-                      À la une
+                      Paramètres de vente
                     </button>
                     
-                    <button 
-                      onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                    >
-                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <Plus className="w-4 h-4 text-white" />
+                    <button className="w-full p-4 text-green-400 hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3">
+                      <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
                       </div>
-                      Ajouter à la sélection
+                      Marquer vendue
+                    </button>
+                    
+                    <button className="w-full p-4 text-red-400 hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3">
+                      <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
+                        <X className="w-4 h-4 text-white" />
+                      </div>
+                      Retirer de la vente
                     </button>
                     
                     <button 
@@ -1373,92 +1077,6 @@ export default function Collections() {
                   </div>
                 </div>
               </>
-            )}
-
-            {/* Featured Panel */}
-            {showFeaturedPanel && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md border border-[hsl(214,35%,30%)]">
-                  <div className="p-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-white">À la une</h3>
-                      <button
-                        onClick={() => setShowFeaturedPanel(false)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Description du post
-                        </label>
-                        <textarea
-                          value={featuredDescription}
-                          onChange={(e) => setFeaturedDescription(e.target.value)}
-                          placeholder="Partagez quelque chose sur cette carte..."
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                          rows={4}
-                        />
-                      </div>
-                      
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setShowFeaturedPanel(false)}
-                          className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
-                        >
-                          Annuler
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (!featuredDescription.trim() || !selectedCard) return;
-                            
-                            try {
-                              const response = await fetch('/api/posts', {
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                  content: featuredDescription,
-                                  cardImage: selectedCard.imageUrl,
-                                  cardName: selectedCard.playerName,
-                                  type: 'featured'
-                                })
-                              });
-                              
-                              if (!response.ok) {
-                                throw new Error('Failed to create post');
-                              }
-                              
-                              setShowFeaturedPanel(false);
-                              setFeaturedDescription("");
-                              setSelectedCard(null);
-                              
-                              toast({
-                                title: "Post créé !",
-                                description: "Ton post a été ajouté à la une.",
-                              });
-                            } catch (error) {
-                              toast({
-                                title: "Erreur",
-                                description: "Impossible de créer le post.",
-                                variant: "destructive",
-                              });
-                            }
-                          }}
-                          disabled={!featuredDescription.trim()}
-                          className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg transition-colors"
-                        >
-                          Publier
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             )}
 
             {/* Trade Panel */}
@@ -1530,9 +1148,14 @@ export default function Collections() {
           </div>
         )}
       </main>
-      
-
-      
+      <Navigation />
+    </div>
+      <CardAddModal
+        isOpen={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        collections={collections || []}
+        selectedCollection={selectedCollection || undefined}
+      />
       {/* Delete Confirmation Modal */}
       {showDeleteModal && collectionToDelete && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -1548,7 +1171,7 @@ export default function Collections() {
             </h3>
             
             <p className="text-[hsl(212,23%,69%)] text-center mb-6">
-              Es-tu sûr de vouloir supprimer la collection "{collectionToDelete.name}" ? 
+              Êtes-vous sûr de vouloir supprimer la collection "{collectionToDelete.name}" ? 
               Cette action est irréversible et supprimera toutes les cartes associées.
             </p>
             
@@ -1573,211 +1196,6 @@ export default function Collections() {
           </div>
         </div>
       )}
-
-      {/* Modal de confirmation de suppression de carte */}
-      {showDeleteCardModal && cardToDelete && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
-                <Trash2 className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold">Supprimer la carte</h3>
-                <p className="text-gray-400 text-sm">Cette action est irréversible</p>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <p className="text-gray-300 text-sm">
-                Êtes-vous sûr de vouloir supprimer définitivement cette carte ?
-              </p>
-              <div className="mt-3 p-3 bg-gray-800 rounded-lg">
-                <p className="text-white font-medium text-sm">{cardToDelete.playerName}</p>
-                <p className="text-gray-400 text-xs">{cardToDelete.reference}</p>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDeleteCardModal(false);
-                  setCardToDelete(null);
-                }}
-                className="flex-1 px-4 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={confirmDeleteCard}
-                disabled={deleteCardMutation.isPending}
-                className="flex-1 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
-              >
-                {deleteCardMutation.isPending ? "Suppression..." : "Supprimer"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Card Fullscreen Modal */}
-      {showCardFullscreen && selectedCard && selectedCard.imageUrl && (
-        <div 
-          className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4"
-          onClick={() => {
-            setShowCardFullscreen(false);
-            setIsCardRotated(false);
-          }}
-        >
-          <div 
-            className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setShowCardFullscreen(false)}
-              className="absolute top-4 right-4 z-10 w-12 h-12 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white transition-all duration-300"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
-            {/* Card Image */}
-            <div 
-              className="max-w-full max-h-full flex items-center justify-center cursor-pointer select-none"
-              style={{ 
-                perspective: '1200px',
-                transformStyle: 'preserve-3d'
-              }}
-              onMouseMove={(e) => {
-                if (!isCardRotated) {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const centerX = rect.left + rect.width / 2;
-                  const centerY = rect.top + rect.height / 2;
-                  
-                  // Normaliser les coordonnées entre -1 et 1
-                  const normalizedX = (e.clientX - centerX) / (rect.width / 2);
-                  const normalizedY = (e.clientY - centerY) / (rect.height / 2);
-                  
-                  // Limiter et ajuster la rotation pour un effet plus naturel
-                  const maxRotation = 25;
-                  const rotateY = normalizedX * maxRotation;
-                  const rotateX = -normalizedY * maxRotation;
-                  
-                  setRotationStyle({ 
-                    rotateX: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), 
-                    rotateY: Math.max(-maxRotation, Math.min(maxRotation, rotateY))
-                  });
-                }
-              }}
-              onMouseLeave={() => {
-                if (!isCardRotated) {
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsCardRotated(!isCardRotated);
-                if (!isCardRotated) {
-                  // Rotation fixe quand cliqué
-                  setRotationStyle({ rotateX: 15, rotateY: 35 });
-                } else {
-                  // Retour à la position neutre
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation();
-                setIsCardRotated(!isCardRotated);
-                if (!isCardRotated) {
-                  setRotationStyle({ rotateX: 15, rotateY: 35 });
-                } else {
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-              onTouchMove={(e) => {
-                if (!isCardRotated && e.touches.length === 1) {
-                  const touch = e.touches[0];
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const centerX = rect.left + rect.width / 2;
-                  const centerY = rect.top + rect.height / 2;
-                  
-                  const normalizedX = (touch.clientX - centerX) / (rect.width / 2);
-                  const normalizedY = (touch.clientY - centerY) / (rect.height / 2);
-                  
-                  const maxRotation = 20; // Un peu moins que sur desktop pour mobile
-                  const rotateY = normalizedX * maxRotation;
-                  const rotateX = -normalizedY * maxRotation;
-                  
-                  setRotationStyle({ 
-                    rotateX: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), 
-                    rotateY: Math.max(-maxRotation, Math.min(maxRotation, rotateY))
-                  });
-                }
-              }}
-              onTouchEnd={() => {
-                if (!isCardRotated) {
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-            >
-              <img
-                src={selectedCard.imageUrl}
-                alt={selectedCard.playerName || "Card"}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                style={{
-                  filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
-                  transform: `perspective(1200px) rotateX(${rotationStyle.rotateX}deg) rotateY(${rotationStyle.rotateY}deg) scale(${isCardRotated ? 1.05 : 1})`,
-                  transformStyle: 'preserve-3d',
-                  transition: isCardRotated 
-                    ? 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' 
-                    : 'transform 0.15s ease-out',
-                  background: `linear-gradient(
-                    ${45 + rotationStyle.rotateY}deg, 
-                    rgba(255,255,255,0.1) 0%, 
-                    rgba(255,255,255,0.05) 50%, 
-                    rgba(0,0,0,0.1) 100%
-                  )`,
-                  boxShadow: `
-                    0 0 0 8px rgba(255,215,0,0.3),
-                    0 0 0 16px rgba(255,215,0,0.1),
-                    ${20 + rotationStyle.rotateY / 2}px ${20 + rotationStyle.rotateX / 2}px 60px rgba(0,0,0,0.8),
-                    inset -5px -5px 15px rgba(0,0,0,0.3),
-                    inset 5px 5px 15px rgba(255,255,255,${0.1 + Math.abs(rotationStyle.rotateX) / 100})
-                  `,
-                  touchAction: 'manipulation',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  WebkitTouchCallout: 'none'
-                }}
-                draggable={false}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Milestone Celebration Modal */}
-      <MilestoneCelebration 
-        milestone={currentMilestone}
-        onClose={() => setCurrentMilestone(null)}
-      />
-
-      {/* Development Test Button - Hidden in production */}
-
-      {/* Floating Add Card Button - Only in "Mes cartes" tab and when no fullscreen modal */}
-      {activeTab === "cards" && !showCardFullscreen && (
-        <button
-          onClick={() => setLocation("/add-card")}
-          className="fixed bottom-20 right-4 w-10 h-10 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] active:bg-[hsl(9,85%,55%)] text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 hover:scale-110 active:scale-95"
-          style={{
-            borderRadius: '12px',
-            boxShadow: '0 4px 16px rgba(240, 101, 67, 0.25), 0 0 0 0 rgba(240, 101, 67, 0.3)',
-          }}
-        >
-          <Plus className="w-5 h-5" />
-        </button>
-      )}
-
       <Navigation />
     </div>
   );
