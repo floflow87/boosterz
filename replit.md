@@ -118,6 +118,15 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 28, 2025. Configured dual database architecture for dev/prod separation
+  - **Development environment**: Continues using Neon database on Replit for development
+  - **Production environment**: Configured to use Supabase database when deployed
+  - **Database routing**: Automatic detection based on NODE_ENV variable
+  - **Migration system**: Created comprehensive migration script for Supabase initialization
+  - **Environment separation**: SUPABASE_DATABASE_URL for production, DATABASE_URL for development
+  - **Complete schema migration**: All tables, indexes, and relationships configured for Supabase
+  - **Documentation**: Created DEPLOYMENT-GUIDE.md with step-by-step production setup instructions
+  - **Benefits**: Clean separation between dev and prod data, professional deployment architecture
 - June 27, 2025. Fixed drag & drop system optimization and resolved card addition bug
   - **Drag & drop improvements**: Added 3px activation distance, 300ms debounce for mutations, visual overlay with help message
   - **Performance optimization**: Implemented optimistic updates with automatic position reorganization
