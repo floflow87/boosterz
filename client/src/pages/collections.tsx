@@ -80,6 +80,12 @@ export default function Collections() {
     season: '',
     condition: 'excellent'
   });
+  const [editImageFile, setEditImageFile] = useState<File | null>(null);
+  const [editImagePreview, setEditImagePreview] = useState<string>("");
+  const [playerSuggestions, setPlayerSuggestions] = useState<string[]>([]);
+  const [teamSuggestions, setTeamSuggestions] = useState<string[]>([]);
+  const [showPlayerSuggestions, setShowPlayerSuggestions] = useState(false);
+  const [showTeamSuggestions, setShowTeamSuggestions] = useState(false);
   const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
@@ -584,15 +590,86 @@ export default function Collections() {
       condition: card.condition || 'excellent'
     });
     
+    // Initialiser l'aperçu de l'image avec l'image actuelle
+    setEditImagePreview(card.imageUrl || '');
+    setEditImageFile(null);
+    
     setShowOptionsPanel(false);
     setShowEditModal(true);
+  };
+
+  const handleEditImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setEditImageFile(file);
+      
+      // Créer un aperçu
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setEditImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Fonctions d'autocomplétion
+  const handlePlayerNameChange = (value: string) => {
+    setEditData({...editData, playerName: value});
+    
+    if (value.length > 2) {
+      // Générer des suggestions basées sur les cartes existantes
+      const allCards = cards || [];
+      const suggestions = allCards.filter((card: any) => 
+        card.playerName && card.playerName.toLowerCase().includes(value.toLowerCase())
+      ).map((card: any) => card.playerName);
+      
+      const uniqueSuggestions = Array.from(new Set(suggestions)).slice(0, 5);
+      setPlayerSuggestions(uniqueSuggestions);
+      setShowPlayerSuggestions(uniqueSuggestions.length > 0);
+    } else {
+      setShowPlayerSuggestions(false);
+    }
+  };
+
+  const handleTeamNameChange = (value: string) => {
+    setEditData({...editData, teamName: value});
+    
+    if (value.length > 2) {
+      // Générer des suggestions basées sur les cartes existantes
+      const allCards = cards || [];
+      const suggestions = allCards.filter((card: any) => 
+        card.teamName && card.teamName.toLowerCase().includes(value.toLowerCase())
+      ).map((card: any) => card.teamName);
+      
+      const uniqueSuggestions = Array.from(new Set(suggestions)).slice(0, 5);
+      setTeamSuggestions(uniqueSuggestions);
+      setShowTeamSuggestions(uniqueSuggestions.length > 0);
+    } else {
+      setShowTeamSuggestions(false);
+    }
   };
 
   const handleSaveEdit = async () => {
     if (!selectedCard) return;
 
     try {
-      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}`, editData);
+      let imageUrl = editData.imageUrl;
+      
+      // Si une nouvelle image a été uploadée, l'encoder en base64
+      if (editImageFile) {
+        const reader = new FileReader();
+        imageUrl = await new Promise((resolve) => {
+          reader.onload = (e) => resolve(e.target?.result as string);
+          reader.readAsDataURL(editImageFile);
+        });
+      }
+
+      const updateData = {
+        ...editData,
+        imageUrl
+      };
+
+      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}`, updateData);
       
       // Invalider les caches pour rafraîchir l'affichage
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
@@ -607,6 +684,12 @@ export default function Collections() {
       
       setShowEditModal(false);
       setSelectedCard(null);
+      
+      // Réinitialiser les états
+      setEditImageFile(null);
+      setEditImagePreview("");
+      setShowPlayerSuggestions(false);
+      setShowTeamSuggestions(false);
     } catch (error) {
       console.error("Error editing card:", error);
       toast({
@@ -1354,57 +1437,54 @@ export default function Collections() {
                     <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-4" />
                     
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-lg font-bold text-white">Actions</h3>
-                      <button
-                        onClick={() => setShowOptionsPanel(false)}
-                        className="text-white hover:bg-gray-600/30 rounded-lg p-1 transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
+                      <div className="flex-1" />
+                      <h3 className="text-lg font-bold text-white text-center">Actions</h3>
+                      <div className="flex-1 flex justify-end">
+                        <button
+                          onClick={() => setShowOptionsPanel(false)}
+                          className="text-white hover:bg-gray-600/30 rounded-lg p-1 transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
                     </div>
                     
+                    {/* 1. Mettre en vente */}
                     {!selectedCard.isSold && (
-                      <>
-
+                      (selectedCard.isForSale || selectedCard.isForTrade) ? (
                         <button 
-                          onClick={handleMarkAsSold}
+                          onClick={handleRemoveFromSale}
+                          className="w-full p-1.5 text-white hover:bg-red-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
+                        >
+                          <X className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                          Retirer de la vente
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => {
+                            setShowOptionsPanel(false);
+                            setShowTradePanel(true);
+                          }}
                           className="w-full p-1.5 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                         >
-                          <Check className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                          Marquer comme vendue
+                          <ShoppingCart className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                          Mettre en vente
                         </button>
-                        
-                        {(selectedCard.isForSale || selectedCard.isForTrade) ? (
-                          <button 
-                            onClick={handleRemoveFromSale}
-                            className="w-full p-1.5 text-white hover:bg-red-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                          >
-                            <X className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                            Retirer de la vente
-                          </button>
-                        ) : (
-                          <button 
-                            onClick={() => {
-                              setShowOptionsPanel(false);
-                              setShowTradePanel(true);
-                            }}
-                            className="w-full p-1.5 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                          >
-                            <ShoppingCart className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                            Mettre en vente
-                          </button>
-                        )}
-                        
-                        <button 
-                          onClick={() => handleEditCard(selectedCard)}
-                          className="w-full p-1.5 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                        >
-                          <Edit className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                          Modifier
-                        </button>
-                      </>
+                      )
+                    )}
+
+                    {/* 2. Marquer comme vendue */}
+                    {!selectedCard.isSold && (
+                      <button 
+                        onClick={handleMarkAsSold}
+                        className="w-full p-1.5 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
+                      >
+                        <Check className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                        Marquer comme vendue
+                      </button>
                     )}
                     
+                    {/* 3. Poster à la une */}
                     <button 
                       onClick={() => {
                         setShowOptionsPanel(false);
@@ -1416,6 +1496,7 @@ export default function Collections() {
                       Poster à la une
                     </button>
                     
+                    {/* 4. Ajouter à la collection */}
                     <button 
                       onClick={() => setShowOptionsPanel(false)}
                       className="w-full p-1.5 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
@@ -1424,6 +1505,16 @@ export default function Collections() {
                       Ajouter à la collection
                     </button>
                     
+                    {/* 5. Modifier la carte */}
+                    <button 
+                      onClick={() => handleEditCard(selectedCard)}
+                      className="w-full p-1.5 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
+                    >
+                      <Edit className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                      Modifier la carte
+                    </button>
+                    
+                    {/* 6. Dupliquer la carte */}
                     <button 
                       onClick={() => handleDuplicateCard(selectedCard)}
                       className="w-full p-1.5 text-white hover:bg-purple-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
@@ -1442,7 +1533,7 @@ export default function Collections() {
                     {/* Séparateur */}
                     <div className="border-t border-gray-600/30 my-2"></div>
                     
-                    {/* Bouton Supprimer en bas */}
+                    {/* 7. Supprimer la carte */}
                     <button 
                       onClick={() => handleDeleteCard(selectedCard)}
                       className="w-full p-1.5 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
@@ -1563,40 +1654,102 @@ export default function Collections() {
                       </button>
                     </div>
                     
-                    {/* Image preview */}
-                    {editData.imageUrl && (
-                      <div className="w-32 h-40 mx-auto mb-4 rounded-lg overflow-hidden border border-gray-600">
-                        <img 
-                          src={editData.imageUrl} 
-                          alt="Aperçu" 
-                          className="w-full h-full object-cover"
-                        />
+                    {/* Image upload section */}
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-gray-300">
+                        Image de la carte
+                      </label>
+                      
+                      {/* Current image preview */}
+                      {editImagePreview && (
+                        <div className="w-32 h-40 mx-auto mb-4 rounded-lg overflow-hidden border border-gray-600">
+                          <img 
+                            src={editImagePreview} 
+                            alt="Aperçu" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      
+                      {/* File upload */}
+                      <div className="flex items-center justify-center w-full">
+                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-[hsl(214,35%,25%)] hover:bg-[hsl(214,35%,30%)] transition-colors">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <Camera className="w-8 h-8 mb-4 text-gray-400" />
+                            <p className="mb-2 text-sm text-gray-400">
+                              <span className="font-semibold">Cliquer pour uploader</span> ou glisser-déposer
+                            </p>
+                            <p className="text-xs text-gray-500">PNG, JPG ou JPEG</p>
+                          </div>
+                          <input 
+                            type="file" 
+                            className="hidden" 
+                            accept="image/*"
+                            onChange={handleEditImageUpload}
+                          />
+                        </label>
                       </div>
-                    )}
+                    </div>
                     
                     <div className="space-y-3">
-                      <div>
+                      {/* Nom du joueur avec autocomplétion */}
+                      <div className="relative">
                         <label className="block text-sm font-medium text-gray-300 mb-1">
                           Nom du joueur
                         </label>
                         <input
                           type="text"
                           value={editData.playerName}
-                          onChange={(e) => setEditData({...editData, playerName: e.target.value})}
+                          onChange={(e) => handlePlayerNameChange(e.target.value)}
+                          onFocus={() => editData.playerName.length > 2 && setShowPlayerSuggestions(true)}
                           className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
+                        {showPlayerSuggestions && playerSuggestions.length > 0 && (
+                          <div className="absolute z-10 w-full mt-1 bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                            {playerSuggestions.map((suggestion, index) => (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  setEditData({...editData, playerName: suggestion});
+                                  setShowPlayerSuggestions(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-white hover:bg-[hsl(214,35%,40%)] transition-colors"
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       
-                      <div>
+                      {/* Équipe avec autocomplétion */}
+                      <div className="relative">
                         <label className="block text-sm font-medium text-gray-300 mb-1">
                           Équipe
                         </label>
                         <input
                           type="text"
                           value={editData.teamName}
-                          onChange={(e) => setEditData({...editData, teamName: e.target.value})}
+                          onChange={(e) => handleTeamNameChange(e.target.value)}
+                          onFocus={() => editData.teamName.length > 2 && setShowTeamSuggestions(true)}
                           className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
                         />
+                        {showTeamSuggestions && teamSuggestions.length > 0 && (
+                          <div className="absolute z-10 w-full mt-1 bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                            {teamSuggestions.map((suggestion, index) => (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  setEditData({...editData, teamName: suggestion});
+                                  setShowTeamSuggestions(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-white hover:bg-[hsl(214,35%,40%)] transition-colors"
+                              >
+                                {suggestion}
+                              </button>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       
                       <div>
@@ -1637,18 +1790,6 @@ export default function Collections() {
                       
                       <div>
                         <label className="block text-sm font-medium text-gray-300 mb-1">
-                          URL de l'image
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.imageUrl}
-                          onChange={(e) => setEditData({...editData, imageUrl: e.target.value})}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
                           Saison
                         </label>
                         <input
@@ -1678,7 +1819,11 @@ export default function Collections() {
                     
                     <div className="flex gap-3 pt-4">
                       <button
-                        onClick={() => setShowEditModal(false)}
+                        onClick={() => {
+                          setShowEditModal(false);
+                          setShowPlayerSuggestions(false);
+                          setShowTeamSuggestions(false);
+                        }}
                         className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
                       >
                         Annuler
