@@ -128,52 +128,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.patch("/api/personal-cards/:id", authenticateToken, async (req: AuthRequest, res) => {
-    try {
-      const personalCardId = parseInt(req.params.id);
-      const userId = req.user!.id;
-      
-      console.log(`PATCH /api/personal-cards/${personalCardId} called by user ${userId}`);
-      console.log('Request body:', req.body);
-      
-      if (isNaN(personalCardId)) {
-        return res.status(400).json({ error: "Invalid personal card ID" });
-      }
-
-      // Vérifier que la carte personnelle appartient à l'utilisateur
-      const existingCard = await storage.getPersonalCard(personalCardId);
-      if (!existingCard) {
-        console.log(`Personal card ${personalCardId} not found`);
-        return res.status(404).json({ error: "Personal card not found" });
-      }
-
-      if (existingCard.userId !== userId) {
-        console.log(`Personal card ${personalCardId} does not belong to user ${userId}`);
-        return res.status(403).json({ error: "You don't own this card" });
-      }
-
-      // Valider les données avec le schéma Zod
-      const validatedData = insertPersonalCardSchema.parse({
-        ...req.body,
-        userId
-      });
-
-      console.log('Validated data:', validatedData);
-
-      const updatedCard = await storage.updatePersonalCard(personalCardId, validatedData);
-      console.log('Updated personal card:', updatedCard);
-      
-      res.json(updatedCard);
-    } catch (error) {
-      console.error('Error updating personal card:', error);
-      if (error instanceof Error) {
-        console.error("Error details:", error.message);
-        console.error("Error stack:", error.stack);
-      }
-      res.status(500).json({ error: "Failed to update personal card" });
-    }
-  });
-
   // Chat routes (commented out to avoid conflicts)
   // app.use('/api/chat', chatRoutes);
 
