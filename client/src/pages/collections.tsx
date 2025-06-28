@@ -1287,16 +1287,11 @@ export default function CollectionDetail() {
       {/* Card Detail Modal - Fullscreen with slide animation */}
       {selectedCard && (
         <div 
-          className="fixed inset-0 bg-black/70 z-50"
-          onClick={() => setSelectedCard(null)}
+          className="fixed inset-0 bg-black z-50"
+          style={{
+            animation: 'slideInFromRight 0.4s ease-out'
+          }}
         >
-          <div 
-            className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              animation: 'slideInFromRight 0.4s ease-out'
-            }}
-          >
           <div className="w-full h-full flex flex-col">
             {/* Header - Fixed */}
             <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
