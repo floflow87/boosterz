@@ -731,50 +731,6 @@ export default function CollectionDetail() {
     return variants[currentVariantIndex] || selectedCard;
   };
 
-  const handleImageUpload = async (cardId: number, imageUrl: string) => {
-    try {
-      console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
-      
-      // Update card image first
-      const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
-      console.log("Image update result:", imageResult);
-      
-      // Automatically mark card as owned
-      const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
-      console.log("Ownership update result:", ownershipResult);
-      
-      // Force refresh of cards data to ensure images are displayed
-      await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-      console.log("Query cache invalidated for cards");
-      
-      // Update local state after successful API calls
-      if (selectedCard && selectedCard.id === cardId) {
-        const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
-        setSelectedCard(updatedCard);
-        console.log("Local selected card state updated:", updatedCard);
-      }
-      
-      // Trigger card pull effect
-      setPulledCardEffect(cardId);
-      setTimeout(() => setPulledCardEffect(null), 3000);
-      
-      toast({
-        title: "Photo sauvegardée",
-        description: "La photo a été ajoutée et la carte marquée comme acquise.",
-        className: "bg-green-900 border-green-700 text-green-100",
-      });
-      
-      setShowPhotoUpload(false);
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder la photo. Vérifie ta connexion.",
-        variant: "destructive"
-      });
-    }
-  };
-
   if (collectionLoading || cardsLoading) {
     return <LoadingScreen message="Chargement de la collection..." />;
   }
@@ -1380,7 +1336,12 @@ export default function CollectionDetail() {
                 
                 {/* Content - Scrollable content */}
                 <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
-                  <div className="p-6 space-y-6">
+                  {(() => {
+                    const currentCard = getCurrentCard();
+                    const variants = getCardVariants(selectedCard);
+                    
+                    return (
+                      <div className="p-6 space-y-6">
                         {/* Card Carousel with Touch Support */}
                         <div className="w-full max-w-md mx-auto relative">
                           {(() => {
@@ -1473,44 +1434,50 @@ export default function CollectionDetail() {
                         );
                       })()}
                       
-                      {/* Navigation Arrows for Variants - Simplified */}
-                      {getCardVariants(selectedCard).length > 1 && (
-                        <>
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const variants = getCardVariants(selectedCard);
-                              const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
-                              const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
-                              const prevCard = variants[prevIndex];
-                              setSelectedCard(prevCard);
-                            }}
-                            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
-                          >
-                            <ChevronLeft className="w-6 h-6" />
-                          </button>
-                          
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              const variants = getCardVariants(selectedCard);
-                              const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
-                              const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
-                              const nextCard = variants[nextIndex];
-                              setSelectedCard(nextCard);
-                            }}
-                            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
-                          >
-                            <ChevronRight className="w-6 h-6" />
-                          </button>
-                          
-                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
-                            {getCardVariants(selectedCard).findIndex(v => v.id === currentCard?.id) + 1} / {getCardVariants(selectedCard).length}
-                          </div>
-                        </>
-                      )}
+                      {/* Navigation Arrows for Variants */}
+                      {(() => {
+                        const variants = getCardVariants(selectedCard);
+                        if (variants.length <= 1) return null;
+                        
+                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        
+                        return (
+                          <>
+                            {/* Previous Arrow */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
+                                const prevCard = variants[prevIndex];
+                                setSelectedCard(prevCard);
+                              }}
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
+                            >
+                              <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            
+                            {/* Next Arrow */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
+                                const nextCard = variants[nextIndex];
+                                setSelectedCard(nextCard);
+                              }}
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
+                            >
+                              <ChevronRight className="w-6 h-6" />
+                            </button>
+                            
+                            {/* Variant Counter */}
+                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
+                              {currentIndex + 1} / {variants.length}
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
 
                     {/* Card Details */}
@@ -1792,7 +1759,49 @@ export default function CollectionDetail() {
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
         preselectedPlayer={selectedCard?.playerName || undefined}
-        onImageUploaded={handleImageUpload}
+        onImageUploaded={async (cardId, imageUrl) => {
+          try {
+            console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
+            
+            // Update card image first
+            const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            console.log("Image update result:", imageResult);
+            
+            // Automatically mark card as owned
+            const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            console.log("Ownership update result:", ownershipResult);
+            
+            // Force refresh of cards data to ensure images are displayed
+            await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+            console.log("Query cache invalidated for cards");
+            
+            // Update local state after successful API calls
+            if (selectedCard && selectedCard.id === cardId) {
+              const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
+              setSelectedCard(updatedCard);
+              console.log("Local selected card state updated:", updatedCard);
+            }
+            
+            // Trigger card pull effect
+            setPulledCardEffect(cardId);
+            setTimeout(() => setPulledCardEffect(null), 3000);
+            
+            toast({
+              title: "Photo sauvegardée",
+              description: "La photo a été ajoutée et la carte marquée comme acquise.",
+              className: "bg-green-900 border-green-700 text-green-100",
+            });
+            
+            setShowPhotoUpload(false);
+          } catch (error) {
+            console.error("Erreur lors de la sauvegarde:", error);
+            toast({
+              title: "Erreur",
+              description: "Impossible de sauvegarder la photo. Vérifie ta connexion.",
+              variant: "destructive"
+            });
+          }
+        }}
         availableCards={cards || []}
         initialCard={selectedCard || undefined}
         currentFilter={filter}
@@ -1809,7 +1818,6 @@ export default function CollectionDetail() {
           }}
         />
       )}
-    </div>
     </div>
   );
 }
