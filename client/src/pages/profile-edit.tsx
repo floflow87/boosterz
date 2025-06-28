@@ -10,7 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
-import ProfileLoadingScreen from "@/components/ProfileLoadingScreen";
+import LoadingScreen from "@/components/LoadingScreen";
 
 interface UserProfile {
   id: number;
@@ -44,7 +44,7 @@ export default function ProfileEdit() {
 
   // Afficher l'écran de chargement
   if (isLoading) {
-    return <ProfileLoadingScreen />;
+    return <LoadingScreen />;
   }
 
   // Mettre à jour les champs quand les données sont chargées
