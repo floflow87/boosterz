@@ -17,6 +17,7 @@ export const users = pgTable("users", {
   avatar: text("avatar"),
   bio: text("bio"),
   isPublic: boolean("is_public").default(true).notNull(),
+  isActive: boolean("is_active").default(true).notNull(),
   followersCount: integer("followers_count").default(0).notNull(),
   followingCount: integer("following_count").default(0).notNull(),
   totalCards: integer("total_cards").default(0).notNull(),

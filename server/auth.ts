@@ -80,9 +80,10 @@ export class AuthService {
         name: users.name,
         avatar: users.avatar,
         bio: users.bio,
+        isActive: users.isActive,
       })
       .from(users)
-      .where(eq(users.id, session[0].userId))
+      .where(and(eq(users.id, session[0].userId), eq(users.isActive, true)))
       .limit(1);
 
     return user[0] || null;
@@ -96,7 +97,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   if (sessionUserId) {
     try {
       const user = await storage.getUser(sessionUserId);
-      if (user) {
+      if (user && user.isActive) {
         req.user = {
           id: user.id,
           username: user.username,
@@ -104,6 +105,8 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
           name: user.name
         };
         return next();
+      } else if (user && !user.isActive) {
+        return res.status(403).json({ message: 'Compte désactivé' });
       }
     } catch (error) {
       console.error('Session auth error:', error);
@@ -134,7 +137,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       }
       
       console.log('Dev mode - retrieved user:', user);
-      if (user) {
+      if (user && user.isActive) {
         req.user = {
           id: user.id,
           username: user.username,
@@ -143,10 +146,17 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
         };
         console.log('Dev mode - set req.user:', req.user);
         return next();
+      } else if (user && !user.isActive) {
+        console.log('Dev mode - user account is deactivated');
+        return res.status(403).json({ message: 'Compte désactivé' });
       }
     } catch (error) {
       console.error('Development auth error:', error);
     }
+  }
+
+  if (!token) {
+    return res.status(401).json({ message: 'Access token required' });
   }
 
   try {
@@ -168,7 +178,7 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
   if (req.session?.userId) {
     try {
       const user = await storage.getUser(req.session.userId);
-      if (user) {
+      if (user && user.isActive) {
         req.user = {
           id: user.id,
           username: user.username,
@@ -189,7 +199,7 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
   if (token) {
     try {
       const user = await AuthService.getUserByToken(token);
-      if (user) {
+      if (user && user.isActive) {
         req.user = user;
       }
     } catch (error) {
@@ -201,7 +211,7 @@ export const optionalAuth = async (req: AuthRequest, res: Response, next: NextFu
   if (!req.user) {
     try {
       const user = await storage.getUser(1);
-      if (user) {
+      if (user && user.isActive) {
         req.user = {
           id: user.id,
           username: user.username,
