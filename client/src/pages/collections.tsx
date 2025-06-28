@@ -475,12 +475,9 @@ export default function Collections() {
         reference: card.reference,
         numbering: card.numbering,
         season: card.season,
-        imageUrl: card.imageUrl,
         condition: card.condition,
         isForSale: false, // Nouvelle carte non en vente par défaut
         isForTrade: false,
-        tradePrice: null,
-        tradeDescription: null,
         tradeOnly: false
       };
       return apiRequest("POST", "/api/personal-cards", duplicateData);
