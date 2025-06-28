@@ -204,7 +204,7 @@ export default function Social() {
         setPostCommentsCount(prev => ({ ...prev, ...comments }));
       }
     }
-  }, [feed?.length, myPosts?.length, Object.keys(postLikes).length, Object.keys(postCommentsCount).length]); // Only depend on array lengths and existing data to avoid infinite loops
+  }, [feed, myPosts]); // Only depend on the actual data arrays
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
