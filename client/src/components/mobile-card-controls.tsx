@@ -27,7 +27,7 @@ export default function MobileCardControls({
     return (
       <button
         onClick={onToggleSelect}
-        className="absolute top-2 left-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold z-10"
+        className="absolute top-2 left-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold z-30 shadow-lg border-2 border-white"
         title="Sélectionner pour modifier"
       >
         {position + 1}

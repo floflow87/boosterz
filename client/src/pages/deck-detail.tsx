@@ -297,8 +297,20 @@ export default function DeckDetail() {
         <div className="max-w-6xl mx-auto">
           <div className={cn(
             "rounded-2xl p-6 mb-6 relative overflow-hidden transition-all duration-300",
-            `bg-gradient-to-br ${themeGradient}`
-          )}>
+            deck.coverImage 
+              ? "bg-cover bg-center" 
+              : `bg-gradient-to-br ${themeGradient}`
+          )}
+          style={deck.coverImage ? {
+            backgroundImage: `url(${deck.coverImage})`,
+            backgroundPosition: `center ${deck.bannerPosition || 50}%`
+          } : undefined}
+          >
+            {/* Overlay sombre pour la lisibilité du texte quand il y a une image */}
+            {deck.coverImage && (
+              <div className="absolute inset-0 bg-black/40 rounded-2xl" />
+            )}
+            
             <div className="flex items-center justify-between mb-4 relative z-10">
               <div>
                 <h1 className={cn(
@@ -350,25 +362,6 @@ export default function DeckDetail() {
                     <Share2 className="w-4 h-4" />
                   </Button>
                 </div>
-              )}
-            </div>
-
-            {/* Bannière avec thème (avec ou sans photo) */}
-            <div className="w-full h-32 rounded-lg overflow-hidden mb-4">
-              {deck.coverImage ? (
-                <div
-                  className="w-full h-full"
-                  style={{
-                    backgroundImage: `url(${deck.coverImage})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: `center ${deck.bannerPosition || 50}%`
-                  }}
-                />
-              ) : (
-                <div className={cn(
-                  "w-full h-full",
-                  `bg-gradient-to-br ${themeGradient}`
-                )} />
               )}
             </div>
           </div>
