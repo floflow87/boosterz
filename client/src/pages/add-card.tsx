@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,8 +21,14 @@ export default function AddCard() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
+  // Détecter le mode édition depuis les paramètres URL
+  const isEditMode = new URLSearchParams(window.location.search).has('edit');
+  const editCardData = isEditMode ? 
+    JSON.parse(decodeURIComponent(new URLSearchParams(window.location.search).get('edit') || '{}')) 
+    : null;
+  
   // Step management
-  const [currentStep, setCurrentStep] = useState<Step>("import");
+  const [currentStep, setCurrentStep] = useState<Step>(isEditMode ? "details" : "import");
   
   // Form data - pour les cartes personnelles
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
@@ -177,6 +183,64 @@ export default function AddCard() {
       });
     },
   });
+
+  // Mutation pour mettre à jour une carte existante
+  const updateCardMutation = useMutation({
+    mutationFn: async (cardData: any) => {
+      console.log("Client: Updating card with data:", cardData);
+      const result = await apiRequest("PATCH", `/api/personal-cards/${editCardData.id}`, cardData);
+      console.log("Client: Received update response from server:", result);
+      return result;
+    },
+    onSuccess: (updatedCard: any) => {
+      console.log("Client: Card successfully updated:", updatedCard);
+      toast({
+        title: "Carte modifiée",
+        description: "La carte a été modifiée avec succès !",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      // Invalidate all related cache keys to ensure fresh data
+      console.log("Client: Invalidating cache keys...");
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      // Rediriger vers les collections
+      setTimeout(() => setLocation("/collections"), 500);
+    },
+    onError: (error: any) => {
+      console.error("Client: Error updating card:", error);
+      toast({
+        title: "Erreur",
+        description: error?.message || "Impossible de modifier la carte. Vérifie tes informations.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Initialiser les données en mode édition
+  useEffect(() => {
+    if (isEditMode && editCardData) {
+      setPlayerName(editCardData.playerName || "");
+      setTeamName(editCardData.teamName || "");
+      setCardType(editCardData.cardType || "");
+      setReference(editCardData.reference || "");
+      setNumbering(editCardData.numbering || "");
+      setSeason(editCardData.season || "");
+      setCondition(editCardData.condition || "");
+      setSalePrice(editCardData.salePrice || "");
+      setSaleDescription(editCardData.saleDescription || "");
+      setIsForSale(editCardData.isForSale || false);
+      setOriginalImage(editCardData.imageUrl || null);
+      setEditedImage(editCardData.imageUrl || null);
+      
+      // Trouver la collection correspondante
+      if (editCardData.collectionId) {
+        setSelectedCollectionId(editCardData.collectionId);
+      }
+    }
+  }, [isEditMode, editCardData, collections]);
 
   const handleFileImport = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

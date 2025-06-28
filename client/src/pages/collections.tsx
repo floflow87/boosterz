@@ -59,7 +59,7 @@ export default function Collections() {
   const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
   const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
 
-  const [cardToEdit, setCardToEdit] = useState<PersonalCard | null>(null);
+
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [isCardRotated, setIsCardRotated] = useState(false);
@@ -509,33 +509,7 @@ export default function Collections() {
     }
   });
 
-  // Mutation pour modifier une carte
-  const updateCardMutation = useMutation({
-    mutationFn: async ({ cardId, updates }: { cardId: number, updates: any }) => {
-      return apiRequest("PATCH", `/api/personal-cards/${cardId}`, updates);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
-      toast({
-        title: "Carte modifiée",
-        description: "La carte a été mise à jour avec succès.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowEditCardModal(false);
-      setCardToEdit(null);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erreur",
-        description: error.message || "Erreur lors de la modification de la carte.",
-        variant: "destructive",
-      });
-    }
-  });
+
 
   const handleMarkAsSold = async () => {
     if (!selectedCard) return;
@@ -1856,20 +1830,7 @@ export default function Collections() {
         onClose={() => setCurrentMilestone(null)}
       />
 
-      {/* Edit Card Modal */}
-      <EditCardModal
-        card={cardToEdit}
-        isOpen={showEditCardModal}
-        onClose={() => {
-          setShowEditCardModal(false);
-          setCardToEdit(null);
-        }}
-        onUpdate={(updates: Partial<PersonalCard>) => {
-          if (cardToEdit) {
-            updateCardMutation.mutate({ cardId: cardToEdit.id, updates });
-          }
-        }}
-      />
+
 
       {/* Development Test Button - Hidden in production */}
 
