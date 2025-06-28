@@ -308,13 +308,29 @@ export default function DeckDetail() {
   // Mutation optimisée pour sauvegarder les nouvelles positions 
   const updatePositionsMutation = useMutation({
     mutationFn: async (newPositions: Array<{ cardId?: number; personalCardId?: number; position: number }>) => {
+      console.log('Sending reorder request for deck:', id);
+      console.log('Positions data:', newPositions);
+      
       const response = await fetch(`/api/decks/${id}/reorder`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || 'test'}`
+        },
         body: JSON.stringify({ positions: newPositions })
       });
-      if (!response.ok) throw new Error('Failed to update positions');
-      return response.json();
+      
+      console.log('Reorder response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Reorder failed:', errorText);
+        throw new Error(`Failed to update positions: ${errorText}`);
+      }
+      
+      const result = await response.json();
+      console.log('Reorder success:', result);
+      return result;
     },
     onMutate: async () => {
       // Pas d'invalidation immédiate - l'UI a déjà été mise à jour
