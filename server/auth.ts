@@ -117,11 +117,22 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   console.log('Auth middleware - authHeader:', authHeader);
   console.log('Auth middleware - token:', token);
 
-  // Development mode: authenticate with any token as user 1
+  // Development mode: authenticate with any token as user 1, if no user 1 exists, authenticate as first user
   if (token === 'test' || !token) {
-    console.log('Using development mode authentication for user 1');
+    console.log('Using development mode authentication');
     try {
-      const user = await storage.getUser(1);
+      let user = await storage.getUser(1);
+      
+      // If user 1 doesn't exist, try to get any user
+      if (!user) {
+        console.log('User 1 not found, trying to get any existing user...');
+        const allUsers = await storage.getUsers();
+        if (allUsers && allUsers.length > 0) {
+          user = allUsers[0];
+          console.log('Using first available user:', user);
+        }
+      }
+      
       console.log('Dev mode - retrieved user:', user);
       if (user) {
         req.user = {

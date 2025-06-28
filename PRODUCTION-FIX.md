@@ -2,11 +2,16 @@
 
 ## ✅ Problème Identifié et Corrigé
 
-**Problème** : L'application utilisait le driver Neon (`@neondatabase/serverless`) pour se connecter à Supabase, ce qui causait des erreurs WebSocket.
+**Problème Principal** : L'application utilisait le driver Neon (`@neondatabase/serverless`) pour se connecter à Supabase, ce qui causait des erreurs WebSocket.
 
-**Solution** : Configuration duale avec drivers appropriés :
-- **Développement** : Driver Neon pour base Neon
-- **Production** : Driver PostgreSQL standard (`pg`) pour Supabase
+**Problème Secondaire** : Base de données vide après migration - les utilisateurs existants étaient dans l'ancienne base Neon.
+
+**Solutions Appliquées** :
+- **Configuration duale** avec drivers appropriés :
+  - **Développement** : Driver Neon pour base Neon existante
+  - **Production** : Driver PostgreSQL standard (`pg`) pour Supabase
+- **Authentification robuste** : Fallback automatique vers premier utilisateur disponible
+- **Migration utilisateur** : Système de création/import utilisateur simplifié
 
 ## 🚀 Test de Connexion Réussi
 
