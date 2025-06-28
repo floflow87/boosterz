@@ -1284,55 +1284,45 @@ export default function CollectionDetail() {
 
       <Navigation />
 
-      {/* Card Detail Modal - Fullscreen with slide animation */}
+      {/* Modal latéral pour les détails de carte de collection */}
       {selectedCard && (
-        <div 
-          className="fixed inset-0 bg-black/70 z-50"
-          onClick={() => setSelectedCard(null)}
-        >
+        <>
+          {/* Overlay */}
           <div 
-            className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              animation: 'slideInFromRight 0.4s ease-out'
-            }}
-          >
-          <div className="w-full h-full flex flex-col">
-            {/* Header - Fixed */}
-            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-white">
-                  {selectedCard.playerName || 'Joueur Inconnu'}
-                </h2>
-                <p className="text-gray-400 text-sm">
-                  {selectedCard.teamName || 'Équipe Inconnue'}
-                </p>
-                <div className="flex gap-2 text-xs text-blue-400 mt-1">
-                  {collection?.name && <span>Collection: {collection.name}</span>}
-                  {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
+            className="fixed inset-0 bg-black/70 z-50" 
+            onClick={() => setSelectedCard(null)}
+          />
+          
+          {/* Modal latéral qui glisse depuis la droite */}
+          <div className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto">
+            <div className="p-6">
+              {/* Header du modal */}
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-xl font-bold text-white">Détails de la carte</h2>
+                <div className="flex items-center gap-2">
+                  {/* Menu actions */}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log("Options button clicked");
+                      setShowOptionsPanel(true);
+                    }}
+                    className="text-gray-400 hover:text-white transition-colors p-1"
+                    type="button"
+                  >
+                    <MoreVertical className="w-6 h-6" />
+                  </button>
+                  
+                  {/* Bouton fermer */}
+                  <button
+                    onClick={() => setSelectedCard(null)}
+                    className="text-gray-400 hover:text-white transition-colors p-1"
+                  >
+                    <X className="w-6 h-6" />
+                  </button>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Options button clicked");
-                    setShowOptionsPanel(true);
-                  }}
-                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
-                  type="button"
-                >
-                  <MoreVertical className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setSelectedCard(null)}
-                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
             
             {/* Content - Scrollable content */}
             <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
