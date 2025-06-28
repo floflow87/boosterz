@@ -79,19 +79,7 @@ export default function Landing() {
             <h1 className="text-4xl md:text-5xl font-bold font-luckiest mb-4 text-white">
               BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
             </h1>
-            <p className="text-xl mb-8 text-gray-300">
-              La plateforme de collection de cartes football Score Ligue 1
-            </p>
-            
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              {features.map((feature, index) => (
-                <div key={index} className="text-center">
-                  <feature.icon className="w-8 h-8 text-[hsl(9,85%,67%)] mx-auto mb-2" />
-                  <h3 className="font-semibold mb-1">{feature.title}</h3>
-                  <p className="text-sm text-gray-400">{feature.description}</p>
-                </div>
-              ))}
-            </div>
+
           </div>
 
           {/* Right side - Login form */}
