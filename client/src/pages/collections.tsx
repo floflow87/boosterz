@@ -1818,7 +1818,6 @@ export default function CollectionDetail() {
           }}
         />
       )}
-      </div>
     </div>
   );
 }
