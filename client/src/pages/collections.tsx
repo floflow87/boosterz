@@ -1709,10 +1709,10 @@ export default function Collections() {
 
                       {/* Collection selector */}
                       <div className="space-y-4">
-                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
-                          Collection
-                        </h2>
                         <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Collection
+                          </label>
                           <select
                             value={editData.collectionId}
                             onChange={(e) => setEditData({...editData, collectionId: e.target.value})}
@@ -1730,10 +1730,10 @@ export default function Collections() {
 
                       {/* Season selector */}
                       <div className="space-y-4">
-                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
-                          Saison
-                        </h2>
                         <div>
+                          <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Saison
+                          </label>
                           <select
                             value={editData.season}
                             onChange={(e) => setEditData({...editData, season: e.target.value})}
@@ -1850,7 +1850,7 @@ export default function Collections() {
                             />
                           </div>
                           
-                          <div>
+                          <div className="pb-6">
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                               Condition
                             </label>
@@ -1865,6 +1865,28 @@ export default function Collections() {
                               <option value="poor">Mauvais</option>
                             </select>
                           </div>
+                        </div>
+                      </div>
+                      
+                      {/* Save button at bottom */}
+                      <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] border-t border-gray-700 p-4">
+                        <div className="flex gap-3 max-w-4xl mx-auto">
+                          <button
+                            onClick={() => {
+                              setShowEditModal(false);
+                              setShowPlayerSuggestions(false);
+                              setShowTeamSuggestions(false);
+                            }}
+                            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-lg transition-colors font-medium"
+                          >
+                            Annuler
+                          </button>
+                          <button
+                            onClick={handleSaveEdit}
+                            className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-3 px-6 rounded-lg transition-colors font-medium"
+                          >
+                            Enregistrer
+                          </button>
                         </div>
                       </div>
                     </div>
