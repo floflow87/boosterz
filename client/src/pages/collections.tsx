@@ -1135,178 +1135,206 @@ export default function Collections() {
           </div>
         )}
 
-        {/* Card Detail Modal - Fullscreen with slide animation */}
+        {/* Modal latéral pour les détails de carte de collection */}
         {selectedCard && (
-          <div 
-            className="fixed inset-0 bg-black z-50 animate-slide-in"
-          >
-            <div className="w-full h-full flex flex-col">
-              {/* Header - Fixed */}
-              <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
-                <div className="flex-1">
-                  <h2 className="text-lg font-bold text-white">
-                    {selectedCard.playerName || 'Joueur Inconnu'}
-                  </h2>
-                  <p className="text-gray-400 text-sm">
-                    {selectedCard.teamName || 'Équipe Inconnue'}
-                  </p>
-                  <div className="flex gap-2 text-xs text-blue-400 mt-1">
-                    {collections?.find(c => c.id === selectedCard.collectionId)?.name && (
-                      <span>Collection: {collections.find(c => c.id === selectedCard.collectionId)?.name}</span>
-                    )}
-                    {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
+          <>
+            {/* Overlay */}
+            <div 
+              className="fixed inset-0 bg-black/70 z-50" 
+              onClick={() => setSelectedCard(null)}
+            />
+            
+            {/* Modal latéral qui glisse depuis la droite */}
+            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto">
+              <div className="p-6">
+                {/* Header du modal */}
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-xl font-bold text-white">Détails de la carte</h2>
+                  <div className="flex items-center gap-2">
+                    {/* Menu actions */}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowOptionsPanel(true);
+                      }}
+                      className="text-gray-400 hover:text-white transition-colors p-1"
+                      type="button"
+                    >
+                      <MoreVertical className="w-6 h-6" />
+                    </button>
+                    
+                    {/* Bouton fermer */}
+                    <button
+                      onClick={() => setSelectedCard(null)}
+                      className="text-gray-400 hover:text-white transition-colors p-1"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setShowOptionsPanel(true);
-                    }}
-                    className="text-white p-2 hover:bg-gray-700/30 rounded-lg transition-all z-20"
-                    type="button"
-                  >
-                    <MoreVertical className="w-6 h-6" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedCard(null)}
-                    className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-              </div>
 
-              {/* Content - Scrollable avec scroll fluide et hauteur augmentée */}
-              <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-8 pb-20" style={{ scrollBehavior: 'smooth' }}>
-                {/* Card Container avec marges augmentées */}
-                <div className="max-w-lg mx-auto min-h-full pb-20">
-                  {/* Card Image avec effet 3D */}
-                  <div className="aspect-[3/4.5] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
-                    {selectedCard.imageUrl ? (
-                      <img 
-                        src={selectedCard.imageUrl} 
-                        alt={selectedCard.playerName || "Card"}
-                        className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105 cursor-pointer"
-                        style={{
-                          animation: 'card-auto-float 8s ease-in-out infinite',
-                          transformStyle: 'preserve-3d',
-                          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
-                        }}
-                        onClick={() => {
-                          setShowCardFullscreen(true);
-                          setIsCardRotated(false);
-                        }}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <span className="text-lg">#{selectedCard.reference}</span>
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Card Info */}
-                  <div className="space-y-4 text-white">
-                    {/* Collection Info - First */}
-                    {selectedCard.collectionId && (
-                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-                        <div className="text-primary font-medium text-sm mb-1">Collection</div>
-                        <div className="text-white font-semibold">
-                          {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Collection inconnue'}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Sale Description - If available */}
-                    {selectedCard.saleDescription && (
-                      <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                        <div className="text-primary font-medium text-sm mb-2">Description de la vente</div>
-                        <div className="text-gray-300 text-sm leading-relaxed">
-                          {selectedCard.saleDescription}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <div className="text-gray-400">Référence</div>
-                        <div className="text-white">{selectedCard.reference}</div>
-                      </div>
-                      <div>
-                        <div className="text-gray-400">Type</div>
-                        <div className="text-white">{selectedCard.cardType}</div>
+                {/* Image de la carte */}
+                <div className="aspect-[3/4] bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl overflow-hidden mb-6 relative">
+                  {selectedCard.imageUrl ? (
+                    <img 
+                      src={selectedCard.imageUrl} 
+                      alt={selectedCard.playerName || 'Carte'}
+                      className="w-full h-full object-cover cursor-pointer"
+                      onClick={() => {
+                        setShowCardFullscreen(true);
+                        setIsCardRotated(false);
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white">
+                      <div className="text-center p-4">
+                        <div className="text-lg font-bold mb-2">{selectedCard.playerName}</div>
+                        <div className="text-sm text-gray-300">{selectedCard.teamName}</div>
+                        <div className="text-xs text-gray-400 mt-1">{selectedCard.cardType}</div>
                       </div>
                     </div>
-                    
-                    {selectedCard.numbering && (
-                      <div>
-                        <div className="text-gray-400 text-sm">Numérotation</div>
-                        <div className="text-white">{selectedCard.numbering}</div>
-                      </div>
-                    )}
+                  )}
+                  
+                  {/* Badge selon le statut */}
+                  {selectedCard.isForSale ? (
+                    <div className="absolute top-4 right-4 bg-[hsl(9,85%,67%)] text-white px-3 py-2 rounded-full text-sm font-bold">
+                      EN VENTE
+                    </div>
+                  ) : selectedCard.isForTrade ? (
+                    <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-2 rounded-full text-sm font-bold">
+                      ÉCHANGE
+                    </div>
+                  ) : (
+                    <div className="absolute top-4 right-4 bg-gray-600 text-white px-3 py-2 rounded-full text-sm font-bold">
+                      COLLECTION
+                    </div>
+                  )}
+                </div>
 
-                    {/* Sale Price */}
-                    {selectedCard.salePrice ? (
-                      <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                        <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                        <div className="text-green-400 font-bold text-lg">
-                          {selectedCard.salePrice}€
-                        </div>
-                        {selectedCard.isSold && (
-                          <div className="text-yellow-400 font-medium text-sm mt-1">
-                            ✓ Vendue
-                          </div>
-                        )}
+                {/* Informations de la carte */}
+                <div className="space-y-4">
+                  <div>
+                    <h3 className="text-2xl font-bold text-white mb-2">{selectedCard.playerName}</h3>
+                    <p className="text-gray-400 text-lg mb-1">{selectedCard.teamName}</p>
+                    <p className="text-gray-500">{selectedCard.cardType}</p>
+                  </div>
+
+                  {/* Collection Info */}
+                  {selectedCard.collectionId && (
+                    <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                      <div className="text-white font-medium text-sm mb-2">Collection</div>
+                      <div className="text-white font-semibold">
+                        {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Collection inconnue'}
                       </div>
-                    ) : selectedCard.tradePrice ? (
-                      <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                        <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                        <div className="text-green-400 font-bold text-lg">
-                          {selectedCard.tradePrice}€
-                        </div>
+                    </div>
+                  )}
+
+                  {/* Prix de vente */}
+                  {selectedCard.salePrice ? (
+                    <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
+                      <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
+                      <div className="text-green-400 font-bold text-2xl">
+                        {selectedCard.salePrice}€
                       </div>
-                    ) : selectedCard.isForTrade ? (
-                      <div className="bg-blue-600/10 rounded-lg p-4 border border-blue-600/20">
-                        <div className="text-blue-400 font-medium text-sm">
-                          Disponible à l'échange
-                        </div>
+                    </div>
+                  ) : selectedCard.tradePrice ? (
+                    <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
+                      <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
+                      <div className="text-green-400 font-bold text-2xl">
+                        {selectedCard.tradePrice?.replace('$', '')}€
                       </div>
-                    ) : (
-                      <div className="bg-gray-600/10 rounded-lg p-4 border border-gray-600/20">
-                        <div className="text-gray-400 font-medium text-sm">
-                          Pas disponible à la vente
-                        </div>
+                    </div>
+                  ) : selectedCard.isForTrade ? (
+                    <div className="bg-blue-600/10 rounded-lg p-4 border border-blue-600/20">
+                      <div className="text-blue-400 font-medium text-sm mb-1">Statut</div>
+                      <div className="text-blue-400 font-bold text-xl">
+                        Disponible à l'échange
                       </div>
-                    )}
-                    
-                    {/* Trade Info */}
-                    {selectedCard.isForTrade && (
-                      <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4 space-y-2">
-                        <div className="text-primary font-medium text-sm">
-                          {selectedCard.tradeOnly ? "Échange uniquement" : "Vente & Échange"}
-                        </div>
-                        
-                        {selectedCard.tradePrice && !selectedCard.tradeOnly && (
-                          <div className="text-green-400 font-medium">
-                            {selectedCard.tradePrice?.replace('$', '')}€
-                          </div>
-                        )}
-                        
-                        {selectedCard.tradeDescription && (
-                          <div className="text-gray-300 text-sm">
-                            {selectedCard.tradeDescription}
-                          </div>
-                        )}
+                    </div>
+                  ) : (
+                    <div className="bg-gray-600/10 rounded-lg p-4 border border-gray-600/20">
+                      <div className="text-gray-400 font-medium text-sm mb-1">Statut</div>
+                      <div className="text-gray-400 font-bold text-xl">
+                        Collection personnelle
                       </div>
-                    )}
+                    </div>
+                  )}
+
+                  {/* Description de vente */}
+                  {selectedCard.saleDescription && selectedCard.saleDescription.trim() !== '' && (
+                    <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                      <div className="text-white font-medium text-sm mb-2">Description</div>
+                      <div className="text-gray-300 text-sm leading-relaxed">
+                        {selectedCard.saleDescription}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Description d'échange */}
+                  {selectedCard.tradeDescription && selectedCard.tradeDescription.trim() !== '' && (
+                    <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                      <div className="text-white font-medium text-sm mb-2">Description de l'échange</div>
+                      <div className="text-gray-300 text-sm leading-relaxed">
+                        {selectedCard.tradeDescription}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Informations techniques */}
+                  <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
+                    <div className="text-white font-medium text-sm mb-3">Informations</div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Collection:</span>
+                        <span className="text-white">
+                          {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Score Ligue 1'}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Saison:</span>
+                        <span className="text-white">{selectedCard.season || '23/24'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Type de carte:</span>
+                        <span className="text-white">{selectedCard.cardType}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Équipe:</span>
+                        <span className="text-white">{selectedCard.teamName}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Joueur:</span>
+                        <span className="text-white">{selectedCard.playerName}</span>
+                      </div>
+                      {selectedCard.reference && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Référence:</span>
+                          <span className="text-white">{selectedCard.reference}</span>
+                        </div>
+                      )}
+                      {selectedCard.numbering && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">Numérotation:</span>
+                          <span className="text-white">{selectedCard.numbering}</span>
+                        </div>
+                      )}
+                      {selectedCard.condition && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-400">État:</span>
+                          <span className="text-green-400">{selectedCard.condition}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </>
+        )}
 
-            {/* Options Panel - Slide from bottom */}
-            {showOptionsPanel && (
+        {/* Options Panel - Slide from bottom */}
+        {showOptionsPanel && (
               <>
                 <div 
                   className="fixed inset-0 bg-black/50 z-[70]"
