@@ -126,7 +126,7 @@ The application follows a modern full-stack architecture with clear separation b
   - **Production setup**: Successfully configured SUPABASE_DATABASE_URL for production environment
   - **Database migration**: Added is_active column to both development (Neon) and production (Supabase) databases
   - **Dual user creation**: Created two users in both databases with proper bcrypt password hashing:
-    - User 1 (Admin): ID: 1, Floflow87, florent@yopmail.com, password: Test123456
+    - User 1 (Admin): ID: 1, Floflow87, florent@yopmail.com, password: Test25
     - User 2: ID: 2, maxlamenace, maxlamenace@yopmail.com, password: Test25, bio: "Je suis un passionné de cartes et je PC l'OM"
   - **SQL management**: Admin can toggle user access via UPDATE users SET is_active = true/false WHERE id = [USER_ID]
   - **Benefits**: Simple user management system without complex admin interface, dual environment setup, production-ready with test users
