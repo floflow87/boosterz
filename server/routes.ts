@@ -128,6 +128,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update personal card information
+  app.patch("/api/personal-cards/:id", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const personalCardId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      const { playerName, teamName, cardType, reference, numbering, imageUrl, season, condition } = req.body;
+      
+      console.log(`PATCH /api/personal-cards/${personalCardId} called by user ${userId}`, req.body);
+      
+      if (isNaN(personalCardId)) {
+        return res.status(400).json({ error: "Invalid personal card ID" });
+      }
+
+      // Vérifier que la carte personnelle appartient à l'utilisateur
+      const personalCard = await storage.getPersonalCard(personalCardId);
+      if (!personalCard) {
+        console.log(`Personal card ${personalCardId} not found`);
+        return res.status(404).json({ error: "Personal card not found" });
+      }
+
+      if (personalCard.userId !== userId) {
+        console.log(`Personal card ${personalCardId} does not belong to user ${userId}`);
+        return res.status(403).json({ error: "You don't own this card" });
+      }
+
+      // Construire les données de mise à jour
+      const updateData: any = {};
+      if (playerName !== undefined) updateData.playerName = playerName;
+      if (teamName !== undefined) updateData.teamName = teamName;
+      if (cardType !== undefined) updateData.cardType = cardType;
+      if (reference !== undefined) updateData.reference = reference;
+      if (numbering !== undefined) updateData.numbering = numbering;
+      if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+      if (season !== undefined) updateData.season = season;
+      if (condition !== undefined) updateData.condition = condition;
+      
+      console.log('Updating personal card with data:', updateData);
+      
+      const updatedCard = await storage.updatePersonalCard(personalCardId, updateData);
+      
+      if (!updatedCard) {
+        return res.status(404).json({ message: "Personal card not found after update" });
+      }
+      
+      console.log('Personal card updated successfully:', updatedCard.id, updatedCard.playerName);
+      
+      res.json(updatedCard);
+    } catch (error) {
+      console.error('Error updating personal card:', error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Chat routes (commented out to avoid conflicts)
   // app.use('/api/chat', chatRoutes);
 
