@@ -118,16 +118,18 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 28, 2025. Completed IsActive administration system with Supabase production setup
-  - **User model enhancement**: Added isActive boolean field (default: true) to users table
+- June 28, 2025. Completed IsActive administration system with dual user setup
+  - **User model enhancement**: Added isActive boolean field (default: true) to users table in both databases
   - **Authentication system**: Modified auth middleware to check isActive status before granting access
   - **Access control**: Users with isActive=false receive "Compte désactivé" error and cannot authenticate
-  - **Admin functionality**: Minimal admin system where isActive controls user access to the application
-  - **Production setup**: Successfully configured SUPABASE_DATABASE_URL and created production user
+  - **Admin functionality**: Simple SQL-based admin system where isActive controls user access to the application
+  - **Production setup**: Successfully configured SUPABASE_DATABASE_URL for production environment
   - **Database migration**: Added is_active column to both development (Neon) and production (Supabase) databases
-  - **User creation**: Created main user (ID: 1, Floflow87) in Supabase with proper bcrypt password hash
+  - **Dual user creation**: Created two users in both databases with proper bcrypt password hashing:
+    - User 1 (Admin): ID: 1, Floflow87, florent@yopmail.com, password: Test123456
+    - User 2: ID: 2, maxlamenace, maxlamenace@yopmail.com, password: Test25, bio: "Je suis un passionné de cartes et je PC l'OM"
   - **SQL management**: Admin can toggle user access via UPDATE users SET is_active = true/false WHERE id = [USER_ID]
-  - Benefits: Simple user management system without complex admin interface, dual environment setup, production-ready
+  - **Benefits**: Simple user management system without complex admin interface, dual environment setup, production-ready with test users
 - June 28, 2025. Simplified settings page by removing unnecessary options
   - **Removed sections**: Confidentialité, Aide & Support, Notifications push, Sons, Synchronisation
   - **Kept essentials**: Profil, Trophées, Notifications, Mode sombre, Visite guidée, Déconnexion
