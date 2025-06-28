@@ -1647,30 +1647,22 @@ export default function Collections() {
               <div className="fixed inset-0 bg-[hsl(216,46%,13%)] z-[100]">
                 <div className="h-full flex flex-col">
                   {/* Header */}
-                  <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                    <div className="flex items-center gap-4">
-                      <button
-                        onClick={() => {
-                          setShowEditModal(false);
-                          setShowPlayerSuggestions(false);
-                          setShowTeamSuggestions(false);
-                        }}
-                        className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-                      >
-                        <X className="w-6 h-6 text-white" />
-                      </button>
-                      <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
-                    </div>
+                  <div className="flex items-center gap-4 p-4 border-b border-gray-700">
                     <button
-                      onClick={handleSaveEdit}
-                      className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg transition-colors font-medium"
+                      onClick={() => {
+                        setShowEditModal(false);
+                        setShowPlayerSuggestions(false);
+                        setShowTeamSuggestions(false);
+                      }}
+                      className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
                     >
-                      Enregistrer
+                      <X className="w-6 h-6 text-white" />
                     </button>
+                    <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
                   </div>
 
                   {/* Content */}
-                  <div className="flex-1 overflow-y-auto p-6">
+                  <div className="flex-1 overflow-y-auto p-6 pb-24">
                     <div className="max-w-2xl mx-auto space-y-6">
                     
                       {/* Image upload section */}
@@ -1871,26 +1863,14 @@ export default function Collections() {
                         </div>
                       </div>
                       
-                      {/* Save button at bottom */}
-                      <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] border-t border-gray-700 p-4">
-                        <div className="flex gap-3 max-w-4xl mx-auto">
-                          <button
-                            onClick={() => {
-                              setShowEditModal(false);
-                              setShowPlayerSuggestions(false);
-                              setShowTeamSuggestions(false);
-                            }}
-                            className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-3 px-6 rounded-lg transition-colors font-medium"
-                          >
-                            Annuler
-                          </button>
-                          <button
-                            onClick={handleSaveEdit}
-                            className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-3 px-6 rounded-lg transition-colors font-medium"
-                          >
-                            Enregistrer
-                          </button>
-                        </div>
+                      {/* Save button at bottom right */}
+                      <div className="fixed bottom-6 right-6 z-10">
+                        <button
+                          onClick={handleSaveEdit}
+                          className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-3 px-8 rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl"
+                        >
+                          Enregistrer
+                        </button>
                       </div>
                     </div>
                   </div>
