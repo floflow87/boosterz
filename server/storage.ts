@@ -106,8 +106,15 @@ export interface IStorage {
 
 export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.id, id));
-    return user || undefined;
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      return user || undefined;
+    } catch (error) {
+      console.error('❌ Database error in getUser:', error);
+      console.error('🔍 Environment:', process.env.NODE_ENV);
+      console.error('🔗 Database URL exists:', !!process.env.SUPABASE_DATABASE_URL || !!process.env.DATABASE_URL);
+      throw error;
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {

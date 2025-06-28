@@ -1,21 +1,18 @@
-import { Pool, neonConfig } from '@neondatabase/serverless';
-import { drizzle } from 'drizzle-orm/neon-serverless';
+import { Pool as NeonPool, neonConfig } from '@neondatabase/serverless';
+import { Pool as PgPool } from 'pg';
+import { drizzle as drizzleNeon } from 'drizzle-orm/neon-serverless';
+import { drizzle as drizzlePg } from 'drizzle-orm/node-postgres';
 import ws from "ws";
 import * as schema from "@shared/schema";
 
 // Configuration pour environnements séparés dev/production
 const isProduction = process.env.NODE_ENV === 'production';
-const isReplit = process.env.REPLIT_DB_URL !== undefined;
-
-// Configuration WebSocket pour Neon (nécessaire en développement)
-if (!isProduction) {
-  neonConfig.webSocketConstructor = ws;
-}
 
 let databaseUrl: string;
+let db: any;
 
 if (isProduction) {
-  // En production, utilise la base Supabase fournie
+  // En production, utilise Supabase avec pg
   const prodUrl = process.env.SUPABASE_DATABASE_URL || process.env.DATABASE_URL;
   if (!prodUrl) {
     throw new Error(
@@ -24,8 +21,19 @@ if (isProduction) {
   }
   databaseUrl = prodUrl;
   console.log('🗄️  Database: Production (Supabase)');
+  
+  const pool = new PgPool({ 
+    connectionString: databaseUrl,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+  
+  db = drizzlePg(pool, { schema });
 } else {
-  // En développement, utilise la base Neon existante
+  // En développement, utilise Neon
+  neonConfig.webSocketConstructor = ws;
+  
   const devUrl = process.env.DATABASE_URL;
   if (!devUrl) {
     throw new Error(
@@ -34,11 +42,13 @@ if (isProduction) {
   }
   databaseUrl = devUrl;
   console.log('🗄️  Database: Development (Neon)');
+  
+  const pool = new NeonPool({ 
+    connectionString: databaseUrl,
+    ssl: false
+  });
+  
+  db = drizzleNeon({ client: pool, schema });
 }
 
-export const pool = new Pool({ 
-  connectionString: databaseUrl,
-  ssl: isProduction ? true : false // SSL uniquement requis en production pour Supabase
-});
-
-export const db = drizzle({ client: pool, schema });
+export { db };
