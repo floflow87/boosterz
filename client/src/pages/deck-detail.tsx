@@ -73,8 +73,8 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? 'none' : transition, // Pas de transition pendant le drag
     zIndex: isDragging ? 1000 : 'auto',
-    touchAction: 'none', // Empêche le navigateur de gérer les gestes tactiles
-    userSelect: 'none', // Empêche la sélection de texte pendant le drag
+    touchAction: 'none' as const, // Empêche le navigateur de gérer les gestes tactiles
+    userSelect: 'none' as const, // Empêche la sélection de texte pendant le drag
   };
 
   return (
@@ -92,9 +92,16 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
         {index + 1}
       </div>
       
-      {/* Indicateur de drag visible au hover */}
+      {/* Indicateur de drag visible au hover - toute la carte est glissable */}
       <div className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 pointer-events-none">
         <GripVertical className="w-4 h-4" />
+      </div>
+      
+      {/* Zone de debug visuelle pour montrer la zone glissable */}
+      <div className="absolute inset-0 border-2 border-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-lg pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+          Toute la carte est glissable
+        </div>
       </div>
       
       {cardData.type === 'collection' ? (
@@ -291,6 +298,11 @@ export default function DeckDetail() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  console.log('📱 Sensors configured:', sensors.length, 'sensors');
+  console.log('👤 Is owner view:', isOwnerView);
+  console.log('🎯 Deck owner ID:', deck?.userId);
+  console.log('🧑‍💻 Current user ID:', currentUser?.user?.id);
 
   // Fonction debounce pour les mutations
   const debouncedUpdatePositions = useCallback((positions: Array<{ cardId?: number; personalCardId?: number; position: number }>) => {
@@ -489,6 +501,8 @@ export default function DeckDetail() {
 
   // Gestion optimisée du début de drag
   const handleDragStart = useCallback((event: DragStartEvent) => {
+    console.log('🚀 Drag start detected!', event.active.id);
+    console.log('🔍 Event details:', event);
     setIsDragging(true);
     setDraggedItem(event.active.id as string);
   }, []);
