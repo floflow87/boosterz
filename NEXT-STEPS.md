@@ -13,21 +13,19 @@
 
 ### 2. Initialiser la base Supabase (UNE SEULE FOIS)
 
-**Option A : Script automatique**
-```bash
-SUPABASE_DATABASE_URL="postgresql://postgres.cqfzgjefafqwcjzvfnaq:TON_MOT_DE_PASSE@aws-0-eu-west-3.pooler.supabase.com:6543/postgres" tsx scripts/migrate-production.ts
-```
+**✅ URL configurée** : `postgresql://postgres.cqfzgjefafqwcjzvfnaq:5sXK3P6jx8To@aws-0-eu-west-3.pooler.supabase.com:6543/postgres`
 
-**Option B : Interface Supabase**
-1. Va dans SQL Editor sur Supabase
-2. Copie le contenu SQL du fichier `scripts/migrate-production.ts`
-3. Exécute le script
+**Interface Supabase (recommandé)**
+1. Va dans **SQL Editor** sur ton dashboard Supabase
+2. Copie tout le contenu du fichier `supabase-setup.sql`
+3. Colle et exécute le script
+4. Tu verras "Base de données Supabase initialisée avec succès! 🎉"
 
 ### 3. Déployer sur Replit
 
 Quand tu déploies, ajoute cette variable d'environnement :
 ```
-SUPABASE_DATABASE_URL=postgresql://postgres.cqfzgjefafqwcjzvfnaq:TON_MOT_DE_PASSE@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
+SUPABASE_DATABASE_URL=postgresql://postgres.cqfzgjefafqwcjzvfnaq:5sXK3P6jx8To@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
 ```
 
 ## Avantages de cette Configuration
