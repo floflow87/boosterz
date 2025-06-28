@@ -84,6 +84,8 @@ export default function DeckDetail() {
   console.log('👤 Is owner view:', isOwnerView);
   console.log('🎯 Deck owner ID:', deck?.userId);
   console.log('🧑‍💻 Current user ID:', currentUserId);
+  console.log('🎮 LocalCards count:', localCards.length);
+  console.log('🎯 FocusedCard:', focusedCard);
 
   // Fonction pour déplacer une carte
   const moveCard = (fromPosition: number, toPosition: number) => {
@@ -351,8 +353,9 @@ export default function DeckDetail() {
               )}
             </div>
 
-            {deck.coverImage && (
-              <div className="w-full h-32 rounded-lg overflow-hidden mb-4">
+            {/* Bannière avec thème (avec ou sans photo) */}
+            <div className="w-full h-32 rounded-lg overflow-hidden mb-4">
+              {deck.coverImage ? (
                 <div
                   className="w-full h-full"
                   style={{
@@ -361,8 +364,13 @@ export default function DeckDetail() {
                     backgroundPosition: `center ${deck.bannerPosition || 50}%`
                   }}
                 />
-              </div>
-            )}
+              ) : (
+                <div className={cn(
+                  "w-full h-full",
+                  `bg-gradient-to-br ${themeGradient}`
+                )} />
+              )}
+            </div>
           </div>
 
           {/* Cards Grid */}
@@ -422,15 +430,16 @@ export default function DeckDetail() {
                     {/* Contrôles mobile */}
                     {isOwnerView && (
                       <MobileCardControls
-                        position={index}
+                        position={deckCard.position}
                         totalCards={localCards.length}
                         isSelected={focusedCard === deckCard.position}
                         onMoveLeft={() => moveCard(deckCard.position, deckCard.position - 1)}
                         onMoveRight={() => moveCard(deckCard.position, deckCard.position + 1)}
                         onDelete={() => removeCardMutation.mutate(deckCard.position)}
-                        onToggleSelect={() => setFocusedCard(
-                          focusedCard === deckCard.position ? null : deckCard.position
-                        )}
+                        onToggleSelect={() => {
+                          console.log('🔷 Toggle select called for position:', deckCard.position);
+                          setFocusedCard(focusedCard === deckCard.position ? null : deckCard.position);
+                        }}
                       />
                     )}
                   </div>

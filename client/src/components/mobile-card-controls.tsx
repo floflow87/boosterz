@@ -21,6 +21,8 @@ export default function MobileCardControls({
   onDelete,
   onToggleSelect
 }: MobileCardControlsProps) {
+  console.log('🎮 MobileCardControls render - position:', position, 'isSelected:', isSelected, 'totalCards:', totalCards);
+  
   if (!isSelected) {
     return (
       <button
