@@ -1380,12 +1380,7 @@ export default function CollectionDetail() {
                 
                 {/* Content - Scrollable content */}
                 <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
-                  {(() => {
-                    const currentCard = getCurrentCard();
-                    const variants = getCardVariants(selectedCard);
-                    
-                    return (
-                      <div className="p-6 space-y-6">
+                  <div className="p-6 space-y-6">
                         {/* Card Carousel with Touch Support */}
                         <div className="w-full max-w-md mx-auto relative">
                           {(() => {
