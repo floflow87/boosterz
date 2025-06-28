@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useLocation, useParams } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Edit3, Trash2, Share2, Eye, EyeOff, GripVertical, Plus, X, Upload, ChevronDown, ChevronUp } from "lucide-react";
+import MobileCardControls from "@/components/mobile-card-controls";
 import { useToast } from "@/hooks/use-toast";
 import { Deck, Card, PersonalCard } from "@shared/schema";
 import Header from "@/components/header";
