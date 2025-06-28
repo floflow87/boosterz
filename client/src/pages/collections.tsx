@@ -44,7 +44,7 @@ export default function Collections() {
     queryKey: ["/api/auth/me"],
   });
   
-  const userId = authUser?.user?.id || 1;
+  const userId = (authUser as any)?.user?.id || 1;
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
@@ -346,7 +346,7 @@ export default function Collections() {
                 className="w-full bg-[hsl(214,35%,22%)] text-white rounded-lg p-3 border border-gray-600 font-poppins"
               >
                 <option value="">Toutes les collections</option>
-                {collections?.map((collection) => (
+                {(Array.isArray(collections) ? collections : []).map((collection) => (
                   <option key={collection.id} value={collection.id}>
                     {collection.name} ({getCollectionCompletion(collection).ownedCards}/{getCollectionCompletion(collection).totalCards})
                   </option>
@@ -357,7 +357,7 @@ export default function Collections() {
             {/* Collections Grid */}
             {!selectedCollection && (
               <div className="collection-grid mb-6">
-                {collections?.map((collection) => {
+                {(Array.isArray(collections) ? collections : []).map((collection) => {
                   const completion = getCollectionCompletion(collection);
                   return (
                     <div 
@@ -402,7 +402,7 @@ export default function Collections() {
             )}
 
             {/* Personal Cards Display when no collection selected */}
-            {!selectedCollection && personalCards && personalCards.length > 0 && (
+            {!selectedCollection && Array.isArray(personalCards) && personalCards.length > 0 && (
               <div className="space-y-4">
                 <h3 className="text-lg font-bold text-white font-poppins">Mes Cartes Personnelles</h3>
                 <div className="grid grid-cols-2 gap-4">
@@ -430,7 +430,7 @@ export default function Collections() {
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[hsl(9,85%,67%)] mx-auto"></div>
               </div>
-            ) : userDecks && userDecks.length > 0 ? (
+            ) : Array.isArray(userDecks) && userDecks.length > 0 ? (
               <div className="space-y-4">
                 {userDecks.map((deck: any) => (
                   <div 
