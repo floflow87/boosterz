@@ -22,8 +22,13 @@ export async function apiRequest(
     }
 
     // Add authentication token if available
-    const token = localStorage.getItem('authToken') || localStorage.getItem('token') || 'test';
-    headers["Authorization"] = `Bearer ${token}`;
+    const token = localStorage.getItem('authToken') || localStorage.getItem('token');
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      // Development fallback - use test token for user 1
+      headers["Authorization"] = `Bearer test`;
+    }
 
     console.log(`Making ${method} request to:`, url);
     console.log('Headers:', headers);
