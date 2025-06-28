@@ -1522,8 +1522,6 @@ export default function CollectionDetail() {
                         <p className="text-gray-300">Rareté: {selectedCard.cardType?.includes('Insert') ? 'Insert' : 'Base'}</p>
                       </div>
                     </div>
-
-
                   </div>
                 );
               })()}
