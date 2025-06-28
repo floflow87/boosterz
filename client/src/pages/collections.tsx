@@ -1297,51 +1297,51 @@ export default function CollectionDetail() {
               animation: 'slideInFromRight 0.4s ease-out'
             }}
           >
-          <div className="w-full h-full flex flex-col">
-            {/* Header - Fixed */}
-            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-white">
-                  {selectedCard.playerName || 'Joueur Inconnu'}
-                </h2>
-                <p className="text-gray-400 text-sm">
-                  {selectedCard.teamName || 'Équipe Inconnue'}
-                </p>
-                <div className="flex gap-2 text-xs text-blue-400 mt-1">
-                  {collection?.name && <span>Collection: {collection.name}</span>}
-                  {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
+              <div className="w-full h-full flex flex-col">
+                {/* Header - Fixed */}
+                <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
+                  <div className="flex-1">
+                    <h2 className="text-lg font-bold text-white">
+                      {selectedCard.playerName || 'Joueur Inconnu'}
+                    </h2>
+                    <p className="text-gray-400 text-sm">
+                      {selectedCard.teamName || 'Équipe Inconnue'}
+                    </p>
+                    <div className="flex gap-2 text-xs text-blue-400 mt-1">
+                      {collection?.name && <span>Collection: {collection.name}</span>}
+                      {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log("Options button clicked");
+                        setShowOptionsPanel(true);
+                      }}
+                      className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
+                      type="button"
+                    >
+                      <MoreVertical className="w-6 h-6" />
+                    </button>
+                    <button
+                      onClick={() => setSelectedCard(null)}
+                      className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+                    >
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Options button clicked");
-                    setShowOptionsPanel(true);
-                  }}
-                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
-                  type="button"
-                >
-                  <MoreVertical className="w-6 h-6" />
-                </button>
-                <button
-                  onClick={() => setSelectedCard(null)}
-                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-            </div>
-            
-            {/* Content - Scrollable content */}
-            <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
-              {(() => {
-                const currentCard = getCurrentCard();
-                const variants = getCardVariants(selectedCard);
                 
-                return (
-                  <div className="p-6 space-y-6">
+                {/* Content - Scrollable content */}
+                <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
+                  {(() => {
+                    const currentCard = getCurrentCard();
+                    const variants = getCardVariants(selectedCard);
+                    
+                    return (
+                      <div className="p-6 space-y-6">
                     {/* Card Carousel with Touch Support */}
                     <div className="w-full max-w-md mx-auto relative">
                       {(() => {
