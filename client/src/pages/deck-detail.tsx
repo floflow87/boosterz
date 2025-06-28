@@ -56,9 +56,15 @@ interface SortableCardProps {
   onRemove: (position: number) => void;
   isSelected: boolean;
   onLongPress: (position: number) => void;
+  moveCard: (fromPosition: number, toPosition: number) => void;
+  localCards: Array<{
+    type: 'collection' | 'personal';
+    card: Card | PersonalCard;
+    position: number;
+  }>;
 }
 
-function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }: SortableCardProps) {
+function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress, moveCard, localCards }: SortableCardProps) {
   const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
   const [isLongPressing, setIsLongPressing] = useState(false);
   const {
@@ -180,17 +186,44 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
         )
       )}
       
-      {/* Bouton poubelle qui apparaît lors du long press */}
+      {/* Boutons de contrôle pour mobile */}
       {isSelected && (
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onRemove(cardData.position);
-          }}
-          className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 shadow-lg z-20 animate-pulse"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
+        <div className="absolute top-2 right-2 flex flex-col gap-1 z-20">
+          {index > 0 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                moveCard(cardData.position, cardData.position - 1);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-1.5 shadow-lg text-xs font-bold"
+              title="Déplacer vers la gauche"
+            >
+              ←
+            </button>
+          )}
+          {index < (localCards?.length || 0) - 1 && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                moveCard(cardData.position, cardData.position + 1);
+              }}
+              className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-1.5 shadow-lg text-xs font-bold"
+              title="Déplacer vers la droite"
+            >
+              →
+            </button>
+          )}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onRemove(cardData.position);
+            }}
+            className="bg-red-600 hover:bg-red-700 text-white rounded-full p-1.5 shadow-lg animate-pulse"
+            title="Supprimer la carte"
+          >
+            <Trash2 className="w-3 h-3" />
+          </button>
+        </div>
       )}
     </div>
   );
@@ -534,6 +567,40 @@ export default function DeckDetail() {
     setIsDragging(true);
     setDraggedItem(event.active.id as string);
   }, []);
+
+  // Fonction pour déplacer une carte (alternative mobile aux boutons)
+  const moveCard = useCallback((fromPosition: number, toPosition: number) => {
+    console.log('🔄 Moving card from position', fromPosition, 'to', toPosition);
+    
+    const oldIndex = localCards.findIndex(card => card.position === fromPosition);
+    const newIndex = localCards.findIndex(card => card.position === toPosition);
+    
+    if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
+      const newCards = arrayMove(localCards, oldIndex, newIndex);
+      
+      // Mettre à jour les positions
+      const updatedCards = newCards.map((card, index) => ({
+        ...card,
+        position: index
+      }));
+      
+      setLocalCards(updatedCards);
+      
+      // Appeler l'API de réorganisation avec debounce
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      
+      debounceTimerRef.current = setTimeout(() => {
+        const newPositions = updatedCards.map((card, index) => ({
+          cardId: card.type === 'collection' ? (card.card as Card).id : undefined,
+          personalCardId: card.type === 'personal' ? (card.card as PersonalCard).id : undefined,
+          position: index
+        }));
+        updatePositionsMutation.mutate(newPositions);
+      }, 300);
+    }
+  }, [localCards, id, updatePositionsMutation]);
 
   // Gestionnaire optimisé de fin de drag
   const handleDragEnd = useCallback((event: DragEndEvent) => {
