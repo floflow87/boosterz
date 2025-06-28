@@ -29,8 +29,8 @@ export default function AddCard() {
     JSON.parse(decodeURIComponent(new URLSearchParams(window.location.search).get('edit') || '{}')) 
     : null;
   
-  // Step management
-  const [currentStep, setCurrentStep] = useState<Step>(isEditMode ? "details" : "import");
+  // Step management - Toujours afficher le formulaire principal
+  const [currentStep, setCurrentStep] = useState<Step>("details");
   
   // Form data - pour les cartes personnelles
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);

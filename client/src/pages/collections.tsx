@@ -1313,21 +1313,30 @@ export default function Collections() {
                   onClick={() => setShowOptionsPanel(false)}
                 />
                 <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl z-[80] transform transition-transform duration-300 ease-out">
-                  <div className="p-6 space-y-4">
+                  <div className="p-4 space-y-2">
                     {/* Handle bar */}
-                    <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-4" />
+                    <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-3" />
                     
-                    <h3 className="text-lg font-bold text-white mb-4 text-center">Actions</h3>
+                    {/* Header avec titre et bouton fermer */}
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-bold text-white">Actions</h3>
+                      <button
+                        onClick={() => setShowOptionsPanel(false)}
+                        className="p-1 text-gray-400 hover:text-white transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
                     
                     {!selectedCard.isSold && (
                       <>
 
                         <button 
                           onClick={handleMarkAsSold}
-                          className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                         >
-                          <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                            <Check className="w-4 h-4 text-white" />
+                          <div className="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center">
+                            <Check className="w-3 h-3 text-white" />
                           </div>
                           Marquer comme vendue
                         </button>
@@ -1335,10 +1344,10 @@ export default function Collections() {
                         {(selectedCard.isForSale || selectedCard.isForTrade) ? (
                           <button 
                             onClick={handleRemoveFromSale}
-                            className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                            className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                           >
-                            <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                              <X className="w-4 h-4 text-white" />
+                            <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
+                              <X className="w-3 h-3 text-white" />
                             </div>
                             Retirer de la vente
                           </button>
@@ -1348,10 +1357,10 @@ export default function Collections() {
                               setShowOptionsPanel(false);
                               setShowTradePanel(true);
                             }}
-                            className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                            className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                           >
-                            <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                              <ShoppingCart className="w-4 h-4 text-white" />
+                            <div className="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center">
+                              <ShoppingCart className="w-3 h-3 text-white" />
                             </div>
                             Mettre en vente
                           </button>
@@ -1359,10 +1368,10 @@ export default function Collections() {
                         
                         <button 
                           onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                         >
-                          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                            <Trash2 className="w-4 h-4 text-white" />
+                          <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
+                            <Trash2 className="w-3 h-3 text-white" />
                           </div>
                           Supprimer la carte
                         </button>
@@ -1378,10 +1387,10 @@ export default function Collections() {
                         
                         <button 
                           onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                         >
-                          <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                            <Trash2 className="w-4 h-4 text-white" />
+                          <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
+                            <Trash2 className="w-3 h-3 text-white" />
                           </div>
                           Supprimer la carte
                         </button>
@@ -1393,30 +1402,30 @@ export default function Collections() {
                         setShowOptionsPanel(false);
                         setShowFeaturedPanel(true);
                       }}
-                      className="w-full p-2 text-white hover:bg-yellow-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-2 text-white hover:bg-yellow-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                     >
-                      <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
-                        <Star className="w-4 h-4 text-white" />
+                      <div className="w-6 h-6 bg-yellow-600 rounded-md flex items-center justify-center">
+                        <Star className="w-3 h-3 text-white" />
                       </div>
                       À la une
                     </button>
                     
                     <button 
                       onClick={() => handleEditCard(selectedCard as PersonalCard)}
-                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                     >
-                      <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <Settings className="w-4 h-4 text-white" />
+                      <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
+                        <Settings className="w-3 h-3 text-white" />
                       </div>
                       Modifier la carte
                     </button>
                     
                     <button 
                       onClick={() => handleDuplicateCard(selectedCard as PersonalCard)}
-                      className="w-full p-2 text-white hover:bg-purple-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                      className="w-full p-2 text-white hover:bg-purple-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                     >
-                      <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                        <Copy className="w-4 h-4 text-white" />
+                      <div className="w-6 h-6 bg-purple-600 rounded-md flex items-center justify-center">
+                        <Copy className="w-3 h-3 text-white" />
                       </div>
                       Dupliquer la carte
                     </button>
