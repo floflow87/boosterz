@@ -1342,47 +1342,47 @@ export default function CollectionDetail() {
                     
                     return (
                       <div className="p-6 space-y-6">
-                    {/* Card Carousel with Touch Support */}
-                    <div className="w-full max-w-md mx-auto relative">
-                      {(() => {
-                        const variants = getCardVariants(selectedCard);
-                        if (variants.length <= 1) {
-                          return currentCard?.imageUrl ? (
-                            <div 
-                              className="relative w-full h-96 perspective-1000"
-                              style={{ perspective: '1000px' }}
-                            >
-                              <img 
-                                src={currentCard.imageUrl} 
-                                alt={`${currentCard.playerName} card`}
-                                className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
-                                style={{
-                                  transformStyle: 'preserve-3d',
-                                  willChange: 'transform',
-                                  animation: 'card-auto-float 12s ease-in-out infinite'
-                                }}
-                              />
-                              {/* Featured Star on Photo */}
-                              {currentCard.isFeatured && (
-                                <div className="absolute top-3 right-3 z-20">
-                                  <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
-                                    <Star className="w-4 h-4 text-white fill-current" />
-                                  </div>
+                        {/* Card Carousel with Touch Support */}
+                        <div className="w-full max-w-md mx-auto relative">
+                          {(() => {
+                            const variants = getCardVariants(selectedCard);
+                            if (variants.length <= 1) {
+                              return currentCard?.imageUrl ? (
+                                <div 
+                                  className="relative w-full h-96 perspective-1000"
+                                  style={{ perspective: '1000px' }}
+                                >
+                                  <img 
+                                    src={currentCard.imageUrl} 
+                                    alt={`${currentCard.playerName} card`}
+                                    className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                                    style={{
+                                      transformStyle: 'preserve-3d',
+                                      willChange: 'transform',
+                                      animation: 'card-auto-float 12s ease-in-out infinite'
+                                    }}
+                                  />
+                                  {/* Featured Star on Photo */}
+                                  {currentCard.isFeatured && (
+                                    <div className="absolute top-3 right-3 z-20">
+                                      <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
+                                        <Star className="w-4 h-4 text-white fill-current" />
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
-                            </div>
-                          ) : (
-                            <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
-                              <HelpCircle className="w-16 h-16 text-gray-400" />
-                            </div>
-                          );
-                        }
+                              ) : (
+                                <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
+                                  <HelpCircle className="w-16 h-16 text-gray-400" />
+                                </div>
+                              );
+                            }
 
-                        // Carousel pour multiple variantes
-                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
-                        
-                        return (
-                          <div 
+                            // Carousel pour multiple variantes
+                            const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                            
+                            return (
+                              <div 
                             className="relative w-full h-96 overflow-hidden rounded-lg"
                             onTouchStart={(e) => {
                               const touch = e.touches[0];
