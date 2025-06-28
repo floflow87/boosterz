@@ -79,20 +79,18 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative group transition-transform duration-200 ease-out",
+        "relative group transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing",
         isDragging && "opacity-75 scale-105 rotate-2 shadow-2xl z-50"
       )}
       {...attributes}
+      {...listeners}
     >
       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center z-10">
         {index + 1}
       </div>
       
-      {/* Handle de drag */}
-      <div 
-        className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-all duration-200 cursor-grab active:cursor-grabbing hover:bg-black/90 hover:scale-110 z-10"
-        {...listeners}
-      >
+      {/* Indicateur de drag visible au hover */}
+      <div className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 pointer-events-none">
         <GripVertical className="w-4 h-4" />
       </div>
       
