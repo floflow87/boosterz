@@ -10,6 +10,7 @@ import { apiRequest } from "@/lib/queryClient";
 import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
+import ProfileLoadingScreen from "@/components/ProfileLoadingScreen";
 
 interface UserProfile {
   id: number;
