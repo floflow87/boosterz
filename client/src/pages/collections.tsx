@@ -80,15 +80,25 @@ export default function Collections() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Récupérer l'utilisateur authentifié
+  const { data: authUser, isLoading: authLoading } = useQuery({
+    queryKey: ["/api/auth/me"],
+  });
+  
+  const currentUser = authUser?.user;
+  const userId = currentUser?.id;
+
   const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["/api/users/999"],
+    queryKey: ["/api/users", userId],
+    enabled: !!userId,
   });
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ["/api/users/999/collections"],
+    queryKey: ["/api/users", userId, "collections"],
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
     refetchOnWindowFocus: false,
+    enabled: !!userId,
   });
 
   // Query pour les cartes personnelles

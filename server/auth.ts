@@ -117,7 +117,9 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   console.log('🔐 Auth middleware - authHeader:', authHeader);
   console.log('🔐 Auth middleware - token:', token ? `${token.substring(0, 20)}...` : 'none');
 
-  // WORKAROUND: Auto-authenticate as user 999 when no token is provided
+  // TEMPORARILY DISABLED: Auto-authenticate as user 999 when no token is provided
+  // This allows proper login with different accounts
+  /*
   if (!token) {
     console.log('⚡ No token provided - auto-authenticating as user 999');
     try {
@@ -136,6 +138,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       console.error('Auto-auth error:', error);
     }
   }
+  */
 
   // Development mode: for 'test' token only, use user 1  
   if (token === 'test') {
