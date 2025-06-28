@@ -17,6 +17,7 @@ import {
   closestCenter,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   DragEndEvent,
@@ -72,6 +73,8 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? 'none' : transition, // Pas de transition pendant le drag
     zIndex: isDragging ? 1000 : 'auto',
+    touchAction: 'none', // Empêche le navigateur de gérer les gestes tactiles
+    userSelect: 'none', // Empêche la sélection de texte pendant le drag
   };
 
   return (
@@ -79,7 +82,7 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
       ref={setNodeRef}
       style={style}
       className={cn(
-        "relative group transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing",
+        "relative group transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing touch-manipulation",
         isDragging && "opacity-75 scale-105 rotate-2 shadow-2xl z-50"
       )}
       {...attributes}
@@ -270,12 +273,18 @@ export default function DeckDetail() {
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout>();
 
-  // Configuration optimisée des capteurs pour le drag and drop
+  // Configuration optimisée des capteurs pour le drag and drop (desktop + mobile)
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
         distance: 3, // Distance réduite pour plus de réactivité
         tolerance: 3,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 100, // Délai court pour éviter les conflits avec le scroll
+        tolerance: 5, // Tolérance pour les mouvements accidentels
       },
     }),
     useSensor(KeyboardSensor, {
