@@ -18,6 +18,7 @@ import type { User, Collection, Card, PersonalCard } from "@shared/schema";
 import MilestoneCelebration from "@/components/MilestoneCelebration";
 import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
 import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
+import EditCardModal from "@/components/edit-card-modal";
 import TrophyAvatar from "@/components/TrophyAvatar";
 
 const getThemeGradient = (themeColors: string) => {
@@ -502,6 +503,34 @@ export default function Collections() {
       toast({
         title: "Erreur",
         description: error.message || "Erreur lors de la duplication de la carte.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Mutation pour modifier une carte
+  const updateCardMutation = useMutation({
+    mutationFn: async ({ cardId, updates }: { cardId: number, updates: any }) => {
+      return apiRequest("PATCH", `/api/personal-cards/${cardId}`, updates);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      toast({
+        title: "Carte modifiée",
+        description: "La carte a été mise à jour avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      setShowEditCardModal(false);
+      setCardToEdit(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erreur",
+        description: error.message || "Erreur lors de la modification de la carte.",
         variant: "destructive",
       });
     }
@@ -1823,6 +1852,21 @@ export default function Collections() {
       <MilestoneCelebration 
         milestone={currentMilestone}
         onClose={() => setCurrentMilestone(null)}
+      />
+
+      {/* Edit Card Modal */}
+      <EditCardModal
+        card={cardToEdit}
+        isOpen={showEditCardModal}
+        onClose={() => {
+          setShowEditCardModal(false);
+          setCardToEdit(null);
+        }}
+        onUpdate={(updates) => {
+          if (cardToEdit) {
+            updateCardMutation.mutate({ cardId: cardToEdit.id, updates });
+          }
+        }}
       />
 
       {/* Development Test Button - Hidden in production */}
