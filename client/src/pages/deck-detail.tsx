@@ -60,6 +60,7 @@ interface SortableCardProps {
 
 function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }: SortableCardProps) {
   const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isLongPressing, setIsLongPressing] = useState(false);
   const {
     attributes,
     listeners,
@@ -77,32 +78,59 @@ function SortableCard({ id, cardData, index, onRemove, isSelected, onLongPress }
     userSelect: 'none' as const, // Empêche la sélection de texte pendant le drag
   };
 
+  // Gestionnaires pour l'appui long mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const timer = setTimeout(() => {
+      setIsLongPressing(true);
+      onLongPress(cardData.position);
+    }, 800); // 800ms pour déclencher l'appui long
+    setPressTimer(timer);
+  };
+
+  const handleTouchEnd = () => {
+    if (pressTimer) {
+      clearTimeout(pressTimer);
+      setPressTimer(null);
+    }
+    setIsLongPressing(false);
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       className={cn(
         "relative group transition-transform duration-200 ease-out cursor-grab active:cursor-grabbing touch-manipulation",
-        isDragging && "opacity-75 scale-105 rotate-2 shadow-2xl z-50"
+        isDragging && "opacity-75 scale-105 rotate-2 shadow-2xl z-50",
+        isLongPressing && "scale-110 shadow-xl ring-2 ring-blue-500",
+        isSelected && "ring-2 ring-red-500"
       )}
       {...attributes}
       {...listeners}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
     >
       <div className="absolute top-2 left-2 bg-black/70 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center z-10">
         {index + 1}
       </div>
       
-      {/* Indicateur de drag visible au hover - toute la carte est glissable */}
-      <div className="absolute top-2 right-2 bg-black/70 text-white rounded p-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 pointer-events-none">
+      {/* Indicateur de drag visible - adapté pour mobile */}
+      <div className={cn(
+        "absolute top-2 right-2 bg-black/70 text-white rounded p-1 transition-all duration-200 z-10",
+        isLongPressing ? "opacity-100 scale-110" : "opacity-0 group-hover:opacity-100"
+      )}>
         <GripVertical className="w-4 h-4" />
       </div>
       
-      {/* Zone de debug visuelle pour montrer la zone glissable */}
-      <div className="absolute inset-0 border-2 border-blue-500 opacity-0 group-hover:opacity-20 transition-opacity duration-200 rounded-lg pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
-          Toute la carte est glissable
+      {/* Message d'aide pour mobile */}
+      {isLongPressing && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-lg z-20">
+          <div className="bg-blue-500 text-white text-xs px-3 py-1 rounded-full">
+            Maintenez et glissez pour réorganiser
+          </div>
         </div>
-      </div>
+      )}
       
       {cardData.type === 'collection' ? (
         (cardData.card as Card).imageUrl ? (
