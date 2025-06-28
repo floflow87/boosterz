@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -509,6 +509,51 @@ export default function Collections() {
   const confirmDeleteCard = () => {
     if (cardToDelete) {
       deleteCardMutation.mutate(cardToDelete.id);
+    }
+  };
+
+  const handleDuplicateCard = async (card: any) => {
+    if (!card) return;
+    
+    try {
+      // Créer une nouvelle carte avec les mêmes données
+      const duplicateData = {
+        playerName: card.playerName,
+        teamName: card.teamName,
+        cardType: card.cardType,
+        reference: card.reference,
+        numbering: card.numbering,
+        imageUrl: card.imageUrl,
+        collectionId: card.collectionId,
+        season: card.season,
+        condition: "excellent", // Condition par défaut
+        isOwned: true
+      };
+
+      console.log("Duplicating card with data:", duplicateData);
+
+      await apiRequest("POST", "/api/personal-cards", duplicateData);
+      
+      // Invalider les caches pour rafraîchir l'affichage
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      toast({
+        title: "Carte dupliquée",
+        description: "La carte a été dupliquée avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      setShowOptionsPanel(false);
+      setSelectedCard(null);
+    } catch (error) {
+      console.error("Error duplicating card:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de dupliquer la carte.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -1325,7 +1370,15 @@ export default function Collections() {
                       className="w-full p-1.5 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                     >
                       <Plus className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                      Ajouter à la sélection
+                      Ajouter à la collection
+                    </button>
+                    
+                    <button 
+                      onClick={() => handleDuplicateCard(selectedCard)}
+                      className="w-full p-1.5 text-white hover:bg-purple-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
+                    >
+                      <Copy className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                      Dupliquer la carte
                     </button>
                     
                     <button 
