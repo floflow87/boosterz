@@ -1524,7 +1524,7 @@ export default function CollectionDetail() {
                     </div>
                   </div>
                 );
-              })()}
+                  })()}
             </div>
           </div>
         </div>
