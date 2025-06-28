@@ -1639,201 +1639,234 @@ export default function Collections() {
               </div>
             )}
 
-            {/* Edit Modal */}
+            {/* Edit Window */}
             {showEditModal && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex items-center justify-center p-4">
-                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-lg border border-[hsl(214,35%,30%)] max-h-[90vh] overflow-y-auto">
-                  <div className="p-6 space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-lg font-bold text-white">Modifier la carte</h3>
-                      <button
-                        onClick={() => setShowEditModal(false)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                    
-                    {/* Image upload section */}
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-gray-300">
-                        Image de la carte
-                      </label>
-                      
-                      {/* Current image preview */}
-                      {editImagePreview && (
-                        <div className="w-32 h-40 mx-auto mb-4 rounded-lg overflow-hidden border border-gray-600">
-                          <img 
-                            src={editImagePreview} 
-                            alt="Aperçu" 
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                      )}
-                      
-                      {/* File upload */}
-                      <div className="flex items-center justify-center w-full">
-                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-[hsl(214,35%,25%)] hover:bg-[hsl(214,35%,30%)] transition-colors">
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <Camera className="w-8 h-8 mb-4 text-gray-400" />
-                            <p className="mb-2 text-sm text-gray-400">
-                              <span className="font-semibold">Cliquer pour uploader</span> ou glisser-déposer
-                            </p>
-                            <p className="text-xs text-gray-500">PNG, JPG ou JPEG</p>
-                          </div>
-                          <input 
-                            type="file" 
-                            className="hidden" 
-                            accept="image/*"
-                            onChange={handleEditImageUpload}
-                          />
-                        </label>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-3">
-                      {/* Nom du joueur avec autocomplétion */}
-                      <div className="relative">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Nom du joueur
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.playerName}
-                          onChange={(e) => handlePlayerNameChange(e.target.value)}
-                          onFocus={() => editData.playerName.length > 2 && setShowPlayerSuggestions(true)}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        {showPlayerSuggestions && playerSuggestions.length > 0 && (
-                          <div className="absolute z-10 w-full mt-1 bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg shadow-lg max-h-32 overflow-y-auto">
-                            {playerSuggestions.map((suggestion, index) => (
-                              <button
-                                key={index}
-                                onClick={() => {
-                                  setEditData({...editData, playerName: suggestion});
-                                  setShowPlayerSuggestions(false);
-                                }}
-                                className="w-full text-left px-3 py-2 text-white hover:bg-[hsl(214,35%,40%)] transition-colors"
-                              >
-                                {suggestion}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Équipe avec autocomplétion */}
-                      <div className="relative">
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Équipe
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.teamName}
-                          onChange={(e) => handleTeamNameChange(e.target.value)}
-                          onFocus={() => editData.teamName.length > 2 && setShowTeamSuggestions(true)}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        {showTeamSuggestions && teamSuggestions.length > 0 && (
-                          <div className="absolute z-10 w-full mt-1 bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg shadow-lg max-h-32 overflow-y-auto">
-                            {teamSuggestions.map((suggestion, index) => (
-                              <button
-                                key={index}
-                                onClick={() => {
-                                  setEditData({...editData, teamName: suggestion});
-                                  setShowTeamSuggestions(false);
-                                }}
-                                className="w-full text-left px-3 py-2 text-white hover:bg-[hsl(214,35%,40%)] transition-colors"
-                              >
-                                {suggestion}
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Type de carte
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.cardType}
-                          onChange={(e) => setEditData({...editData, cardType: e.target.value})}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Référence
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.reference}
-                          onChange={(e) => setEditData({...editData, reference: e.target.value})}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Numérotation
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.numbering}
-                          onChange={(e) => setEditData({...editData, numbering: e.target.value})}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Saison
-                        </label>
-                        <input
-                          type="text"
-                          value={editData.season}
-                          onChange={(e) => setEditData({...editData, season: e.target.value})}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          Condition
-                        </label>
-                        <select
-                          value={editData.condition}
-                          onChange={(e) => setEditData({...editData, condition: e.target.value})}
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                        >
-                          <option value="mint">Mint</option>
-                          <option value="excellent">Excellent</option>
-                          <option value="good">Bon</option>
-                          <option value="poor">Mauvais</option>
-                        </select>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3 pt-4">
+              <div className="fixed inset-0 bg-[hsl(216,46%,13%)] z-[100]">
+                <div className="h-full flex flex-col">
+                  {/* Header */}
+                  <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                    <div className="flex items-center gap-4">
                       <button
                         onClick={() => {
                           setShowEditModal(false);
                           setShowPlayerSuggestions(false);
                           setShowTeamSuggestions(false);
                         }}
-                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
+                        className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
                       >
-                        Annuler
+                        <X className="w-6 h-6 text-white" />
                       </button>
-                      <button
-                        onClick={handleSaveEdit}
-                        className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-4 rounded-lg transition-colors font-medium"
-                      >
-                        Enregistrer
-                      </button>
+                      <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
+                    </div>
+                    <button
+                      onClick={handleSaveEdit}
+                      className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white px-6 py-2 rounded-lg transition-colors font-medium"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 overflow-y-auto p-6">
+                    <div className="max-w-2xl mx-auto space-y-6">
+                    
+                      {/* Image upload section */}
+                      <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                          Image de la carte
+                        </h2>
+                        
+                        {/* Current image preview */}
+                        {editImagePreview && (
+                          <div className="w-48 h-60 mx-auto mb-4 rounded-lg overflow-hidden border border-gray-600">
+                            <img 
+                              src={editImagePreview} 
+                              alt="Aperçu" 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                        
+                        {/* File upload */}
+                        <div className="flex items-center justify-center w-full">
+                          <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-[hsl(214,35%,25%)] hover:bg-[hsl(214,35%,30%)] transition-colors">
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                              <Camera className="w-10 h-10 mb-4 text-gray-400" />
+                              <p className="mb-2 text-base text-gray-400">
+                                <span className="font-semibold">Cliquer pour uploader</span> ou glisser-déposer
+                              </p>
+                              <p className="text-sm text-gray-500">PNG, JPG ou JPEG</p>
+                            </div>
+                            <input 
+                              type="file" 
+                              className="hidden" 
+                              accept="image/*"
+                              onChange={handleEditImageUpload}
+                            />
+                          </label>
+                        </div>
+                      </div>
+
+                      {/* Collection selector */}
+                      <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                          Collection
+                        </h2>
+                        <div>
+                          <select
+                            value={editData.collectionId}
+                            onChange={(e) => setEditData({...editData, collectionId: e.target.value})}
+                            className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                          >
+                            <option value="">Sélectionner une collection</option>
+                            {collections?.map((collection) => (
+                              <option key={collection.id} value={collection.id}>
+                                {collection.name}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Season selector */}
+                      <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                          Saison
+                        </h2>
+                        <div>
+                          <select
+                            value={editData.season}
+                            onChange={(e) => setEditData({...editData, season: e.target.value})}
+                            className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                          >
+                            <option value="">Sélectionner une saison</option>
+                            <option value="22/23">2022/23</option>
+                            <option value="23/24">2023/24</option>
+                            <option value="24/25">2024/25</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Card details section */}
+                      <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+                          Détails de la carte
+                        </h2>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          {/* Nom du joueur avec autocomplétion */}
+                          <div className="relative">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Nom du joueur
+                            </label>
+                            <input
+                              type="text"
+                              value={editData.playerName}
+                              onChange={(e) => handlePlayerNameChange(e.target.value)}
+                              onFocus={() => editData.playerName.length > 2 && setShowPlayerSuggestions(true)}
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            />
+                            {showPlayerSuggestions && playerSuggestions.length > 0 && (
+                              <div className="absolute z-10 w-full mt-1 bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                                {playerSuggestions.map((suggestion, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => {
+                                      setEditData({...editData, playerName: suggestion});
+                                      setShowPlayerSuggestions(false);
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-white hover:bg-[hsl(214,35%,40%)] transition-colors"
+                                  >
+                                    {suggestion}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          
+                          {/* Équipe avec autocomplétion */}
+                          <div className="relative">
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Équipe
+                            </label>
+                            <input
+                              type="text"
+                              value={editData.teamName}
+                              onChange={(e) => handleTeamNameChange(e.target.value)}
+                              onFocus={() => editData.teamName.length > 2 && setShowTeamSuggestions(true)}
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            />
+                            {showTeamSuggestions && teamSuggestions.length > 0 && (
+                              <div className="absolute z-10 w-full mt-1 bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                                {teamSuggestions.map((suggestion, index) => (
+                                  <button
+                                    key={index}
+                                    onClick={() => {
+                                      setEditData({...editData, teamName: suggestion});
+                                      setShowTeamSuggestions(false);
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-white hover:bg-[hsl(214,35%,40%)] transition-colors"
+                                  >
+                                    {suggestion}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Type de carte
+                            </label>
+                            <input
+                              type="text"
+                              value={editData.cardType}
+                              onChange={(e) => setEditData({...editData, cardType: e.target.value})}
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Référence
+                            </label>
+                            <input
+                              type="text"
+                              value={editData.reference}
+                              onChange={(e) => setEditData({...editData, reference: e.target.value})}
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Numérotation
+                            </label>
+                            <input
+                              type="text"
+                              value={editData.numbering}
+                              onChange={(e) => setEditData({...editData, numbering: e.target.value})}
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            />
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                              Condition
+                            </label>
+                            <select
+                              value={editData.condition}
+                              onChange={(e) => setEditData({...editData, condition: e.target.value})}
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            >
+                              <option value="mint">Mint</option>
+                              <option value="excellent">Excellent</option>
+                              <option value="good">Bon</option>
+                              <option value="poor">Mauvais</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
