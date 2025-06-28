@@ -1,10 +1,18 @@
 import { Pool } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-serverless';
 
-const DATABASE_URL = process.env.DATABASE_URL;
+const DATABASE_URL = process.env.SUPABASE_DATABASE_URL || 
+  process.env.DATABASE_URL ||
+  "postgresql://postgres.cqfzgjefafqwcjzvfnaq:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:6543/postgres";
 
 if (!DATABASE_URL) {
-  console.error('❌ DATABASE_URL environment variable is required');
+  console.error('❌ SUPABASE_DATABASE_URL environment variable is required');
+  process.exit(1);
+}
+
+if (DATABASE_URL.includes('[YOUR-PASSWORD]')) {
+  console.error('❌ Please replace [YOUR-PASSWORD] with your actual Supabase password');
+  console.error('💡 Set SUPABASE_DATABASE_URL with your complete connection string');
   process.exit(1);
 }
 

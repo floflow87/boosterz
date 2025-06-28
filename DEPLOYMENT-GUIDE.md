@@ -14,31 +14,31 @@ Tu as déjà créé le projet Supabase. Voici les étapes pour finaliser :
 
 ## 📋 Étapes de Configuration Production
 
-### 1. Récupérer l'URL Supabase
-1. Va sur [Supabase Dashboard](https://supabase.com/dashboard/projects)
-2. Sélectionne ton projet
-3. Va dans **Settings** → **Database**
-4. Copie la **Connection String** sous "Connection pooling"
-5. Remplace `[YOUR-PASSWORD]` par ton mot de passe de base
+### 1. Configuration URL Supabase
+✅ **URL fournie** : `postgresql://postgres.cqfzgjefafqwcjzvfnaq:[YOUR-PASSWORD]@aws-0-eu-west-3.pooler.supabase.com:6543/postgres`
 
-Format attendu :
+**Il te faut juste :**
+1. Récupérer ton mot de passe Supabase 
+2. Remplacer `[YOUR-PASSWORD]` par ton mot de passe réel
+
+Format final :
 ```
-postgresql://postgres.abc123:[PASSWORD]@aws-0-eu-west-1.pooler.supabase.com:6543/postgres
+postgresql://postgres.cqfzgjefafqwcjzvfnaq:TON_MOT_DE_PASSE@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
 ```
 
 ### 2. Initialiser le Schéma Supabase
 
-Une fois l'URL récupérée, exécute le script de migration :
-
+**Méthode 1 : Script automatique (recommandé)**
 ```bash
-# Depuis ton terminal local ou lors du déploiement
-SUPABASE_DATABASE_URL="postgresql://postgres.abc123:[PASSWORD]@aws-0-eu-west-1.pooler.supabase.com:6543/postgres" tsx scripts/migrate-production.ts
+# Remplace TON_MOT_DE_PASSE par ton vrai mot de passe Supabase
+SUPABASE_DATABASE_URL="postgresql://postgres.cqfzgjefafqwcjzvfnaq:TON_MOT_DE_PASSE@aws-0-eu-west-3.pooler.supabase.com:6543/postgres" tsx scripts/migrate-production.ts
 ```
 
-Ou tu peux utiliser directement l'interface SQL de Supabase :
-
+**Méthode 2 : Interface Supabase**
 1. Va dans **SQL Editor** dans ton dashboard Supabase
-2. Exécute le contenu du fichier `scripts/migrate-production.ts` (la partie SQL entre les backticks)
+2. Copie et exécute le contenu SQL du fichier `scripts/migrate-production.ts`
+
+Le script créera automatiquement toutes les tables nécessaires avec les bonnes relations.
 
 ### 3. Configuration des Variables d'Environnement
 
@@ -46,12 +46,14 @@ Ou tu peux utiliser directement l'interface SQL de Supabase :
 ✅ **Rien à changer** - Garde la configuration actuelle
 
 #### Pour la Production (Déploiement)
-Ajoute ces variables d'environnement lors du déploiement :
+Ajoute cette variable d'environnement lors du déploiement :
 
 ```bash
 NODE_ENV=production
-SUPABASE_DATABASE_URL=postgresql://postgres.abc123:[PASSWORD]@aws-0-eu-west-1.pooler.supabase.com:6543/postgres
+SUPABASE_DATABASE_URL=postgresql://postgres.cqfzgjefafqwcjzvfnaq:TON_MOT_DE_PASSE@aws-0-eu-west-3.pooler.supabase.com:6543/postgres
 ```
+
+**Important** : Remplace `TON_MOT_DE_PASSE` par ton vrai mot de passe Supabase
 
 ## 🚀 Processus de Déploiement
 
