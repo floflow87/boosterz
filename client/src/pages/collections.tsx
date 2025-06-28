@@ -1529,7 +1529,6 @@ export default function CollectionDetail() {
           </div>
         </div>
       )}
-      }
 
       {/* Fullscreen Card Modal */}
       {showFullscreenCard && selectedCard && (
@@ -1819,6 +1818,7 @@ export default function CollectionDetail() {
           }}
         />
       )}
+      }
     </div>
   );
 }
