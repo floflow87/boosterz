@@ -40,7 +40,12 @@ export default function ProfileEdit() {
     queryKey: ['/api/auth/me']
   });
 
-  const currentUser = authData?.user;
+  const currentUser = authData?.user || null;
+
+  // Afficher l'écran de chargement
+  if (isLoading) {
+    return <ProfileLoadingScreen />;
+  }
 
   // Mettre à jour les champs quand les données sont chargées
   useEffect(() => {
@@ -78,7 +83,7 @@ export default function ProfileEdit() {
     },
     onSuccess: (data) => {
       // Update the current user data with the response from server
-      queryClient.setQueryData('/api/auth/me', data);
+      queryClient.setQueryData(['/api/auth/me'], data);
       queryClient.invalidateQueries({ queryKey: ['/api/auth/me'] });
       
       toast({
