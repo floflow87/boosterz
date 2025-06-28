@@ -731,50 +731,6 @@ export default function CollectionDetail() {
     return variants[currentVariantIndex] || selectedCard;
   };
 
-  const handleImageUpload = async (cardId: number, imageUrl: string) => {
-    try {
-      console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
-      
-      // Update card image first
-      const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
-      console.log("Image update result:", imageResult);
-      
-      // Automatically mark card as owned
-      const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
-      console.log("Ownership update result:", ownershipResult);
-      
-      // Force refresh of cards data to ensure images are displayed
-      await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-      console.log("Query cache invalidated for cards");
-      
-      // Update local state after successful API calls
-      if (selectedCard && selectedCard.id === cardId) {
-        const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
-        setSelectedCard(updatedCard);
-        console.log("Local selected card state updated:", updatedCard);
-      }
-      
-      // Trigger card pull effect
-      setPulledCardEffect(cardId);
-      setTimeout(() => setPulledCardEffect(null), 3000);
-      
-      toast({
-        title: "Photo sauvegardée",
-        description: "La photo a été ajoutée et la carte marquée comme acquise.",
-        className: "bg-green-900 border-green-700 text-green-100",
-      });
-      
-      setShowPhotoUpload(false);
-    } catch (error) {
-      console.error("Erreur lors de la sauvegarde:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder la photo. Vérifie ta connexion.",
-        variant: "destructive"
-      });
-    }
-  };
-
   if (collectionLoading || cardsLoading) {
     return <LoadingScreen message="Chargement de la collection..." />;
   }
@@ -1803,7 +1759,49 @@ export default function CollectionDetail() {
         isOpen={showPhotoUpload}
         onClose={() => setShowPhotoUpload(false)}
         preselectedPlayer={selectedCard?.playerName || undefined}
-        onImageUploaded={handleImageUpload}
+        onImageUploaded={async (cardId, imageUrl) => {
+          try {
+            console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
+            
+            // Update card image first
+            const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            console.log("Image update result:", imageResult);
+            
+            // Automatically mark card as owned
+            const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            console.log("Ownership update result:", ownershipResult);
+            
+            // Force refresh of cards data to ensure images are displayed
+            await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+            console.log("Query cache invalidated for cards");
+            
+            // Update local state after successful API calls
+            if (selectedCard && selectedCard.id === cardId) {
+              const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
+              setSelectedCard(updatedCard);
+              console.log("Local selected card state updated:", updatedCard);
+            }
+            
+            // Trigger card pull effect
+            setPulledCardEffect(cardId);
+            setTimeout(() => setPulledCardEffect(null), 3000);
+            
+            toast({
+              title: "Photo sauvegardée",
+              description: "La photo a été ajoutée et la carte marquée comme acquise.",
+              className: "bg-green-900 border-green-700 text-green-100",
+            });
+            
+            setShowPhotoUpload(false);
+          } catch (error) {
+            console.error("Erreur lors de la sauvegarde:", error);
+            toast({
+              title: "Erreur",
+              description: "Impossible de sauvegarder la photo. Vérifie ta connexion.",
+              variant: "destructive"
+            });
+          }
+        }}
         availableCards={cards || []}
         initialCard={selectedCard || undefined}
         currentFilter={filter}
