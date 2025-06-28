@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy, ShoppingCart } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -64,10 +64,22 @@ export default function Collections() {
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [showFeaturedPanel, setShowFeaturedPanel] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [featuredDescription, setFeaturedDescription] = useState("");
   const [salePrice, setSalePrice] = useState('');
   const [saleDescription, setSaleDescription] = useState('');
   const [tradeOnly, setTradeOnly] = useState(false);
+  const [editData, setEditData] = useState({
+    playerName: '',
+    teamName: '',
+    cardType: '',
+    reference: '',
+    numbering: '',
+    imageUrl: '',
+    collectionId: '',
+    season: '',
+    condition: 'excellent'
+  });
   const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
@@ -552,6 +564,54 @@ export default function Collections() {
       toast({
         title: "Erreur",
         description: "Impossible de dupliquer la carte.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleEditCard = (card: any) => {
+    if (!card) return;
+    
+    setEditData({
+      playerName: card.playerName || '',
+      teamName: card.teamName || '',
+      cardType: card.cardType || '',
+      reference: card.reference || '',
+      numbering: card.numbering || '',
+      imageUrl: card.imageUrl || '',
+      collectionId: card.collectionId || '',
+      season: card.season || '',
+      condition: card.condition || 'excellent'
+    });
+    
+    setShowOptionsPanel(false);
+    setShowEditModal(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!selectedCard) return;
+
+    try {
+      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}`, editData);
+      
+      // Invalider les caches pour rafraîchir l'affichage
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      toast({
+        title: "Carte modifiée",
+        description: "Les modifications ont été sauvegardées avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      setShowEditModal(false);
+      setSelectedCard(null);
+    } catch (error) {
+      console.error("Error editing card:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de sauvegarder les modifications.",
         variant: "destructive"
       });
     }
@@ -1293,7 +1353,15 @@ export default function Collections() {
                     {/* Handle bar */}
                     <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-4" />
                     
-                    <h3 className="text-lg font-bold text-white mb-3 text-center">Actions</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-bold text-white">Actions</h3>
+                      <button
+                        onClick={() => setShowOptionsPanel(false)}
+                        className="text-white hover:bg-gray-600/30 rounded-lg p-1 transition-colors"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
                     
                     {!selectedCard.isSold && (
                       <>
@@ -1322,34 +1390,17 @@ export default function Collections() {
                             }}
                             className="w-full p-1.5 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                           >
-                            <Plus className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                            <ShoppingCart className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
                             Mettre en vente
                           </button>
                         )}
                         
                         <button 
-                          onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-1.5 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
+                          onClick={() => handleEditCard(selectedCard)}
+                          className="w-full p-1.5 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                         >
-                          <Trash2 className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                          Supprimer la carte
-                        </button>
-                      </>
-                    )}
-                    
-                    {selectedCard.isSold && (
-                      <>
-                        <div className="w-full p-1.5 text-gray-400 rounded-lg text-sm text-center">
-                          <div className="text-yellow-400 font-bold mb-1">✓ Carte vendue</div>
-                          <div className="text-xs">Aucune action disponible</div>
-                        </div>
-                        
-                        <button 
-                          onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-1.5 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                        >
-                          <Trash2 className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                          Supprimer la carte
+                          <Edit className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                          Modifier
                         </button>
                       </>
                     )}
@@ -1362,7 +1413,7 @@ export default function Collections() {
                       className="w-full p-1.5 text-white hover:bg-yellow-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
                     >
                       <Star className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
-                      À la une
+                      Poster à la une
                     </button>
                     
                     <button 
@@ -1379,6 +1430,25 @@ export default function Collections() {
                     >
                       <Copy className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
                       Dupliquer la carte
+                    </button>
+
+                    {selectedCard.isSold && (
+                      <div className="w-full p-1.5 text-gray-400 rounded-lg text-sm text-center">
+                        <div className="text-yellow-400 font-bold mb-1">✓ Carte vendue</div>
+                        <div className="text-xs">Aucune action disponible</div>
+                      </div>
+                    )}
+                    
+                    {/* Séparateur */}
+                    <div className="border-t border-gray-600/30 my-2"></div>
+                    
+                    {/* Bouton Supprimer en bas */}
+                    <button 
+                      onClick={() => handleDeleteCard(selectedCard)}
+                      className="w-full p-1.5 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-[hsl(9,85%,67%)]" />
+                      Supprimer la carte
                     </button>
                     
                     <button 
@@ -1472,6 +1542,153 @@ export default function Collections() {
                           Publier
                         </button>
                       </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Edit Modal */}
+            {showEditModal && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-[90] flex items-center justify-center p-4">
+                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-lg border border-[hsl(214,35%,30%)] max-h-[90vh] overflow-y-auto">
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-white">Modifier la carte</h3>
+                      <button
+                        onClick={() => setShowEditModal(false)}
+                        className="text-gray-400 hover:text-white"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                    
+                    {/* Image preview */}
+                    {editData.imageUrl && (
+                      <div className="w-32 h-40 mx-auto mb-4 rounded-lg overflow-hidden border border-gray-600">
+                        <img 
+                          src={editData.imageUrl} 
+                          alt="Aperçu" 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    )}
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Nom du joueur
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.playerName}
+                          onChange={(e) => setEditData({...editData, playerName: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Équipe
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.teamName}
+                          onChange={(e) => setEditData({...editData, teamName: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Type de carte
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.cardType}
+                          onChange={(e) => setEditData({...editData, cardType: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Référence
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.reference}
+                          onChange={(e) => setEditData({...editData, reference: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Numérotation
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.numbering}
+                          onChange={(e) => setEditData({...editData, numbering: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          URL de l'image
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.imageUrl}
+                          onChange={(e) => setEditData({...editData, imageUrl: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Saison
+                        </label>
+                        <input
+                          type="text"
+                          value={editData.season}
+                          onChange={(e) => setEditData({...editData, season: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-1">
+                          Condition
+                        </label>
+                        <select
+                          value={editData.condition}
+                          onChange={(e) => setEditData({...editData, condition: e.target.value})}
+                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary"
+                        >
+                          <option value="mint">Mint</option>
+                          <option value="excellent">Excellent</option>
+                          <option value="good">Bon</option>
+                          <option value="poor">Mauvais</option>
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-3 pt-4">
+                      <button
+                        onClick={() => setShowEditModal(false)}
+                        className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
+                      >
+                        Annuler
+                      </button>
+                      <button
+                        onClick={handleSaveEdit}
+                        className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-4 rounded-lg transition-colors font-medium"
+                      >
+                        Enregistrer
+                      </button>
                     </div>
                   </div>
                 </div>
