@@ -1,1891 +1,1820 @@
 import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy, Settings, ShoppingCart } from "lucide-react";
-import Header from "@/components/header";
-import HaloBlur from "@/components/halo-blur";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useParams, useLocation } from "wouter";
+import { Plus, Check, HelpCircle, Grid, List, X, Search, Trash2, Camera, CheckSquare, Square, Users, ChevronLeft, ChevronRight, Minus, Handshake, MoreVertical, Star } from "lucide-react";
 import Navigation from "@/components/navigation";
-
-import CardDisplay from "../components/card-display";
+import CardPhotoImportFixed from "@/components/card-photo-import-fixed";
+import CardTradePanel from "@/components/card-trade-panel";
 import LoadingScreen from "@/components/LoadingScreen";
-import { apiRequest, queryClient } from "@/lib/queryClient";
+import HaloBlur from "@/components/halo-blur";
+import CardDisplay from "@/components/card-display";
+// import { ProductionDiagnostic } from "@/components/production-diagnostic";
+import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import avatarImage from "@assets/image_1750196240581.png";
-import cardStackIcon from "@assets/image_1750351528484.png";
-import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
-import goldenCardsIcon from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750366562526.png";
-import type { User, Collection, Card, PersonalCard } from "@shared/schema";
-import MilestoneCelebration from "@/components/MilestoneCelebration";
-import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
-import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
+import type { Collection, Card } from "@shared/schema";
+import logoImage from "@assets/image 29_1750317707391.png";
+import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
 
-import TrophyAvatar from "@/components/TrophyAvatar";
-
-const getThemeGradient = (themeColors: string) => {
-  const themeStyles: Record<string, string> = {
-    "main+background": "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)",
-    "white+sky": "linear-gradient(135deg, #ffffff 0%, #0ea5e9 100%)",
-    "red+navy": "linear-gradient(135deg, #dc2626 0%, #1e3a8a 100%)",
-    "navy+bronze": "linear-gradient(135deg, #1e3a8a 0%, #a3a3a3 100%)",
-    "white+red": "linear-gradient(135deg, #ffffff 0%, #dc2626 100%)",
-    "white+blue": "linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)",
-    "gold+black": "linear-gradient(135deg, #fbbf24 0%, #000000 100%)",
-    "green+white": "linear-gradient(135deg, #22c55e 0%, #ffffff 100%)",
-    "red+black": "linear-gradient(135deg, #dc2626 0%, #000000 100%)",
-    "blue+white+red": "linear-gradient(135deg, #3b82f6 0%, #ffffff 50%, #dc2626 100%)",
-    "full+black": "#000000"
-  };
-  return themeStyles[themeColors] || "linear-gradient(135deg, #1e3a8a 0%, #1f2937 100%)";
-};
-
-const getThemeTextColor = (themeColors: string) => {
-  const lightThemes = ["white+sky", "white+red", "white+blue", "green+white"];
-  // Le thème full+black doit toujours afficher le texte en blanc
-  if (themeColors === "full+black") {
-    return "#ffffff";
-  }
-  return lightThemes.includes(themeColors) ? "#000000" : "#ffffff";
-};
-
-
-export default function Collections() {
+export default function CollectionDetail() {
+  const params = useParams();
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
-  const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
-  const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
-
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
-  const [showDeleteCardModal, setShowDeleteCardModal] = useState(false);
-  const [cardToDelete, setCardToDelete] = useState<Card | null>(null);
-
-
-  const [selectedCard, setSelectedCard] = useState<any>(null);
-  const [showCardFullscreen, setShowCardFullscreen] = useState(false);
-  const [isCardRotated, setIsCardRotated] = useState(false);
-  const [rotationStyle, setRotationStyle] = useState({ rotateX: 0, rotateY: 0 });
-  const [showOptionsPanel, setShowOptionsPanel] = useState(false);
-  const [showTradePanel, setShowTradePanel] = useState(false);
-  const [showFeaturedPanel, setShowFeaturedPanel] = useState(false);
-  const [featuredDescription, setFeaturedDescription] = useState("");
-  const [salePrice, setSalePrice] = useState('');
-  const [saleDescription, setSaleDescription] = useState('');
-  const [tradeOnly, setTradeOnly] = useState(false);
-  const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const collectionId = params.id ? parseInt(params.id) : 1;
+  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "autographs" | "hits" | "special_1_1">("bases");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchSuggestions, setSearchSuggestions] = useState<string[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  
-  // Milestone celebration state
-  const [currentMilestone, setCurrentMilestone] = useState<MilestoneData | null>(null);
-  const [collectionCompletions, setCollectionCompletions] = useState<Record<number, any>>({});
-  
+  const [showSearchSuggestions, setShowSearchSuggestions] = useState(false);
+  const [showFullscreenCard, setShowFullscreenCard] = useState(false);
+  const [selectedCards, setSelectedCards] = useState<Set<number>>(new Set());
+  const [showBulkActions, setShowBulkActions] = useState(false);
+  const [cardVariantIndexes, setCardVariantIndexes] = useState<Record<string, number>>({});
+  const [panStates, setPanStates] = useState<Record<string, { x: number; y: number; scale: number }>>({});
+  const [showTradePanel, setShowTradePanel] = useState(false);
+  const [selectedTradeCard, setSelectedTradeCard] = useState<Card | null>(null);
+  const [pulledCardEffect, setPulledCardEffect] = useState<number | null>(null);
+  const [starEffectCards, setStarEffectCards] = useState<Set<number>>(new Set());
+  const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["/api/users/1"],
-  });
-
-  const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ["/api/users/1/collections"],
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes
-    refetchOnWindowFocus: false,
-  });
-
-  // Query pour les cartes personnelles
-  const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery<any[]>({
-    queryKey: ["/api/personal-cards"],
-    staleTime: 5 * 60 * 1000,
-    enabled: activeTab === "cards",
-  });
-
-  // Query pour les decks de l'utilisateur avec cache optimisé
-  const { data: userDecks = [], isLoading: decksLoading } = useQuery<any[]>({
-    queryKey: ["/api/decks"],
-    staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes
-    gcTime: 20 * 60 * 1000, // Garde en cache 20 minutes  
-    refetchOnWindowFocus: false, // Ne pas refetch au focus
-    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
-  });
-
-  // Query pour obtenir les détails complets des decks avec cartes pour prévisualisation
-  const { data: deckPreviews = [] } = useQuery({
-    queryKey: ['/api/decks/previews', userDecks?.map(d => d.id).join(',')],
-    queryFn: async () => {
-      if (!userDecks?.length) return [];
+  // Add scroll listener for background effect and sticky actions bar
+  useEffect(() => {
+    const handleScroll = () => {
+      const categoryTabs = document.getElementById('category-tabs');
+      const stickyActions = document.getElementById('sticky-actions');
+      if (categoryTabs) {
+        const scrollY = window.scrollY;
+        if (scrollY > 50) {
+          categoryTabs.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+          categoryTabs.style.backdropFilter = 'blur(10px)';
+        } else {
+          categoryTabs.style.backgroundColor = 'transparent';
+          categoryTabs.style.backdropFilter = 'none';
+        }
+      }
       
-      const previews = await Promise.all(
-        userDecks.map(async (deck: any) => {
-          try {
-            const response = await fetch(`/api/decks/${deck.id}`);
-            if (response.ok) {
-              const deckWithCards = await response.json();
-              return {
-                ...deck,
-                previewCards: deckWithCards.cards.slice(0, 3)
-              };
-            }
-            return { ...deck, previewCards: [] };
-          } catch {
-            return { ...deck, previewCards: [] };
-          }
-        })
-      );
-      return previews;
+      // Show sticky actions bar when cards are selected and user scrolls
+      if (stickyActions && selectedCards.size > 0) {
+        stickyActions.style.display = 'flex';
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [selectedCards.size]);
+
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+    queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+  }, [collectionId, queryClient]);
+
+  const updateCardImageMutation = useMutation({
+    mutationFn: async ({ cardId, imageUrl }: { cardId: number; imageUrl: string }) => {
+      return apiRequest("PATCH", `/api/cards/${cardId}/image`, { imageUrl });
     },
-    enabled: activeTab === "deck" && !!userDecks?.length,
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
-    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
-    refetchOnWindowFocus: false, // Ne pas refetch au focus
-    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
-  });
-
-  // Filtrer et rechercher les cartes personnelles
-  const filteredPersonalCards = personalCards.filter(card => {
-    // Filtre par statut de vente
-    if (saleFilter === 'available') {
-      // En vente : cartes avec isForTrade=true ET un prix, mais pas vendues
-      if (!card.isForTrade || !card.tradePrice || card.isSold) return false;
-    } else if (saleFilter === 'sold') {
-      // Vendues : seulement les cartes avec isSold=true
-      if (!card.isSold) return false;
-    } 
-    // Pour 'all', on affiche toutes les cartes sans filtrage par statut de vente
-    
-    // Filtre par recherche
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      const playerMatch = card.playerName?.toLowerCase().includes(query);
-      const teamMatch = card.teamName?.toLowerCase().includes(query);
-      return playerMatch || teamMatch;
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
     }
-    
-    return true;
-  }).sort((a, b) => {
-    // Trier les cartes vendues à la fin de la liste
-    if (a.isSold && !b.isSold) return 1;
-    if (!a.isSold && b.isSold) return -1;
-    return 0;
   });
 
-  // Générer les suggestions d'autocomplétion
-  const generateSuggestions = (query: string) => {
-    if (!query.trim()) return [];
-    
-    const suggestions = new Set<string>();
-    const queryLower = query.toLowerCase();
-    
-    personalCards.forEach(card => {
-      if (card.playerName && card.playerName.toLowerCase().includes(queryLower)) {
-        suggestions.add(card.playerName);
-      }
-      if (card.teamName && card.teamName.toLowerCase().includes(queryLower)) {
-        suggestions.add(card.teamName);
-      }
-    });
-    
-    return Array.from(suggestions).slice(0, 5);
-  };
-
-  // Mettre à jour les suggestions quand la recherche change
-  // Gérer le paramètre tab dans l'URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tabParam = urlParams.get('tab');
-    if (tabParam === 'decks') {
-      setActiveTab('deck');
-    }
-  }, []);
-
-  useEffect(() => {
-    if (personalCards.length === 0) return;
-    
-    const suggestions = generateSuggestions(searchQuery);
-    setSearchSuggestions(suggestions);
-    setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
-  }, [searchQuery]);
-
-  // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
-  const getCollectionCompletion = (collection: Collection) => {
-    // Utiliser d'abord les données de la collection si disponibles
-    if (collection.totalCards && collection.ownedCards !== undefined) {
-      return {
-        totalCards: collection.totalCards,
-        ownedCards: collection.ownedCards,
-        percentage: Math.round((collection.ownedCards / collection.totalCards) * 100)
-      };
-    }
-    
-    // Valeurs par défaut si pas de données
-    return { totalCards: 0, ownedCards: 0, percentage: 0 };
-  };
-
-  // Query for all user cards when no collection is selected
-  const { data: allUserCardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
-    queryKey: ["/api/cards/all"],
-    enabled: !selectedCollection && activeTab === "cards",
-  });
-
-  // Query for specific collection cards
-  const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
-    queryKey: [`/api/collections/${selectedCollection}/cards`],
-    enabled: !!selectedCollection && activeTab === "cards",
-  });
-
-  // Extract cards from response - use all user cards if no collection selected
-  const cards = selectedCollection 
-    ? (cardsResponse?.cards || [])
-    : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
-
-  // Effect to check for milestones when collections data changes
-  useEffect(() => {
-    if (!collections || collections.length === 0) return;
-
-    // Calculate all collection completions
-    const newCompletions: Record<number, any> = {};
-    
-    collections.forEach(collection => {
-      const completion = getCollectionCompletion(collection);
-      newCompletions[collection.id] = completion;
-
-      // Check for milestones if we have previous data to compare
-      const previousCompletion = collectionCompletions[collection.id];
-      
-      if (previousCompletion && completion.percentage !== previousCompletion.percentage) {
-        // Check for completion milestones
-        const milestone = MilestoneDetector.checkAllMilestones(
-          collection as any,
-          completion,
-          previousCompletion,
-          collections as any,
-          newCompletions
+  const updateCardFeaturedMutation = useMutation({
+    mutationFn: async ({ cardId, isFeatured }: { cardId: number; isFeatured: boolean }) => {
+      return apiRequest("PATCH", `/api/cards/${cardId}/featured`, { isFeatured });
+    },
+    onSuccess: (updatedCard, { cardId, isFeatured }) => {
+      // Mise à jour optimiste du cache sans invalider (pour éviter le réordonnancement)
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isFeatured } : card
         );
+      });
+    }
+  });
 
-        if (milestone) {
-          setCurrentMilestone(milestone);
+  const toggleOwnershipMutation = useMutation({
+    mutationFn: async ({ cardId, isOwned }: { cardId: number; isOwned: boolean }) => {
+      return apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned });
+    },
+    onSuccess: (_, { cardId, isOwned }) => {
+      if (isOwned) {
+        // Déclencher l'effet de tirage (sans tremblement)
+        setPulledCardEffect(cardId);
+        setTimeout(() => setPulledCardEffect(null), 2000);
+      }
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+    }
+  });
+
+  const { data: collection, isLoading: collectionLoading } = useQuery<Collection>({
+    queryKey: [`/api/collections/${collectionId}`],
+  });
+
+  const { data: cardsResponse, isLoading: cardsLoading, error: cardsError } = useQuery<{cards: Card[], pagination?: any}>({
+    queryKey: [`/api/collections/${collectionId}/cards`],
+    staleTime: 0,
+    gcTime: 1 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    retry: 2,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+  });
+
+  // Extract cards from response (handle both old array format and new paginated format)
+  const cards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
+
+  // Scroll to top when page loads
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [collectionId]);
+
+  // Group cards by player and show only one card per player
+  // Fonction pour obtenir toutes les variantes d'un joueur pour les autographes
+  const getPlayerVariants = (playerName: string, teamName: string) => {
+    if (!cards) return [];
+    return cards.filter(card => 
+      card.playerName === playerName && 
+      card.teamName === teamName && 
+      card.cardType.includes("Autograph") &&
+      card.numbering !== "/1" // Exclude 1/1 cards
+    ).sort((a, b) => {
+      // Trier par ordre de rareté : numérotées par ordre décroissant
+      const aNum = parseInt(a.numbering?.replace("/", "") || "0");
+      const bNum = parseInt(b.numbering?.replace("/", "") || "0");
+      return bNum - aNum; // Ordre décroissant pour les numérotées
+    });
+  };
+
+  const getUniquePlayerCards = () => {
+    if (!cards) return [];
+    
+    const playerGroups = new Map();
+    
+    cards.forEach(card => {
+      const matchesSearch = !searchTerm || 
+        card.playerName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.teamName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.reference.toLowerCase().includes(searchTerm.toLowerCase());
+
+      if (!matchesSearch) return;
+
+      let includeCard = false;
+      switch (filter) {
+        case "bases": 
+          // "Bases num." = Parallel Laser et Swirl (vos 9 variantes par joueur)
+          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+          break;
+
+        case "autographs": 
+          // Autographes (toutes les variantes)
+          includeCard = card.cardType.includes("Autograph");
+          break;
+        case "hits": 
+          // Toutes les cartes Insert
+          includeCard = card.cardType.includes("Insert");
+          break;
+        case "special_1_1": 
+          // Cartes spéciales 1/1 (incluant autographes 1/1)
+          includeCard = card.numbering === "/1" || card.cardType === "Base 1/1";
+          break;
+
+        default: 
+          // Par défaut, afficher les bases numérotées
+          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+      }
+
+      if (includeCard) {
+        const playerKey = `${card.playerName}-${card.teamName}`;
+        if (!playerGroups.has(playerKey)) {
+          // Pour les autographes, on stocke la première carte mais on va gérer les variantes
+          playerGroups.set(playerKey, card);
         }
       }
     });
+    
+    let sortedCards = Array.from(playerGroups.values());
+    
+    // Pour les hits, trier par type de carte puis par joueur
+    if (filter === "hits") {
+      sortedCards.sort((a, b) => {
+        // D'abord par type de carte
+        if (a.cardType !== b.cardType) {
+          return a.cardType.localeCompare(b.cardType);
+        }
+        // Puis par nom de joueur
+        return (a.playerName || "").localeCompare(b.playerName || "");
+      });
+    } else {
+      // Pour les autres filtres, trier par numéro de référence
+      sortedCards.sort((a, b) => {
+        const getCardNumber = (ref: string) => {
+          // Pour les références simples comme "001", "002", etc.
+          if (/^\d+$/.test(ref)) {
+            return parseInt(ref, 10);
+          }
+          // Pour les références avec suffixe comme "001-L", "001-S", etc.
+          const match = ref.match(/^(\d+)/);
+          return match ? parseInt(match[1], 10) : 999;
+        };
+        
+        const aNum = getCardNumber(a.reference);
+        const bNum = getCardNumber(b.reference);
+        
+        // Si les numéros de base sont identiques, trier par référence complète
+        if (aNum === bNum) {
+          return a.reference.localeCompare(b.reference);
+        }
+        
+        return aNum - bNum;
+      });
+    }
+    
+    return sortedCards;
+  };
 
-    // Update the completions state only if it has changed
-    setCollectionCompletions(prev => {
-      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newCompletions);
-      return hasChanged ? newCompletions : prev;
-    });
-  }, [collections]);
+  const filteredCards = getUniquePlayerCards();
 
-  // Effect to check for first collection milestone when user first loads the app
+  // Calculate numbered bases count (excluding 1/1 cards)
+  const numberedBasesCount = cards?.filter(card => 
+    card.cardType === "Parallel Numbered" && 
+    card.numbering !== "1/1"
+  ).length || 0;
+
+  // Debug logging pour la production
   useEffect(() => {
-    if (!collections || collections.length === 0) return;
-    
-    // Check for first collection milestone only once
-    const completions: Record<number, any> = {};
-    collections.forEach(collection => {
-      completions[collection.id] = getCollectionCompletion(collection);
+    console.log("Collection loading state:", { 
+      collectionLoading, 
+      cardsLoading, 
+      cardsError
     });
-
-    const firstCollectionMilestone = MilestoneDetector.checkFirstCollectionMilestone(
-      collections as any,
-      completions
-    );
-
-    if (firstCollectionMilestone) {
-      setCurrentMilestone(firstCollectionMilestone);
+    console.log("Cards data:", cards ? `${cards.length} cards loaded` : "No cards data");
+    if (cardsError) {
+      console.error("Cards loading error:", cardsError);
     }
-  }, [collections]); // Only run when collections first load
+  }, [collectionLoading, cardsLoading, cards, cardsError]);
 
-  // Development helper: Add test milestone triggers
-  useEffect(() => {
-    // Add global functions for testing milestones
-    if (typeof window !== 'undefined') {
-      (window as any).testMilestone = (type?: string) => {
-        const milestone = MilestoneTestTriggers.createTestMilestone(type as any || 'completion');
-        setCurrentMilestone(milestone);
-      };
-
-      (window as any).testRandomMilestone = () => {
-        const milestone = MilestoneTestTriggers.getRandomMilestone();
-        setCurrentMilestone(milestone);
-      };
-
-      (window as any).testCompletionMilestone = (percentage: number) => {
-        const milestone = MilestoneTestTriggers.createCompletionMilestone(percentage);
-        setCurrentMilestone(milestone);
-      };
-    }
-  }, []);
-
-  // Mutation pour mettre à jour les paramètres de vente
-  const updateSaleSettingsMutation = useMutation({
-    mutationFn: async ({ cardId, price, description, tradeOnly }: {
-      cardId: number;
-      price: string;
-      description: string;
-      tradeOnly: boolean;
-    }) => {
-      console.log("Saving sale settings:", { cardId, price, description, tradeOnly });
-      
-      const requestData = {
-        isForSale: true,
-        isForTrade: true,
-        tradePrice: price,
-        tradeDescription: description,
-        tradeOnly
-      };
-      
-      console.log("Request data:", requestData);
-      console.log("Making request to:", `/api/personal-cards/${cardId}/sale-settings`);
-      
-      try {
-        const result = await apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, requestData);
-        console.log("API response received:", result);
-        return result;
-      } catch (error) {
-        console.error("API request failed:", error);
-        throw error;
-      }
-    },
-    onSuccess: (updatedCard) => {
-      // Mettre à jour les cartes personnelles
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      
-      // Vider les champs uniquement après succès
-      setSalePrice('');
-      setSaleDescription('');
-      setTradeOnly(false);
-      
-      toast({
-        title: "Paramètres sauvegardés",
-        description: "Les paramètres de vente ont été mis à jour.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowTradePanel(false);
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    },
-    onError: (error) => {
-      console.error("Error saving sale settings:", error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder les paramètres.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  // Mutation pour retirer de la vente
-  const removeFromSaleMutation = useMutation({
-    mutationFn: async (cardId: number) => {
-      return apiRequest("PATCH", `/api/personal-cards/${cardId}/sale-settings`, {
-        isForSale: false,
-        isForTrade: false,
-        tradePrice: null,
-        tradeDescription: null,
-        tradeOnly: false
-      });
-    },
-    onSuccess: (updatedCard) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      
-      toast({
-        title: "Carte retirée de la vente",
-        description: "La carte n'est plus disponible à la vente.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    },
-    onError: (error) => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de retirer la carte de la vente.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const deleteCollectionMutation = useMutation({
-    mutationFn: async (collectionId: number) => {
-      return apiRequest("DELETE", `/api/collections/${collectionId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      toast({
-        title: "Collection supprimée",
-        description: "La collection a été supprimée avec succès.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      setShowDeleteModal(false);
-      setCollectionToDelete(null);
-    },
-    onError: () => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la collection.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Mutation pour supprimer une carte
-  const deleteCardMutation = useMutation({
-    mutationFn: async (cardId: number) => {
-      return apiRequest("DELETE", `/api/personal-cards/${cardId}`);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      
-      toast({
-        title: "Carte supprimée",
-        description: "La carte a été supprimée avec succès.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setShowDeleteCardModal(false);
-      setCardToDelete(null);
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    },
-    onError: () => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la carte.",
-        variant: "destructive"
-      });
-    }
-  });
-
-  // Mutation pour dupliquer une carte
-  const duplicateCardMutation = useMutation({
-    mutationFn: async (card: PersonalCard) => {
-      const duplicateData = {
-        playerName: card.playerName,
-        teamName: card.teamName,
-        cardType: card.cardType,
-        reference: card.reference,
-        numbering: "", // Vider la numérotation pour re-remplir
-        season: card.season,
-        condition: card.condition,
-        imageUrl: card.imageUrl, // Copier l'image
-        isForSale: false, // Nouvelle carte non en vente par défaut
-        isForTrade: false,
-        tradeOnly: false
-      };
-      return apiRequest("POST", "/api/personal-cards", duplicateData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
-      toast({
-        title: "Carte dupliquée",
-        description: "La carte a été dupliquée avec succès.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      
-      setSelectedCard(null);
-      setShowOptionsPanel(false);
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Erreur",
-        description: error.message || "Erreur lors de la duplication de la carte.",
-        variant: "destructive",
-      });
-    }
-  });
-
-
-
-  const handleMarkAsSold = async () => {
-    if (!selectedCard) return;
-    
-    try {
-      await apiRequest("PATCH", `/api/personal-cards/${selectedCard.id}/sale-settings`, {
-        isSold: true,
-        isForSale: false,
-        isForTrade: false
-      });
-      
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
-      
-      toast({
-        title: "Carte marquée comme vendue",
-        description: "La carte est maintenant disponible dans l'onglet 'Vendues'.",
-        className: "bg-green-600 text-white border-green-700"
-      });
-      setShowOptionsPanel(false);
-      setSelectedCard(null);
-    } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de marquer la carte comme vendue.",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const handleRemoveFromSale = () => {
-    if (!selectedCard) return;
-    removeFromSaleMutation.mutate(selectedCard.id);
-  };
-
-  const handleDeleteCollection = (collection: Collection) => {
-    setCollectionToDelete(collection);
-    setShowDeleteModal(true);
-  };
-
-  const confirmDeleteCollection = () => {
-    if (collectionToDelete) {
-      deleteCollectionMutation.mutate(collectionToDelete.id);
-    }
-  };
-
-  const handleDeleteCard = (card: Card) => {
-    setCardToDelete(card);
-    setShowDeleteCardModal(true);
-    setShowOptionsPanel(false);
-  };
-
-  const handleDuplicateCard = (card: PersonalCard) => {
-    duplicateCardMutation.mutate(card);
-  };
-
-  const handleEditCard = (card: PersonalCard) => {
-    // Encoder les données de la carte dans l'URL pour les passer à la page add-card
-    const cardData = encodeURIComponent(JSON.stringify(card));
-    setLocation(`/add-card?edit=${cardData}`);
-    setShowOptionsPanel(false);
-  };
-
-  const confirmDeleteCard = () => {
-    if (cardToDelete) {
-      deleteCardMutation.mutate(cardToDelete.id);
-    }
-  };
-
-  const handleTabChange = (tab: "collections" | "cards" | "deck") => {
-    setActiveTab(tab);
-    if (tab === "collections") {
-      setSelectedCollection(null);
-    }
-  };
-
-  const handleSaveSaleSettings = () => {
-    if (!selectedCard) return;
-    
-    updateSaleSettingsMutation.mutate({
-      cardId: selectedCard.id,
-      price: salePrice,
-      description: saleDescription,
-      tradeOnly: tradeOnly
-    });
-  };
-
-  if (userLoading || collectionsLoading) {
+  if (collectionLoading) {
     return <LoadingScreen />;
   }
 
+  if (cardsLoading) {
+    return <LoadingScreen message="Chargement des cartes..." />;
+  }
+
+  if (cardsError) {
+    return (
+      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-white text-xl mb-4">Erreur de chargement</h2>
+          <p className="text-gray-400 mb-4">Impossible de charger les cartes de la collection</p>
+          <button 
+            onClick={() => queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] })}
+            className="text-white px-4 py-2 rounded transition-all duration-300"
+            style={{ backgroundColor: '#F37261' }}
+            onMouseOver={(e) => e.target.style.backgroundColor = '#E85A47'}
+            onMouseOut={(e) => e.target.style.backgroundColor = '#F37261'}
+          >
+            Réessayer
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!collection) {
+    return (
+      <div className="min-h-screen bg-[hsl(216,46%,13%)] flex items-center justify-center">
+        <div className="text-white">Collection non trouvée</div>
+      </div>
+    );
+  }
+
+  // Bulk actions functions
+  const handleCardSelection = (cardId: number, checked: boolean) => {
+    const newSelection = new Set(selectedCards);
+    
+    // Find the card being selected/deselected
+    const targetCard = cards?.find(c => c.id === cardId);
+    if (!targetCard) return;
+    
+    // Get all variants for this player
+    const variants = getCardVariants(targetCard);
+    
+    if (checked) {
+      // Add ALL variants for this player
+      variants.forEach(variant => {
+        newSelection.add(variant.id);
+      });
+    } else {
+      // Remove ALL variants for this player
+      variants.forEach(variant => {
+        newSelection.delete(variant.id);
+      });
+    }
+    
+    setSelectedCards(newSelection);
+    setShowBulkActions(newSelection.size > 0);
+  };
+
+  const handleSelectAll = () => {
+    if (!filteredCards) return;
+    // Select ALL variants for each player, not just the visible one
+    const allVariantIds = new Set<number>();
+    
+    filteredCards.forEach(card => {
+      const variants = getCardVariants(card);
+      variants.forEach(variant => {
+        allVariantIds.add(variant.id);
+      });
+    });
+    
+    setSelectedCards(allVariantIds);
+    setShowBulkActions(true);
+  };
+
+  const handleDeselectAll = () => {
+    setSelectedCards(new Set());
+    setShowBulkActions(false);
+  };
+
+  const handleBulkMarkAsOwned = async () => {
+    try {
+      // Déclencher l'effet d'étoiles pour toutes les cartes sélectionnées non possédées
+      const cardsToMark = Array.from(selectedCards).filter(cardId => {
+        const card = cards?.find(c => c.id === cardId);
+        return card && !card.isOwned;
+      });
+      
+      // Ajouter l'effet d'étoiles pour toutes les cartes à marquer
+      cardsToMark.forEach(cardId => {
+        setStarEffectCards(prev => {
+          const newSet = new Set(prev);
+          newSet.add(cardId);
+          return newSet;
+        });
+      });
+      
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          cardsToMark.includes(card.id) ? { ...card, isOwned: true } : card
+        );
+      });
+      
+      const promises = cardsToMark.map(async (cardId) => {
+        return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
+      });
+      await Promise.all(promises);
+      
+      // Retirer l'effet d'étoiles après l'animation
+      setTimeout(() => {
+        cardsToMark.forEach(cardId => {
+          setStarEffectCards(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(cardId);
+            return newSet;
+          });
+        });
+      }, 2000);
+      
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users/1/collections'] });
+      setSelectedCards(new Set());
+      setShowBulkActions(false);
+      
+      toast({
+        title: "Cartes marquées comme acquises",
+        description: `${cardsToMark.length} carte(s) marquée(s) comme acquise(s).`,
+        className: "bg-green-900 border-green-700 text-green-100"
+      });
+    } catch (error) {
+      console.error("Bulk mark as owned error:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les cartes.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleBulkMarkAsNotOwned = async () => {
+    try {
+      const cardsToUnmark = Array.from(selectedCards).filter(cardId => {
+        const card = cards?.find(c => c.id === cardId);
+        return card && card.isOwned;
+      });
+      
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          cardsToUnmark.includes(card.id) ? { ...card, isOwned: false } : card
+        );
+      });
+      
+      const promises = cardsToUnmark.map(async (cardId) => {
+        return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
+      });
+      await Promise.all(promises);
+      
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users/1/collections'] });
+      setSelectedCards(new Set());
+      setShowBulkActions(false);
+      
+      toast({
+        title: "Cartes marquées comme manquantes",
+        description: `${cardsToUnmark.length} carte(s) marquée(s) comme manquante(s).`,
+        className: "bg-[hsl(9,85%,67%)] border-[hsl(9,85%,57%)] text-white"
+      });
+    } catch (error) {
+      console.error("Bulk mark as not owned error:", error);
+      // Revert cache on error
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+      toast({
+        title: "Erreur",
+        description: "Impossible de mettre à jour les cartes.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCardSelect = (card: Card) => {
+    setSelectedCard(card);
+    setCurrentVariantIndex(0);
+  };
+
+  const handleMarkAsOwned = async (cardId: number, withPhoto: boolean) => {
+    try {
+      // Déclencher l'effet d'étoiles une seule fois
+      setStarEffectCards(prev => {
+        const newSet = new Set(prev);
+        newSet.add(cardId);
+        return newSet;
+      });
+      
+      // Update local state immediately for visual feedback
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: true });
+      }
+      
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: true } : card
+        );
+      });
+      
+      await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+      
+      // Retirer l'effet d'étoiles après l'animation
+      setTimeout(() => {
+        setStarEffectCards(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(cardId);
+          return newSet;
+        });
+      }, 2000);
+      
+      if (withPhoto) {
+        setShowPhotoUpload(true);
+      }
+      toast({
+        title: "Carte marquée comme acquise",
+        description: "La carte a été marquée comme acquise avec succès.",
+        className: "bg-green-900 border-green-700 text-green-100"
+      });
+    } catch (error) {
+      // Revert local state on error
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: false });
+      }
+      // Revert cache on error
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: false } : card
+        );
+      });
+      // Retirer l'effet d'étoiles en cas d'erreur
+      setStarEffectCards(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(cardId);
+        return newSet;
+      });
+      toast({
+        title: "Erreur",
+        description: "Impossible de marquer la carte comme acquise.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleMarkAsNotOwned = async (cardId: number) => {
+    try {
+      // Update local state immediately for visual feedback
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: false });
+      }
+      
+      // Mettre à jour immédiatement le cache pour un rendu instantané
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: false } : card
+        );
+      });
+      
+      await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: false });
+      toast({
+        title: "Carte marquée comme manquante",
+        description: "La carte a été marquée comme manquante avec succès.",
+        className: "bg-[hsl(9,85%,67%)] border-[hsl(9,85%,57%)] text-white"
+      });
+    } catch (error) {
+      // Revert local state on error
+      if (selectedCard && selectedCard.id === cardId) {
+        setSelectedCard({ ...selectedCard, isOwned: true });
+      }
+      // Revert cache on error
+      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map(card => 
+          card.id === cardId ? { ...card, isOwned: true } : card
+        );
+      });
+      toast({
+        title: "Erreur",
+        description: "Impossible de marquer la carte comme manquante.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handlePhotoSave = async (imageUrl: string, cardId?: number) => {
+    if (cardId) {
+      try {
+        // Update local state immediately for visual feedback
+        if (selectedCard && selectedCard.id === cardId) {
+          setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
+        }
+        
+        // Update card image
+        await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+        
+        // Automatically mark card as owned
+        await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+        
+        toast({
+          title: "Photo ajoutée",
+          description: "La photo a été ajoutée et la carte marquée comme acquise."
+        });
+      } catch (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible d'ajouter la photo.",
+          variant: "destructive"
+        });
+      }
+    }
+    setShowPhotoUpload(false);
+  };
+
+  const getCardVariants = (card: Card) => {
+    if (!cards) return [card];
+    
+    // Pour les bases, on ne garde que les variantes non-numérotées (Base, Laser, Swirl)
+    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+      return cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        (c.cardType === "Base" || c.cardType === "Parallel Laser" || c.cardType === "Parallel Swirl")
+      );
+    }
+    
+    // Pour les bases numérotées, on récupère toutes les 9 variantes
+    if (card.cardType === "Parallel Numbered") {
+      const numberedVariants = cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        c.cardType === "Parallel Numbered"
+      );
+      
+      // Trier par ordre de rareté: toutes les variantes /9 par couleur
+      return numberedVariants.sort((a, b) => {
+        const getRarityOrder = (subType: string) => {
+          if (subType === "Blue") return 1;
+          if (subType === "Red") return 2;
+          if (subType === "Green") return 3;
+          if (subType === "Gold") return 4;
+          if (subType === "Silver") return 5;
+          if (subType === "Purple") return 6;
+          if (subType === "Orange") return 7;
+          if (subType === "Black") return 8;
+          if (subType === "Rainbow") return 9;
+          return 10;
+        };
+        
+        const aOrder = getRarityOrder(a.cardSubType || "");
+        const bOrder = getRarityOrder(b.cardSubType || "");
+        
+        return aOrder - bOrder;
+      });
+    }
+    
+    // Pour les hits avec variantes (Base, /15, /10)
+    const hitTypes = ["Insert Keepers", "Insert Breakthrough", "Insert Score Team", "Insert Pure Class", "Insert Hot Rookies"];
+    if (hitTypes.some(type => card.cardType?.includes(type))) {
+      const hitVariants = cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        c.cardType === card.cardType
+      );
+      
+      // Trier par ordre: Base, /15, /10
+      return hitVariants.sort((a, b) => {
+        const getVariantOrder = (numbering: string | null) => {
+          if (!numbering) return 1; // Base
+          if (numbering === "1/15") return 2;
+          if (numbering === "1/10") return 3;
+          return 4;
+        };
+        
+        return getVariantOrder(a.numbering) - getVariantOrder(b.numbering);
+      });
+    }
+    
+    // Pour les autographes, récupérer toutes les variantes du joueur
+    if (card.cardType.includes("Autograph")) {
+      return getPlayerVariants(card.playerName || "", card.teamName || "");
+    }
+    
+    // Pour les autres cartes (inserts spéciaux), une seule version
+    return [card];
+  };
+
+  const getCardBorderColor = (card: Card) => {
+    if (!card.isOwned) return "border-gray-600";
+    
+    // Vert pour les bases
+    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+      return "border-green-500";
+    }
+    
+    // Bleu pour les bases numérotées  
+    if (card.cardType === "Parallel Numbered") {
+      return "border-blue-500";
+    }
+    
+    // Violet brillant pour les hits (Insert)
+    if (card.cardType?.includes("Insert")) {
+      return "border-purple-500 shadow-lg shadow-purple-500/50";
+    }
+    
+    // Gold brillant pour tous les autographes
+    if (card.cardType.includes("Autograph")) {
+      return "border-yellow-500 shadow-lg shadow-yellow-500/50";
+    }
+    
+    // Noir pour les spéciales
+    if (card.cardType === "special_1_1" || card.numbering === "1/1") {
+      return "border-black";
+    }
+    
+    return "border-green-500"; // Default
+  };
+
+  const getCardAnimationName = (card: Card) => {
+    if (!card.isOwned) return null;
+    
+    // Vert pour les bases
+    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+      return "pulse-shadow-green";
+    }
+    
+    // Bleu pour les bases numérotées  
+    if (card.cardType === "Parallel Numbered") {
+      return "pulse-shadow-blue";
+    }
+    
+    // Violet pour les hits (Insert)
+    if (card.cardType?.includes("Insert")) {
+      return "pulse-shadow-purple";
+    }
+    
+    // Gold pour tous les autographes
+    if (card.cardType.includes("Autograph")) {
+      return "pulse-shadow-yellow";
+    }
+    
+    // Noir pour les spéciales
+    if (card.cardType === "special_1_1" || card.numbering === "1/1") {
+      return "pulse-shadow-black";
+    }
+    
+    return "pulse-shadow-green"; // Default green
+  };
+
+  const getCurrentCard = () => {
+    if (!selectedCard) return null;
+    const variants = getCardVariants(selectedCard);
+    return variants[currentVariantIndex] || selectedCard;
+  };
+
+  if (collectionLoading || cardsLoading) {
+    return <LoadingScreen message="Chargement de la collection..." />;
+  }
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
+    <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white overflow-x-hidden relative">
       <HaloBlur />
-      <Header title="Mes cartes" />
-      <main className="relative z-10 px-4 pb-24">
-        {/* User Profile Section */}
-        {user && (
-          <div className="flex flex-col items-center text-center mb-4 mt-2">
-            <TrophyAvatar 
-              userId={user.id}
-              avatar={user.avatar || undefined}
-              size="lg"
-            />
-            <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
-            <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">
-                  {(() => {
-                    // Compter uniquement les cartes personnelles affichées dans l'onglet "Cartes"
-                    // (en excluant les vendues pour correspondre au filtrage de l'onglet)
-                    const visibleCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
-                    return visibleCardsCount;
-                  })()}
-                </span>
-                <span>cartes</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{userDecks?.length || 0}</span>
-                <span>decks</span>
-              </div>
-              <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.followersCount || 0}</span>
-                <span>abonnés</span>
-              </div>
+      
+      {/* Sticky Actions Bar */}
+      {selectedCards.size > 0 && (
+        <div 
+          id="sticky-actions"
+          className="fixed top-0 left-0 right-0 z-[100] bg-gray-900/95 backdrop-blur-md border-b border-gray-700 px-4 py-3 shadow-lg"
+        >
+          <div className="flex items-center justify-between max-w-sm mx-auto">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-blue-400" />
+              <span className="text-white text-sm font-medium">
+                {selectedCards.size} sélectionnée(s)
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleBulkMarkAsOwned}
+                className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                title="Marquer comme acquises"
+              >
+                <Check className="w-4 h-4 text-white" />
+              </button>
+              <button
+                onClick={handleBulkMarkAsNotOwned}
+                className="p-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                title="Marquer comme manquantes"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+              <button
+                onClick={handleDeselectAll}
+                className="p-2 bg-gray-600 hover:bg-gray-700 rounded-lg transition-colors"
+                title="Désélectionner tout"
+              >
+                <Square className="w-4 h-4 text-white" />
+              </button>
             </div>
           </div>
-        )}
+        </div>
+      )}
+      
+      <main className={`px-3 pb-20 relative z-10 transition-all duration-300 ${selectedCards.size > 0 ? 'pt-20' : 'pt-3'}`} id="collection-top">
+        {/* Collection Header */}
+        <div className="flex items-start mb-6">
+          <button
+            onClick={() => setLocation('/collections')}
+            className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+          >
+            <ChevronLeft className="w-6 h-6 text-white" />
+          </button>
+          <div className="flex flex-col items-center flex-1">
+            <h1 className="text-xl font-bold text-white text-center mb-1">
+              {collection?.name || "Collection"}
+            </h1>
+            <p className="text-gray-400 text-sm italic text-center">2023/24</p>
+          </div>
+          <div className="w-10"></div>
+        </div>
 
-        {/* Navigation Tabs - Horizontal Scroll */}
-        <div className="overflow-x-auto scrollbar-hide mb-6" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <div className="flex space-x-2 bg-[hsl(214,35%,22%)] rounded-xl p-1 min-w-max">
+        {/* Category Tabs - Badge Style - Sticky */}
+        <div className="sticky top-0 z-50 pb-4 mb-2 pt-2 -mx-3 px-3 transition-all duration-300" id="category-tabs">
+          <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[52px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
-              onClick={() => handleTabChange("cards")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "cards" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
+              onClick={() => setFilter("bases")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                filter === "bases" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
+              style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
             >
-              <CardIcon className="w-4 h-4" />
-              Cartes
+              Bases num.
             </button>
 
-            <button
-              onClick={() => handleTabChange("collections")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "collections" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <Layers className="w-4 h-4" />
-              Collections
-            </button>
+          <button
+            onClick={() => setFilter("hits")}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+              filter === "hits" 
+                ? "text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+            style={filter === "hits" ? { backgroundColor: '#F37261' } : {}}
+          >
+            Hits
+          </button>
+          <button
+            onClick={() => setFilter("autographs")}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+              filter === "autographs" 
+                ? "text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+            style={filter === "autographs" ? { backgroundColor: '#F37261' } : {}}
+          >
+            Autographes
+          </button>
 
-            <button
-              onClick={() => handleTabChange("deck")}
-              className={`py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 whitespace-nowrap ${
-                activeTab === "deck" 
-                  ? "bg-primary text-primary-foreground shadow-md transform scale-[1.02]" 
-                  : "text-gray-400 hover:text-white hover:bg-[hsl(214,35%,30%)]"
-              }`}
-            >
-              <BookOpen className="w-4 h-4" />
-              Decks
-            </button>
-
+          <button
+            onClick={() => setFilter("special_1_1")}
+            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+              filter === "special_1_1" 
+                ? "bg-black text-white shadow-lg transform scale-105" 
+                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+            }`}
+          >
+            Spéciales
+          </button>
           </div>
         </div>
 
-        {/* Collections Tab Content */}
-        {activeTab === "collections" && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Collections</h3>
-            {/* Add Collection Button - Moved to top */}
-            <div 
-              onClick={() => setLocation("/add-card")}
-              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
-            >
-              <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-white" />
+        {/* Search Bar and View Toggle */}
+        <div className="flex items-center gap-3 mb-2 mt-2">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Rechercher par joueur ou équipe"
+              value={searchTerm}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchTerm(value);
+                
+                if (value.length >= 2) {
+                  const uniquePlayers = Array.from(new Set(cards?.map(card => card.playerName).filter(Boolean))) as string[];
+                  const uniqueTeams = Array.from(new Set(cards?.map(card => card.teamName).filter(Boolean))) as string[];
+                  const allSuggestions = [...uniquePlayers, ...uniqueTeams];
+                  
+                  const filtered = allSuggestions.filter(item => 
+                    item.toLowerCase().includes(value.toLowerCase())
+                  ).slice(0, 5);
+                  
+                  setSearchSuggestions(filtered);
+                  setShowSearchSuggestions(filtered.length > 0);
+                } else {
+                  setShowSearchSuggestions(false);
+                  setSearchSuggestions([]);
+                }
+              }}
+              onFocus={() => {
+                if (searchSuggestions.length > 0) {
+                  setShowSearchSuggestions(true);
+                }
+              }}
+              className="w-full pl-10 pr-10 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-400 placeholder:text-sm focus:outline-none focus:border-blue-500"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => {
+                  setSearchTerm("");
+                  setShowSearchSuggestions(false);
+                  setSearchSuggestions([]);
+                }}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+            
+            {showSearchSuggestions && searchSuggestions.length > 0 && (
+              <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg max-h-32 overflow-y-auto">
+                {searchSuggestions.map((suggestion, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    className="w-full text-left px-3 py-2 text-white hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
+                    onClick={() => {
+                      setSearchTerm(suggestion);
+                      setShowSearchSuggestions(false);
+                    }}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
               </div>
-              <h3 className="font-bold text-white font-poppins text-base">Nouvelle Collection</h3>
+            )}
+          </div>
+          
+
+          
+
+        </div>
+
+        {/* View Toggle and Selection Controls */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            {/* View Toggle Buttons */}
+            <div className="flex items-center bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => setViewMode("grid")}
+                className={`p-2 rounded-md transition-all ${
+                  viewMode === "grid" 
+                    ? "bg-[hsl(9,85%,67%)] text-white" 
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <Grid className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-2 rounded-md transition-all ${
+                  viewMode === "list" 
+                    ? "bg-[hsl(9,85%,67%)] text-white" 
+                    : "text-gray-400 hover:text-white"
+                }`}
+              >
+                <List className="w-4 h-4" />
+              </button>
             </div>
 
-            {collections?.map((collection) => {
-              const completion = getCollectionCompletion(collection);
-              return (
-                <div key={collection.id}>
-                  <div 
-                    onClick={() => {
-                      setLocation(`/collection/${collection.id}`);
-                    }}
-                    className="w-full bg-gradient-radial from-[hsl(214,35%,22%)] from-0% to-[hsl(216,46%,13%)] to-100% rounded-2xl overflow-hidden cursor-pointer group relative transform transition-all duration-300 hover:scale-[1.02] border-2 border-yellow-500/50 hover:border-yellow-400/70"
-                  >
-                    {/* Header with title and delete button */}
-                    <div className="p-4 pb-3">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-white font-poppins text-lg">{collection.name}</h3>
-                          <p className="text-white/60 text-sm italic">{collection.season || 'Saison non spécifiée'}</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {!collection.name?.includes("SCORE LIGUE 1") && (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleDeleteCollection(collection);
-                              }}
-                              className="opacity-0 group-hover:opacity-100 p-2 rounded-full bg-red-500 hover:bg-red-600 text-white transition-all duration-200"
-                              title="Supprimer la collection"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+            {/* Select All - Only show when no cards selected */}
+            {selectedCards.size === 0 && filteredCards && filteredCards.length > 0 && (
+              <button
+                onClick={handleSelectAll}
+                className="text-sm hover:opacity-80"
+                style={{ color: '#F37261' }}
+              >
+                Tout sélectionner
+              </button>
+            )}
+          </div>
+        </div>
 
-                    {/* Card display area */}
-                    <div className="h-32 relative flex items-center justify-center overflow-hidden px-4 pb-3">
-                      <div className="relative w-full max-w-md h-32 flex items-center justify-center">
-                        {/* Main card with golden cards image and effects */}
-                        <div className="relative w-32 h-32 bg-gradient-to-br from-yellow-900/30 via-yellow-800/40 to-amber-900/50 rounded-2xl p-3 shadow-2xl flex items-center justify-center border border-yellow-500/20 group hover:scale-105 transition-all duration-300">
-                          {/* Golden glow effect */}
-                          <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 via-amber-500/5 to-yellow-600/10 rounded-2xl animate-pulse"></div>
-                          
-                          {/* Shimmer effect */}
-                          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/20 to-transparent rounded-2xl transform -skew-x-12 animate-shimmer"></div>
-                          
+
+
+        {/* Cards Display */}
+        {!filteredCards || filteredCards.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="text-gray-400 mb-4 text-lg">
+              {searchTerm ? "Aucune carte trouvée pour cette recherche" : 
+               "Aucune carte dans cette catégorie"}
+            </div>
+            <button 
+              onClick={() => window.location.reload()}
+              className="text-white px-4 py-2 rounded transition-all duration-300"
+              style={{ backgroundColor: '#F37261' }}
+              onMouseOver={(e) => e.target.style.backgroundColor = '#E85A47'}
+              onMouseOut={(e) => e.target.style.backgroundColor = '#F37261'}
+            >
+              Recharger la page
+            </button>
+          </div>
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-2 gap-3">
+          {filteredCards?.map((card) => {
+            const variants = getCardVariants(card);
+            const playerKey = `${card.playerName}-${card.teamName}`;
+            const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
+            const currentVariant = variants[currentVariantIdx] || card;
+            
+            const handleVariantChange = (direction: 'prev' | 'next') => {
+              const newIndex = direction === 'prev' 
+                ? Math.max(0, currentVariantIdx - 1)
+                : Math.min(variants.length - 1, currentVariantIdx + 1);
+              setCardVariantIndexes(prev => ({ ...prev, [playerKey]: newIndex }));
+              
+              // Update selection to reflect the new variant
+              const newVariant = variants[newIndex];
+              if (selectedCards.has(currentVariant.id) && newVariant) {
+                const newSelection = new Set(selectedCards);
+                newSelection.delete(currentVariant.id);
+                if (newVariant.id !== currentVariant.id) {
+                  // Don't auto-select the new variant
+                }
+                setSelectedCards(newSelection);
+                setShowBulkActions(newSelection.size > 0);
+              }
+            };
+
+            const handleCardPan = (cardId: number, startX: number, startY: number, currentX: number, currentY: number) => {
+              const deltaX = currentX - startX;
+              const deltaY = currentY - startY;
+              const cardKey = `card-${cardId}`;
+              
+              setPanStates(prev => ({
+                ...prev,
+                [cardKey]: {
+                  x: deltaX,
+                  y: deltaY,
+                  scale: 1.1
+                }
+              }));
+            };
+
+            const resetCardPan = (cardId: number) => {
+              const cardKey = `card-${cardId}`;
+              setPanStates(prev => ({
+                ...prev,
+                [cardKey]: { x: 0, y: 0, scale: 1 }
+              }));
+            };
+            
+            // Check if all variants are owned (card is complete)
+            const allVariantsOwned = variants.every(variant => variant.isOwned);
+            const animationName = getCardAnimationName(currentVariant);
+            
+            // Check if ANY variant for this player is selected
+            const isAnyVariantSelected = variants.some(variant => selectedCards.has(variant.id));
+            
+            return (
+              <div 
+                key={playerKey}
+                className={`relative bg-gray-800 rounded-xl overflow-hidden transition-all duration-200 ${
+                  isAnyVariantSelected 
+                    ? `border-4 ${getCardBorderColor(currentVariant)} shadow-lg ring-2 ring-opacity-50 ${
+                        getCardBorderColor(currentVariant).includes('border-green-500') ? 'ring-green-400' :
+                        getCardBorderColor(currentVariant).includes('border-blue-500') ? 'ring-blue-400' :
+                        getCardBorderColor(currentVariant).includes('border-purple-500') ? 'ring-purple-400' :
+                        getCardBorderColor(currentVariant).includes('border-yellow-500') ? 'ring-yellow-400' :
+                        'ring-gray-400'
+                      }`
+                    : `border-2 ${getCardBorderColor(currentVariant)}`
+                }`}
+              >
+                {/* Étoiles gravitantes pour l'effet d'acquisition */}
+                {starEffectCards.has(currentVariant.id) && (
+                  <div className="card-stars"></div>
+                )}
+                {/* Checkbox */}
+                <div className="absolute top-2 left-2 z-20">
+                  <input
+                    type="checkbox"
+                    checked={isAnyVariantSelected}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCardSelection(currentVariant.id, e.target.checked);
+                    }}
+                    className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
+                  />
+                </div>
+
+                {/* Featured Star */}
+                {currentVariant.isFeatured && (
+                  <div className="absolute top-2 right-2 z-20">
+                    <div className="bg-yellow-500 rounded-full p-1">
+                      <Star className="w-3 h-3 text-white fill-current" />
+                    </div>
+                  </div>
+                )}
+                
+                {/* Variant Navigation */}
+                {variants.length > 1 && (
+                  <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-1 bg-black bg-opacity-70 rounded-lg px-2 py-1">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVariantChange('prev');
+                      }}
+                      disabled={currentVariantIdx === 0}
+                      className="p-1 text-white disabled:opacity-30 hover:bg-white hover:bg-opacity-20 rounded"
+                    >
+                      <ChevronLeft className="w-3 h-3" />
+                    </button>
+                    <span className="text-white text-xs font-medium">
+                      {currentVariantIdx + 1}/{variants.length}
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVariantChange('next');
+                      }}
+                      disabled={currentVariantIdx === variants.length - 1}
+                      className="p-1 text-white disabled:opacity-30 hover:bg-white hover:bg-opacity-20 rounded"
+                    >
+                      <ChevronRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                )}
+                
+                {/* Card Type Badge */}
+                <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
+                  {currentVariant.cardType === "Base" ? "Base" : 
+                   currentVariant.cardType === "Parallel Laser" ? "Laser" :
+                   currentVariant.cardType === "Parallel Swirl" ? "Swirl" : 
+                   currentVariant.cardType === "Parallel Numbered" ? 
+                     (currentVariant.numbering?.replace("1/", "/") || "Numbered") :
+                   currentVariant.cardType === "Autograph" ? "Auto" :
+                   currentVariant.cardType === "Autograph 1/1" ? "Auto 1/1" :
+                   currentVariant.cardType === "Autograph Gold" ? "Auto Gold" :
+                   currentVariant.cardType === "Autograph Red" ? "Auto Red" :
+                   currentVariant.cardType === "Autograph Silver" ? "Auto Silver" :
+                   currentVariant.cardType === "Autograph Blue" ? "Auto Blue" :
+                   currentVariant.cardType === "Autograph Green" ? "Auto Green" :
+                   currentVariant.cardType === "Autograph Bronze" ? "Auto Bronze" :
+                   currentVariant.cardType.includes("Autograph") ? "Auto" :
+                   currentVariant.cardType}
+                </div>
+                
+                {/* Ownership Status */}
+                {currentVariant.isOwned && (
+                  <div className="absolute top-8 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
+                    Acquise
+                  </div>
+                )}
+                
+                {/* Card Content */}
+                <div 
+                  onClick={() => handleCardSelect(currentVariant)}
+                  className="cursor-pointer hover:bg-gray-700 transition-all duration-300"
+                >
+                  {/* Card Image */}
+                  <div className="aspect-[3/4] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400">
+                    {currentVariant.imageUrl ? (
+                      <img 
+                        src={currentVariant.imageUrl} 
+                        alt={currentVariant.playerName || ""} 
+                        className="w-full h-full object-cover transition-transform duration-300 ease-out"
+                        onError={(e) => {
+                          console.log("Image failed to load:", currentVariant.imageUrl);
+                          // Fallback to default image if image fails to load
+                          e.currentTarget.src = cardDefaultImage;
+                        }}
+                        onLoad={() => {
+                          console.log("Image loaded successfully:", currentVariant.imageUrl);
+                        }}
+
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-white p-4">
+                        {/* Score Ligue 1 Logo */}
+                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-3 opacity-80">
                           <img 
-                            src={goldenCardsIcon}
-                            alt="Golden trading cards"
-                            className="w-24 h-24 object-contain rounded-lg relative z-10 filter drop-shadow-lg group-hover:drop-shadow-2xl transition-all duration-300"
-                            style={{
-                              filter: 'drop-shadow(0 0 20px rgba(251, 191, 36, 0.3)) brightness(1.1) contrast(1.1)'
-                            }}
+                            src={logoImage} 
+                            alt="Score Ligue 1" 
+                            className="w-12 h-12 object-contain"
                           />
-                          
-                          {/* Sparkle effects */}
-                          <div className="absolute top-2 right-2 w-2 h-2 bg-yellow-400 rounded-full animate-ping opacity-75"></div>
-                          <div className="absolute bottom-3 left-3 w-1.5 h-1.5 bg-amber-300 rounded-full animate-pulse delay-300"></div>
-                          <div className="absolute top-1/2 left-2 w-1 h-1 bg-yellow-500 rounded-full animate-pulse delay-700"></div>
                         </div>
+
+                        
                       </div>
-                    </div>
+                    )}
                     
-                    {/* Progress bar */}
-                    <div className="px-4 pb-4">
-                      <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
-                        <div 
-                          className="bg-[hsl(9,85%,67%)] h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${completion.percentage}%` }}
-                        ></div>
+                    
+                  </div>
+                  
+                  {/* Card Info */}
+                  <div className="p-3">
+                    {currentVariant.cardType?.includes("Insert") && (
+                      <div className="text-purple-400 text-xs font-medium mb-1">
+                        {(() => {
+                          const cardType = currentVariant.cardType || "";
+                          if (cardType.includes("Hot Rookies")) return "Hot Rookies";
+                          if (cardType.includes("Keepers")) return "Keepers";
+                          if (cardType.includes("Club Legend")) return "Club Legend";
+                          if (cardType.includes("Spotlight")) return "Spotlight";
+                          if (cardType.includes("Pennants")) return "Pennants";
+                          if (cardType.includes("Next Up")) return "Next Up";
+                          if (cardType.includes("Intergalactic")) return "Intergalactic";
+                          if (cardType.includes("Score Team")) return "Score Team";
+                          if (cardType.includes("Breakthrough")) return "Breakthrough";
+                          if (cardType.includes("Pure Class")) return "Pure Class";
+                          return "Insert";
+                        })()}
                       </div>
-                      <div className="flex justify-between text-xs text-white/60 mt-1">
-                        <span>{completion.percentage}% complété</span>
-                        <span>{completion.ownedCards} cartes acquises</span>
-                      </div>
+                    )}
+                    <div className="text-white font-bold text-sm mb-1">
+                      {currentVariant.playerName}
                     </div>
+                    <div className="text-gray-400 text-xs mb-1">
+                      {currentVariant.teamName}
+                    </div>
+                    <div className="text-gray-400 text-xs">
+                      Référence: {currentVariant.reference}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          </div>
+        ) : (
+          // List View
+          <div className="space-y-2">
+            {filteredCards?.map((card) => {
+              const variants = getCardVariants(card);
+              const playerKey = `${card.playerName}-${card.teamName}`;
+              const currentVariantIdx = cardVariantIndexes[playerKey] || 0;
+              const currentVariant = variants[currentVariantIdx] || card;
+              const isAnyVariantSelected = variants.some(variant => selectedCards.has(variant.id));
+
+              return (
+                <div 
+                  key={playerKey}
+                  className={`bg-gray-800 rounded-lg p-3 flex items-center gap-3 transition-all duration-200 cursor-pointer hover:bg-gray-700 ${
+                    isAnyVariantSelected ? 'border-2 border-blue-500' : 'border border-gray-600'
+                  }`}
+                  onClick={() => handleCardSelect(currentVariant)}
+                >
+                  {/* Checkbox */}
+                  <input
+                    type="checkbox"
+                    checked={isAnyVariantSelected}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      handleCardSelection(currentVariant.id, e.target.checked);
+                    }}
+                    className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
+                  />
+
+                  {/* Card Image */}
+                  <div className="w-12 h-16 bg-gray-600 rounded overflow-hidden flex-shrink-0">
+                    {currentVariant.imageUrl ? (
+                      <img 
+                        src={currentVariant.imageUrl} 
+                        alt={currentVariant.playerName || 'Card'} 
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <HelpCircle className="w-6 h-6 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Player Info */}
+                  <div className="flex-1">
+                    <h3 className="text-white font-medium text-sm">
+                      {currentVariant.playerName || 'Joueur Inconnu'}
+                    </h3>
+                    <p className="text-gray-400 text-xs">
+                      {currentVariant.teamName || 'Équipe Inconnue'}
+                    </p>
+                  </div>
+
+                  {/* Variants Count */}
+                  <div className="text-right">
+                    <div className="text-white text-sm font-medium">
+                      {variants.length} variant{variants.length > 1 ? 's' : ''}
+                    </div>
+                    <div className="text-gray-400 text-xs">
+                      {variants.filter(v => v.isOwned).length} / {variants.length} possédées
+                    </div>
+                  </div>
+
+                  {/* Status indicator */}
+                  <div className="w-3 h-3 rounded-full flex-shrink-0" 
+                       style={{ backgroundColor: currentVariant.isOwned ? '#10B981' : '#EF4444' }}>
                   </div>
                 </div>
               );
             })}
           </div>
         )}
+      </main>
 
+      <Navigation />
 
-
-        {/* Cards Tab Content - Personal Cards */}
-        {activeTab === "cards" && (
-          <div className="space-y-4">
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes cartes</h3>
-              
-              {/* Controls Row - Filter Tabs and View Icons */}
-              <div className="flex items-center justify-between">
-                {/* Filter Tabs */}
-                <div className="flex items-center gap-2 bg-gray-700 rounded-lg p-1">
-                  <button
-                    onClick={() => setSaleFilter('all')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'all' 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Toutes
-                  </button>
-                  <button
-                    onClick={() => setSaleFilter('available')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'available' 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    En vente
-                  </button>
-                  <button
-                    onClick={() => setSaleFilter('sold')}
-                    className={`px-3 py-1 rounded text-xs transition-all ${
-                      saleFilter === 'sold' 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    Vendues
-                  </button>
-                </div>
-
-                {/* View Mode Icons */}
-                <div className="flex items-center gap-1 bg-gray-700 rounded-lg p-1">
-                  <button
-                    onClick={() => setViewMode("list")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "list" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <List className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode("grid")}
-                    className={`p-2 rounded-md transition-all ${
-                      viewMode === "grid" 
-                        ? "bg-primary text-primary-foreground" 
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <Grid className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Search Bar with Autocomplete */}
-            <div className="relative mb-6">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Rechercher par joueur ou équipe..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setShowSuggestions(searchSuggestions.length > 0)}
-                  onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
-                  className="w-full pl-10 pr-4 py-3 bg-[hsl(214,35%,15%)] border border-gray-600 rounded-lg text-white placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                />
-              </div>
-              
-              {/* Autocomplete Suggestions */}
-              {showSuggestions && searchSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-[hsl(214,35%,18%)] border border-gray-600 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
-                  {searchSuggestions.map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setSearchQuery(suggestion);
-                        setShowSuggestions(false);
-                      }}
-                      className="w-full text-left px-4 py-2 text-white hover:bg-[hsl(214,35%,25%)] transition-colors border-b border-gray-700 last:border-b-0"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-
-
-            {personalCardsLoading ? (
-              <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-              </div>
-            ) : filteredPersonalCards && filteredPersonalCards.length > 0 ? (
-              viewMode === "grid" ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {filteredPersonalCards.map((card: any) => (
-                    <div 
-                      key={card.id} 
-                      className={`bg-[hsl(214,35%,22%)] rounded-lg p-3 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer relative ${card.isSold ? 'opacity-75' : ''}`}
-                      onClick={() => setSelectedCard(card)}
-                    >
-                      {card.isSold && (
-                        <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center z-10">
-                          <div className="bg-yellow-500 text-black px-3 py-1 rounded-full font-bold text-sm">
-                            VENDUE
-                          </div>
-                        </div>
-                      )}
-                      {card.imageUrl && (
-                        <img 
-                          src={card.imageUrl} 
-                          alt={`${card.playerName || 'Carte'}`}
-                          className={`w-full h-32 object-cover rounded-md mb-2 ${card.isSold ? 'grayscale' : ''}`}
-                        />
-                      )}
-                      <div className="space-y-1">
-                        {card.playerName && (
-                          <h4 className="text-white font-medium text-sm truncate">{card.playerName}</h4>
-                        )}
-                        {card.teamName && (
-                          <p className="text-gray-400 text-xs truncate">{card.teamName}</p>
-                        )}
-                        <p className="text-gray-500 text-xs">{card.cardType}</p>
-                        {!card.isSold && card.isForTrade && card.tradePrice && (
-                          <div className="absolute bottom-2 right-2">
-                            <span className="text-primary text-xs font-medium">
-                              {card.tradePrice?.replace('$', '')}€
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                // List view
-                <div className="space-y-3">
-                  {filteredPersonalCards.map((card: any) => (
-                    <div 
-                      key={card.id} 
-                      className={`bg-[hsl(214,35%,22%)] rounded-lg p-4 hover:bg-[hsl(214,35%,25%)] transition-colors cursor-pointer flex items-center gap-4 relative ${card.isSold ? 'opacity-75' : ''}`}
-                      onClick={() => setSelectedCard(card)}
-                    >
-                      {card.isSold && (
-                        <div className="absolute top-2 right-2 bg-yellow-500 text-black px-2 py-1 rounded-full font-bold text-xs z-10">
-                          VENDUE
-                        </div>
-                      )}
-                      {card.imageUrl && (
-                        <img 
-                          src={card.imageUrl} 
-                          alt={`${card.playerName || 'Carte'}`}
-                          className={`w-20 h-28 object-cover rounded-md flex-shrink-0 ${card.isSold ? 'grayscale' : ''}`}
-                        />
-                      )}
-                      <div className="flex-1 space-y-1">
-                        {card.playerName && (
-                          <h4 className="text-white font-medium">{card.playerName}</h4>
-                        )}
-                        {card.teamName && (
-                          <p className="text-gray-400 text-sm">{card.teamName}</p>
-                        )}
-                        <p className="text-gray-500 text-sm">{card.cardType}</p>
-                      </div>
-                      {!card.isSold && card.isForTrade && card.tradePrice && (
-                        <div className="flex items-center gap-2">
-                          <span className="text-primary font-medium">{card.tradePrice?.replace('$', '')}€</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )
-            ) : (
-              <div className="text-center py-12">
-                <CardIcon className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                <div className="text-gray-400 mb-2 text-lg">Aucune carte trouvée</div>
-                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  {searchQuery ? "Aucune carte ne correspond à votre recherche." : "Ajoute tes cartes personnelles pour les organiser et les mettre en vente."}
+      {/* Modal latéral pour les détails de carte de collection */}
+      {selectedCard && (
+        <div 
+          className="fixed inset-0 bg-black z-50"
+          style={{
+            animation: 'slideInFromRight 0.4s ease-out'
+          }}
+        >
+          <div className="w-full h-full flex flex-col">
+            {/* Header - Fixed */}
+            <div className="flex items-center justify-between p-4 bg-[hsl(214,35%,22%)] border-b border-gray-700 sticky top-0 z-10">
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-white">
+                  {selectedCard.playerName || 'Joueur Inconnu'}
+                </h2>
+                <p className="text-gray-400 text-sm">
+                  {selectedCard.teamName || 'Équipe Inconnue'}
                 </p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Deck Tab Content */}
-        {activeTab === "deck" && (
-          <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Decks</h3>
-            
-            {/* Add Deck Button */}
-            <div 
-              onClick={() => setLocation("/create-deck")}
-              className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
-            >
-              <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Plus className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="font-bold text-white font-poppins text-base">Nouveau Deck</h3>
-            </div>
-
-            {/* Decks List */}
-            {decksLoading ? (
-              <div className="space-y-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-[hsl(214,35%,22%)] rounded-2xl p-4 animate-pulse">
-                    <div className="h-4 bg-gray-700 rounded mb-2"></div>
-                    <div className="h-20 bg-gray-700 rounded"></div>
-                  </div>
-                ))}
-              </div>
-            ) : userDecks.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="mb-6">
-                  <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                <div className="flex gap-2 text-xs text-blue-400 mt-1">
+                  {collection?.name && <span>Collection: {collection.name}</span>}
+                  {selectedCard.season && <span>• Saison {selectedCard.season}</span>}
                 </div>
-                <div className="text-gray-400 mb-4 text-lg">
-                  Tu n'as pas encore créé de deck.
-                </div>
-                <p className="text-[hsl(212,23%,69%)] text-sm leading-relaxed mb-6 max-w-md mx-auto">
-                  Crée ton premier deck de cartes et montre-le à ta communauté.
-                </p>
-                <button 
-                  onClick={() => setLocation("/create-deck")}
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-lg font-medium transition-colors"
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Options button clicked");
+                    setShowOptionsPanel(true);
+                  }}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all z-20"
+                  type="button"
                 >
-                  <Plus className="w-4 h-4 mr-2 inline" />
-                  Créer mon premier deck
+                  <MoreVertical className="w-6 h-6" />
+                </button>
+                <button
+                  onClick={() => setSelectedCard(null)}
+                  className="text-white bg-gray-800 p-2 rounded-lg hover:bg-gray-700 transition-all"
+                >
+                  <X className="w-6 h-6" />
                 </button>
               </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4">
-                {(deckPreviews.length > 0 ? deckPreviews : userDecks).map((deck: any) => (
-                  <div 
-                    key={deck.id} 
-                    onClick={() => {
-                      // Vérifier que le deck existe avant la navigation
-                      queryClient.invalidateQueries({ queryKey: [`/api/decks/${deck.id}`] });
-                      setLocation(`/deck/${deck.id}`);
-                    }}
-                    className="rounded-2xl p-4 border-2 border-yellow-500/50 hover:border-yellow-400/70 transition-all cursor-pointer hover:scale-[1.02] transform relative overflow-hidden"
-                    style={{
-                      background: deck.themeColors ? getThemeGradient(deck.themeColors) : "hsl(214,35%,22%)"
-                    }}
-                  >
-                    {/* Effet d'étoiles filantes pour les decks complets */}
-                    {deck.previewCards && deck.previewCards.length === 9 && (
-                      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        {Array.from({length: 8}).map((_, i) => (
-                          <div
-                            key={i}
-                            className="absolute w-px h-8 bg-gradient-to-b from-transparent via-yellow-300 to-transparent opacity-70"
-                            style={{
-                              top: `${-10 + Math.random() * 20}%`,
-                              left: `${Math.random() * 100}%`,
-                              transform: `rotate(${20 + Math.random() * 20}deg)`,
-                              animation: `shooting-star ${2 + Math.random() * 3}s ease-in-out infinite`,
-                              animationDelay: `${Math.random() * 4}s`
-                            }}
-                          />
-                        ))}
-                      </div>
-                    )}
-                    <div className="flex items-center justify-between mb-3 relative z-10">
-                      <h4 className="font-bold text-lg font-luckiest" style={{
-                        color: deck.themeColors ? getThemeTextColor(deck.themeColors) : "#ffffff"
-                      }}>{deck.name}</h4>
-                      <span className="text-xs" style={{
-                        color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.cardCount}/12</span>
-                    </div>
-                    
-                    {/* Preview des cartes */}
-                    <div className="h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-800 to-gray-700 flex items-center p-3">
-                      {deck.previewCards && deck.previewCards.length > 0 ? (
-                        <div className={`flex w-full perspective-1000 ${
-                          deck.previewCards.length === 1 ? 'justify-center' : 
-                          deck.previewCards.length === 2 ? 'justify-center space-x-4' : 
-                          'space-x-3'
-                        }`}>
-                          {deck.previewCards.map((cardData: any, index: number) => {
-                            // Calculer la transformation selon le nombre de cartes
-                            let transform = '';
-                            if (deck.previewCards.length === 1) {
-                              transform = 'rotateY(0deg) rotateX(10deg)';
-                            } else if (deck.previewCards.length === 2) {
-                              transform = `rotateY(${index === 0 ? -10 : 10}deg) rotateX(10deg)`;
-                            } else {
-                              transform = `rotateY(${-15 + index * 15}deg) rotateX(10deg)`;
-                            }
-                            
-                            return (
-                              <div 
-                                key={index} 
-                                className={`h-24 relative transform-gpu ${
-                                  deck.previewCards.length === 1 ? 'w-20' :
-                                  deck.previewCards.length === 2 ? 'w-20' :
-                                  'flex-1'
-                                }`}
+            </div>
+            
+            {/* Content - Scrollable content */}
+            <div className="flex-1 bg-[hsl(216,46%,13%)] overflow-y-auto">
+              {(() => {
+                const currentCard = getCurrentCard();
+                const variants = getCardVariants(selectedCard);
+                
+                return (
+                  <div className="p-6 space-y-6">
+                    {/* Card Carousel with Touch Support */}
+                    <div className="w-full max-w-md mx-auto relative">
+                      {(() => {
+                        const variants = getCardVariants(selectedCard);
+                        if (variants.length <= 1) {
+                          return currentCard?.imageUrl ? (
+                            <div 
+                              className="relative w-full h-96 perspective-1000"
+                              style={{ perspective: '1000px' }}
+                            >
+                              <img 
+                                src={currentCard.imageUrl} 
+                                alt={`${currentCard.playerName} card`}
+                                className={`w-full h-full object-cover rounded-lg transition-transform duration-500 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
                                 style={{
-                                  transform,
-                                  transformStyle: 'preserve-3d'
+                                  transformStyle: 'preserve-3d',
+                                  willChange: 'transform',
+                                  animation: 'card-auto-float 12s ease-in-out infinite'
                                 }}
-                              >
-                                {cardData.card.imageUrl ? (
-                                  <div className="w-full h-full rounded-lg overflow-hidden shadow-lg border-2 border-white/20 relative">
-                                    <img 
-                                      src={cardData.card.imageUrl} 
-                                      alt={cardData.card.playerName}
-                                      className="w-full h-full object-cover"
-                                    />
+                              />
+                              {/* Featured Star on Photo */}
+                              {currentCard.isFeatured && (
+                                <div className="absolute top-3 right-3 z-20">
+                                  <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
+                                    <Star className="w-4 h-4 text-white fill-current" />
                                   </div>
-                                ) : (
-                                  <div className="w-full h-full rounded-lg bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2 shadow-lg border-2 border-white/20">
-                                    <div>
-                                      <div className="font-bold text-xs mb-1">{cardData.card.playerName}</div>
-                                      <div className="text-xs opacity-80">{cardData.card.teamName}</div>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="w-full h-96 bg-gray-600 rounded-lg flex items-center justify-center">
+                              <HelpCircle className="w-16 h-16 text-gray-400" />
+                            </div>
+                          );
+                        }
+
+                        // Carousel pour multiple variantes
+                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        
+                        return (
+                          <div 
+                            className="relative w-full h-96 overflow-hidden rounded-lg"
+                            onTouchStart={(e) => {
+                              const touch = e.touches[0];
+                              setCurrentVariantIndex(touch.clientX);
+                            }}
+                            onTouchMove={(e) => {
+                              e.preventDefault();
+                            }}
+                            onTouchEnd={(e) => {
+                              const touch = e.changedTouches[0];
+                              const diffX = currentVariantIndex - touch.clientX;
+                              
+                              if (Math.abs(diffX) > 50) {
+                                if (diffX > 0 && currentIndex < variants.length - 1) {
+                                  setSelectedCard(variants[currentIndex + 1]);
+                                } else if (diffX < 0 && currentIndex > 0) {
+                                  setSelectedCard(variants[currentIndex - 1]);
+                                }
+                              }
+                            }}
+                          >
+                            {currentCard?.imageUrl ? (
+                              <div className="relative w-full h-full">
+                                <img 
+                                  src={currentCard.imageUrl} 
+                                  alt={`${currentCard.playerName} card`}
+                                  className={`w-full h-full object-cover transition-transform duration-300 ${starEffectCards.has(currentCard.id) ? 'animate-sparkle-stars' : ''}`}
+                                  style={{
+                                    transformStyle: 'preserve-3d',
+                                    willChange: 'transform',
+                                    animation: 'card-auto-float 12s ease-in-out infinite'
+                                  }}
+                                />
+                                {/* Featured Star on Carousel Photo */}
+                                {currentCard.isFeatured && (
+                                  <div className="absolute top-3 right-3 z-20">
+                                    <div className="bg-yellow-500 rounded-full p-2 shadow-lg">
+                                      <Star className="w-4 h-4 text-white fill-current" />
                                     </div>
                                   </div>
                                 )}
                               </div>
-                            );
-                          })}
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center w-full text-white font-bold">
-                          Deck vide - Voir le deck
-                        </div>
-                      )}
+                            ) : (
+                              <div className="w-full h-full bg-gray-600 flex items-center justify-center">
+                                <HelpCircle className="w-16 h-16 text-gray-400" />
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
+                      
+                      {/* Navigation Arrows for Variants */}
+                      {(() => {
+                        const variants = getCardVariants(selectedCard);
+                        if (variants.length <= 1) return null;
+                        
+                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        
+                        return (
+                          <>
+                            {/* Previous Arrow */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
+                                const prevCard = variants[prevIndex];
+                                setSelectedCard(prevCard);
+                              }}
+                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
+                            >
+                              <ChevronLeft className="w-6 h-6" />
+                            </button>
+                            
+                            {/* Next Arrow */}
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
+                                const nextCard = variants[nextIndex];
+                                setSelectedCard(nextCard);
+                              }}
+                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
+                            >
+                              <ChevronRight className="w-6 h-6" />
+                            </button>
+                            
+                            {/* Variant Counter */}
+                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
+                              {currentIndex + 1} / {variants.length}
+                            </div>
+                          </>
+                        );
+                      })()}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
 
-        {/* Modal latéral pour les détails de carte de collection */}
-        {selectedCard && (
-          <>
-            {/* Overlay */}
-            <div 
-              className="fixed inset-0 bg-black/70 z-50" 
-              onClick={() => setSelectedCard(null)}
-            />
-            
-            {/* Modal latéral qui glisse depuis la droite */}
-            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-[hsl(214,35%,18%)] z-[60] transform transition-transform duration-300 ease-out overflow-y-auto">
-              <div className="p-6">
-                {/* Header du modal */}
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-bold text-white">Détails de la carte</h2>
-                  <div className="flex items-center gap-2">
-                    {/* Menu actions */}
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowOptionsPanel(true);
-                      }}
-                      className="text-gray-400 hover:text-white transition-colors p-1"
-                      type="button"
-                    >
-                      <MoreVertical className="w-6 h-6" />
-                    </button>
-                    
-                    {/* Bouton fermer */}
-                    <button
-                      onClick={() => setSelectedCard(null)}
-                      className="text-gray-400 hover:text-white transition-colors p-1"
-                    >
-                      <X className="w-6 h-6" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Image de la carte */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl overflow-hidden mb-6 relative">
-                  {selectedCard.imageUrl ? (
-                    <img 
-                      src={selectedCard.imageUrl} 
-                      alt={selectedCard.playerName || 'Carte'}
-                      className="w-full h-full object-cover cursor-pointer"
-                      onClick={() => {
-                        setShowCardFullscreen(true);
-                        setIsCardRotated(false);
-                      }}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white">
-                      <div className="text-center p-4">
-                        <div className="text-lg font-bold mb-2">{selectedCard.playerName}</div>
-                        <div className="text-sm text-gray-300">{selectedCard.teamName}</div>
-                        <div className="text-xs text-gray-400 mt-1">{selectedCard.cardType}</div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Badge selon le statut */}
-                  {selectedCard.isForSale ? (
-                    <div className="absolute top-4 right-4 bg-[hsl(9,85%,67%)] text-white px-3 py-2 rounded-full text-sm font-bold">
-                      EN VENTE
-                    </div>
-                  ) : selectedCard.isForTrade ? (
-                    <div className="absolute top-4 right-4 bg-blue-600 text-white px-3 py-2 rounded-full text-sm font-bold">
-                      ÉCHANGE
-                    </div>
-                  ) : (
-                    <div className="absolute top-4 right-4 bg-gray-600 text-white px-3 py-2 rounded-full text-sm font-bold">
-                      COLLECTION
-                    </div>
-                  )}
-                </div>
-
-                {/* Informations de la carte */}
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-white mb-2">{selectedCard.playerName}</h3>
-                    <p className="text-gray-400 text-lg mb-1">{selectedCard.teamName}</p>
-                    <p className="text-gray-500">{selectedCard.cardType}</p>
-                  </div>
-
-                  {/* Collection Info */}
-                  {selectedCard.collectionId && (
-                    <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                      <div className="text-white font-medium text-sm mb-2">Collection</div>
-                      <div className="text-white font-semibold">
-                        {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Collection inconnue'}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Prix de vente */}
-                  {selectedCard.salePrice ? (
-                    <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                      <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                      <div className="text-green-400 font-bold text-2xl">
-                        {selectedCard.salePrice}€
-                      </div>
-                    </div>
-                  ) : selectedCard.tradePrice ? (
-                    <div className="bg-green-600/10 rounded-lg p-4 border border-green-600/20">
-                      <div className="text-green-400 font-medium text-sm mb-1">Prix de vente</div>
-                      <div className="text-green-400 font-bold text-2xl">
-                        {selectedCard.tradePrice?.replace('$', '')}€
-                      </div>
-                    </div>
-                  ) : selectedCard.isForTrade ? (
-                    <div className="bg-blue-600/10 rounded-lg p-4 border border-blue-600/20">
-                      <div className="text-blue-400 font-medium text-sm mb-1">Statut</div>
-                      <div className="text-blue-400 font-bold text-xl">
-                        Disponible à l'échange
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-gray-600/10 rounded-lg p-4 border border-gray-600/20">
-                      <div className="text-gray-400 font-medium text-sm mb-1">Statut</div>
-                      <div className="text-gray-400 font-bold text-xl">
-                        Collection personnelle
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Description de vente */}
-                  {selectedCard.saleDescription && selectedCard.saleDescription.trim() !== '' && (
-                    <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                      <div className="text-white font-medium text-sm mb-2">Description</div>
-                      <div className="text-gray-300 text-sm leading-relaxed">
-                        {selectedCard.saleDescription}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Description d'échange */}
-                  {selectedCard.tradeDescription && selectedCard.tradeDescription.trim() !== '' && (
-                    <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                      <div className="text-white font-medium text-sm mb-2">Description de l'échange</div>
-                      <div className="text-gray-300 text-sm leading-relaxed">
-                        {selectedCard.tradeDescription}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Informations techniques */}
-                  <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                    <div className="text-white font-medium text-sm mb-3">Informations</div>
-                    <div className="space-y-2 text-sm">
+                    {/* Card Details */}
+                    <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Collection:</span>
-                        <span className="text-white">
-                          {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Score Ligue 1'}
+                        <span className="text-gray-400">Type:</span>
+                        <span className="text-white">{currentCard?.cardType || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Numérotation:</span>
+                        <span className="text-white">{currentCard?.numbering || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Référence:</span>
+                        <span className="text-white">{currentCard?.reference || 'N/A'}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Statut:</span>
+                        <span className={currentCard?.isOwned ? "text-green-400" : "text-red-400"}>
+                          {currentCard?.isOwned ? "Possédée" : "Manquante"}
                         </span>
                       </div>
+                      {/* Dispo à la vente */}
                       <div className="flex justify-between">
-                        <span className="text-gray-400">Saison:</span>
-                        <span className="text-white">{selectedCard.season || '23/24'}</span>
+                        <span className="text-gray-400">Dispo à la vente:</span>
+                        <span className="text-white">
+                          {currentCard?.isForTrade ? (
+                            currentCard?.tradeOnly ? "Trade uniquement" : 
+                            currentCard?.tradePrice ? `Vente et trade - ${currentCard.tradePrice}` : 
+                            "Vente et trade"
+                          ) : "Non renseigné"}
+                        </span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Type de carte:</span>
-                        <span className="text-white">{selectedCard.cardType}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Équipe:</span>
-                        <span className="text-white">{selectedCard.teamName}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Joueur:</span>
-                        <span className="text-white">{selectedCard.playerName}</span>
-                      </div>
-                      {selectedCard.reference && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Référence:</span>
-                          <span className="text-white">{selectedCard.reference}</span>
-                        </div>
-                      )}
-                      {selectedCard.numbering && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">Numérotation:</span>
-                          <span className="text-white">{selectedCard.numbering}</span>
-                        </div>
-                      )}
-                      {selectedCard.condition && (
-                        <div className="flex justify-between">
-                          <span className="text-gray-400">État:</span>
-                          <span className="text-green-400">{selectedCard.condition}</span>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
 
-        {/* Options Panel - Slide from bottom */}
-        {showOptionsPanel && (
-              <>
+                    {/* Additional Information */}
+                    <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
+                      <h4 className="text-lg font-semibold text-white">Informations supplémentaires</h4>
+                      <div className="space-y-2 text-sm">
+                        <p className="text-gray-300">Collection: SCORE LIGUE 1</p>
+                        <p className="text-gray-300">Saison: 2023-24</p>
+                        <p className="text-gray-300">Rareté: {selectedCard.cardType?.includes('Insert') ? 'Insert' : 'Base'}</p>
+                      </div>
+                    </div>
+
+
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Card Modal */}
+      {showFullscreenCard && selectedCard && (
+        <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
+          <button
+            onClick={() => setShowFullscreenCard(false)}
+            className="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-lg hover:bg-opacity-75 transition-all z-60"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          
+          <div className="relative max-w-2xl max-h-full">
+            {(() => {
+              const currentCard = getCurrentCard();
+              return currentCard?.imageUrl ? (
                 <div 
-                  className="fixed inset-0 bg-black/50 z-[70]"
-                  onClick={() => setShowOptionsPanel(false)}
-                />
-                <div className="fixed bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl z-[80] transform transition-transform duration-300 ease-out">
-                  <div className="p-4 space-y-2">
-                    {/* Handle bar */}
-                    <div className="w-12 h-1 bg-gray-500 rounded-full mx-auto mb-3" />
-                    
-                    {/* Header avec titre et bouton fermer */}
-                    <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-lg font-bold text-white">Actions</h3>
-                      <button
-                        onClick={() => setShowOptionsPanel(false)}
-                        className="p-1 text-gray-400 hover:text-white transition-colors"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                    
-                    {!selectedCard.isSold && (
-                      <>
-
-                        <button 
-                          onClick={handleMarkAsSold}
-                          className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                        >
-                          <div className="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center">
-                            <Check className="w-3 h-3 text-white" />
-                          </div>
-                          Marquer comme vendue
-                        </button>
-                        
-                        {(selectedCard.isForSale || selectedCard.isForTrade) ? (
-                          <button 
-                            onClick={handleRemoveFromSale}
-                            className="w-full p-2 text-white hover:bg-red-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                          >
-                            <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
-                              <X className="w-3 h-3 text-white" />
-                            </div>
-                            Retirer de la vente
-                          </button>
-                        ) : (
-                          <button 
-                            onClick={() => {
-                              setShowOptionsPanel(false);
-                              setShowTradePanel(true);
-                            }}
-                            className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                          >
-                            <div className="w-6 h-6 bg-green-600 rounded-md flex items-center justify-center">
-                              <ShoppingCart className="w-3 h-3 text-white" />
-                            </div>
-                            Mettre en vente
-                          </button>
-                        )}
-                        
-                        <button 
-                          onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                        >
-                          <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
-                            <Trash2 className="w-3 h-3 text-white" />
-                          </div>
-                          Supprimer la carte
-                        </button>
-                      </>
-                    )}
-                    
-                    {selectedCard.isSold && (
-                      <>
-                        <div className="w-full p-2 text-gray-400 rounded-lg font-medium text-center">
-                          <div className="text-yellow-400 font-bold mb-2">✓ Carte vendue</div>
-                          <div className="text-sm">Aucune action disponible</div>
-                        </div>
-                        
-                        <button 
-                          onClick={() => handleDeleteCard(selectedCard)}
-                          className="w-full p-2 text-white hover:bg-red-600/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                        >
-                          <div className="w-6 h-6 bg-red-600 rounded-md flex items-center justify-center">
-                            <Trash2 className="w-3 h-3 text-white" />
-                          </div>
-                          Supprimer la carte
-                        </button>
-                      </>
-                    )}
-                    
-                    <button 
-                      onClick={() => {
-                        setShowOptionsPanel(false);
-                        setShowFeaturedPanel(true);
-                      }}
-                      className="w-full p-2 text-white hover:bg-yellow-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                    >
-                      <div className="w-6 h-6 bg-yellow-600 rounded-md flex items-center justify-center">
-                        <Star className="w-3 h-3 text-white" />
-                      </div>
-                      À la une
-                    </button>
-                    
-                    <button 
-                      onClick={() => handleEditCard(selectedCard as PersonalCard)}
-                      className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                    >
-                      <div className="w-6 h-6 bg-blue-600 rounded-md flex items-center justify-center">
-                        <Settings className="w-3 h-3 text-white" />
-                      </div>
-                      Modifier la carte
-                    </button>
-                    
-                    <button 
-                      onClick={() => handleDuplicateCard(selectedCard as PersonalCard)}
-                      className="w-full p-2 text-white hover:bg-purple-400/10 rounded-lg text-sm transition-colors text-left flex items-center gap-2"
-                    >
-                      <div className="w-6 h-6 bg-purple-600 rounded-md flex items-center justify-center">
-                        <Copy className="w-3 h-3 text-white" />
-                      </div>
-                      Dupliquer la carte
-                    </button>
-                    
-                    <button 
-                      onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-2 text-white hover:bg-green-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
-                    >
-                      <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                        <Plus className="w-4 h-4 text-white" />
-                      </div>
-                      Ajouter à la collection
-                    </button>
-                    
-                    <button 
-                      onClick={() => setShowOptionsPanel(false)}
-                      className="w-full p-4 text-gray-400 hover:bg-gray-400/10 rounded-lg font-medium transition-colors text-center mt-6"
-                    >
-                      Annuler
-                    </button>
-                  </div>
+                  className="relative w-full h-96 transform-gpu transition-transform duration-300 ease-out"
+                  style={{
+                    perspective: '1000px',
+                    transformStyle: 'preserve-3d',
+                    animation: 'card-auto-float 6s ease-in-out infinite'
+                  }}
+                >
+                  <img 
+                    src={currentCard.imageUrl} 
+                    alt={currentCard.playerName || "Card"} 
+                    className="w-full h-full object-contain rounded-xl shadow-2xl"
+                    style={{
+                      filter: 'drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5))'
+                    }}
+                  />
                 </div>
-              </>
-            )}
-
-            {/* Featured Panel */}
-            {showFeaturedPanel && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md border border-[hsl(214,35%,30%)]">
-                  <div className="p-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-white">À la une</h3>
-                      <button
-                        onClick={() => setShowFeaturedPanel(false)}
-                        className="text-gray-400 hover:text-white"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
-                    </div>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Description du post
-                        </label>
-                        <textarea
-                          value={featuredDescription}
-                          onChange={(e) => setFeaturedDescription(e.target.value)}
-                          placeholder="Partagez quelque chose sur cette carte..."
-                          className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                          rows={4}
-                        />
-                      </div>
-                      
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => setShowFeaturedPanel(false)}
-                          className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
-                        >
-                          Annuler
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (!featuredDescription.trim() || !selectedCard) return;
-                            
-                            try {
-                              const response = await fetch('/api/posts', {
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                  content: featuredDescription,
-                                  cardImage: selectedCard.imageUrl,
-                                  cardName: selectedCard.playerName,
-                                  type: 'featured'
-                                })
-                              });
-                              
-                              if (!response.ok) {
-                                throw new Error('Failed to create post');
-                              }
-                              
-                              setShowFeaturedPanel(false);
-                              setFeaturedDescription("");
-                              setSelectedCard(null);
-                              
-                              toast({
-                                title: "Post créé !",
-                                description: "Ton post a été ajouté à la une.",
-                                className: "bg-green-600 text-white border-green-700"
-                              });
-                            } catch (error) {
-                              toast({
-                                title: "Erreur",
-                                description: "Impossible de créer le post.",
-                                variant: "destructive",
-                              });
-                            }
-                          }}
-                          disabled={!featuredDescription.trim()}
-                          className="flex-1 bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg transition-colors"
-                        >
-                          Publier
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+              ) : (
+                <div className="w-full h-full bg-gray-700 rounded-xl flex items-center justify-center">
+                  <HelpCircle className="w-24 h-24 text-gray-400" />
                 </div>
-              </div>
-            )}
-
-            {/* Trade Panel */}
-            {showTradePanel && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-                <div className="bg-[hsl(214,35%,22%)] rounded-2xl w-full max-w-md border border-[hsl(214,35%,30%)]">
-                  <div className="p-6 space-y-4">
-                    <h3 className="text-lg font-bold text-white mb-4">Paramètres de vente</h3>
-                    
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Prix de vente
-                        </label>
-                        <input
-                          type="text"
-                          value={salePrice}
-                          onChange={(e) => setSalePrice(e.target.value)}
-                          placeholder="Ex: 15€"
-                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)]"
-                        />
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                          Description
-                        </label>
-                        <textarea
-                          rows={3}
-                          value={saleDescription}
-                          onChange={(e) => setSaleDescription(e.target.value)}
-                          placeholder="Décrivez l'état de la carte..."
-                          className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-[hsl(9,85%,67%)] resize-none"
-                        />
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          id="tradeOnly"
-                          checked={tradeOnly}
-                          onChange={(e) => setTradeOnly(e.target.checked)}
-                          className="w-4 h-4 text-[hsl(9,85%,67%)] bg-gray-700 border-gray-600 rounded focus:ring-[hsl(9,85%,67%)]"
-                        />
-                        <label htmlFor="tradeOnly" className="text-sm text-gray-300">
-                          Échange uniquement (pas de vente)
-                        </label>
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-3 pt-4">
-                      <button 
-                        onClick={() => setShowTradePanel(false)}
-                        className="flex-1 p-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-medium transition-colors"
-                      >
-                        Annuler
-                      </button>
-                      <button 
-                        onClick={handleSaveSaleSettings}
-                        className="flex-1 p-3 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white rounded-lg font-medium transition-colors"
-                      >
-                        Sauvegarder
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+              );
+            })()}
           </div>
-        )}
-      </main>
-      
-
-      
-      {/* Delete Confirmation Modal */}
-      {showDeleteModal && collectionToDelete && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 max-w-md w-full mx-4 border border-[hsl(214,35%,30%)]">
-            <div className="flex items-center justify-center mb-4">
-              <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-6 h-6 text-white" />
-              </div>
-            </div>
-            
-            <h3 className="text-lg font-bold text-white text-center mb-2">
-              Supprimer la collection
-            </h3>
-            
-            <p className="text-[hsl(212,23%,69%)] text-center mb-6">
-              Es-tu sûr de vouloir supprimer la collection "{collectionToDelete.name}" ? 
-              Cette action est irréversible et supprimera toutes les cartes associées.
-            </p>
-            
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDeleteModal(false);
-                  setCollectionToDelete(null);
-                }}
-                className="flex-1 px-4 py-2 text-sm bg-[hsl(214,35%,30%)] text-white rounded-lg hover:bg-[hsl(214,35%,35%)] transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={confirmDeleteCollection}
-                disabled={deleteCollectionMutation.isPending}
-                className="flex-1 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
-              >
-                {deleteCollectionMutation.isPending ? "Suppression..." : "Supprimer"}
-              </button>
-            </div>
+          
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-center">
+            <p className="text-sm opacity-75">Bouge ta souris ou ton doigt pour faire pivoter la carte</p>
           </div>
         </div>
       )}
 
-      {/* Modal de confirmation de suppression de carte */}
-      {showDeleteCardModal && cardToDelete && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-sm w-full">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
-                <Trash2 className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <h3 className="text-white font-bold">Supprimer la carte</h3>
-                <p className="text-gray-400 text-sm">Cette action est irréversible</p>
-              </div>
-            </div>
-            
-            <div className="mb-6">
-              <p className="text-gray-300 text-sm">
-                Êtes-vous sûr de vouloir supprimer définitivement cette carte ?
-              </p>
-              <div className="mt-3 p-3 bg-gray-800 rounded-lg">
-                <p className="text-white font-medium text-sm">{cardToDelete.playerName}</p>
-                <p className="text-gray-400 text-xs">{cardToDelete.reference}</p>
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => {
-                  setShowDeleteCardModal(false);
-                  setCardToDelete(null);
-                }}
-                className="flex-1 px-4 py-2 text-sm bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={confirmDeleteCard}
-                disabled={deleteCardMutation.isPending}
-                className="flex-1 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50"
-              >
-                {deleteCardMutation.isPending ? "Suppression..." : "Supprimer"}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Card Fullscreen Modal */}
-      {showCardFullscreen && selectedCard && selectedCard.imageUrl && (
+      {/* Options Panel - Replit-style */}
+      {showOptionsPanel && selectedCard && (
         <div 
-          className="fixed inset-0 z-[100] bg-black flex items-center justify-center p-4"
-          onClick={() => {
-            setShowCardFullscreen(false);
-            setIsCardRotated(false);
-          }}
+          className="fixed inset-0 z-[70]"
+          onClick={() => setShowOptionsPanel(false)}
         >
+          {/* Background overlay */}
+          <div className="absolute inset-0 bg-black bg-opacity-60 backdrop-blur-sm"></div>
+          
+          {/* Panel */}
           <div 
-            className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center"
+            className="absolute bottom-0 left-0 right-0 bg-[hsl(214,35%,22%)] rounded-t-3xl shadow-2xl transform transition-transform duration-300 ease-out"
+            style={{
+              animation: 'slideInFromBottom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
+              height: '50vh',
+              minHeight: '400px'
+            }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
-            <button
-              onClick={() => setShowCardFullscreen(false)}
-              className="absolute top-4 right-4 z-10 w-12 h-12 bg-black/60 hover:bg-black/80 rounded-full flex items-center justify-center text-white transition-all duration-300"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            {/* Handle bar */}
+            <div className="flex justify-center pt-3 pb-2">
+              <div className="w-10 h-1 bg-gray-400 rounded-full"></div>
+            </div>
+            
+            <div className="px-6 pb-8 h-full overflow-y-auto">
+              <h3 className="text-xl font-semibold text-white mb-6 text-center">Options</h3>
+            
+              <div className="space-y-2">
+                {/* Proposer à l'échange */}
+                <button
+                  onClick={() => {
+                    setSelectedTradeCard(selectedCard);
+                    setShowTradePanel(true);
+                    setShowOptionsPanel(false);
+                  }}
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                    <Handshake className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-sm">Proposer à l'échange</span>
+                </button>
 
-            {/* Card Image */}
-            <div 
-              className="max-w-full max-h-full flex items-center justify-center cursor-pointer select-none"
-              style={{ 
-                perspective: '1200px',
-                transformStyle: 'preserve-3d'
-              }}
-              onMouseMove={(e) => {
-                if (!isCardRotated) {
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const centerX = rect.left + rect.width / 2;
-                  const centerY = rect.top + rect.height / 2;
+                {/* Photo action */}
+                {(() => {
+                  const currentCard = getCurrentCard();
+                  const hasPhoto = currentCard?.imageUrl;
                   
-                  // Normaliser les coordonnées entre -1 et 1
-                  const normalizedX = (e.clientX - centerX) / (rect.width / 2);
-                  const normalizedY = (e.clientY - centerY) / (rect.height / 2);
-                  
-                  // Limiter et ajuster la rotation pour un effet plus naturel
-                  const maxRotation = 25;
-                  const rotateY = normalizedX * maxRotation;
-                  const rotateX = -normalizedY * maxRotation;
-                  
-                  setRotationStyle({ 
-                    rotateX: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), 
-                    rotateY: Math.max(-maxRotation, Math.min(maxRotation, rotateY))
-                  });
-                }
-              }}
-              onMouseLeave={() => {
-                if (!isCardRotated) {
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsCardRotated(!isCardRotated);
-                if (!isCardRotated) {
-                  // Rotation fixe quand cliqué
-                  setRotationStyle({ rotateX: 15, rotateY: 35 });
-                } else {
-                  // Retour à la position neutre
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-              onTouchStart={(e) => {
-                e.stopPropagation();
-                setIsCardRotated(!isCardRotated);
-                if (!isCardRotated) {
-                  setRotationStyle({ rotateX: 15, rotateY: 35 });
-                } else {
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-              onTouchMove={(e) => {
-                if (!isCardRotated && e.touches.length === 1) {
-                  const touch = e.touches[0];
-                  const rect = e.currentTarget.getBoundingClientRect();
-                  const centerX = rect.left + rect.width / 2;
-                  const centerY = rect.top + rect.height / 2;
-                  
-                  const normalizedX = (touch.clientX - centerX) / (rect.width / 2);
-                  const normalizedY = (touch.clientY - centerY) / (rect.height / 2);
-                  
-                  const maxRotation = 20; // Un peu moins que sur desktop pour mobile
-                  const rotateY = normalizedX * maxRotation;
-                  const rotateX = -normalizedY * maxRotation;
-                  
-                  setRotationStyle({ 
-                    rotateX: Math.max(-maxRotation, Math.min(maxRotation, rotateX)), 
-                    rotateY: Math.max(-maxRotation, Math.min(maxRotation, rotateY))
-                  });
-                }
-              }}
-              onTouchEnd={() => {
-                if (!isCardRotated) {
-                  setRotationStyle({ rotateX: 0, rotateY: 0 });
-                }
-              }}
-            >
-              <img
-                src={selectedCard.imageUrl}
-                alt={selectedCard.playerName || "Card"}
-                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                style={{
-                  filter: 'drop-shadow(0 25px 50px rgba(255,255,255,0.1))',
-                  transform: `perspective(1200px) rotateX(${rotationStyle.rotateX}deg) rotateY(${rotationStyle.rotateY}deg) scale(${isCardRotated ? 1.05 : 1})`,
-                  transformStyle: 'preserve-3d',
-                  transition: isCardRotated 
-                    ? 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)' 
-                    : 'transform 0.15s ease-out',
-                  background: `linear-gradient(
-                    ${45 + rotationStyle.rotateY}deg, 
-                    rgba(255,255,255,0.1) 0%, 
-                    rgba(255,255,255,0.05) 50%, 
-                    rgba(0,0,0,0.1) 100%
-                  )`,
-                  boxShadow: `
-                    0 0 0 8px rgba(255,215,0,0.3),
-                    0 0 0 16px rgba(255,215,0,0.1),
-                    ${20 + rotationStyle.rotateY / 2}px ${20 + rotationStyle.rotateX / 2}px 60px rgba(0,0,0,0.8),
-                    inset -5px -5px 15px rgba(0,0,0,0.3),
-                    inset 5px 5px 15px rgba(255,255,255,${0.1 + Math.abs(rotationStyle.rotateX) / 100})
-                  `,
-                  touchAction: 'manipulation',
-                  userSelect: 'none',
-                  WebkitUserSelect: 'none',
-                  WebkitTouchCallout: 'none'
-                }}
-                draggable={false}
-              />
+                  return (
+                    <button
+                      onClick={() => {
+                        if (hasPhoto) {
+                          updateCardImageMutation.mutateAsync({
+                            cardId: currentCard.id,
+                            imageUrl: ""
+                          }).then(() => {
+                            toast({
+                              title: "Photo supprimée",
+                              description: "La photo de la carte a été supprimée avec succès."
+                            });
+                          }).catch(() => {
+                            toast({
+                              title: "Erreur",
+                              description: "Impossible de supprimer la photo.",
+                              variant: "destructive"
+                            });
+                          });
+                        } else {
+                          setShowPhotoUpload(true);
+                        }
+                        setShowOptionsPanel(false);
+                      }}
+                      className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                    >
+                      <div className={`w-8 h-8 ${hasPhoto ? 'bg-red-600' : 'bg-orange-500'} rounded-lg flex items-center justify-center`}>
+                        {hasPhoto ? 
+                          <Trash2 className="w-5 h-5 text-white" /> : 
+                          <Camera className="w-5 h-5 text-white" />
+                        }
+                      </div>
+                      <span className="text-sm">{hasPhoto ? 'Supprimer la photo' : 'Ajouter une photo'}</span>
+                    </button>
+                  );
+                })()}
+
+                {/* Statut de possession */}
+                <button
+                  onClick={async () => {
+                    try {
+                      const currentCard = getCurrentCard();
+                      if (selectedCard.isOwned) {
+                        await handleMarkAsNotOwned(currentCard?.id || selectedCard.id);
+                      } else {
+                        await handleMarkAsOwned(currentCard?.id || selectedCard.id, false);
+                      }
+                      setShowOptionsPanel(false);
+                    } catch (error) {
+                      toast({
+                        title: "Erreur",
+                        description: "Impossible de modifier le statut de la carte.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                >
+                  <div className={`w-8 h-8 ${selectedCard.isOwned ? 'bg-red-600' : 'bg-green-600'} rounded-lg flex items-center justify-center`}>
+                    {selectedCard.isOwned ? 
+                      <Minus className="w-5 h-5 text-white" /> : 
+                      <Check className="w-5 h-5 text-white" />
+                    }
+                  </div>
+                  <span className="text-sm">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
+                </button>
+
+                {/* Mettre à la une */}
+                <button
+                  onClick={async () => {
+                    try {
+                      const currentCard = getCurrentCard();
+                      const cardId = currentCard?.id || selectedCard.id;
+                      const newFeaturedStatus = !currentCard?.isFeatured;
+                      
+                      // Fermer le panel immédiatement pour un feedback rapide
+                      setShowOptionsPanel(false);
+                      
+                      // Mettre à jour l'état local immédiatement pour l'affichage de l'étoile
+                      if (selectedCard && selectedCard.id === cardId) {
+                        setSelectedCard({ ...selectedCard, isFeatured: newFeaturedStatus });
+                      }
+                      
+                      // Mettre à jour le cache immédiatement
+                      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
+                        if (!oldData) return oldData;
+                        return oldData.map(card => 
+                          card.id === cardId ? { ...card, isFeatured: newFeaturedStatus } : card
+                        );
+                      });
+                      
+                      await updateCardFeaturedMutation.mutateAsync({ 
+                        cardId, 
+                        isFeatured: newFeaturedStatus 
+                      });
+                      
+                      toast({
+                        title: newFeaturedStatus ? "Mise à la une" : "Retirée de la une",
+                        description: newFeaturedStatus 
+                          ? "Cette carte a été mise à la une de ta collection." 
+                          : "Cette carte a été retirée de la une.",
+                        className: "bg-yellow-900 border-yellow-700 text-yellow-100",
+                      });
+                    } catch (error) {
+                      // En cas d'erreur, rétablir l'état précédent
+                      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+                      toast({
+                        title: "Erreur",
+                        description: "Impossible de modifier le statut de la carte.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                  className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
+                >
+                  <div className="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
+                    <Star className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-sm">
+                    {(() => {
+                      const currentCard = getCurrentCard();
+                      return currentCard?.isFeatured ? "Retirer de la une" : "Mettre à la une";
+                    })()}
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Milestone Celebration Modal */}
-      <MilestoneCelebration 
-        milestone={currentMilestone}
-        onClose={() => setCurrentMilestone(null)}
+      {/* Photo Upload Modal */}
+      <CardPhotoImportFixed
+        isOpen={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        preselectedPlayer={selectedCard?.playerName || undefined}
+        onImageUploaded={async (cardId, imageUrl) => {
+          try {
+            console.log("Starting image upload process for card:", cardId, "with image:", imageUrl.substring(0, 50) + "...");
+            
+            // Update card image first
+            const imageResult = await updateCardImageMutation.mutateAsync({ cardId, imageUrl });
+            console.log("Image update result:", imageResult);
+            
+            // Automatically mark card as owned
+            const ownershipResult = await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
+            console.log("Ownership update result:", ownershipResult);
+            
+            // Force refresh of cards data to ensure images are displayed
+            await queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
+            console.log("Query cache invalidated for cards");
+            
+            // Update local state after successful API calls
+            if (selectedCard && selectedCard.id === cardId) {
+              const updatedCard = { ...selectedCard, imageUrl, isOwned: true };
+              setSelectedCard(updatedCard);
+              console.log("Local selected card state updated:", updatedCard);
+            }
+            
+            // Trigger card pull effect
+            setPulledCardEffect(cardId);
+            setTimeout(() => setPulledCardEffect(null), 3000);
+            
+            toast({
+              title: "Photo sauvegardée",
+              description: "La photo a été ajoutée et la carte marquée comme acquise.",
+              className: "bg-green-900 border-green-700 text-green-100",
+            });
+            
+            setShowPhotoUpload(false);
+          } catch (error) {
+            console.error("Erreur lors de la sauvegarde:", error);
+            toast({
+              title: "Erreur",
+              description: "Impossible de sauvegarder la photo. Vérifie ta connexion.",
+              variant: "destructive"
+            });
+          }
+        }}
+        availableCards={cards || []}
+        initialCard={selectedCard || undefined}
+        currentFilter={filter}
       />
 
-
-
-      {/* Development Test Button - Hidden in production */}
-
-      {/* Floating Add Card Button - Only in "Mes cartes" tab and when no fullscreen modal */}
-      {activeTab === "cards" && !showCardFullscreen && (
-        <button
-          onClick={() => setLocation("/add-card")}
-          className="fixed bottom-20 right-4 w-10 h-10 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] active:bg-[hsl(9,85%,55%)] text-white shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center z-50 hover:scale-110 active:scale-95"
-          style={{
-            borderRadius: '12px',
-            boxShadow: '0 4px 16px rgba(240, 101, 67, 0.25), 0 0 0 0 rgba(240, 101, 67, 0.3)',
+      {/* Trade Panel Modal */}
+      {selectedTradeCard && (
+        <CardTradePanel
+          card={selectedTradeCard}
+          isOpen={showTradePanel}
+          onClose={() => {
+            setShowTradePanel(false);
+            setSelectedTradeCard(null);
           }}
-        >
-          <Plus className="w-5 h-5" />
-        </button>
+        />
       )}
-
-      <Navigation />
     </div>
   );
 }
