@@ -55,13 +55,12 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
       return;
     }
 
-    const uniquePlayers = Array.from(new Set(
-      allCards
-        .filter(card => card.playerName && card.playerName.toLowerCase().includes(input.toLowerCase()))
-        .map(card => card.playerName)
-        .filter((name): name is string => name !== null)
-    )).slice(0, 8);
-
+    const filtered = allCards
+      .filter(card => card.playerName && card.playerName.toLowerCase().includes(input.toLowerCase()))
+      .map(card => card.playerName)
+      .filter(name => name !== null) as string[];
+    
+    const uniquePlayers = Array.from(new Set(filtered)).slice(0, 8);
     setPlayerSuggestions(uniquePlayers);
     setShowPlayerSuggestions(uniquePlayers.length > 0);
   };
@@ -74,13 +73,12 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
       return;
     }
 
-    const uniqueTeams = Array.from(new Set(
-      allCards
-        .filter(card => card.teamName && card.teamName.toLowerCase().includes(input.toLowerCase()))
-        .map(card => card.teamName)
-        .filter((name): name is string => name !== null)
-    )).slice(0, 8);
-
+    const filtered = allCards
+      .filter(card => card.teamName && card.teamName.toLowerCase().includes(input.toLowerCase()))
+      .map(card => card.teamName)
+      .filter(name => name !== null) as string[];
+    
+    const uniqueTeams = Array.from(new Set(filtered)).slice(0, 8);
     setTeamSuggestions(uniqueTeams);
     setShowTeamSuggestions(uniqueTeams.length > 0);
   };
@@ -327,7 +325,7 @@ export default function EditCardModal({ card, isOpen, onClose, onUpdate }: EditC
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 p-3 bg-blue-600 hover:bg-blue-500 rounded-lg text-white transition-colors"
+            className="flex-1 p-3 bg-[hsl(240,21%,15%)] hover:bg-[hsl(240,21%,20%)] rounded-lg text-[hsl(38,92%,50%)] transition-colors font-medium"
           >
             Enregistrer
           </button>
