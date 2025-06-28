@@ -1287,10 +1287,11 @@ export default function CollectionDetail() {
       {/* Card Detail Modal - Fullscreen with slide animation */}
       {selectedCard && (
         <div 
-          className="fixed inset-0 bg-black z-50"
+          className="fixed top-0 right-0 h-full w-full max-w-md bg-black/70 z-50"
           style={{
             animation: 'slideInFromRight 0.4s ease-out'
           }}
+          onClick={() => setSelectedCard(null)}
         >
           <div className="w-full h-full flex flex-col">
             {/* Header - Fixed */}
