@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -465,6 +465,49 @@ export default function Collections() {
     }
   });
 
+  // Mutation pour dupliquer une carte
+  const duplicateCardMutation = useMutation({
+    mutationFn: async (card: PersonalCard) => {
+      const duplicateData = {
+        playerName: card.playerName,
+        teamName: card.teamName,
+        cardType: card.cardType,
+        reference: card.reference,
+        numbering: card.numbering,
+        season: card.season,
+        imageUrl: card.imageUrl,
+        condition: card.condition,
+        isForSale: false, // Nouvelle carte non en vente par défaut
+        isForTrade: false,
+        tradePrice: null,
+        tradeDescription: null,
+        tradeOnly: false
+      };
+      return apiRequest("POST", "/api/personal-cards", duplicateData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      
+      toast({
+        title: "Carte dupliquée",
+        description: "La carte a été dupliquée avec succès.",
+        className: "bg-green-600 text-white border-green-700"
+      });
+      
+      setSelectedCard(null);
+      setShowOptionsPanel(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erreur",
+        description: error.message || "Erreur lors de la duplication de la carte.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleMarkAsSold = async () => {
     if (!selectedCard) return;
     
@@ -516,6 +559,10 @@ export default function Collections() {
     setCardToDelete(card);
     setShowDeleteCardModal(true);
     setShowOptionsPanel(false);
+  };
+
+  const handleDuplicateCard = (card: PersonalCard) => {
+    duplicateCardMutation.mutate(card);
   };
 
   const confirmDeleteCard = () => {
@@ -1345,13 +1392,23 @@ export default function Collections() {
                     </button>
                     
                     <button 
+                      onClick={() => handleDuplicateCard(selectedCard as PersonalCard)}
+                      className="w-full p-2 text-white hover:bg-purple-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
+                    >
+                      <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <Copy className="w-4 h-4 text-white" />
+                      </div>
+                      Dupliquer la carte
+                    </button>
+                    
+                    <button 
                       onClick={() => setShowOptionsPanel(false)}
                       className="w-full p-2 text-white hover:bg-blue-400/10 rounded-lg font-medium transition-colors text-left flex items-center gap-3"
                     >
                       <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
                         <Plus className="w-4 h-4 text-white" />
                       </div>
-                      Ajouter à la sélection
+                      Ajouter à la collection
                     </button>
                     
                     <button 
