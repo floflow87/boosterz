@@ -89,7 +89,7 @@ export default function Collections() {
   const userId = currentUser?.id;
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["/api/users", userId],
+    queryKey: [`/api/users/${userId}`],
     enabled: !!userId,
   });
 
@@ -562,14 +562,14 @@ export default function Collections() {
       <Header title="Mes cartes" />
       <main className="relative z-10 px-4 pb-24">
         {/* User Profile Section */}
-        {user && (
+        {currentUser && (
           <div className="flex flex-col items-center text-center mb-4 mt-2">
             <TrophyAvatar 
-              userId={user.id}
-              avatar={user.avatar || undefined}
+              userId={currentUser.id}
+              avatar={currentUser.avatar || undefined}
               size="lg"
             />
-            <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
+            <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{currentUser.name || currentUser.username}</h2>
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
               <div className="flex items-center space-x-1">
                 <span className="font-medium text-white">
@@ -587,7 +587,7 @@ export default function Collections() {
                 <span>decks</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.followersCount || 0}</span>
+                <span className="font-medium text-white">{user?.followersCount || 0}</span>
                 <span>abonnés</span>
               </div>
             </div>
