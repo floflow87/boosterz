@@ -1478,50 +1478,44 @@ export default function CollectionDetail() {
                         );
                       })()}
                       
-                      {/* Navigation Arrows for Variants */}
-                      {(() => {
-                        const variants = getCardVariants(selectedCard);
-                        if (variants.length <= 1) return null;
-                        
-                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
-                        
-                        return (
-                          <>
-                            {/* Previous Arrow */}
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
-                                const prevCard = variants[prevIndex];
-                                setSelectedCard(prevCard);
-                              }}
-                              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
-                            >
-                              <ChevronLeft className="w-6 h-6" />
-                            </button>
-                            
-                            {/* Next Arrow */}
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
-                                const nextCard = variants[nextIndex];
-                                setSelectedCard(nextCard);
-                              }}
-                              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
-                            >
-                              <ChevronRight className="w-6 h-6" />
-                            </button>
-                            
-                            {/* Variant Counter */}
-                            <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
-                              {currentIndex + 1} / {variants.length}
-                            </div>
-                          </>
-                        );
-                      })()}
+                      {/* Navigation Arrows for Variants - Simplified */}
+                      {getCardVariants(selectedCard).length > 1 && (
+                        <>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const variants = getCardVariants(selectedCard);
+                              const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                              const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
+                              const prevCard = variants[prevIndex];
+                              setSelectedCard(prevCard);
+                            }}
+                            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
+                          >
+                            <ChevronLeft className="w-6 h-6" />
+                          </button>
+                          
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const variants = getCardVariants(selectedCard);
+                              const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                              const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
+                              const nextCard = variants[nextIndex];
+                              setSelectedCard(nextCard);
+                            }}
+                            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
+                          >
+                            <ChevronRight className="w-6 h-6" />
+                          </button>
+                          
+                          <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
+                            {getCardVariants(selectedCard).findIndex(v => v.id === currentCard?.id) + 1} / {getCardVariants(selectedCard).length}
+                          </div>
+                        </>
+                      )}
                     </div>
 
                     {/* Card Details */}
@@ -1820,6 +1814,7 @@ export default function CollectionDetail() {
           }}
         />
       )}
+    </div>
     </div>
   );
 }
