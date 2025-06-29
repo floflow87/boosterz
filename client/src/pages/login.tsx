@@ -33,6 +33,9 @@ export default function Login() {
       // Sauvegarder le token avec le même nom que App.tsx
       localStorage.setItem('authToken', data.token);
       
+      // Marquer l'onboarding comme terminé pour les utilisateurs existants
+      localStorage.setItem('onboarding_completed', 'true');
+      
       toast({
         title: "Connexion réussie",
         description: `Bienvenue ${data.user.name}!`,

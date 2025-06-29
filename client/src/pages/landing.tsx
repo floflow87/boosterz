@@ -33,6 +33,9 @@ export default function Landing() {
       console.log('Login success response:', response);
       localStorage.setItem('authToken', response.token);
       
+      // Marquer l'onboarding comme terminé pour les utilisateurs existants
+      localStorage.setItem('onboarding_completed', 'true');
+      
       // Force page reload to trigger router re-evaluation
       window.location.href = '/collections';
     },
