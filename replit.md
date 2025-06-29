@@ -118,6 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 29, 2025. Completed bottom-panel image editor with horizontal scrolling navigation
+  - **Interface restructured**: Moved from side panel to bottom panel layout with horizontal tabs
+  - **Navigation system**: Added scrollable horizontal menu with 4 options (Luminosité, Contraste, Rotation, Rogner)
+  - **Dynamic gauge**: Implemented progress bar under active tab reflecting current parameter values
+  - **Optimized sizing**: Reduced image preview size (max-w-xs, max-h-64) for better space distribution
+  - **Compact layout**: Reduced padding throughout interface (p-4 instead of p-6) for optimal space usage
+  - **Real-time preview**: Maintained live preview functionality above controls with all editing features
+  - **User experience**: Enhanced with better visibility of all tabs and progress indicators
 - June 28, 2025. Successfully published complete application to GitHub repository
   - **GitHub deployment**: Code successfully published to https://github.com/floflow87/boosterz
   - **Security implementation**: .gitignore properly configured to exclude sensitive files (.env, scripts/, attached_assets/)

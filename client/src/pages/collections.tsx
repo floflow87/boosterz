@@ -2392,8 +2392,8 @@ export default function Collections() {
           </div>
 
           {/* Image Preview Area */}
-          <div className="flex-1 flex items-center justify-center p-8">
-            <div className="max-w-lg max-h-full">
+          <div className="flex-1 flex items-center justify-center p-4">
+            <div className="max-w-xs max-h-64">
               <img
                 src={editedImageResult}
                 alt="Aperçu retouché"
@@ -2434,9 +2434,9 @@ export default function Collections() {
             </div>
 
             {/* Controls Content */}
-            <div className="p-6">
+            <div className="p-4">
               {/* Gauge under active tab */}
-              <div className="w-full h-1 bg-gray-600 rounded-full mb-6">
+              <div className="w-full h-1 bg-gray-600 rounded-full mb-4">
                 <div 
                   className="h-1 bg-[hsl(9,85%,67%)] rounded-full transition-all duration-300"
                   style={{ 
@@ -2560,17 +2560,17 @@ export default function Collections() {
             </div>
 
             {/* Actions */}
-            <div className="p-6 border-t border-gray-700">
+            <div className="p-4 border-t border-gray-700">
               <div className="flex gap-3">
                 <button
                   onClick={resetImageEditor}
-                  className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-6 rounded-lg transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
                 >
                   Réinitialiser
                 </button>
                 <button
                   onClick={() => setShowImageEditor(false)}
-                  className="bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-6 rounded-lg transition-colors"
+                  className="bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-4 rounded-lg transition-colors text-sm"
                 >
                   Annuler
                 </button>
@@ -2579,7 +2579,7 @@ export default function Collections() {
                     applyImageEdits();
                     setShowImageEditor(false);
                   }}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-6 rounded-lg transition-colors ml-auto"
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-4 rounded-lg transition-colors ml-auto text-sm"
                 >
                   Appliquer
                 </button>
