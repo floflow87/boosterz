@@ -89,13 +89,16 @@ export default function Collections() {
   const [showPlayerSuggestions, setShowPlayerSuggestions] = useState(false);
   const [showTeamSuggestions, setShowTeamSuggestions] = useState(false);
   
-  // Image editor states
+  // Image editor states - new modern interface
   const [showImageEditor, setShowImageEditor] = useState(false);
   const [imageEditorActiveTab, setImageEditorActiveTab] = useState('brightness');
   const [imageEditorBrightness, setImageEditorBrightness] = useState(100);
   const [imageEditorContrast, setImageEditorContrast] = useState(100);
   const [imageEditorRotation, setImageEditorRotation] = useState(0);
-  const [imageEditorCrop, setImageEditorCrop] = useState({ x: 0, y: 0, width: 100, height: 100 });
+  const [imageEditorZoom, setImageEditorZoom] = useState(100);
+  const [imageEditorPosition, setImageEditorPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [originalImageForEdit, setOriginalImageForEdit] = useState<string>("");
   const [editedImageResult, setEditedImageResult] = useState<string>("");
   const [saleFilter, setSaleFilter] = useState<'all' | 'available' | 'sold'>('all');
@@ -169,7 +172,7 @@ export default function Collections() {
     setIsMouseDown(false);
   };
 
-  // Image editor functions
+  // Image editor functions - new modern system
   const openImageEditor = (imageUrl: string) => {
     setOriginalImageForEdit(imageUrl);
     setEditedImageResult(imageUrl);
@@ -177,8 +180,37 @@ export default function Collections() {
     setImageEditorBrightness(100);
     setImageEditorContrast(100);
     setImageEditorRotation(0);
-    setImageEditorCrop({ x: 0, y: 0, width: 100, height: 100 });
+    setImageEditorZoom(100);
+    setImageEditorPosition({ x: 0, y: 0 });
     setShowImageEditor(true);
+  };
+
+  // Functions for interactive crop and zoom
+  const handleImageMouseDown = (e: React.MouseEvent) => {
+    if (imageEditorActiveTab === 'crop') {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleImageMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && imageEditorActiveTab === 'crop') {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      setImageEditorPosition(prev => ({
+        x: prev.x + deltaX,
+        y: prev.y + deltaY
+      }));
+      setDragStart({ x: e.clientX, y: e.clientY });
+    }
+  };
+
+  const handleImageMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleZoomChange = (zoom: number) => {
+    setImageEditorZoom(zoom);
   };
 
   const applyImageEdits = () => {
@@ -236,7 +268,8 @@ export default function Collections() {
     setImageEditorBrightness(100);
     setImageEditorContrast(100);
     setImageEditorRotation(0);
-    setImageEditorCrop({ x: 0, y: 0, width: 100, height: 100 });
+    setImageEditorZoom(100);
+    setImageEditorPosition({ x: 0, y: 0 });
     setEditedImageResult(originalImageForEdit);
   };
 
@@ -1845,7 +1878,7 @@ export default function Collections() {
                   <div className="flex items-center justify-between p-4 border-b border-gray-700">
                     {/* Bouton de validation à gauche */}
                     <button
-                      onClick={handleEditSubmit}
+                      onClick={handleSaveEdit}
                       className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                       title="Valider les modifications"
                     >
@@ -2537,38 +2570,38 @@ export default function Collections() {
 
                 {imageEditorActiveTab === 'crop' && (
                   <div className="space-y-6">
-                    <p className="text-gray-400 text-sm mb-4">Ajustez les valeurs pour rogner l'image :</p>
+                    <p className="text-gray-400 text-sm mb-4">Ajustez le zoom et la position :</p>
                     <div className="grid grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-gray-400 text-base mb-3">Décaler vers la droite: {imageEditorCrop.x}%</label>
+                        <label className="block text-gray-400 text-base mb-3">Position X: {imageEditorPosition.x}px</label>
                         <input
                           type="range"
-                          min="0"
-                          max="30"
-                          value={imageEditorCrop.x}
-                          onChange={(e) => setImageEditorCrop(prev => ({ ...prev, x: parseInt(e.target.value) }))}
+                          min="-50"
+                          max="50"
+                          value={imageEditorPosition.x}
+                          onChange={(e) => setImageEditorPosition(prev => ({ ...prev, x: parseInt(e.target.value) }))}
                           className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-400 text-base mb-3">Décaler vers le bas: {imageEditorCrop.y}%</label>
+                        <label className="block text-gray-400 text-base mb-3">Position Y: {imageEditorPosition.y}px</label>
                         <input
                           type="range"
-                          min="0"
-                          max="30"
-                          value={imageEditorCrop.y}
-                          onChange={(e) => setImageEditorCrop(prev => ({ ...prev, y: parseInt(e.target.value) }))}
+                          min="-50"
+                          max="50"
+                          value={imageEditorPosition.y}
+                          onChange={(e) => setImageEditorPosition(prev => ({ ...prev, y: parseInt(e.target.value) }))}
                           className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-400 text-base mb-3">Zoom: {imageEditorCrop.width}%</label>
+                        <label className="block text-gray-400 text-base mb-3">Zoom: {imageEditorZoom}%</label>
                         <input
                           type="range"
                           min="80"
-                          max="120"
-                          value={imageEditorCrop.width}
-                          onChange={(e) => setImageEditorCrop(prev => ({ ...prev, width: parseInt(e.target.value), height: parseInt(e.target.value) }))}
+                          max="200"
+                          value={imageEditorZoom}
+                          onChange={(e) => setImageEditorZoom(parseInt(e.target.value))}
                           className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
                         />
                       </div>
