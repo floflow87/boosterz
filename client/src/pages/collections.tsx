@@ -2047,7 +2047,7 @@ export default function Collections() {
                             />
                           </div>
                           
-                          <div className="pb-6">
+                          <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                               Condition
                             </label>
@@ -2063,16 +2063,16 @@ export default function Collections() {
                             </select>
                           </div>
                         </div>
-                      </div>
-                      
-                      {/* Save button at bottom right */}
-                      <div className="fixed bottom-6 right-6 z-10">
-                        <button
-                          onClick={handleSaveEdit}
-                          className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-3 px-8 rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl"
-                        >
-                          Enregistrer
-                        </button>
+                        
+                        {/* Save button after quality field */}
+                        <div className="flex justify-end pt-6">
+                          <button
+                            onClick={handleSaveEdit}
+                            className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-3 px-8 rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl"
+                          >
+                            Enregistrer
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2377,212 +2377,191 @@ export default function Collections() {
 
       {/* Image Editor Menu */}
       {showImageEditor && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[200] flex flex-col">
-          {/* Header */}
-          <div className="bg-[hsl(216,46%,13%)] border-b border-gray-700 p-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-bold text-white">Retouche d'image</h2>
-              <button
-                onClick={() => setShowImageEditor(false)}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-white" />
-              </button>
-            </div>
-          </div>
-
-          {/* Image Preview Area */}
-          <div className="flex-1 flex items-center justify-center p-4">
-            <div className="max-w-xs max-h-64">
-              <img
-                src={editedImageResult}
-                alt="Aperçu retouché"
-                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                style={{
-                  filter: `brightness(${imageEditorBrightness}%) contrast(${imageEditorContrast}%)`,
-                  transform: `rotate(${imageEditorRotation}deg)`
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Bottom Panel */}
-          <div className="bg-[hsl(216,46%,13%)] border-t border-gray-700">
-            {/* Horizontal Menu Tabs */}
-            <div className="border-b border-gray-700">
-              <div className="flex overflow-x-auto scrollbar-hide px-4">
-                {[
-                  { id: 'brightness', label: 'Luminosité', icon: Star },
-                  { id: 'contrast', label: 'Contraste', icon: Zap },
-                  { id: 'rotation', label: 'Rotation', icon: RefreshCw },
-                  { id: 'crop', label: 'Rogner', icon: Edit }
-                ].map((tab) => (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[200]">
+          <div className="h-full bg-[hsl(216,46%,13%)] flex flex-col">
+            {/* Header */}
+            <div className="border-b border-gray-700 p-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-white">Retouche d'image</h2>
+                <div className="flex items-center gap-2">
                   <button
-                    key={tab.id}
-                    onClick={() => setImageEditorActiveTab(tab.id)}
-                    className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap border-b-2 transition-colors ${
-                      imageEditorActiveTab === tab.id
-                        ? 'border-[hsl(9,85%,67%)] text-white'
-                        : 'border-transparent text-gray-400 hover:text-white'
-                    }`}
+                    onClick={() => {
+                      applyImageEdits();
+                      setShowImageEditor(false);
+                    }}
+                    className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
                   >
-                    <tab.icon className="w-4 h-4" />
-                    {tab.label}
+                    <Check className="w-5 h-5 text-white" />
                   </button>
-                ))}
+                  <button
+                    onClick={() => setShowImageEditor(false)}
+                    className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5 text-white" />
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Controls Content */}
-            <div className="p-4">
-              {/* Gauge under active tab */}
-              <div className="w-full h-1 bg-gray-600 rounded-full mb-4">
-                <div 
-                  className="h-1 bg-[hsl(9,85%,67%)] rounded-full transition-all duration-300"
-                  style={{ 
-                    width: imageEditorActiveTab === 'brightness' ? `${(imageEditorBrightness - 50) / 100 * 100}%` :
-                           imageEditorActiveTab === 'contrast' ? `${(imageEditorContrast - 50) / 100 * 100}%` :
-                           imageEditorActiveTab === 'rotation' ? `${(imageEditorRotation % 360) / 360 * 100}%` :
-                           '50%'
+            {/* Image Preview - Slightly larger and centered */}
+            <div className="flex justify-center p-4 border-b border-gray-700">
+              <div className="w-40 h-52 overflow-hidden rounded-lg">
+                <img
+                  src={editedImageResult}
+                  alt="Aperçu retouché"
+                  className="w-full h-full object-cover shadow-lg"
+                  style={{
+                    filter: `brightness(${imageEditorBrightness}%) contrast(${imageEditorContrast}%)`,
+                    transform: `rotate(${imageEditorRotation}deg) scale(${imageEditorCrop.width / 100}) translate(${imageEditorCrop.x}%, ${imageEditorCrop.y}%)`,
+                    transformOrigin: 'center center'
                   }}
                 />
               </div>
-
-              {/* Tab Content */}
-              {imageEditorActiveTab === 'brightness' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-white font-medium">Luminosité</label>
-                    <span className="text-gray-400 text-sm">{imageEditorBrightness}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="50"
-                    max="150"
-                    value={imageEditorBrightness}
-                    onChange={(e) => setImageEditorBrightness(parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                </div>
-              )}
-
-              {imageEditorActiveTab === 'contrast' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-white font-medium">Contraste</label>
-                    <span className="text-gray-400 text-sm">{imageEditorContrast}%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="50"
-                    max="150"
-                    value={imageEditorContrast}
-                    onChange={(e) => setImageEditorContrast(parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                </div>
-              )}
-
-              {imageEditorActiveTab === 'rotation' && (
-                <div className="space-y-4">
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => rotateImage('left')}
-                      className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <RefreshCw className="w-4 h-4 rotate-180" />
-                      90° Gauche
-                    </button>
-                    <button
-                      onClick={() => rotateImage('right')}
-                      className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                      90° Droite
-                    </button>
-                  </div>
-                  <div className="text-center text-gray-400 text-sm">
-                    Rotation actuelle: {imageEditorRotation}°
-                  </div>
-                </div>
-              )}
-
-              {imageEditorActiveTab === 'crop' && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Gauche: {imageEditorCrop.x}%</label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="25"
-                        value={imageEditorCrop.x}
-                        onChange={(e) => setImageEditorCrop(prev => ({ ...prev, x: parseInt(e.target.value) }))}
-                        className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Haut: {imageEditorCrop.y}%</label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="25"
-                        value={imageEditorCrop.y}
-                        onChange={(e) => setImageEditorCrop(prev => ({ ...prev, y: parseInt(e.target.value) }))}
-                        className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Largeur: {imageEditorCrop.width}%</label>
-                      <input
-                        type="range"
-                        min="50"
-                        max="100"
-                        value={imageEditorCrop.width}
-                        onChange={(e) => setImageEditorCrop(prev => ({ ...prev, width: parseInt(e.target.value) }))}
-                        className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-gray-400 text-sm mb-2">Hauteur: {imageEditorCrop.height}%</label>
-                      <input
-                        type="range"
-                        min="50"
-                        max="100"
-                        value={imageEditorCrop.height}
-                        onChange={(e) => setImageEditorCrop(prev => ({ ...prev, height: parseInt(e.target.value) }))}
-                        className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Actions */}
-            <div className="p-4 border-t border-gray-700">
-              <div className="flex gap-3">
-                <button
-                  onClick={resetImageEditor}
-                  className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
-                >
-                  Réinitialiser
-                </button>
-                <button
-                  onClick={() => setShowImageEditor(false)}
-                  className="bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-4 rounded-lg transition-colors text-sm"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={() => {
-                    applyImageEdits();
-                    setShowImageEditor(false);
-                  }}
-                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-4 rounded-lg transition-colors ml-auto text-sm"
-                >
-                  Appliquer
-                </button>
+            {/* Controls Area - Taking most of the screen */}
+            <div className="flex-1 overflow-y-auto">
+              {/* Horizontal Menu Tabs with integrated gauge */}
+              <div className="border-b border-gray-700">
+                <div className="flex overflow-x-auto scrollbar-hide px-4">
+                  {[
+                    { id: 'brightness', label: 'Luminosité', icon: Star },
+                    { id: 'contrast', label: 'Contraste', icon: Zap },
+                    { id: 'rotation', label: 'Rotation', icon: RefreshCw },
+                    { id: 'crop', label: 'Rogner', icon: Crop }
+                  ].map((tab) => (
+                    <div key={tab.id} className="relative">
+                      <button
+                        onClick={() => setImageEditorActiveTab(tab.id)}
+                        className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap border-b-2 transition-colors ${
+                          imageEditorActiveTab === tab.id
+                            ? 'border-[hsl(9,85%,67%)] text-white'
+                            : 'border-transparent text-gray-400 hover:text-white'
+                        }`}
+                      >
+                        <tab.icon className="w-4 h-4" />
+                        {tab.label}
+                      </button>
+                      {/* Gauge integrated in tab */}
+                      {imageEditorActiveTab === tab.id && (
+                        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-600">
+                          <div 
+                            className="h-0.5 bg-[hsl(9,85%,67%)] transition-all duration-300"
+                            style={{ 
+                              width: tab.id === 'brightness' ? `${(imageEditorBrightness - 50) / 100 * 100}%` :
+                                     tab.id === 'contrast' ? `${(imageEditorContrast - 50) / 100 * 100}%` :
+                                     tab.id === 'rotation' ? `${(imageEditorRotation % 360) / 360 * 100}%` :
+                                     '50%'
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Controls Content */}
+              <div className="p-6">
+                {/* Tab Content */}
+                {imageEditorActiveTab === 'brightness' && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <label className="text-white font-medium text-lg">Luminosité</label>
+                      <span className="text-gray-400 text-lg">{imageEditorBrightness}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="150"
+                      value={imageEditorBrightness}
+                      onChange={(e) => setImageEditorBrightness(parseInt(e.target.value))}
+                      className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                  </div>
+                )}
+
+                {imageEditorActiveTab === 'contrast' && (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <label className="text-white font-medium text-lg">Contraste</label>
+                      <span className="text-gray-400 text-lg">{imageEditorContrast}%</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="50"
+                      max="150"
+                      value={imageEditorContrast}
+                      onChange={(e) => setImageEditorContrast(parseInt(e.target.value))}
+                      className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
+                    />
+                  </div>
+                )}
+
+                {imageEditorActiveTab === 'rotation' && (
+                  <div className="space-y-6">
+                    <div className="flex gap-4">
+                      <button
+                        onClick={() => rotateImage('left')}
+                        className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3 text-sm"
+                      >
+                        <RefreshCw className="w-4 h-4 rotate-180" />
+                        90° Gauche
+                      </button>
+                      <button
+                        onClick={() => rotateImage('right')}
+                        className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-4 px-6 rounded-lg transition-colors flex items-center justify-center gap-3 text-sm"
+                      >
+                        <RefreshCw className="w-4 h-4" />
+                        90° Droite
+                      </button>
+                    </div>
+                    <div className="text-center text-gray-400 text-lg">
+                      Rotation actuelle: {imageEditorRotation}°
+                    </div>
+                  </div>
+                )}
+
+                {imageEditorActiveTab === 'crop' && (
+                  <div className="space-y-6">
+                    <p className="text-gray-400 text-sm mb-4">Ajustez les valeurs pour rogner l'image :</p>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="block text-gray-400 text-base mb-3">Décaler vers la droite: {imageEditorCrop.x}%</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="30"
+                          value={imageEditorCrop.x}
+                          onChange={(e) => setImageEditorCrop(prev => ({ ...prev, x: parseInt(e.target.value) }))}
+                          className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 text-base mb-3">Décaler vers le bas: {imageEditorCrop.y}%</label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="30"
+                          value={imageEditorCrop.y}
+                          onChange={(e) => setImageEditorCrop(prev => ({ ...prev, y: parseInt(e.target.value) }))}
+                          className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-gray-400 text-base mb-3">Zoom: {imageEditorCrop.width}%</label>
+                        <input
+                          type="range"
+                          min="80"
+                          max="120"
+                          value={imageEditorCrop.width}
+                          onChange={(e) => setImageEditorCrop(prev => ({ ...prev, width: parseInt(e.target.value), height: parseInt(e.target.value) }))}
+                          className="w-full h-3 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
