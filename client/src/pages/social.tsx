@@ -19,8 +19,17 @@ import HaloBlur from "@/components/halo-blur";
 import NotificationsModal from "@/components/NotificationsModal";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
-import type { User as UserType, Collection, Card, Post } from "@shared/schema";
+import type { User as UserType, Collection, Card, Post as BasePost } from "@shared/schema";
 import CardDisplay from "@/components/card-display";
+
+interface Post extends BasePost {
+  user?: {
+    id: number;
+    name: string;
+    username: string;
+    avatar?: string;
+  };
+}
 
 interface CurrentUser {
   user: {
@@ -486,6 +495,8 @@ export default function Social() {
         ...prev,
         [postId]: [{
           id: result.comment.id,
+          postId: postId,
+          userId: currentUser?.user?.id!,
           content: result.comment.content,
           createdAt: result.comment.createdAt,
           user: {
@@ -1299,9 +1310,7 @@ export default function Social() {
                             </span>
                             <span className="text-gray-400 text-xs">@{user.username}</span>
                           </div>
-                          {user.email && (
-                            <div className="text-gray-500 text-xs truncate">{user.email}</div>
-                          )}
+
                         </div>
                         <div className="text-xs text-gray-400">
                           {user.followersCount || 0} abonnés
@@ -1360,9 +1369,7 @@ export default function Social() {
                             {user.name || user.username}
                           </button>
                           <p className="text-sm text-gray-400">@{user.username}</p>
-                          {searchTerm && user.email && (
-                            <p className="text-xs text-gray-500">{user.email}</p>
-                          )}
+
                         </div>
                       </div>
                       
