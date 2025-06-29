@@ -268,6 +268,78 @@ export default function Conversations() {
       </div>
 
       
+      {/* New Message Panel */}
+      {showNewMessagePanel && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-[hsl(214,35%,15%)] rounded-lg w-full max-w-md max-h-[80vh] overflow-hidden">
+            {/* Panel Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-700">
+              <h2 className="text-lg font-semibold text-white">Nouveau message</h2>
+              <button
+                onClick={() => setShowNewMessagePanel(false)}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-400" />
+              </button>
+            </div>
+
+            {/* Panel Content */}
+            <div className="p-4">
+              <p className="text-gray-400 text-sm mb-4">
+                Sélectionnez un utilisateur que vous suivez :
+              </p>
+
+              {followedLoading ? (
+                <div className="text-center py-8">
+                  <div className="text-gray-400">Chargement...</div>
+                </div>
+              ) : followedUsers.length > 0 ? (
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {followedUsers.map((user) => (
+                    <div
+                      key={user.id}
+                      onClick={() => {
+                        setShowNewMessagePanel(false);
+                        setLocation(`/chat/${user.id}`);
+                      }}
+                      className="flex items-center space-x-3 p-3 bg-[hsl(214,35%,22%)] rounded-lg hover:bg-[hsl(214,35%,25%)] cursor-pointer transition-colors"
+                    >
+                      <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
+                        {(user as any)?.avatar ? (
+                          <img 
+                            src={(user as any).avatar} 
+                            alt={user.name}
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-sm font-bold text-white">
+                            {user.name?.charAt(0) || user.username?.charAt(0)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-white">{user.name}</h3>
+                        <p className="text-xs text-gray-400">@{user.username}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-600" />
+                  <p className="text-gray-400 text-sm">
+                    Vous ne suivez personne encore.
+                  </p>
+                  <p className="text-gray-500 text-xs mt-1">
+                    Suivez des utilisateurs depuis la page sociale pour pouvoir leur envoyer des messages.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <Navigation />
     </div>
   );
