@@ -100,10 +100,11 @@ export default function Collections() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  // 3D card rotation handlers
+  // 3D card rotation handlers optimisés
   const handleCardMouseMove = (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
-    if (!cardRef) return;
+    if (!cardRef || !isCardRotated) return;
     
+    e.preventDefault();
     const rect = cardRef.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
@@ -121,25 +122,33 @@ export default function Collections() {
     const deltaX = clientX - centerX;
     const deltaY = clientY - centerY;
     
-    // Limiter l'angle de rotation pour un effet plus naturel
-    const rotateY = (deltaX / (rect.width / 2)) * 15; // Max 15 degrés
-    const rotateX = -(deltaY / (rect.height / 2)) * 15; // Max 15 degrés
+    // Calculs optimisés avec interpolation plus douce
+    const maxRotation = 12; // Réduit pour plus de fluidité
+    const rotateY = (deltaX / (rect.width / 2)) * maxRotation;
+    const rotateX = -(deltaY / (rect.height / 2)) * maxRotation;
     
-    setRotationStyle({
-      rotateX: Math.max(-15, Math.min(15, rotateX)),
-      rotateY: Math.max(-15, Math.min(15, rotateY))
-    });
+    // Application immédiate sans setState pour éviter le lag
+    if (cardRef) {
+      const transform = `rotateX(${Math.max(-maxRotation, Math.min(maxRotation, rotateX))}deg) rotateY(${Math.max(-maxRotation, Math.min(maxRotation, rotateY))}deg) scale(${isMouseDown ? 1.02 : 1.05})`;
+      cardRef.style.transform = transform;
+    }
   };
 
   const handleCardMouseEnter = () => {
     setIsCardRotated(true);
+    if (cardRef) {
+      cardRef.style.transition = 'none'; // Désactiver transitions pour fluidité
+    }
   };
 
   const handleCardMouseLeave = () => {
     setIsCardRotated(false);
     setIsMouseDown(false);
-    // Retour progressif à la position initiale
-    setRotationStyle({ rotateX: 0, rotateY: 0 });
+    // Retour fluide à la position initiale
+    if (cardRef) {
+      cardRef.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
+      cardRef.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+    }
   };
 
   const handleCardMouseDown = () => {
@@ -1369,12 +1378,6 @@ export default function Collections() {
                         style={{
                           transformStyle: 'preserve-3d',
                           filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))',
-                          transform: isCardRotated 
-                            ? `rotateX(${rotationStyle.rotateX}deg) rotateY(${rotationStyle.rotateY}deg) scale(${isMouseDown ? 1.02 : 1.05})` 
-                            : 'rotateX(0deg) rotateY(0deg) scale(1)',
-                          transition: isCardRotated 
-                            ? 'transform 0.1s ease-out' 
-                            : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
                           willChange: 'transform'
                         }}
                         onMouseEnter={handleCardMouseEnter}
