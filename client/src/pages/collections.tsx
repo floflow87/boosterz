@@ -61,6 +61,8 @@ export default function Collections() {
   const [showCardFullscreen, setShowCardFullscreen] = useState(false);
   const [isCardRotated, setIsCardRotated] = useState(false);
   const [rotationStyle, setRotationStyle] = useState({ rotateX: 0, rotateY: 0 });
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const [cardRef, setCardRef] = useState<HTMLElement | null>(null);
   const [showOptionsPanel, setShowOptionsPanel] = useState(false);
   const [showTradePanel, setShowTradePanel] = useState(false);
   const [showFeaturedPanel, setShowFeaturedPanel] = useState(false);
@@ -97,6 +99,56 @@ export default function Collections() {
   
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // 3D card rotation handlers
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLElement> | React.TouchEvent<HTMLElement>) => {
+    if (!cardRef) return;
+    
+    const rect = cardRef.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    let clientX, clientY;
+    if ('touches' in e) {
+      if (e.touches.length === 0) return;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+    
+    const deltaX = clientX - centerX;
+    const deltaY = clientY - centerY;
+    
+    // Limiter l'angle de rotation pour un effet plus naturel
+    const rotateY = (deltaX / (rect.width / 2)) * 15; // Max 15 degrés
+    const rotateX = -(deltaY / (rect.height / 2)) * 15; // Max 15 degrés
+    
+    setRotationStyle({
+      rotateX: Math.max(-15, Math.min(15, rotateX)),
+      rotateY: Math.max(-15, Math.min(15, rotateY))
+    });
+  };
+
+  const handleCardMouseEnter = () => {
+    setIsCardRotated(true);
+  };
+
+  const handleCardMouseLeave = () => {
+    setIsCardRotated(false);
+    setIsMouseDown(false);
+    // Retour progressif à la position initiale
+    setRotationStyle({ rotateX: 0, rotateY: 0 });
+  };
+
+  const handleCardMouseDown = () => {
+    setIsMouseDown(true);
+  };
+
+  const handleCardMouseUp = () => {
+    setIsMouseDown(false);
+  };
 
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ["/api/users/1"],
@@ -1303,22 +1355,41 @@ export default function Collections() {
               <div className="flex-1 overflow-y-auto bg-[hsl(216,46%,13%)] p-8 pb-20" style={{ scrollBehavior: 'smooth' }}>
                 {/* Card Container avec marges augmentées */}
                 <div className="max-w-lg mx-auto min-h-full pb-20">
-                  {/* Card Image avec effet 3D */}
-                  <div className="aspect-[3/4.5] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8">
+                  {/* Card Image avec effet 3D interactif */}
+                  <div 
+                    className="aspect-[3/4.5] bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900 relative border border-blue-400 rounded-lg overflow-hidden mb-8 cursor-pointer"
+                    style={{ perspective: '1000px' }}
+                  >
                     {selectedCard.imageUrl ? (
                       <img 
+                        ref={(el) => setCardRef(el)}
                         src={selectedCard.imageUrl} 
                         alt={selectedCard.playerName || "Card"}
-                        className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105 cursor-pointer"
+                        className="w-full h-full object-cover select-none"
                         style={{
-                          animation: 'card-auto-float 8s ease-in-out infinite',
                           transformStyle: 'preserve-3d',
-                          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))'
+                          filter: 'drop-shadow(0 20px 40px rgba(0,0,0,0.3))',
+                          transform: isCardRotated 
+                            ? `rotateX(${rotationStyle.rotateX}deg) rotateY(${rotationStyle.rotateY}deg) scale(${isMouseDown ? 1.02 : 1.05})` 
+                            : 'rotateX(0deg) rotateY(0deg) scale(1)',
+                          transition: isCardRotated 
+                            ? 'transform 0.1s ease-out' 
+                            : 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+                          willChange: 'transform'
                         }}
+                        onMouseEnter={handleCardMouseEnter}
+                        onMouseLeave={handleCardMouseLeave}
+                        onMouseMove={handleCardMouseMove}
+                        onMouseDown={handleCardMouseDown}
+                        onMouseUp={handleCardMouseUp}
+                        onTouchStart={handleCardMouseDown}
+                        onTouchEnd={handleCardMouseUp}
+                        onTouchMove={handleCardMouseMove}
                         onClick={() => {
                           setShowCardFullscreen(true);
                           setIsCardRotated(false);
                         }}
+                        draggable={false}
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400">
