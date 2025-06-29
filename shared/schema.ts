@@ -501,6 +501,10 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   salePrice: true,
   saleDescription: true,
   isForSale: true,
+  isForTrade: true,
+  tradePrice: true,
+  tradeDescription: true,
+  tradeOnly: true,
   condition: true,
 }).extend({
   // Rendre la plupart des champs optionnels sauf userId et cardType
@@ -512,6 +516,11 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   imageUrl: z.string().optional(),
   salePrice: z.string().optional(),
   saleDescription: z.string().optional(),
+  isForSale: z.boolean().optional(),
+  isForTrade: z.boolean().optional(),
+  tradePrice: z.string().optional(),
+  tradeDescription: z.string().optional(),
+  tradeOnly: z.boolean().optional(),
   condition: z.string().optional(),
 });
 

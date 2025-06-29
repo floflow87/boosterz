@@ -1876,16 +1876,20 @@ export default function Collections() {
                 <div className="h-full flex flex-col">
                   {/* Header */}
                   <div className="flex items-center justify-between p-4 border-b border-gray-700">
-                    {/* Bouton de validation à gauche */}
-                    <button
-                      onClick={handleSaveEdit}
-                      className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
-                      title="Valider les modifications"
-                    >
-                      <Check className="w-6 h-6 text-white" />
-                    </button>
+                    <div className="w-8"></div> {/* Spacer pour centrer le titre */}
                     
-                    <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
+                    <div className="flex items-center space-x-4">
+                      <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
+                      
+                      {/* Bouton de validation */}
+                      <button
+                        onClick={handleSaveEdit}
+                        className="p-1.5 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                        title="Valider les modifications"
+                      >
+                        <Check className="w-4 h-4 text-white" />
+                      </button>
+                    </div>
                     
                     {/* Bouton de fermeture à droite */}
                     <button
@@ -1894,10 +1898,10 @@ export default function Collections() {
                         setShowPlayerSuggestions(false);
                         setShowTeamSuggestions(false);
                       }}
-                      className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                      className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
                       title="Fermer"
                     >
-                      <X className="w-6 h-6 text-white" />
+                      <X className="w-4 h-4 text-gray-400" />
                     </button>
                   </div>
 
