@@ -1327,27 +1327,120 @@ export default function Collections() {
                     )}
                   </div>
                   
-                  {/* Card Info */}
-                  <div className="space-y-4 text-white">
-                    {/* Collection Info - First */}
-                    {selectedCard.collectionId && (
-                      <div className="bg-primary/10 rounded-lg p-4 border border-primary/20">
-                        <div className="text-primary font-medium text-sm mb-1">Collection</div>
-                        <div className="text-white font-semibold">
-                          {collections?.find(c => c.id === selectedCard.collectionId)?.name || 'Collection inconnue'}
-                        </div>
-                      </div>
-                    )}
+                  {/* Card Details - Structured two-column layout */}
+                  <div className="space-y-6 text-white">
+                    {/* Description Section */}
+                    <div className="bg-[hsl(214,35%,18%)] rounded-xl p-6 border border-[hsl(214,35%,25%)]">
+                      <h3 className="text-lg font-bold text-white mb-4">Description</h3>
+                      <p className="text-gray-300 text-sm leading-relaxed">
+                        {selectedCard.saleDescription || selectedCard.tradeDescription || "Carte en excellent état, sortie directement du pack"}
+                      </p>
+                    </div>
 
-                    {/* Sale Description - If available */}
-                    {selectedCard.saleDescription && (
-                      <div className="bg-[hsl(214,35%,15%)] rounded-lg p-4">
-                        <div className="text-primary font-medium text-sm mb-2">Description de la vente</div>
-                        <div className="text-gray-300 text-sm leading-relaxed">
-                          {selectedCard.saleDescription}
+                    {/* Information Section - Two columns */}
+                    <div className="bg-[hsl(214,35%,18%)] rounded-xl p-6 border border-[hsl(214,35%,25%)]">
+                      <h3 className="text-lg font-bold text-white mb-6">Informations</h3>
+                      
+                      <div className="space-y-4">
+                        {/* Collection */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <span className="text-gray-400 text-sm font-medium">Collection:</span>
+                          <span className="col-span-2 text-white text-sm">
+                            {collections?.find(c => c.id === selectedCard.collectionId)?.name || "Score Ligue 1"}
+                          </span>
                         </div>
+
+                        {/* Season */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <span className="text-gray-400 text-sm font-medium">Saison:</span>
+                          <span className="col-span-2 text-white text-sm">
+                            {selectedCard.season || "23/24"}
+                          </span>
+                        </div>
+
+                        {/* Card Type */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <span className="text-gray-400 text-sm font-medium">Type de carte:</span>
+                          <span className="col-span-2 text-white text-sm">
+                            {(() => {
+                              const type = selectedCard.cardType;
+                              switch(type) {
+                                case 'base': return 'Base';
+                                case 'base_numbered': return 'Base Numérotée';
+                                case 'insert': return 'Insert';
+                                case 'autographe': return 'Autographe';
+                                case 'numbered': return 'Numérotée';
+                                case 'special_1_1': return 'Spéciale 1/1';
+                                default: return type || 'Insert';
+                              }
+                            })()}
+                          </span>
+                        </div>
+
+                        {/* Team */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <span className="text-gray-400 text-sm font-medium">Équipe:</span>
+                          <span className="col-span-2 text-white text-sm">
+                            {selectedCard.teamName || "Équipe inconnue"}
+                          </span>
+                        </div>
+
+                        {/* Player */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <span className="text-gray-400 text-sm font-medium">Joueur:</span>
+                          <span className="col-span-2 text-white text-sm">
+                            {selectedCard.playerName || "Joueur inconnu"}
+                          </span>
+                        </div>
+
+                        {/* Condition */}
+                        <div className="grid grid-cols-3 gap-4 items-center">
+                          <span className="text-gray-400 text-sm font-medium">État:</span>
+                          <span className="col-span-2 text-white text-sm">
+                            {selectedCard.condition || "Near Mint"}
+                          </span>
+                        </div>
+
+                        {/* Reference */}
+                        {selectedCard.reference && (
+                          <div className="grid grid-cols-3 gap-4 items-center">
+                            <span className="text-gray-400 text-sm font-medium">Référence:</span>
+                            <span className="col-span-2 text-white text-sm">
+                              #{selectedCard.reference}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Numbering */}
+                        {selectedCard.numbering && (
+                          <div className="grid grid-cols-3 gap-4 items-center">
+                            <span className="text-gray-400 text-sm font-medium">Numérotation:</span>
+                            <span className="col-span-2 text-white text-sm">
+                              {selectedCard.numbering}
+                            </span>
+                          </div>
+                        )}
+
+                        {/* Rarity */}
+                        {selectedCard.rarity && (
+                          <div className="grid grid-cols-3 gap-4 items-center">
+                            <span className="text-gray-400 text-sm font-medium">Rareté:</span>
+                            <span className="col-span-2 text-white text-sm">
+                              {(() => {
+                                const rarity = selectedCard.rarity;
+                                switch(rarity) {
+                                  case 'common': return 'Commune';
+                                  case 'rare': return 'Rare';
+                                  case 'super_rare': return 'Super Rare';
+                                  case 'ultra_rare': return 'Ultra Rare';
+                                  default: return rarity;
+                                }
+                              })()}
+                            </span>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
 
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
