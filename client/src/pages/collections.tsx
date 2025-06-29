@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy, ShoppingCart } from "lucide-react";
+import { Plus, Grid, List, Search, Filter, Camera, LayoutGrid, Layers, Trophy, Star, Zap, Award, Users, TrendingUp, Package, Trash2, AlertTriangle, CreditCard, FileText, CreditCard as CardIcon, MoreVertical, X, Edit, Eye, DollarSign, RefreshCw, Check, CheckCircle, BookOpen, Copy, ShoppingCart, Sun, Crop } from "lucide-react";
 import Header from "@/components/header";
 import HaloBlur from "@/components/halo-blur";
 import Navigation from "@/components/navigation";
@@ -2413,7 +2413,7 @@ export default function Collections() {
                 {/* Luminosité */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Sun className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                    <Star className="w-5 h-5 text-[hsl(9,85%,67%)]" />
                     <label className="text-white font-medium">Luminosité</label>
                     <span className="text-gray-400 text-sm ml-auto">{imageEditorBrightness}%</span>
                   </div>
@@ -2474,7 +2474,7 @@ export default function Collections() {
                 {/* Rogner */}
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <Crop className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+                    <Edit className="w-5 h-5 text-[hsl(9,85%,67%)]" />
                     <label className="text-white font-medium">Rogner</label>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
