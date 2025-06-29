@@ -218,6 +218,7 @@ export default function Collections() {
       toast({
         title: "Image retouchée",
         description: "Les modifications ont été appliquées avec succès",
+        className: "bg-green-600 border-green-600 text-white",
       });
     };
     
@@ -1841,7 +1842,19 @@ export default function Collections() {
               <div className="fixed inset-0 bg-[hsl(216,46%,13%)] z-[100]">
                 <div className="h-full flex flex-col">
                   {/* Header */}
-                  <div className="flex items-center gap-4 p-4 border-b border-gray-700">
+                  <div className="flex items-center justify-between p-4 border-b border-gray-700">
+                    {/* Bouton de validation à gauche */}
+                    <button
+                      onClick={handleEditSubmit}
+                      className="p-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                      title="Valider les modifications"
+                    >
+                      <Check className="w-6 h-6 text-white" />
+                    </button>
+                    
+                    <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
+                    
+                    {/* Bouton de fermeture à droite */}
                     <button
                       onClick={() => {
                         setShowEditModal(false);
@@ -1849,10 +1862,10 @@ export default function Collections() {
                         setShowTeamSuggestions(false);
                       }}
                       className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                      title="Fermer"
                     >
                       <X className="w-6 h-6 text-white" />
                     </button>
-                    <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
                   </div>
 
                   {/* Content */}
