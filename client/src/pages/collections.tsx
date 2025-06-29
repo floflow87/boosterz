@@ -2458,7 +2458,7 @@ export default function Collections() {
                   className="w-full h-full object-cover shadow-lg"
                   style={{
                     filter: `brightness(${imageEditorBrightness}%) contrast(${imageEditorContrast}%)`,
-                    transform: `rotate(${imageEditorRotation}deg) scale(${imageEditorCrop.width / 100}) translate(${imageEditorCrop.x}%, ${imageEditorCrop.y}%)`,
+                    transform: `rotate(${imageEditorRotation}deg) scale(${imageEditorZoom / 100}) translate(${imageEditorPosition.x}px, ${imageEditorPosition.y}px)`,
                     transformOrigin: 'center center'
                   }}
                 />

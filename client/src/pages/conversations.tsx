@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
-import { Search, MoreVertical, UserX, UserCheck, Ban, Eye, MessageCircle } from "lucide-react";
+import { Search, MoreVertical, UserX, UserCheck, Ban, Eye, MessageCircle, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -34,6 +34,7 @@ export default function Conversations() {
   const [, setLocation] = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [blockedUsers, setBlockedUsers] = useState<Set<number>>(new Set());
+  const [showNewMessagePanel, setShowNewMessagePanel] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -41,6 +42,17 @@ export default function Conversations() {
   const { data: conversations = [], isLoading } = useQuery<ConversationItem[]>({
     queryKey: ['/api/chat/conversations'],
     refetchInterval: 5000, // Refresh every 5 seconds
+  });
+
+  // Get current user's followed users for new message panel
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/auth/me'],
+    retry: false,
+  });
+
+  const { data: followedUsers = [], isLoading: followedLoading } = useQuery<User[]>({
+    queryKey: [`/api/users/${(currentUser as any)?.user?.id}/following`],
+    enabled: !!(currentUser as any)?.user?.id && showNewMessagePanel,
   });
 
   // Block/Unblock user mutation
@@ -237,9 +249,18 @@ export default function Conversations() {
               <MessageCircle className="w-16 h-16 mx-auto mb-4 text-gray-600" />
               <h3 className="text-lg font-semibold mb-2">Aucune conversation trouvée</h3>
               {searchQuery ? (
-                <p className="text-sm">Essayez de modifier votre recherche</p>
+                <p className="text-sm mb-4">Essayez de modifier votre recherche</p>
               ) : (
-                <p className="text-sm">Commencez une conversation depuis la page sociale</p>
+                <div>
+                  <p className="text-sm mb-4">Commencez une conversation avec vos amis</p>
+                  <Button
+                    onClick={() => setShowNewMessagePanel(true)}
+                    className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Envoyer un message
+                  </Button>
+                </div>
               )}
             </div>
           </div>
