@@ -21,7 +21,7 @@ export default function Login() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: username, password }),
       });
 
       if (!response.ok) {
@@ -30,16 +30,16 @@ export default function Login() {
 
       const data = await response.json();
       
-      // Sauvegarder le token
-      localStorage.setItem('token', data.token);
+      // Sauvegarder le token avec le même nom que App.tsx
+      localStorage.setItem('authToken', data.token);
       
       toast({
         title: "Connexion réussie",
         description: `Bienvenue ${data.user.name}!`,
       });
       
-      // Rediriger vers la page sociale
-      setLocation('/social');
+      // Rediriger vers les collections comme landing.tsx
+      window.location.href = '/collections';
     } catch (error) {
       toast({
         title: "Erreur de connexion",
