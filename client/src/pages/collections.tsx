@@ -91,6 +91,7 @@ export default function Collections() {
   
   // Image editor states
   const [showImageEditor, setShowImageEditor] = useState(false);
+  const [imageEditorActiveTab, setImageEditorActiveTab] = useState('brightness');
   const [imageEditorBrightness, setImageEditorBrightness] = useState(100);
   const [imageEditorContrast, setImageEditorContrast] = useState(100);
   const [imageEditorRotation, setImageEditorRotation] = useState(0);
@@ -172,6 +173,7 @@ export default function Collections() {
   const openImageEditor = (imageUrl: string) => {
     setOriginalImageForEdit(imageUrl);
     setEditedImageResult(imageUrl);
+    setImageEditorActiveTab('brightness');
     setImageEditorBrightness(100);
     setImageEditorContrast(100);
     setImageEditorRotation(0);
@@ -2375,47 +2377,83 @@ export default function Collections() {
 
       {/* Image Editor Menu */}
       {showImageEditor && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-[200]">
-          <div className="h-full flex">
-            {/* Image Preview Area */}
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="max-w-lg max-h-full">
-                <img
-                  src={editedImageResult}
-                  alt="Aperçu retouché"
-                  className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-                  style={{
-                    filter: `brightness(${imageEditorBrightness}%) contrast(${imageEditorContrast}%)`,
-                    transform: `rotate(${imageEditorRotation}deg)`
-                  }}
-                />
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-[200] flex flex-col">
+          {/* Header */}
+          <div className="bg-[hsl(216,46%,13%)] border-b border-gray-700 p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-bold text-white">Retouche d'image</h2>
+              <button
+                onClick={() => setShowImageEditor(false)}
+                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <X className="w-5 h-5 text-white" />
+              </button>
+            </div>
+          </div>
+
+          {/* Image Preview Area */}
+          <div className="flex-1 flex items-center justify-center p-8">
+            <div className="max-w-lg max-h-full">
+              <img
+                src={editedImageResult}
+                alt="Aperçu retouché"
+                className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+                style={{
+                  filter: `brightness(${imageEditorBrightness}%) contrast(${imageEditorContrast}%)`,
+                  transform: `rotate(${imageEditorRotation}deg)`
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Bottom Panel */}
+          <div className="bg-[hsl(216,46%,13%)] border-t border-gray-700">
+            {/* Horizontal Menu Tabs */}
+            <div className="border-b border-gray-700">
+              <div className="flex overflow-x-auto scrollbar-hide px-4">
+                {[
+                  { id: 'brightness', label: 'Luminosité', icon: Star },
+                  { id: 'contrast', label: 'Contraste', icon: Zap },
+                  { id: 'rotation', label: 'Rotation', icon: RefreshCw },
+                  { id: 'crop', label: 'Rogner', icon: Edit }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setImageEditorActiveTab(tab.id)}
+                    className={`flex items-center gap-2 px-6 py-4 whitespace-nowrap border-b-2 transition-colors ${
+                      imageEditorActiveTab === tab.id
+                        ? 'border-[hsl(9,85%,67%)] text-white'
+                        : 'border-transparent text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    <tab.icon className="w-4 h-4" />
+                    {tab.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Sidebar Menu */}
-            <div className="w-80 bg-[hsl(216,46%,13%)] border-l border-gray-700 flex flex-col">
-              {/* Header */}
-              <div className="p-6 border-b border-gray-700">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-white">Retouche d'image</h2>
-                  <button
-                    onClick={() => setShowImageEditor(false)}
-                    className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-                  >
-                    <X className="w-5 h-5 text-white" />
-                  </button>
-                </div>
+            {/* Controls Content */}
+            <div className="p-6">
+              {/* Gauge under active tab */}
+              <div className="w-full h-1 bg-gray-600 rounded-full mb-6">
+                <div 
+                  className="h-1 bg-[hsl(9,85%,67%)] rounded-full transition-all duration-300"
+                  style={{ 
+                    width: imageEditorActiveTab === 'brightness' ? `${(imageEditorBrightness - 50) / 100 * 100}%` :
+                           imageEditorActiveTab === 'contrast' ? `${(imageEditorContrast - 50) / 100 * 100}%` :
+                           imageEditorActiveTab === 'rotation' ? `${(imageEditorRotation % 360) / 360 * 100}%` :
+                           '50%'
+                  }}
+                />
               </div>
 
-              {/* Controls */}
-              <div className="flex-1 p-6 space-y-8 overflow-y-auto">
-                
-                {/* Luminosité */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Star className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+              {/* Tab Content */}
+              {imageEditorActiveTab === 'brightness' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <label className="text-white font-medium">Luminosité</label>
-                    <span className="text-gray-400 text-sm ml-auto">{imageEditorBrightness}%</span>
+                    <span className="text-gray-400 text-sm">{imageEditorBrightness}%</span>
                   </div>
                   <input
                     type="range"
@@ -2426,13 +2464,13 @@ export default function Collections() {
                     className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
                   />
                 </div>
+              )}
 
-                {/* Contraste */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-[hsl(9,85%,67%)]" />
+              {imageEditorActiveTab === 'contrast' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
                     <label className="text-white font-medium">Contraste</label>
-                    <span className="text-gray-400 text-sm ml-auto">{imageEditorContrast}%</span>
+                    <span className="text-gray-400 text-sm">{imageEditorContrast}%</span>
                   </div>
                   <input
                     type="range"
@@ -2443,24 +2481,21 @@ export default function Collections() {
                     className="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
                   />
                 </div>
+              )}
 
-                {/* Rotation */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <RefreshCw className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-                    <label className="text-white font-medium">Pivoter</label>
-                  </div>
-                  <div className="flex gap-2">
+              {imageEditorActiveTab === 'rotation' && (
+                <div className="space-y-4">
+                  <div className="flex gap-3">
                     <button
                       onClick={() => rotateImage('left')}
-                      className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <RefreshCw className="w-4 h-4 rotate-180" />
                       90° Gauche
                     </button>
                     <button
                       onClick={() => rotateImage('right')}
-                      className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2"
                     >
                       <RefreshCw className="w-4 h-4" />
                       90° Droite
@@ -2470,16 +2505,13 @@ export default function Collections() {
                     Rotation actuelle: {imageEditorRotation}°
                   </div>
                 </div>
+              )}
 
-                {/* Rogner */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <Edit className="w-5 h-5 text-[hsl(9,85%,67%)]" />
-                    <label className="text-white font-medium">Rogner</label>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
+              {imageEditorActiveTab === 'crop' && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Gauche</label>
+                      <label className="block text-gray-400 text-sm mb-2">Gauche: {imageEditorCrop.x}%</label>
                       <input
                         type="range"
                         min="0"
@@ -2490,7 +2522,7 @@ export default function Collections() {
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Haut</label>
+                      <label className="block text-gray-400 text-sm mb-2">Haut: {imageEditorCrop.y}%</label>
                       <input
                         type="range"
                         min="0"
@@ -2501,7 +2533,7 @@ export default function Collections() {
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Largeur</label>
+                      <label className="block text-gray-400 text-sm mb-2">Largeur: {imageEditorCrop.width}%</label>
                       <input
                         type="range"
                         min="50"
@@ -2512,7 +2544,7 @@ export default function Collections() {
                       />
                     </div>
                     <div>
-                      <label className="block text-gray-400 text-sm mb-1">Hauteur</label>
+                      <label className="block text-gray-400 text-sm mb-2">Hauteur: {imageEditorCrop.height}%</label>
                       <input
                         type="range"
                         min="50"
@@ -2524,33 +2556,33 @@ export default function Collections() {
                     </div>
                   </div>
                 </div>
-              </div>
+              )}
+            </div>
 
-              {/* Actions */}
-              <div className="p-6 border-t border-gray-700 space-y-3">
+            {/* Actions */}
+            <div className="p-6 border-t border-gray-700">
+              <div className="flex gap-3">
                 <button
                   onClick={resetImageEditor}
-                  className="w-full bg-gray-600 hover:bg-gray-700 text-white py-2 px-4 rounded-lg transition-colors"
+                  className="bg-gray-600 hover:bg-gray-700 text-white py-2 px-6 rounded-lg transition-colors"
                 >
                   Réinitialiser
                 </button>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setShowImageEditor(false)}
-                    className="flex-1 bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    onClick={() => {
-                      applyImageEdits();
-                      setShowImageEditor(false);
-                    }}
-                    className="flex-1 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-4 rounded-lg transition-colors"
-                  >
-                    Appliquer
-                  </button>
-                </div>
+                <button
+                  onClick={() => setShowImageEditor(false)}
+                  className="bg-[hsl(214,35%,30%)] hover:bg-[hsl(214,35%,35%)] text-white py-2 px-6 rounded-lg transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => {
+                    applyImageEdits();
+                    setShowImageEditor(false);
+                  }}
+                  className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-2 px-6 rounded-lg transition-colors ml-auto"
+                >
+                  Appliquer
+                </button>
               </div>
             </div>
           </div>
