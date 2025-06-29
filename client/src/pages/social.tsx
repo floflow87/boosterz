@@ -204,7 +204,7 @@ export default function Social() {
         setPostCommentsCount(prev => ({ ...prev, ...comments }));
       }
     }
-  }, [feed?.length, myPosts?.length, Object.keys(postLikes).length, Object.keys(postCommentsCount).length]); // Only depend on array lengths and existing data to avoid infinite loops
+  }, [feed?.length, myPosts?.length]); // Only depend on array lengths to avoid infinite loops
 
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
@@ -547,7 +547,7 @@ export default function Social() {
   // Utiliser les résultats de recherche si on recherche, sinon les utilisateurs de découverte
   // Filtrer également côté client pour s'assurer que l'utilisateur actuel n'apparaît pas
   const displayedUsers = (searchTerm.length > 1 ? searchResults : users).filter(user => 
-    user.id !== currentUser?.id
+    user.id !== currentUser?.user?.id
   );
 
   // Close autocomplete when clicking outside

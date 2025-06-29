@@ -2110,15 +2110,7 @@ export default function Collections() {
                           </div>
                         </div>
                         
-                        {/* Save button after quality field */}
-                        <div className="flex justify-end pt-6">
-                          <button
-                            onClick={handleSaveEdit}
-                            className="bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white py-3 px-8 rounded-lg transition-colors font-medium shadow-lg hover:shadow-xl"
-                          >
-                            Enregistrer
-                          </button>
-                        </div>
+
                       </div>
                     </div>
                   </div>
@@ -2451,7 +2443,7 @@ export default function Collections() {
 
             {/* Image Preview - Slightly larger and centered */}
             <div className="flex justify-center p-4 border-b border-gray-700">
-              <div className="w-40 h-52 overflow-hidden rounded-lg">
+              <div className={`w-40 h-52 overflow-hidden rounded-lg ${imageEditorActiveTab === 'crop' ? 'border-2 border-dashed border-[hsl(9,85%,67%)] bg-gray-800/50' : ''}`}>
                 <img
                   src={editedImageResult}
                   alt="Aperçu retouché"
