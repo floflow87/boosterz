@@ -488,6 +488,10 @@ export class DatabaseStorage implements IStorage {
       .insert(personalCards)
       .values(insertPersonalCard)
       .returning();
+    
+    // Invalider le cache des trophées après création d'une carte personnelle
+    cache.clear();
+    
     return personalCard;
   }
 
@@ -497,11 +501,19 @@ export class DatabaseStorage implements IStorage {
       .set(updates)
       .where(eq(personalCards.id, id))
       .returning();
+    
+    // Invalider le cache des trophées après modification d'une carte personnelle
+    cache.clear();
+    
     return personalCard || undefined;
   }
 
   async deletePersonalCard(id: number): Promise<boolean> {
     const result = await db.delete(personalCards).where(eq(personalCards.id, id));
+    
+    // Invalider le cache des trophées après suppression d'une carte personnelle
+    cache.clear();
+    
     return (result.rowCount || 0) > 0;
   }
 

@@ -50,10 +50,10 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
     staleTime: 5 * 60 * 1000 // 5 minutes
   });
   
-  // Récupération des cartes personnelles pour calculer le niveau
-  const { data: personalCards } = useQuery({
-    queryKey: userId ? [`/api/users/${userId}/personal-cards`] : ['/api/personal-cards'],
-    enabled: !!userId || true
+  // Récupération des statistiques de trophées optimisées
+  const { data: trophyStats } = useQuery({
+    queryKey: userId ? [`/api/users/${userId}/trophy-stats`] : ['/api/users/me/trophy-stats'],
+    enabled: !!userId || !!currentUser
   });
 
   // Vérifier si c'est l'avatar de l'utilisateur connecté

@@ -118,14 +118,16 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 30, 2025. Optimized card loading performance with caching system and loading screen
+- June 30, 2025. Optimized card loading and trophy halo performance with comprehensive backend caching
   - **Database caching**: Implemented in-memory cache system reducing card loading time by 85% (2.7s → 0.4s)
-  - **Smart cache management**: 5-minute TTL for all cards, 10-minute TTL for collection-specific cards
-  - **Automatic cache invalidation**: Cache cleared when cards are created/modified to ensure data consistency
-  - **Performance monitoring**: Added detailed logging to track query execution times
+  - **Trophy halo optimization**: Created dedicated /api/users/:id/trophy-stats endpoint reducing halo loading by 70% (283ms → 87ms)
+  - **Smart cache management**: 5-minute TTL for all cards, 10-minute TTL for collection-specific cards, 3-minute TTL for trophy stats
+  - **Optimized trophy queries**: Trophy stats now fetch only cardType field instead of full personal cards data
+  - **Automatic cache invalidation**: Cache cleared when cards/personal cards are created/modified to ensure data consistency
+  - **Performance monitoring**: Added detailed logging to track query execution times for both cards and trophy calculations
   - **Custom loading screen**: Created elegant loading interface with progress bar and animated steps
   - **Avatar click restriction**: Made TrophyAvatar clickable only for current user while preserving halo effects for all users
-  - Card loading is now significantly faster with professional loading experience for first-time users
+  - Both card loading and trophy halos now load significantly faster with professional user experience
 - June 30, 2025. Enhanced TrophyAvatar effects and added default collection for new users
   - **Fixed card selection error**: Corrected collectionCards.filter error in create-deck by properly handling API response structure
   - **Multiple card selection**: Added checkbox-based multi-selection system for adding cards to decks
