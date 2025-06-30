@@ -322,7 +322,8 @@ export default function Collections() {
               return {
                 ...deck,
                 previewCards: deckWithCards.cards.slice(0, 3),
-                totalCards: deckWithCards.cards.length
+                totalCards: deckWithCards.cards.length,
+                cardCount: deckWithCards.cards.length
               };
             }
             return { ...deck, previewCards: [] };
@@ -1371,7 +1372,7 @@ export default function Collections() {
                       }}>{deck.name}</h4>
                       <span className="text-xs" style={{
                         color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.previewCards?.length || 0}/12</span>
+                      }}>{deck.cardCount || 0}/12</span>
                     </div>
                     
                     {/* Preview des cartes */}

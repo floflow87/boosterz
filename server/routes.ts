@@ -853,7 +853,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Toggle card ownership
-  app.patch("/api/cards/:id/toggle", async (req, res) => {
+  app.patch("/api/cards/:id/toggle", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const cardId = parseInt(req.params.id);
       const card = await storage.toggleCardOwnership(cardId);
