@@ -598,11 +598,10 @@ export default function CollectionDetail() {
     // Pour les cartes Base 1/1 : 2 variantes seulement (Swirl et Laser)
     if (card.cardType === "Base") {
       // Créer virtuellement les 2 variantes pour chaque carte Base
-      const baseCard = { ...card, cardSubType: "Base" };
       const swirlCard = { ...card, id: card.id + 10000, cardSubType: "Swirl" };
       const laserCard = { ...card, id: card.id + 20000, cardSubType: "Laser" };
       
-      return [baseCard, swirlCard, laserCard];
+      return [swirlCard, laserCard];
     }
     
     // Pour les inserts : pas de variantes (1 seule version)
