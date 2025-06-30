@@ -134,14 +134,15 @@ The application follows a modern full-stack architecture with clear separation b
   - **Scroll isolation**: Separated touch navigation from scroll events to maintain carousel position during page scroll
   - **Consistent numbering**: Carousel counter now accurately reflects current variant position (1-based indexing)
   - Modal carousel navigation now works smoothly with proper French rarity labels that change with each variant
-- June 30, 2025. Finalized variant system with corrected hit numbering and special case handling
+- June 30, 2025. Restored special card variants and finalized complete variant system
+  - **Special cards variants restored**: Added 9 color variants for special cards (Orange, Violet, Vert, Bleu, Rouge, Jaune, Rose, Noir, Argent) all 1/1
   - **Base cards simplified**: Removed variants for Base cards - now single card per player as requested
   - **Hit variants corrected**: All hits now have exactly 2 variants with /15 and /10 numbering (corrected from /25)
   - **Special case handling**: Intergalactic, Next Up, and Pennants display as single cards with "Rare" rarity
   - **Special cards rarity**: All special cards maintain "Unique" rarity regardless of numbering
   - **Laser/Swirl specification**: Enhanced numbering display shows "/50 laser" or "/25 swirl" for numbered base cards
-  - **Streamlined navigation**: Carousel works correctly with simplified variant structure
-  - System now properly reflects Score Ligue 1 23/24 structure with accurate hit numbering and special case handling
+  - **Complete variant structure**: Bases (1), Parallels (9), Hits (2), Specials (9), Autographs (1), Special cases (1)
+  - System now properly reflects Score Ligue 1 23/24 structure with complete variant coverage
 - June 30, 2025. Fixed card display format and carousel functionality for numbered base cards
   - **Display format correction**: Modified "Base 1/50 laser" to show "Base /50 laser" format in collection views
   - **French localization**: Changed "Parallel Numbered" to "Parallèle numérotée" in card preview display

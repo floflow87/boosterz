@@ -644,6 +644,23 @@ export default function CollectionDetail() {
       return [card];
     }
     
+    // Pour les cartes spéciales : créer toutes les variantes
+    if (card.cardType === "special_1_1" || card.cardType?.toLowerCase().includes("special")) {
+      const specialVariants = [
+        { ...card, id: card.id + 1000, cardSubType: "Orange", numbering: "1/1" },
+        { ...card, id: card.id + 2000, cardSubType: "Violet", numbering: "1/1" },
+        { ...card, id: card.id + 3000, cardSubType: "Vert", numbering: "1/1" },
+        { ...card, id: card.id + 4000, cardSubType: "Bleu", numbering: "1/1" },
+        { ...card, id: card.id + 5000, cardSubType: "Rouge", numbering: "1/1" },
+        { ...card, id: card.id + 6000, cardSubType: "Jaune", numbering: "1/1" },
+        { ...card, id: card.id + 7000, cardSubType: "Rose", numbering: "1/1" },
+        { ...card, id: card.id + 8000, cardSubType: "Noir", numbering: "1/1" },
+        { ...card, id: card.id + 9000, cardSubType: "Argent", numbering: "1/1" }
+      ];
+      
+      return specialVariants;
+    }
+    
     // Pour les autres cartes, retourner la carte elle-même
     return [card];
   };
