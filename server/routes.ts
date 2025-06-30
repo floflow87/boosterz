@@ -84,8 +84,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (error instanceof Error) {
         console.error("Error details:", error.message);
         console.error("Error stack:", error.stack);
+        // Si c'est une erreur de validation Zod, retourner plus de détails
+        if (error.name === 'ZodError') {
+          return res.status(400).json({ 
+            error: "Validation error", 
+            details: error.message 
+          });
+        }
       }
-      res.status(500).json({ error: "Failed to create personal card" });
+      res.status(500).json({ 
+        error: "Failed to create personal card",
+        message: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
@@ -1427,10 +1437,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let conversation = await storage.getConversation(currentUserId, recipientId);
       
       if (!conversation) {
-        conversation = await storage.createConversation(
-          Math.min(currentUserId, recipientId),
-          Math.max(currentUserId, recipientId)
-        );
+        conversation = await storage.createConversation({
+          user1Id: Math.min(currentUserId, recipientId),
+          user2Id: Math.max(currentUserId, recipientId)
+        });
       }
 
       // Create the message
@@ -1459,6 +1469,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(formattedMessage);
     } catch (error) {
       console.error("Error sending message:", error);
+      if (error instanceof Error) {
+        console.error("Error details:", error.message);
+        console.error("Error stack:", error.stack);
+        return res.status(500).json({ 
+          message: "Internal server error",
+          error: error.message 
+        });
+      }
       res.status(500).json({ message: "Internal server error" });
     }
   });
