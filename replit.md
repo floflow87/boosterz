@@ -118,6 +118,15 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 30, 2025. Enhanced deck card selection and avatar neon effects
+  - **Fixed card selection error**: Corrected collectionCards.filter error in create-deck by properly handling API response structure
+  - **Multiple card selection**: Added checkbox-based multi-selection system for adding cards to decks
+  - **Visual selection indicators**: Implemented checkboxes, selection overlays, and "Select All" toggle functionality
+  - **Enhanced user feedback**: Added real-time counter showing selected cards and batch addition capability
+  - **Neon avatar effects**: Enhanced TrophyAvatar component with dramatic neon glow effects based on trophy level
+  - **Level-based styling**: Different colors and intensities for gray, green, blue, purple, gold, and rainbow trophy levels
+  - **Advanced visual effects**: Added outer halo, drop shadows, and animated particles for rainbow level
+  - Users can now select multiple cards at once and add them to decks with improved visual feedback and avatar prestige effects
 - June 30, 2025. Fixed card display and deck numbering system
   - **Card display restoration**: Fixed `/api/cards/all` endpoint to use authenticated user instead of hardcoded ID
   - **Authentication requirement**: Added proper authentication middleware to cards endpoint

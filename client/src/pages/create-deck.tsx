@@ -98,10 +98,12 @@ export default function CreateDeck() {
   const [selectAllMode, setSelectAllMode] = useState(false);
 
   // Fetch user's cards (from collections and personal cards)
-  const { data: collectionCards = [] } = useQuery<Card[]>({
+  const { data: collectionCardsData } = useQuery({
     queryKey: ["/api/cards/all"],
     staleTime: 5 * 60 * 1000,
   });
+
+  const collectionCards = collectionCardsData?.cards || [];
 
   const { data: personalCards = [] } = useQuery<PersonalCard[]>({
     queryKey: ["/api/personal-cards"],
