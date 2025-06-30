@@ -809,7 +809,13 @@ export default function UserProfile() {
 
                   {/* Actions */}
                   <div className="flex gap-3">
-                    <button className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 px-4 rounded-lg font-medium hover:bg-[hsl(9,85%,60%)] transition-colors">
+                    <button 
+                      onClick={() => {
+                        setSelectedCard(null);
+                        setLocation(`/chat/${userId}`);
+                      }}
+                      className="flex-1 bg-[hsl(9,85%,67%)] text-white py-3 px-4 rounded-lg font-medium hover:bg-[hsl(9,85%,60%)] transition-colors"
+                    >
                       Contacter le vendeur
                     </button>
                     <button className="bg-[hsl(214,35%,30%)] text-white p-3 rounded-lg hover:bg-[hsl(214,35%,35%)] transition-colors">
