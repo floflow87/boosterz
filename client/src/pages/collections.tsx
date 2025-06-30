@@ -314,7 +314,8 @@ export default function Collections() {
               const deckWithCards = await response.json();
               return {
                 ...deck,
-                previewCards: deckWithCards.cards.slice(0, 3)
+                previewCards: deckWithCards.cards.slice(0, 3),
+                totalCards: deckWithCards.cards.length
               };
             }
             return { ...deck, previewCards: [] };
@@ -1363,7 +1364,7 @@ export default function Collections() {
                       }}>{deck.name}</h4>
                       <span className="text-xs" style={{
                         color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.previewCards?.length || 0}/12</span>
+                      }}>{deck.previewCards?.length || 0}/{deck.totalCards || 0}</span>
                     </div>
                     
                     {/* Preview des cartes */}

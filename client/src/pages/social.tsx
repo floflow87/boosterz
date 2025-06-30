@@ -180,10 +180,10 @@ export default function Social() {
 
   // Mettre à jour les likes quand les données arrivent - uniquement quand les données sont chargées
   useEffect(() => {
-    if (!likesLoading && userLikes !== undefined) {
+    if (!likesLoading && userLikes !== undefined && Array.isArray(userLikes)) {
       setLikedPosts(new Set(userLikes));
     }
-  }, [userLikes, likesLoading]);
+  }, [likesLoading]); // Remove userLikes from dependency array to prevent infinite loop
 
 
 
