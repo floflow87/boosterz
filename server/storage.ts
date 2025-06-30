@@ -25,6 +25,7 @@ export interface IStorage {
   createCollection(collection: InsertCollection): Promise<Collection>;
   updateCollection(id: number, updates: Partial<Collection>): Promise<Collection | undefined>;
   deleteCollection(id: number): Promise<boolean>;
+  addUserToCollection(userId: number, collectionId: number): Promise<boolean>;
   
   // Cards
   getCardsByCollectionId(collectionId: number): Promise<Card[]>;
@@ -188,6 +189,48 @@ export class DatabaseStorage implements IStorage {
   async deleteCollection(id: number): Promise<boolean> {
     const result = await db.delete(collections).where(eq(collections.id, id));
     return (result.rowCount || 0) > 0;
+  }
+
+  async addUserToCollection(userId: number, collectionId: number): Promise<boolean> {
+    try {
+      // Check if user already has this collection (prevent duplicates)
+      const existingUserCards = await db
+        .select()
+        .from(userCards)
+        .where(and(
+          eq(userCards.userId, userId),
+          eq(userCards.collectionId, collectionId)
+        ))
+        .limit(1);
+
+      if (existingUserCards.length > 0) {
+        console.log(`User ${userId} already has collection ${collectionId}`);
+        return true; // Consider it success if already exists
+      }
+
+      // Get all cards from the collection
+      const collectionCards = await db
+        .select()
+        .from(cards)
+        .where(eq(cards.collectionId, collectionId));
+
+      // Create userCard entries for all cards in the collection
+      const userCardsToInsert = collectionCards.map(card => ({
+        userId,
+        cardId: card.id,
+        collectionId: card.collectionId,
+        isOwned: false
+      }));
+
+      if (userCardsToInsert.length > 0) {
+        await db.insert(userCards).values(userCardsToInsert);
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error adding user to collection:', error);
+      return false;
+    }
   }
 
   async getCardsByCollectionId(collectionId: number): Promise<Card[]> {

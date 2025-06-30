@@ -118,7 +118,7 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- June 30, 2025. Enhanced deck card selection and avatar neon effects
+- June 30, 2025. Enhanced TrophyAvatar effects and added default collection for new users
   - **Fixed card selection error**: Corrected collectionCards.filter error in create-deck by properly handling API response structure
   - **Multiple card selection**: Added checkbox-based multi-selection system for adding cards to decks
   - **Visual selection indicators**: Implemented checkboxes, selection overlays, and "Select All" toggle functionality
