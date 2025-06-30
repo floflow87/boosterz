@@ -642,8 +642,13 @@ export default function Social() {
     // Filtrer les activités pour exclure celles de l'utilisateur actuel (userId = 1) et Max C (userId = 2)
     const filteredActivities = activities.filter(activity => activity.user.id !== 1 && activity.user.id !== 2);
 
-    // Filtrer également les posts pour exclure ceux de l'utilisateur actuel (userId = 1) et Max C (userId = 2)  
-    const filteredFeedPosts = feedPosts.filter(post => post.userId !== 1 && post.userId !== 2);
+    // Filtrer les posts de l'utilisateur actuel (userId = 1) et garder seulement les 2 derniers posts de Max (userId = 2)
+    const postsFromMax = feedPosts.filter(post => post.userId === 2);
+    const lastTwoMaxPosts = postsFromMax.slice(0, 2); // Prendre les 2 premiers (plus récents)
+    const filteredFeedPosts = [
+      ...feedPosts.filter(post => post.userId !== 1 && post.userId !== 2),
+      ...lastTwoMaxPosts
+    ];
 
     // Combiner posts et activités filtrées et les trier par date décroissante
     const feedItems = [
