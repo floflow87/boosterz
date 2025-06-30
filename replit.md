@@ -127,6 +127,13 @@ The application follows a modern full-stack architecture with clear separation b
   - **CardDisplay integration**: Updated both grid and list views to show new rarity badges instead of card type
   - **Preview integration**: Card preview modal shows proper rarity with color coding
   - Rarity system now accurately reflects Score Ligue 1 23/24 distribution and value hierarchy
+- June 30, 2025. Fixed carousel navigation and dynamic rarity display in card preview modal
+  - **Carousel counter correction**: Fixed carousel to display 1/9 instead of 0/9 on first load
+  - **Touch navigation fix**: Corrected touch event handling to prevent scroll conflicts that reset carousel to position 0
+  - **Dynamic rarity updates**: Rarity badge now updates in real-time as user navigates through card variants
+  - **Scroll isolation**: Separated touch navigation from scroll events to maintain carousel position during page scroll
+  - **Consistent numbering**: Carousel counter now accurately reflects current variant position (1-based indexing)
+  - Modal carousel navigation now works smoothly with proper French rarity labels that change with each variant
 - June 30, 2025. Fixed card display format and carousel functionality for numbered base cards
   - **Display format correction**: Modified "Base 1/50 laser" to show "Base /50 laser" format in collection views
   - **French localization**: Changed "Parallel Numbered" to "Parallèle numérotée" in card preview display

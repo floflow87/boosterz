@@ -1381,19 +1381,21 @@ export default function CollectionDetail() {
                             className="relative w-full h-96 overflow-hidden rounded-lg"
                             onTouchStart={(e) => {
                               const touch = e.touches[0];
-                              setCurrentVariantIndex(touch.clientX);
+                              // Store touch start position, not variant index
+                              e.currentTarget.setAttribute('data-touch-start', touch.clientX.toString());
                             }}
                             onTouchMove={(e) => {
                               e.preventDefault();
                             }}
                             onTouchEnd={(e) => {
                               const touch = e.changedTouches[0];
-                              const diffX = currentVariantIndex - touch.clientX;
+                              const startX = parseFloat(e.currentTarget.getAttribute('data-touch-start') || '0');
+                              const diffX = startX - touch.clientX;
                               
                               if (Math.abs(diffX) > 50) {
-                                if (diffX > 0 && currentIndex < variants.length - 1) {
+                                if (diffX > 0 && currentVariantIndex < variants.length - 1) {
                                   setCurrentVariantIndex(prev => prev + 1);
-                                } else if (diffX < 0 && currentIndex > 0) {
+                                } else if (diffX < 0 && currentVariantIndex > 0) {
                                   setCurrentVariantIndex(prev => prev - 1);
                                 }
                               }
@@ -1465,7 +1467,7 @@ export default function CollectionDetail() {
                             
                             {/* Variant Counter */}
                             <div className="absolute bottom-2 right-2 bg-black bg-opacity-60 text-white px-2 py-1 rounded text-sm">
-                              {currentIndex + 1} / {variants.length}
+                              {currentVariantIndex + 1} / {variants.length}
                             </div>
                           </>
                         );
@@ -1516,11 +1518,11 @@ export default function CollectionDetail() {
                           <span 
                             className="ml-2 px-2 py-1 rounded text-xs font-medium"
                             style={{
-                              color: getRarityInfo(determineRarity(selectedCard.cardType || '', selectedCard.numbering)).color,
-                              backgroundColor: getRarityInfo(determineRarity(selectedCard.cardType || '', selectedCard.numbering)).bgColor
+                              color: getRarityInfo(determineRarity(currentCard?.cardType || '', currentCard?.numbering)).color,
+                              backgroundColor: getRarityInfo(determineRarity(currentCard?.cardType || '', currentCard?.numbering)).bgColor
                             }}
                           >
-                            {getRarityInfo(determineRarity(selectedCard.cardType || '', selectedCard.numbering)).labelFr}
+                            {getRarityInfo(determineRarity(currentCard?.cardType || '', currentCard?.numbering)).labelFr}
                           </span>
                         </p>
                       </div>
