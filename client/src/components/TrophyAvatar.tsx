@@ -50,20 +50,12 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
   // Calcul du niveau d'avatar
   const avatarLevel = useMemo(() => {
     if (!personalCards || !Array.isArray(personalCards)) {
-      console.log('TrophyAvatar: No personal cards found or not array', personalCards);
       return null;
     }
 
     const totalCards = personalCards.length;
     const autographsCount = personalCards.filter((card: any) => card.cardType?.includes('AUTO')).length;
     const specialsCount = personalCards.filter((card: any) => card.cardType && !card.cardType.includes('AUTO') && card.cardType !== 'BASE').length;
-
-    console.log('TrophyAvatar debug:', { 
-      totalCards, 
-      autographsCount, 
-      specialsCount, 
-      userId 
-    });
 
     const allMilestones = [
       ...MILESTONE_CONFIG.collection,

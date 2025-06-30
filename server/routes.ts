@@ -60,6 +60,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route pour obtenir les cartes personnelles d'un utilisateur spécifique (pour TrophyAvatar)
+  app.get("/api/users/:id/personal-cards", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const targetUserId = parseInt(req.params.id);
+      if (isNaN(targetUserId)) {
+        return res.status(400).json({ error: "Invalid user ID" });
+      }
+      
+      const personalCards = await storage.getPersonalCardsByUserId(targetUserId);
+      res.json(personalCards);
+    } catch (error) {
+      console.error("Error fetching user personal cards:", error);
+      res.status(500).json({ error: "Failed to fetch user personal cards" });
+    }
+  });
+
   app.post("/api/personal-cards", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.user!.id;
