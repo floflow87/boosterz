@@ -82,6 +82,9 @@ export interface IStorage {
   createUserCard(userCard: InsertUserCard): Promise<UserCard>;
   updateUserCard(id: number, updates: Partial<UserCard>): Promise<UserCard | undefined>;
   deleteUserCard(id: number): Promise<boolean>;
+  
+  // Trophy Stats (optimized for avatar halos)
+  getTrophyStats(userId: number): Promise<{ totalCards: number; autographs: number; specials: number }>;
 
   // Personal Cards (pour "Mes cartes")
   getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]>;
@@ -421,7 +424,50 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUserCard(id: number): Promise<boolean> {
     const result = await db.delete(userCards).where(eq(userCards.id, id));
+    
+    // Invalider le cache des trophées après suppression
+    cache.clear();
+    
     return (result.rowCount || 0) > 0;
+  }
+
+  async getTrophyStats(userId: number): Promise<{ totalCards: number; autographs: number; specials: number }> {
+    const cacheKey = `trophy_stats_${userId}`;
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<{ totalCards: number; autographs: number; specials: number }>(cacheKey);
+    if (cached) {
+      console.log(`📦 Trophy stats for user ${userId} from cache - ${cached.totalCards} cards`);
+      return cached;
+    }
+    
+    const startTime = Date.now();
+    
+    // Compter les cartes personnelles avec des requêtes optimisées
+    const personalCardsData = await db
+      .select({
+        cardType: personalCards.cardType
+      })
+      .from(personalCards)
+      .where(eq(personalCards.userId, userId));
+    
+    const totalCards = personalCardsData.length;
+    const autographs = personalCardsData.filter(card => card.cardType?.includes('AUTO')).length;
+    const specials = personalCardsData.filter(card => 
+      card.cardType && 
+      !card.cardType.includes('AUTO') && 
+      card.cardType !== 'BASE'
+    ).length;
+    
+    const result = { totalCards, autographs, specials };
+    
+    const endTime = Date.now();
+    console.log(`✅ Trophy stats for user ${userId} calculated in ${endTime - startTime}ms - ${totalCards} total, ${autographs} autos, ${specials} specials`);
+    
+    // Mettre en cache pour 3 minutes (les trophées changent moins souvent)
+    cache.set(cacheKey, result, 180);
+    
+    return result;
   }
 
   async getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]> {
