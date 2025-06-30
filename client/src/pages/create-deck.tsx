@@ -618,8 +618,8 @@ export default function CreateDeck() {
 
       {/* Card Selector Modal */}
       {showCardSelector && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-[hsl(216,46%,13%)] rounded-lg max-w-lg w-full max-h-[80vh] overflow-hidden">
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2">
+          <div className="bg-[hsl(216,46%,13%)] rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
             <div className="p-4 border-b border-gray-700 flex items-center justify-between">
               <h3 className="text-white font-bold">Choisir des cartes ({selectedCardsToAdd.size} sélectionnées)</h3>
               <button
