@@ -9,6 +9,34 @@ interface CardVariantsCarouselProps {
   selectedCardId?: number;
 }
 
+const getFormattedCardType = (card: Card) => {
+  // Pour les cartes Base selon le sous-type
+  if (card.cardType === "Base") {
+    if (card.cardSubType === "Swirl") return "Base swirl";
+    if (card.cardSubType === "Laser") return "Base laser";
+    return "Base";
+  }
+  
+  // Pour les bases numérotées
+  if (card.cardType === "Parallel Numbered") {
+    return `Base /${card.numbering || "X"}`;
+  }
+  
+  // Pour les inserts
+  if (card.cardType?.includes("Insert")) {
+    const insertType = card.cardType.replace("Insert ", "").toLowerCase();
+    return `Insert ${insertType}`;
+  }
+  
+  // Pour les autographes
+  if (card.cardType?.includes("Autograph")) {
+    return `Autographe /${card.numbering || "X"}`;
+  }
+  
+  // Défaut
+  return card.cardType || "Type inconnu";
+};
+
 export default function CardVariantsCarousel({ 
   baseCard, 
   variants, 
@@ -130,8 +158,8 @@ export default function CardVariantsCarousel({
           
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <span className="text-gray-400 text-sm">Référence:</span>
-              <div className="text-white font-medium">{currentCard.reference}</div>
+              <span className="text-gray-400 text-sm">Type:</span>
+              <div className="text-white font-medium">{getFormattedCardType(currentCard)}</div>
             </div>
             <div>
               <span className="text-gray-400 text-sm">Numérotation:</span>

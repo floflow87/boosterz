@@ -604,6 +604,31 @@ export default function CollectionDetail() {
       return [swirlCard, laserCard];
     }
     
+    // Pour les bases numérotées : récupérer toutes les variantes /X
+    if (card.cardType === "Parallel Numbered") {
+      return cards.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName &&
+        c.collectionId === card.collectionId &&
+        c.cardType === "Parallel Numbered"
+      ).sort((a, b) => {
+        const getRarityOrder = (subType: string) => {
+          if (subType === "Blue") return 1;
+          if (subType === "Red") return 2;
+          if (subType === "Green") return 3;
+          if (subType === "Gold") return 4;
+          if (subType === "Silver") return 5;
+          if (subType === "Purple") return 6;
+          if (subType === "Orange") return 7;
+          if (subType === "Black") return 8;
+          if (subType === "Rainbow") return 9;
+          return 10;
+        };
+        
+        return getRarityOrder(a.cardSubType || "") - getRarityOrder(b.cardSubType || "");
+      });
+    }
+    
     // Pour les inserts : pas de variantes (1 seule version)
     if (card.cardType?.includes("Insert")) {
       return [card];
@@ -621,9 +646,14 @@ export default function CollectionDetail() {
   const getCardBorderColor = (card: Card) => {
     if (!card.isOwned) return "border-gray-600";
     
-    // Vert pour les bases (maintenant juste "Base")
+    // Vert pour les bases
     if (card.cardType === "Base") {
       return "border-green-500";
+    }
+    
+    // Bleu pour les bases numérotées
+    if (card.cardType === "Parallel Numbered") {
+      return "border-blue-500";
     }
     
     // Violet brillant pour les hits (Insert)
@@ -678,6 +708,34 @@ export default function CollectionDetail() {
     }
     
     return "pulse-shadow-green"; // Default green
+  };
+
+  const getFormattedCardType = (card: Card) => {
+    // Pour les cartes Base selon le sous-type
+    if (card.cardType === "Base") {
+      if (card.cardSubType === "Swirl") return "Base swirl";
+      if (card.cardSubType === "Laser") return "Base laser";
+      return "Base";
+    }
+    
+    // Pour les bases numérotées
+    if (card.cardType === "Parallel Numbered") {
+      return `Base /${card.numbering || "X"}`;
+    }
+    
+    // Pour les inserts
+    if (card.cardType?.includes("Insert")) {
+      const insertType = card.cardType.replace("Insert ", "").toLowerCase();
+      return `Insert ${insertType}`;
+    }
+    
+    // Pour les autographes
+    if (card.cardType?.includes("Autograph")) {
+      return `Autographe /${card.numbering || "X"}`;
+    }
+    
+    // Défaut
+    return card.cardType || "Type inconnu";
   };
 
   const getCurrentCard = () => {
@@ -1154,7 +1212,7 @@ export default function CollectionDetail() {
                       {currentVariant.teamName}
                     </div>
                     <div className="text-gray-400 text-xs">
-                      Référence: {currentVariant.reference}
+                      {getFormattedCardType(currentVariant)}
                     </div>
                   </div>
                 </div>
