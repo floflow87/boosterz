@@ -179,8 +179,13 @@ export default function CollectionDetail() {
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          // Cartes spéciales 1/1 (Autographe Gold)
-          includeCard = card.cardType === "Autographe Gold";
+          // Cartes spéciales 1/1 : bases + inserts (sauf Intergalactic, Pennants, Next Up) + tous autographes
+          includeCard = card.cardType === "Base" || 
+                       card.cardType.includes("Autograph") ||
+                       (card.cardType.includes("Insert") && 
+                        !card.cardType.includes("Intergalactic") && 
+                        !card.cardType.includes("Pennants") && 
+                        !card.cardType.includes("Next Up"));
           break;
 
         default: 
@@ -686,8 +691,13 @@ export default function CollectionDetail() {
       return "border-yellow-500 shadow-lg shadow-yellow-500/50";
     }
     
-    // Noir pour les spéciales
-    if (card.cardType === "Autographe Gold") {
+    // Noir pour les spéciales 1/1
+    if (card.cardType === "Base" || 
+        card.cardType.includes("Autograph") ||
+        (card.cardType.includes("Insert") && 
+         !card.cardType.includes("Intergalactic") && 
+         !card.cardType.includes("Pennants") && 
+         !card.cardType.includes("Next Up"))) {
       return "border-black";
     }
     
@@ -717,8 +727,13 @@ export default function CollectionDetail() {
       return "pulse-shadow-yellow";
     }
     
-    // Noir pour les spéciales
-    if (card.cardType === "Autographe Gold") {
+    // Noir pour les spéciales 1/1
+    if (card.cardType === "Base" || 
+        card.cardType.includes("Autograph") ||
+        (card.cardType.includes("Insert") && 
+         !card.cardType.includes("Intergalactic") && 
+         !card.cardType.includes("Pennants") && 
+         !card.cardType.includes("Next Up"))) {
       return "pulse-shadow-black";
     }
     
