@@ -94,6 +94,11 @@ export function determineRarity(cardType: string, numbering?: string | null): Ra
     return 'epique'; // Par défaut pour les autographes
   }
 
+  // Cas spéciaux : Intergalactic, Next Up, Pennants = rareté "Rare"
+  if (cardType.includes('Intergalactic') || cardType.includes('Next Up') || cardType.includes('Pennant')) {
+    return 'rare';
+  }
+
   // Cas des inserts non numérotés
   if (cardType.includes('insert') || cardType.includes('Insert')) {
     if (!numbering || numbering === '/50') {

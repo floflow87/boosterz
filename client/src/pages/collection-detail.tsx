@@ -596,13 +596,9 @@ export default function CollectionDetail() {
   const getCardVariants = (card: Card) => {
     if (!cards) return [card];
     
-    // Pour les cartes Base 1/1 : 2 variantes seulement (Swirl et Laser)
+    // Pour les cartes Base : pas de variantes
     if (card.cardType === "Base") {
-      // Créer virtuellement les 2 variantes pour chaque carte Base
-      const swirlCard = { ...card, id: card.id + 10000, cardSubType: "Swirl" };
-      const laserCard = { ...card, id: card.id + 20000, cardSubType: "Laser" };
-      
-      return [swirlCard, laserCard];
+      return [card];
     }
     
     // Pour les bases numérotées : créer les 9 variantes spécifiques
@@ -622,32 +618,23 @@ export default function CollectionDetail() {
       return numberedVariants;
     }
     
-    // Pour les inserts : créer les variantes selon le type
+    // Pour les inserts : gérer les cas spéciaux et variantes
     if (card.cardType?.includes("Insert")) {
-      // Les hits ont différentes variantes selon leur type
+      // Cas spéciaux : Intergalactic, Next Up, Pennants = 1 seule carte
+      if (card.cardType.includes("Intergalactic") || 
+          card.cardType.includes("Next Up") || 
+          card.cardType.includes("Pennant")) {
+        return [card];
+      }
+      
+      // Pour les autres hits : 2 variantes seulement (/15 et /10)
       const hitVariants = [];
       
-      // Variante de base
-      hitVariants.push({ ...card, id: card.id });
+      // Variante de base avec /15
+      hitVariants.push({ ...card, id: card.id, numbering: "/15" });
       
-      // Ajouter des variantes avec différentes numérotations selon le type d'insert
-      if (card.cardType.includes("Goal")) {
-        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/25" });
-        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/10" });
-      } else if (card.cardType.includes("Future")) {
-        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/35" });
-        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/15" });
-      } else if (card.cardType.includes("National")) {
-        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/30" });
-        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/10" });
-      } else if (card.cardType.includes("Rising")) {
-        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/25" });
-        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/5" });
-      } else {
-        // Pour les autres types d'inserts
-        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/25" });
-        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/10" });
-      }
+      // Variante numérotée avec /10
+      hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10" });
       
       return hitVariants;
     }

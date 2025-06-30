@@ -134,14 +134,14 @@ The application follows a modern full-stack architecture with clear separation b
   - **Scroll isolation**: Separated touch navigation from scroll events to maintain carousel position during page scroll
   - **Consistent numbering**: Carousel counter now accurately reflects current variant position (1-based indexing)
   - Modal carousel navigation now works smoothly with proper French rarity labels that change with each variant
-- June 30, 2025. Enhanced special cards rarity and restored variants system for hits
-  - **Special cards rarity**: Modified determineRarity function to force "Unique" rarity for all special cards regardless of numbering
-  - **Hit card variants restoration**: Added comprehensive variant system for Insert cards with type-specific numbering patterns
-  - **Laser/Swirl specification**: Enhanced numbering display in card preview to specify laser or swirl type for numbered base cards
-  - **Variant patterns by hit type**: Goal (/25, /10), Future (/35, /15), National (/30, /10), Rising (/25, /5)
-  - **Default hit variants**: Generic inserts receive /25 and /10 numbering variants
-  - **Modal detail enhancement**: Numbering field now shows format like "/50 laser" or "/25 swirl" for numbered cards
-  - All special cards now display as "Unique" rarity and hits have proper variant navigation with type-specific numbering
+- June 30, 2025. Finalized variant system with corrected hit numbering and special case handling
+  - **Base cards simplified**: Removed variants for Base cards - now single card per player as requested
+  - **Hit variants corrected**: All hits now have exactly 2 variants with /15 and /10 numbering (corrected from /25)
+  - **Special case handling**: Intergalactic, Next Up, and Pennants display as single cards with "Rare" rarity
+  - **Special cards rarity**: All special cards maintain "Unique" rarity regardless of numbering
+  - **Laser/Swirl specification**: Enhanced numbering display shows "/50 laser" or "/25 swirl" for numbered base cards
+  - **Streamlined navigation**: Carousel works correctly with simplified variant structure
+  - System now properly reflects Score Ligue 1 23/24 structure with accurate hit numbering and special case handling
 - June 30, 2025. Fixed card display format and carousel functionality for numbered base cards
   - **Display format correction**: Modified "Base 1/50 laser" to show "Base /50 laser" format in collection views
   - **French localization**: Changed "Parallel Numbered" to "Parallèle numérotée" in card preview display
