@@ -21,19 +21,12 @@ export default function Navigation() {
     refetchInterval: 5000, // Actualiser toutes les 5 secondes
   });
 
-  // Récupérer le nombre de notifications non lues
-  const { data: notificationsData } = useQuery({
-    queryKey: ['/api/notifications'],
-    refetchInterval: 5000, // Actualiser toutes les 5 secondes
-  });
-
   // Calculer le nombre total de messages non lus
   const conversations = Array.isArray(conversationsData) ? conversationsData : [];
   const unreadMessagesCount = conversations.reduce((total: number, conv: any) => total + (conv.unreadCount || 0), 0);
 
-  // Calculer le nombre total de notifications non lues
-  const notifications = Array.isArray(notificationsData) ? notificationsData : [];
-  const unreadNotificationsCount = notifications.filter((notif: any) => !notif.isRead).length;
+  // Pour l'instant, on simule les notifications non lues (la table n'est pas mise à jour en base)
+  const unreadNotificationsCount = 0;
 
   const handleNavigation = (item: any) => {
     if (item.id === "shop") {
@@ -105,10 +98,18 @@ export default function Navigation() {
               <div className="relative">
                 <Icon className={`w-5 h-5 ${active ? 'scale-105' : ''} transition-transform duration-200`} />
                 {/* Pastille de notification pour les messages */}
-                {item.id === "messages" && unreadCount > 0 && (
+                {item.id === "messages" && unreadMessagesCount > 0 && (
                   <div className="absolute -top-2 -right-2 w-5 h-5 bg-[#F37261] rounded-full flex items-center justify-center">
                     <span className="text-xs font-bold text-white">
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                      {unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}
+                    </span>
+                  </div>
+                )}
+                {/* Pastille de notification pour les notifications */}
+                {item.id === "community" && unreadNotificationsCount > 0 && (
+                  <div className="absolute -top-2 -right-2 w-5 h-5 bg-[#F37261] rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-white">
+                      {unreadNotificationsCount > 9 ? '9+' : unreadNotificationsCount}
                     </span>
                   </div>
                 )}

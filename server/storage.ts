@@ -808,7 +808,6 @@ export class DatabaseStorage implements IStorage {
         isRead: notifications.isRead,
         createdAt: notifications.createdAt,
         fromUserId: notifications.fromUserId,
-        postId: notifications.postId,
         messageId: notifications.messageId,
         fromUserName: users.name,
         fromUserAvatar: users.avatar

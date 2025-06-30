@@ -118,6 +118,15 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 30, 2025. Enhanced messaging interface and added notification badges
+  - **Conversation improvements**: Added margin-top to first message in chat page for better spacing
+  - **Avatar display**: Fixed conversation list to show real user avatars instead of placeholder gradients
+  - **Timestamp alignment**: Properly aligned message timestamps with vertical menu dots in conversation list
+  - **Notification badges**: Added red notification badges on conversation lines for unread messages
+  - **Navigation badges**: Added notification badges on Messages tab in navigation bar showing unread count
+  - **Visual enhancements**: Added new message indicator dots on conversations with unread content
+  - **Schema corrections**: Fixed insertPersonalCardSchema to accept null values for optional fields
+  - **Error handling**: Temporarily disabled notifications API due to database schema mismatch
 - June 30, 2025. Enhanced card modification interface and fixed critical system issues
   - **Image upload improvement**: Replaced drag-and-drop area with camera icon overlay positioned on card preview for easier image replacement
   - **Schema validation fix**: Corrected incomplete insertPersonalCardSchema causing 500 errors during card addition - fixed syntax issue in shared/schema.ts
