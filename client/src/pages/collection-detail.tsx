@@ -12,6 +12,7 @@ import CardDisplay from "@/components/card-display";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { Collection, Card } from "@shared/schema";
+import { determineRarity, getRarityInfo, type RarityLevel } from "@shared/rarity";
 import logoImage from "@assets/image 29_1750317707391.png";
 import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
 
@@ -1510,7 +1511,18 @@ export default function CollectionDetail() {
                       <div className="space-y-2 text-sm">
                         <p className="text-gray-300">Collection: SCORE LIGUE 1</p>
                         <p className="text-gray-300">Saison: 2023-24</p>
-                        <p className="text-gray-300">Rareté: {selectedCard.cardType?.includes('Insert') ? 'Insert' : 'Base'}</p>
+                        <p className="text-gray-300">
+                          Rareté: 
+                          <span 
+                            className="ml-2 px-2 py-1 rounded text-xs font-medium"
+                            style={{
+                              color: getRarityInfo(determineRarity(selectedCard.cardType || '', selectedCard.numbering)).color,
+                              backgroundColor: getRarityInfo(determineRarity(selectedCard.cardType || '', selectedCard.numbering)).bgColor
+                            }}
+                          >
+                            {getRarityInfo(determineRarity(selectedCard.cardType || '', selectedCard.numbering)).labelFr}
+                          </span>
+                        </p>
                       </div>
                     </div>
 

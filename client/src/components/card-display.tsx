@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Star, Handshake, Eye, MoreVertical, Share2, Heart, DollarSign, RefreshCw, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Card } from "@shared/schema";
+import { determineRarity, getRarityInfo } from "@shared/rarity";
 import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
 
 interface CardDisplayProps {
@@ -96,29 +97,20 @@ export default function CardDisplay({
 
   const cardImage = imageError ? cardDefaultImage : (card.imageUrl || cardDefaultImage);
   
+  // Utilise le nouveau système de rareté
+  const rarity = determineRarity(card.cardType, card.numbering);
+  const rarityInfo = getRarityInfo(rarity);
+  
   const getCardTypeColor = (cardType: string) => {
-    switch (cardType.toLowerCase()) {
-      case 'base':
-        return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'parallel laser':
-      case 'parallel swirl':
-        return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-      case 'parallel numbered':
-        return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'autograph':
-        return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'insert':
-        return 'bg-orange-500/20 text-orange-300 border-orange-500/30';
-      default:
-        return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-    }
+    // Utilise les couleurs du système de rareté
+    return `text-white border border-white/20`;
   };
 
   const getRarityIndicator = () => {
-    if (card.cardType === 'Autographe') return '✍️';
-    if (card.cardType.includes('Insert')) return '💎';
-    if (card.cardType.includes('Numbered')) return '🔢';
-    if (card.cardType.includes('Parallel')) return '🌟';
+    if (card.cardType === 'Autographe' || card.cardType.toLowerCase().includes('autograph')) return '✍️';
+    if (card.cardType.includes('Insert') || card.cardType.includes('insert')) return '💎';
+    if (card.cardType.includes('Numbered') || card.cardType.includes('numbered')) return '🔢';
+    if (card.cardType.includes('Parallel') || card.cardType.includes('parallel')) return '🌟';
     return '';
   };
 
@@ -163,11 +155,14 @@ export default function CardDisplay({
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-1">
             <h3 className="font-semibold text-white truncate">{card.playerName}</h3>
-            <span className={cn(
-              "px-2 py-1 rounded-full text-xs border whitespace-nowrap flex-shrink-0",
-              getCardTypeColor(card.cardType)
-            )}>
-              {getRarityIndicator()} {card.cardType}
+            <span 
+              className="px-2 py-1 rounded-full text-xs whitespace-nowrap flex-shrink-0 font-medium"
+              style={{
+                color: rarityInfo.color,
+                backgroundColor: rarityInfo.bgColor
+              }}
+            >
+              {getRarityIndicator()} {rarityInfo.labelFr}
             </span>
           </div>
           
