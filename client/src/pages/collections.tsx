@@ -1878,9 +1878,9 @@ export default function Collections() {
                   <div className="flex items-center justify-between p-4 border-b border-gray-700">
                     <div className="w-8"></div> {/* Spacer pour centrer le titre */}
                     
-                    <div className="flex items-center space-x-4">
-                      <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
-                      
+                    <h1 className="text-xl font-bold text-white">Modifier la carte</h1>
+                    
+                    <div className="flex items-center space-x-2">
                       {/* Bouton de validation */}
                       <button
                         onClick={handleSaveEdit}
@@ -1889,20 +1889,20 @@ export default function Collections() {
                       >
                         <Check className="w-4 h-4 text-white" />
                       </button>
-                    </div>
                     
-                    {/* Bouton de fermeture à droite */}
-                    <button
-                      onClick={() => {
-                        setShowEditModal(false);
-                        setShowPlayerSuggestions(false);
-                        setShowTeamSuggestions(false);
-                      }}
-                      className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
-                      title="Fermer"
-                    >
-                      <X className="w-4 h-4 text-gray-400" />
-                    </button>
+                      {/* Bouton de fermeture à droite */}
+                      <button
+                        onClick={() => {
+                          setShowEditModal(false);
+                          setShowPlayerSuggestions(false);
+                          setShowTeamSuggestions(false);
+                        }}
+                        className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
+                        title="Fermer"
+                      >
+                        <X className="w-4 h-4 text-gray-400" />
+                      </button>
+                    </div>
                   </div>
 
                   {/* Content */}
@@ -1911,10 +1911,6 @@ export default function Collections() {
                     
                       {/* Image upload section */}
                       <div className="space-y-4">
-                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
-                          Image de la carte
-                        </h2>
-                        
                         {/* Current image preview */}
                         {editImagePreview && (
                           <div className="w-48 h-60 mx-auto mb-4 rounded-lg overflow-hidden relative">
@@ -1996,10 +1992,6 @@ export default function Collections() {
 
                       {/* Card details section */}
                       <div className="space-y-4">
-                        <h2 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
-                          Détails de la carte
-                        </h2>
-                        
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {/* Nom du joueur avec autocomplétion */}
                           <div className="relative">
@@ -2099,7 +2091,7 @@ export default function Collections() {
                           
                           <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">
-                              Condition
+                              Qualité
                             </label>
                             <select
                               value={editData.condition}
