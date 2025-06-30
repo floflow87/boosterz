@@ -44,6 +44,15 @@ router.post('/register', async (req, res) => {
       password: hashedPassword,
     });
 
+    // Add default collection (Score Ligue 1 23/24) for new users
+    try {
+      await storage.addUserToCollection(user.id, 1); // Collection ID 1 = Score Ligue 1 23/24
+      console.log(`Default collection Score Ligue 1 23/24 added for user ${user.id}`);
+    } catch (error) {
+      console.error('Error adding default collection to user:', error);
+      // Don't fail registration if collection assignment fails
+    }
+
     // Create session
     const token = await AuthService.createSession(user.id);
     

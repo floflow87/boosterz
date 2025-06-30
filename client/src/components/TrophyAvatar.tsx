@@ -139,35 +139,45 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
 
   return (
     <div className={`relative ${sizeClasses[size]} ${className}`}>
-      {/* Effet néon externe - halo de lumière */}
+      {/* Effet néon externe - halo de lumière parfaitement rond */}
       {avatarLevel && neonStyle && (
         <>
-          {/* Halo extérieur */}
-          <div className={`absolute -inset-2 rounded-full blur-lg opacity-75 ${neonStyle.animation}`}>
-            <div className={`w-full h-full rounded-full ${
-              avatarLevel === 'rainbow' 
-                ? 'bg-gradient-to-r from-red-400/60 via-yellow-400/60 via-green-400/60 via-blue-400/60 to-purple-400/60' 
-                : avatarLevel === 'gold'
-                ? 'bg-yellow-400/60'
-                : avatarLevel === 'purple'
-                ? 'bg-purple-400/60'
-                : avatarLevel === 'blue'
-                ? 'bg-blue-400/60'
-                : avatarLevel === 'green'
-                ? 'bg-green-400/60'
-                : 'bg-gray-400/40'
-            }`}></div>
+          {/* Halo extérieur parfaitement rond */}
+          <div className={`absolute -inset-3 rounded-full blur-xl opacity-70 ${neonStyle.animation}`}
+               style={{
+                 background: avatarLevel === 'rainbow' 
+                   ? 'radial-gradient(circle, rgba(248,113,113,0.6) 0%, rgba(250,204,21,0.6) 20%, rgba(34,197,94,0.6) 40%, rgba(59,130,246,0.6) 60%, rgba(168,85,247,0.6) 80%, rgba(248,113,113,0.6) 100%)'
+                   : avatarLevel === 'gold'
+                   ? 'radial-gradient(circle, rgba(250,204,21,0.7) 0%, rgba(250,204,21,0.4) 70%, transparent 100%)'
+                   : avatarLevel === 'purple'
+                   ? 'radial-gradient(circle, rgba(168,85,247,0.7) 0%, rgba(168,85,247,0.4) 70%, transparent 100%)'
+                   : avatarLevel === 'blue'
+                   ? 'radial-gradient(circle, rgba(59,130,246,0.7) 0%, rgba(59,130,246,0.4) 70%, transparent 100%)'
+                   : avatarLevel === 'green'
+                   ? 'radial-gradient(circle, rgba(34,197,94,0.7) 0%, rgba(34,197,94,0.4) 70%, transparent 100%)'
+                   : 'radial-gradient(circle, rgba(156,163,175,0.5) 0%, rgba(156,163,175,0.2) 70%, transparent 100%)'
+               }}>
           </div>
           
-          {/* Bordure néon principale */}
-          <div className={`absolute inset-0 rounded-full p-0.5 ${neonStyle.animation}`}>
-            <div className={`w-full h-full rounded-full ${
-              avatarLevel === 'rainbow' 
-                ? 'bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400' 
-                : ''
-            } ${neonStyle.border} ${neonStyle.shadow}`}>
-              <div className="w-full h-full bg-[hsl(216,46%,13%)] rounded-full"></div>
-            </div>
+          {/* Bordure néon principale parfaitement ronde */}
+          <div className={`absolute inset-0 rounded-full ${neonStyle.animation}`}
+               style={{
+                 padding: '2px',
+                 background: avatarLevel === 'rainbow' 
+                   ? 'conic-gradient(from 0deg, #f87171, #facc15, #22c55e, #3b82f6, #a855f7, #f87171)'
+                   : avatarLevel === 'gold'
+                   ? 'linear-gradient(45deg, #facc15, #fbbf24, #facc15)'
+                   : avatarLevel === 'purple'
+                   ? 'linear-gradient(45deg, #a855f7, #9333ea, #a855f7)'
+                   : avatarLevel === 'blue'
+                   ? 'linear-gradient(45deg, #3b82f6, #2563eb, #3b82f6)'
+                   : avatarLevel === 'green'
+                   ? 'linear-gradient(45deg, #22c55e, #16a34a, #22c55e)'
+                   : 'linear-gradient(45deg, #9ca3af, #6b7280, #9ca3af)',
+                 borderRadius: '50%',
+                 boxShadow: neonStyle.shadow
+               }}>
+            <div className="w-full h-full bg-[hsl(216,46%,13%)] rounded-full" style={{ borderRadius: '50%' }}></div>
           </div>
         </>
       )}
