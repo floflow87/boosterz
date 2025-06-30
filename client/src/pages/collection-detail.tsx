@@ -1431,6 +1431,7 @@ export default function CollectionDetail() {
                       {/* Navigation Arrows for Variants */}
                       {(() => {
                         const variants = getCardVariants(selectedCard);
+                        console.log(`Debugging variants for ${selectedCard.playerName} (${selectedCard.cardType}):`, variants.length, variants);
                         if (variants.length <= 1) return null;
                         
                         const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
