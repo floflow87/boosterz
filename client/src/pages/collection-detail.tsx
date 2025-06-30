@@ -717,7 +717,7 @@ export default function CollectionDetail() {
     
     // Pour les bases numérotées
     if (card.cardType === "Parallel Numbered") {
-      const numbering = card.numbering || "X";
+      const numbering = card.numbering ? card.numbering.replace("1", "") : "/X";
       const subType = card.cardSubType ? ` ${card.cardSubType.toLowerCase()}` : "";
       return `Base ${numbering}${subType}`;
     }
@@ -1373,7 +1373,7 @@ export default function CollectionDetail() {
                         }
 
                         // Carousel pour multiple variantes
-                        const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
+                        const currentIndex = currentVariantIndex;
                         
                         return (
                           <div 
@@ -1391,9 +1391,9 @@ export default function CollectionDetail() {
                               
                               if (Math.abs(diffX) > 50) {
                                 if (diffX > 0 && currentIndex < variants.length - 1) {
-                                  setSelectedCard(variants[currentIndex + 1]);
+                                  setCurrentVariantIndex(prev => prev + 1);
                                 } else if (diffX < 0 && currentIndex > 0) {
-                                  setSelectedCard(variants[currentIndex - 1]);
+                                  setCurrentVariantIndex(prev => prev - 1);
                                 }
                               }
                             }}
@@ -1431,7 +1431,7 @@ export default function CollectionDetail() {
                       {/* Navigation Arrows for Variants */}
                       {(() => {
                         const variants = getCardVariants(selectedCard);
-                        console.log(`Debugging variants for ${selectedCard.playerName} (${selectedCard.cardType}):`, variants.length, variants.map(v => v.cardSubType + " " + v.numbering));
+
                         if (variants.length <= 1) return null;
                         
                         const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
@@ -1443,9 +1443,7 @@ export default function CollectionDetail() {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                const prevIndex = currentIndex > 0 ? currentIndex - 1 : variants.length - 1;
-                                const prevCard = variants[prevIndex];
-                                setSelectedCard(prevCard);
+                                setCurrentVariantIndex(prev => prev > 0 ? prev - 1 : variants.length - 1);
                               }}
                               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
                             >
@@ -1457,9 +1455,7 @@ export default function CollectionDetail() {
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
-                                const nextIndex = currentIndex < variants.length - 1 ? currentIndex + 1 : 0;
-                                const nextCard = variants[nextIndex];
-                                setSelectedCard(nextCard);
+                                setCurrentVariantIndex(prev => prev < variants.length - 1 ? prev + 1 : 0);
                               }}
                               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all z-20"
                             >
