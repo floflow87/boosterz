@@ -569,7 +569,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.id);
       const collections = await storage.getCollectionsByUserId(userId);
-      res.json(collections);
+      
+      // Enrich collections with card counts
+      const enrichedCollections = await Promise.all(
+        collections.map(async (collection) => {
+          const cards = await storage.getCardsByCollectionId(collection.id);
+          const totalCards = cards.length;
+          const ownedCards = cards.filter(card => card.isOwned).length;
+          
+          return {
+            ...collection,
+            totalCards,
+            ownedCards
+          };
+        })
+      );
+      
+      res.json(enrichedCollections);
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }

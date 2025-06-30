@@ -273,6 +273,12 @@ export default function Collections() {
     setEditedImageResult(originalImageForEdit);
   };
 
+  // Get current user first
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/auth/me'],
+    retry: false,
+  });
+
   const { data: user, isLoading: userLoading } = useQuery<User>({
     queryKey: ["/api/users/1"],
   });
