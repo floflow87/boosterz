@@ -1907,7 +1907,7 @@ export default function Collections() {
 
                   {/* Content */}
                   <div className="flex-1 overflow-y-auto p-6 pb-24">
-                    <div className="max-w-2xl mx-auto space-y-6">
+                    <div className="max-w-2xl mx-auto space-y-4">
                     
                       {/* Image upload section */}
                       <div className="space-y-4">
