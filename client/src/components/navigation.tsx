@@ -21,9 +21,19 @@ export default function Navigation() {
     refetchInterval: 5000, // Actualiser toutes les 5 secondes
   });
 
+  // Récupérer le nombre de notifications non lues
+  const { data: notificationsData } = useQuery({
+    queryKey: ['/api/notifications'],
+    refetchInterval: 5000, // Actualiser toutes les 5 secondes
+  });
+
   // Calculer le nombre total de messages non lus
   const conversations = Array.isArray(conversationsData) ? conversationsData : [];
-  const unreadCount = conversations.reduce((total: number, conv: any) => total + (conv.unreadCount || 0), 0);
+  const unreadMessagesCount = conversations.reduce((total: number, conv: any) => total + (conv.unreadCount || 0), 0);
+
+  // Calculer le nombre total de notifications non lues
+  const notifications = Array.isArray(notificationsData) ? notificationsData : [];
+  const unreadNotificationsCount = notifications.filter((notif: any) => !notif.isRead).length;
 
   const handleNavigation = (item: any) => {
     if (item.id === "shop") {

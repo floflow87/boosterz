@@ -169,6 +169,10 @@ export default function Conversations() {
                         </span>
                       </div>
                     )}
+                    {/* Pastille de nouveau message */}
+                    {!conversation.lastMessage.isRead && (
+                      <div className="absolute -top-1 -left-1 w-3 h-3 bg-[hsl(9,85%,67%)] rounded-full border-2 border-[hsl(214,35%,22%)]"></div>
+                    )}
                   </div>
 
                   {/* Conversation Details */}
@@ -182,9 +186,11 @@ export default function Conversations() {
                           <Ban className="w-4 h-4 text-red-500 flex-shrink-0" />
                         )}
                       </div>
-                      <span className={`text-xs ${!conversation.lastMessage.isRead ? 'text-[hsl(9,85%,67%)]' : 'text-gray-400'}`}>
-                        {formatTime(conversation.lastMessage.timestamp)}
-                      </span>
+                      <div className="flex items-center space-x-2">
+                        <span className={`text-xs ${!conversation.lastMessage.isRead ? 'text-[hsl(9,85%,67%)]' : 'text-gray-400'}`}>
+                          {formatTime(conversation.lastMessage.timestamp)}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <p className={`text-sm truncate ${!conversation.lastMessage.isRead ? 'text-gray-300' : 'text-gray-400'}`}>

@@ -31,8 +31,8 @@ export default function Chat() {
     setIsBlocked(blockedUsers.includes(userId));
   }, [userId]);
 
-  // Get current user ID from authentication
-  const { data: authData } = useQuery({
+  // Get current user ID from authentication  
+  const { data: authData } = useQuery<{ user: User }>({
     queryKey: ['/api/auth/me'],
     retry: false,
   });
@@ -268,12 +268,12 @@ export default function Chat() {
       <div className="flex-1 overflow-y-auto pt-4 pb-24 px-4" style={{ paddingTop: '80px' }}>
         <div className="space-y-4 min-h-full">
           {messages && messages.length > 0 ? (
-            messages.map((message) => {
+            messages.map((message, index) => {
               const isOwn = message.senderId === currentUserId;
               return (
                 <div
                   key={message.id}
-                  className={`flex ${isOwn ? "justify-end" : "justify-start"}`}
+                  className={`flex ${isOwn ? "justify-end" : "justify-start"} ${index === 0 ? "mt-6" : ""}`}
                 >
                   <div className={`flex items-end space-x-2 max-w-xs lg:max-w-md ${isOwn ? "flex-row-reverse space-x-reverse" : ""}`}>
                     {!isOwn && (
