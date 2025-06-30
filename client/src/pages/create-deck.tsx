@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, X, Upload, Palette, Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, X, Upload, Palette, Check, ChevronDown, ChevronUp, Square, CheckSquare } from "lucide-react";
 import { Card, PersonalCard, Deck } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -94,6 +94,8 @@ export default function CreateDeck() {
   const [selectedCards, setSelectedCards] = useState<DeckCard[]>([]);
   const [showCardSelector, setShowCardSelector] = useState(false);
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [selectedCardsToAdd, setSelectedCardsToAdd] = useState<Set<string>>(new Set());
+  const [selectAllMode, setSelectAllMode] = useState(false);
 
   // Fetch user's cards (from collections and personal cards)
   const { data: collectionCards = [] } = useQuery<Card[]>({
@@ -167,6 +169,76 @@ export default function CreateDeck() {
       });
     },
   });
+
+  // Toggle card selection
+  const toggleCardSelection = (cardId: string) => {
+    setSelectedCardsToAdd(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId);
+      } else {
+        newSet.add(cardId);
+      }
+      return newSet;
+    });
+  };
+
+  // Select/Deselect all cards
+  const handleSelectAllToggle = () => {
+    if (selectAllMode) {
+      setSelectedCardsToAdd(new Set());
+      setSelectAllMode(false);
+    } else {
+      const allCardIds = availableCards.map(item => {
+        if (item.type === 'collection') {
+          return `collection-${item.card.id}`;
+        } else {
+          return `personal-${item.card.id}`;
+        }
+      });
+      setSelectedCardsToAdd(new Set(allCardIds));
+      setSelectAllMode(true);
+    }
+  };
+
+  // Add selected cards to deck
+  const handleAddSelectedCards = () => {
+    const cardsToAdd: DeckCard[] = [];
+    
+    selectedCardsToAdd.forEach(cardId => {
+      const [type, id] = cardId.split('-');
+      const item = availableCards.find(item => {
+        if (type === 'collection' && item.type === 'collection') {
+          return item.card.id.toString() === id;
+        } else if (type === 'personal' && item.type === 'personal') {
+          return item.card.id.toString() === id;
+        }
+        return false;
+      });
+
+      if (item && selectedCards.length + cardsToAdd.length < 12) {
+        const newCard: DeckCard = {
+          card: item.type === 'collection' ? item.card as Card : undefined,
+          personalCard: item.type === 'personal' ? item.card as PersonalCard : undefined,
+          position: selectedCards.length + cardsToAdd.length
+        };
+        cardsToAdd.push(newCard);
+      }
+    });
+
+    if (cardsToAdd.length > 0) {
+      setSelectedCards([...selectedCards, ...cardsToAdd]);
+      setSelectedCardsToAdd(new Set());
+      setSelectAllMode(false);
+      setShowCardSelector(false);
+      
+      toast({
+        title: "Cartes ajoutées",
+        description: `${cardsToAdd.length} carte(s) ajoutée(s) au deck.`,
+        className: "bg-green-900 border-green-700 text-green-100"
+      });
+    }
+  };
 
   const handleAddCard = (card?: Card, personalCard?: PersonalCard) => {
     if (selectedCards.length >= 12) {
@@ -547,56 +619,105 @@ export default function CreateDeck() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-[hsl(216,46%,13%)] rounded-lg max-w-lg w-full max-h-[80vh] overflow-hidden">
             <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-              <h3 className="text-white font-bold">Choisir une carte</h3>
+              <h3 className="text-white font-bold">Choisir des cartes ({selectedCardsToAdd.size} sélectionnées)</h3>
               <button
-                onClick={() => setShowCardSelector(false)}
+                onClick={() => {
+                  setShowCardSelector(false);
+                  setSelectedCardsToAdd(new Set());
+                  setSelectAllMode(false);
+                }}
                 className="text-gray-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="p-4 max-h-96 overflow-y-auto">
+
+            {/* Select All Toggle */}
+            {availableCards.length > 0 && (
+              <div className="p-4 border-b border-gray-700">
+                <button
+                  onClick={handleSelectAllToggle}
+                  className="flex items-center gap-2 text-white hover:text-primary transition-colors"
+                >
+                  {selectAllMode || selectedCardsToAdd.size === availableCards.length ? (
+                    <CheckSquare className="w-5 h-5" />
+                  ) : (
+                    <Square className="w-5 h-5" />
+                  )}
+                  <span>Sélectionner tout ({availableCards.length} cartes)</span>
+                </button>
+              </div>
+            )}
+
+            <div className="p-4 max-h-80 overflow-y-auto">
               <div className="grid grid-cols-2 gap-3">
-                {availableCards.map((item, index) => (
-                  <button
-                    key={index}
-                    onClick={() => 
-                      item.type === 'collection' 
-                        ? handleAddCard(item.card as Card)
-                        : handleAddCard(undefined, item.card as PersonalCard)
-                    }
-                    className="aspect-[2.5/3.5] bg-[hsl(214,35%,22%)] rounded-lg overflow-hidden hover:ring-2 hover:ring-primary transition-all"
-                  >
-                    {item.type === 'collection' ? (
-                      <CardDisplay
-                        card={item.card as Card}
-                        viewMode="grid"
-                        variant="compact"
-                      />
-                    ) : (
-                      <div className="w-full h-full relative overflow-hidden">
-                        {(item.card as PersonalCard).imageUrl ? (
-                          <img
-                            src={(item.card as PersonalCard).imageUrl}
-                            alt={(item.card as PersonalCard).playerName}
-                            className="w-full h-full object-cover"
+                {availableCards.map((item, index) => {
+                  const cardId = item.type === 'collection' 
+                    ? `collection-${item.card.id}` 
+                    : `personal-${item.card.id}`;
+                  const isSelected = selectedCardsToAdd.has(cardId);
+                  
+                  return (
+                    <div key={index} className="relative">
+                      <button
+                        onClick={() => toggleCardSelection(cardId)}
+                        className={cn(
+                          "aspect-[2.5/3.5] bg-[hsl(214,35%,22%)] rounded-lg overflow-hidden transition-all relative",
+                          isSelected 
+                            ? "ring-2 ring-primary scale-95" 
+                            : "hover:ring-2 hover:ring-gray-400"
+                        )}
+                      >
+                        {item.type === 'collection' ? (
+                          <CardDisplay
+                            card={item.card as Card}
+                            viewMode="grid"
+                            variant="compact"
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2">
-                            <div>
-                              <div className="font-bold">{(item.card as PersonalCard).playerName}</div>
-                              <div className="text-xs opacity-80">{(item.card as PersonalCard).teamName}</div>
+                          <div className="w-full h-full relative overflow-hidden">
+                            {(item.card as PersonalCard).imageUrl ? (
+                              <img
+                                src={(item.card as PersonalCard).imageUrl}
+                                alt={(item.card as PersonalCard).playerName}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center text-white text-xs text-center p-2">
+                                <div>
+                                  <div className="font-bold">{(item.card as PersonalCard).playerName}</div>
+                                  <div className="text-xs opacity-80">{(item.card as PersonalCard).teamName}</div>
+                                </div>
+                              </div>
+                            )}
+                            {/* Overlay avec nom du joueur */}
+                            <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white text-xs p-1 text-center">
+                              <div className="font-bold truncate">{(item.card as PersonalCard).playerName}</div>
                             </div>
                           </div>
                         )}
-                        {/* Overlay avec nom du joueur */}
-                        <div className="absolute bottom-0 left-0 right-0 bg-black/80 text-white text-xs p-1 text-center">
-                          <div className="font-bold truncate">{(item.card as PersonalCard).playerName}</div>
-                        </div>
+                        
+                        {/* Selection overlay */}
+                        {isSelected && (
+                          <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                            <div className="bg-primary rounded-full p-1">
+                              <Check className="w-4 h-4 text-white" />
+                            </div>
+                          </div>
+                        )}
+                      </button>
+                      
+                      {/* Checkbox indicator */}
+                      <div className="absolute -top-2 -right-2 z-10">
+                        {isSelected ? (
+                          <CheckSquare className="w-6 h-6 text-primary bg-white rounded" />
+                        ) : (
+                          <Square className="w-6 h-6 text-gray-400 bg-white rounded" />
+                        )}
                       </div>
-                    )}
-                  </button>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
               {availableCards.length === 0 && (
                 <div className="text-center text-gray-400 py-8">
@@ -604,6 +725,29 @@ export default function CreateDeck() {
                 </div>
               )}
             </div>
+
+            {/* Action buttons */}
+            {selectedCardsToAdd.size > 0 && (
+              <div className="p-4 border-t border-gray-700 flex gap-3">
+                <Button
+                  onClick={() => {
+                    setSelectedCardsToAdd(new Set());
+                    setSelectAllMode(false);
+                  }}
+                  variant="outline"
+                  className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-800"
+                >
+                  Annuler sélection
+                </Button>
+                <Button
+                  onClick={handleAddSelectedCards}
+                  className="flex-1 bg-primary hover:bg-primary/90 text-white"
+                  disabled={selectedCards.length + selectedCardsToAdd.size > 12}
+                >
+                  Ajouter {selectedCardsToAdd.size} carte{selectedCardsToAdd.size > 1 ? 's' : ''}
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       )}
