@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 29, 2025. Fixed card modification interface and schema validation for personal cards
+  - **Interface improvements**: Repositioned check button between title and close button in card modification modal
+  - **Button optimization**: Reduced button sizes (p-1.5, w-4 h-4 icons) for cleaner interface
+  - **Background removal**: Removed border background from card preview image in modification modal
+  - **Schema validation**: Enhanced insertPersonalCardSchema to include all trade-related fields (isForTrade, tradePrice, tradeDescription, tradeOnly)
+  - **Error handling**: Fixed server 500 errors during card addition process through proper schema validation
+  - **UI consistency**: Improved header layout with proper spacing between title, check button, and close button
 - June 29, 2025. Completed bottom-panel image editor with horizontal scrolling navigation
   - **Interface restructured**: Moved from side panel to bottom panel layout with horizontal tabs
   - **Navigation system**: Added scrollable horizontal menu with 4 options (Luminosité, Contraste, Rotation, Rogner)

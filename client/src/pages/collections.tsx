@@ -1917,7 +1917,7 @@ export default function Collections() {
                         
                         {/* Current image preview */}
                         {editImagePreview && (
-                          <div className="w-48 h-60 mx-auto mb-4 rounded-lg overflow-hidden border border-gray-600 relative">
+                          <div className="w-48 h-60 mx-auto mb-4 rounded-lg overflow-hidden relative">
                             <img 
                               src={editImagePreview} 
                               alt="Aperçu" 
