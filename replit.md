@@ -127,10 +127,11 @@ The application follows a modern full-stack architecture with clear separation b
   - **Dual-layer halo system**: Created outer and inner radial gradient halos with blur effects for depth
   - **Level-based halo colors**: Different halo colors for gray, green, blue, purple, gold, and rainbow trophy levels
   - **Clickable avatar**: Made TrophyAvatar clickable to redirect to trophy page (/settings/trophees) with hover scale effect
-  - **List view optimization**: Removed images from collection list view for cleaner display
+  - **Collection list view optimization**: Removed images from collection detail list view (collection-detail.tsx) for cleaner display
+  - **Personal cards view restored**: Maintained images in personal cards list view (collections.tsx) as originally intended
   - **Expanded autographs**: Added missing autographs including Enzo Francescoli, Lorik Cana, Dimitri Payet, Florian Thauvin, Steve Mandanda, Morgan Schneiderlin, and Kasper Dolberg
   - **Database refresh**: Updated collection with 2869 total cards including all new autograph variants
-  - Users can now click their avatar to view trophies and enjoy optimized list view without image clutter
+  - Users can now click their avatar to view trophies and enjoy optimized collection list view without image clutter while keeping personal cards images
 - June 30, 2025. Fixed card display and deck numbering system
   - **Card display restoration**: Fixed `/api/cards/all` endpoint to use authenticated user instead of hardcoded ID
   - **Authentication requirement**: Added proper authentication middleware to cards endpoint

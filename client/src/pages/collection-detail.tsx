@@ -1236,20 +1236,7 @@ export default function CollectionDetail() {
                     className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
                   />
 
-                  {/* Card Image */}
-                  <div className="w-12 h-16 bg-gray-600 rounded overflow-hidden flex-shrink-0">
-                    {currentVariant.imageUrl ? (
-                      <img 
-                        src={currentVariant.imageUrl} 
-                        alt={currentVariant.playerName || 'Card'} 
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <HelpCircle className="w-6 h-6 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
+
 
                   {/* Player Info */}
                   <div className="flex-1">
