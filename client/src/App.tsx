@@ -59,6 +59,7 @@ function Router() {
       <Route path="/community" component={Community} />
       <Route path="/shop" component={Shop} />
       <Route path="/settings" component={Settings} />
+      <Route path="/settings/trophees" component={Trophies} />
       <Route path="/trophies" component={Trophies} />
       <Route path="/profile" component={ProfileEdit} />
       <Route path="/profile/:userId" component={Profile} />
