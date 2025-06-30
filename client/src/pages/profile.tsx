@@ -692,7 +692,7 @@ export default function Profile() {
                       <h3 className="text-white font-medium mb-2">{deck.name}</h3>
                       <p className="text-gray-400 text-sm">{deck.description}</p>
                       <div className="flex items-center justify-between mt-3">
-                        <span className="text-xs text-gray-500">{deck.cardCount || 0} cartes</span>
+                        <span className="text-xs text-gray-500">{deck.cardCount || 0}/12</span>
                         <span className="text-xs text-gray-500">{deck.theme || 'Aucun thème'}</span>
                       </div>
                     </div>

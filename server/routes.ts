@@ -698,10 +698,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get all cards from all collections
-  app.get("/api/cards/all", async (req, res) => {
+  app.get("/api/cards/all", authenticateToken, async (req: AuthRequest, res) => {
     try {
+      const userId = req.user!.id;
+      
       // Get all collections first
-      const collections = await storage.getCollectionsByUserId(1); // Assuming user ID 1
+      const collections = await storage.getCollectionsByUserId(userId);
       let allCards: any[] = [];
       
       // Get cards from each collection
@@ -710,7 +712,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         allCards.push(...cards);
       }
       
-      res.json(allCards);
+      res.json({ cards: allCards });
     } catch (error) {
       console.error("Error fetching all cards:", error);
       res.status(500).json({ message: "Internal server error" });

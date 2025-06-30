@@ -288,6 +288,7 @@ export default function Collections() {
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
     refetchOnWindowFocus: false,
+    enabled: !!currentUser?.user?.id, // Only fetch when we have a user
   });
 
   // Query pour les cartes personnelles
@@ -1370,7 +1371,7 @@ export default function Collections() {
                       }}>{deck.name}</h4>
                       <span className="text-xs" style={{
                         color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.previewCards?.length || 0}/{deck.totalCards || 0}</span>
+                      }}>{deck.previewCards?.length || 0}/12</span>
                     </div>
                     
                     {/* Preview des cartes */}

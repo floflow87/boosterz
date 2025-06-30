@@ -118,6 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 30, 2025. Fixed card display and deck numbering system
+  - **Card display restoration**: Fixed `/api/cards/all` endpoint to use authenticated user instead of hardcoded ID
+  - **Authentication requirement**: Added proper authentication middleware to cards endpoint
+  - **API response structure**: Fixed endpoint to return `{ cards: [] }` format for consistent client-side parsing
+  - **Deck numbering correction**: Updated deck counter to display X/12 format where X is variable card count and 12 is fixed maximum
+  - **Consistent formatting**: Applied X/12 format across all pages (collections, profile, user-profile)
+  - **Real-time data**: Confirmed 2848 cards now loading correctly in collections interface
+  - Cards in collections page now display properly after authentication and endpoint fixes
 - June 30, 2025. Enhanced messaging interface and added notification badges
   - **Conversation improvements**: Added margin-top to first message in chat page for better spacing
   - **Avatar display**: Fixed conversation list to show real user avatars instead of placeholder gradients
