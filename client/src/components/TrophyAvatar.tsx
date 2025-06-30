@@ -63,9 +63,10 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
   });
 
   // Vérifier si c'est l'avatar de l'utilisateur connecté
-  const isOwnAvatar = !userId || (currentUser && (currentUser as any).id === userId);
+  const isOwnAvatar = currentUser && (!userId || (currentUser as any).id === userId);
 
   const handleAvatarClick = () => {
+    console.log('Avatar clicked:', { userId, currentUserId: (currentUser as any)?.id, isOwnAvatar });
     if (isOwnAvatar) {
       setLocation("/settings/trophees");
     }
