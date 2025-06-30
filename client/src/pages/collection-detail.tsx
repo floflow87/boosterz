@@ -595,90 +595,36 @@ export default function CollectionDetail() {
   const getCardVariants = (card: Card) => {
     if (!cards) return [card];
     
-    // Pour les bases, on ne garde que les variantes non-numérotées (Base, Laser, Swirl)
-    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
-      return cards.filter(c => 
-        c.playerName === card.playerName && 
-        c.teamName === card.teamName &&
-        c.collectionId === card.collectionId &&
-        (c.cardType === "Base" || c.cardType === "Parallel Laser" || c.cardType === "Parallel Swirl")
-      );
-    }
-    
-    // Pour les bases numérotées, on récupère toutes les 9 variantes
-    if (card.cardType === "Parallel Numbered") {
-      const numberedVariants = cards.filter(c => 
-        c.playerName === card.playerName && 
-        c.teamName === card.teamName &&
-        c.collectionId === card.collectionId &&
-        c.cardType === "Parallel Numbered"
-      );
+    // Pour les cartes Base 1/1 : 2 variantes seulement (Swirl et Laser)
+    if (card.cardType === "Base") {
+      // Créer virtuellement les 2 variantes pour chaque carte Base
+      const baseCard = { ...card, cardSubType: "Base" };
+      const swirlCard = { ...card, id: card.id + 10000, cardSubType: "Swirl" };
+      const laserCard = { ...card, id: card.id + 20000, cardSubType: "Laser" };
       
-      // Trier par ordre de rareté: toutes les variantes /9 par couleur
-      return numberedVariants.sort((a, b) => {
-        const getRarityOrder = (subType: string) => {
-          if (subType === "Blue") return 1;
-          if (subType === "Red") return 2;
-          if (subType === "Green") return 3;
-          if (subType === "Gold") return 4;
-          if (subType === "Silver") return 5;
-          if (subType === "Purple") return 6;
-          if (subType === "Orange") return 7;
-          if (subType === "Black") return 8;
-          if (subType === "Rainbow") return 9;
-          return 10;
-        };
-        
-        const aOrder = getRarityOrder(a.cardSubType || "");
-        const bOrder = getRarityOrder(b.cardSubType || "");
-        
-        return aOrder - bOrder;
-      });
+      return [baseCard, swirlCard, laserCard];
     }
     
-    // Pour les hits avec variantes (Base, /15, /10)
-    const hitTypes = ["Insert Keepers", "Insert Breakthrough", "Insert Score Team", "Insert Pure Class", "Insert Hot Rookies"];
-    if (hitTypes.some(type => card.cardType?.includes(type))) {
-      const hitVariants = cards.filter(c => 
-        c.playerName === card.playerName && 
-        c.teamName === card.teamName &&
-        c.collectionId === card.collectionId &&
-        c.cardType === card.cardType
-      );
-      
-      // Trier par ordre: Base, /15, /10
-      return hitVariants.sort((a, b) => {
-        const getVariantOrder = (numbering: string | null) => {
-          if (!numbering) return 1; // Base
-          if (numbering === "1/15") return 2;
-          if (numbering === "1/10") return 3;
-          return 4;
-        };
-        
-        return getVariantOrder(a.numbering) - getVariantOrder(b.numbering);
-      });
+    // Pour les inserts : pas de variantes (1 seule version)
+    if (card.cardType?.includes("Insert")) {
+      return [card];
     }
     
-    // Pour les autographes, récupérer toutes les variantes du joueur
-    if (card.cardType.includes("Autograph")) {
-      return getPlayerVariants(card.playerName || "", card.teamName || "");
+    // Pour les autographes : pas de variantes (1 seule version)
+    if (card.cardType?.includes("Autograph")) {
+      return [card];
     }
     
-    // Pour les autres cartes (inserts spéciaux), une seule version
+    // Pour les autres cartes, retourner la carte elle-même
     return [card];
   };
 
   const getCardBorderColor = (card: Card) => {
     if (!card.isOwned) return "border-gray-600";
     
-    // Vert pour les bases
-    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+    // Vert pour les bases (maintenant juste "Base")
+    if (card.cardType === "Base") {
       return "border-green-500";
-    }
-    
-    // Bleu pour les bases numérotées  
-    if (card.cardType === "Parallel Numbered") {
-      return "border-blue-500";
     }
     
     // Violet brillant pour les hits (Insert)
@@ -707,14 +653,9 @@ export default function CollectionDetail() {
   const getCardAnimationName = (card: Card) => {
     if (!card.isOwned) return null;
     
-    // Vert pour les bases
-    if (card.cardType === "Base" || card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl") {
+    // Vert pour les bases (maintenant juste "Base")
+    if (card.cardType === "Base") {
       return "pulse-shadow-green";
-    }
-    
-    // Bleu pour les bases numérotées  
-    if (card.cardType === "Parallel Numbered") {
-      return "pulse-shadow-blue";
     }
     
     // Violet pour les hits (Insert)
