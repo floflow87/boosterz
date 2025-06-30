@@ -179,8 +179,8 @@ export default function CollectionDetail() {
           includeCard = card.cardType.includes("Insert");
           break;
         case "special_1_1": 
-          // Cartes spéciales 1/1 (incluant autographes 1/1)
-          includeCard = card.numbering === "/1" || card.cardType === "Base 1/1";
+          // Cartes spéciales 1/1 (Autographe Gold)
+          includeCard = card.cardType === "Autographe Gold";
           break;
 
         default: 
@@ -687,7 +687,7 @@ export default function CollectionDetail() {
     }
     
     // Noir pour les spéciales
-    if (card.cardType === "special_1_1" || card.numbering === "1/1") {
+    if (card.cardType === "Autographe Gold") {
       return "border-black";
     }
     
@@ -718,7 +718,7 @@ export default function CollectionDetail() {
     }
     
     // Noir pour les spéciales
-    if (card.cardType === "special_1_1" || card.numbering === "1/1") {
+    if (card.cardType === "Autographe Gold") {
       return "pulse-shadow-black";
     }
     
