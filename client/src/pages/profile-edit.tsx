@@ -11,6 +11,7 @@ import Header from "@/components/header";
 import Navigation from "@/components/navigation";
 import HaloBlur from "@/components/halo-blur";
 import LoadingScreen from "@/components/LoadingScreen";
+import TrophyAvatar from "@/components/TrophyAvatar";
 
 interface UserProfile {
   id: number;
@@ -153,20 +154,15 @@ export default function ProfileEdit() {
         <div className="text-center space-y-6">
           <h2 className="text-2xl font-bold font-luckiest text-white">Photo de profil</h2>
           
-          {/* Grande zone d'upload d'avatar */}
+          {/* Grande zone d'upload d'avatar avec effets néon */}
           <div className="flex flex-col items-center space-y-4">
             <div className="relative">
-              <div className="w-32 h-32 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center text-white font-bold text-4xl overflow-hidden border-4 border-[hsl(214,35%,40%)]">
-                {avatar ? (
-                  <img 
-                    src={avatar} 
-                    alt="Avatar" 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  (firstName?.charAt(0) || currentUser.username?.charAt(0) || "U").toUpperCase()
-                )}
-              </div>
+              <TrophyAvatar 
+                userId={currentUser?.id}
+                avatar={avatar || currentUser?.avatar}
+                size="xl"
+                className="w-32 h-32"
+              />
               
               {/* Bouton d'upload plus grand */}
               <label 

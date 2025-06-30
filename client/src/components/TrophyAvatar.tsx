@@ -171,7 +171,7 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
       )}
       
       {/* Avatar principal avec effet de lueur */}
-      <div className={`relative w-full h-full rounded-full overflow-hidden ${avatarLevel ? neonStyle.glow : ''}`}>
+      <div className={`relative w-full h-full rounded-full overflow-hidden ${avatarLevel && neonStyle ? neonStyle.glow : ''}`}>
         {avatar ? (
           <img 
             src={avatar} 

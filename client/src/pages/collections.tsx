@@ -1372,7 +1372,7 @@ export default function Collections() {
                       }}>{deck.name}</h4>
                       <span className="text-xs" style={{
                         color: deck.themeColors ? `${getThemeTextColor(deck.themeColors)}80` : "#9ca3af"
-                      }}>{deck.cardCount || 0}/12</span>
+                      }}>{deck.totalCards || deck.cardCount || 0}/12</span>
                     </div>
                     
                     {/* Preview des cartes */}
