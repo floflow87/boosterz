@@ -374,10 +374,13 @@ export default function DeckDetail() {
         title: "Deck supprimé avec succès!",
         className: "bg-green-600 text-white border-green-700"
       });
-      // Invalider les requêtes pour forcer le rechargement
+      // Invalider TOUTES les requêtes liées aux decks
       queryClient.invalidateQueries({ queryKey: ['/api/decks'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/users'] }); 
       queryClient.removeQueries({ queryKey: [`/api/decks/${id}`] });
-      setLocation('/collections?tab=decks');
+      // Forcer un refetch immédiat
+      queryClient.refetchQueries({ queryKey: ['/api/decks'] });
+      setLocation('/collections?tab=deck');
     },
     onError: (error: any) => {
       console.error('Delete mutation error:', error);
