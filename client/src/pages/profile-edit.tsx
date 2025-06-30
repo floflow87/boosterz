@@ -180,25 +180,6 @@ export default function ProfileEdit() {
               </label>
             </div>
             
-            {/* Zone d'upload alternative */}
-            <label 
-              htmlFor="avatar-upload-alt"
-              className="w-full max-w-xs p-4 border-2 border-dashed border-[hsl(214,35%,40%)] rounded-lg cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors text-center"
-            >
-              <div className="flex flex-col items-center space-y-2">
-                <Camera className="w-8 h-8 text-gray-400" />
-                <p className="text-sm text-gray-400">Cliquez pour changer votre photo</p>
-                <p className="text-xs text-gray-500">ou glissez-déposez une image</p>
-              </div>
-              <input
-                id="avatar-upload-alt"
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="hidden"
-              />
-            </label>
-            
             <div className="text-center">
               <p className="text-white font-medium text-lg">{firstName} {lastName}</p>
               <p className="text-gray-400">@{username}</p>
