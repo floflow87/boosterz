@@ -50,9 +50,9 @@ export default function Conversations() {
     retry: false,
   });
 
-  const { data: followedUsers = [], isLoading: followedLoading } = useQuery<User[]>({
-    queryKey: [`/api/users/${(currentUser as any)?.user?.id}/following`],
-    enabled: !!(currentUser as any)?.user?.id && showNewMessagePanel,
+  const { data: socialUsers = [], isLoading: followedLoading } = useQuery<User[]>({
+    queryKey: ['/api/social/users'],
+    enabled: showNewMessagePanel,
   });
 
   // Block/Unblock user mutation
@@ -293,9 +293,9 @@ export default function Conversations() {
                 <div className="text-center py-8">
                   <div className="text-gray-400">Chargement...</div>
                 </div>
-              ) : followedUsers.length > 0 ? (
+              ) : socialUsers.length > 0 ? (
                 <div className="space-y-2 max-h-60 overflow-y-auto">
-                  {followedUsers.map((user) => (
+                  {socialUsers.map((user) => (
                     <div
                       key={user.id}
                       onClick={() => {
@@ -328,10 +328,10 @@ export default function Conversations() {
                 <div className="text-center py-8">
                   <MessageCircle className="w-12 h-12 mx-auto mb-3 text-gray-600" />
                   <p className="text-gray-400 text-sm">
-                    Vous ne suivez personne encore.
+                    Aucun utilisateur disponible.
                   </p>
                   <p className="text-gray-500 text-xs mt-1">
-                    Suivez des utilisateurs depuis la page sociale pour pouvoir leur envoyer des messages.
+                    Découvrez d'autres collectionneurs depuis la page sociale.
                   </p>
                 </div>
               )}

@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 30, 2025. Enhanced card modification interface and fixed critical system issues
+  - **Image upload improvement**: Replaced drag-and-drop area with camera icon overlay positioned on card preview for easier image replacement
+  - **Schema validation fix**: Corrected incomplete insertPersonalCardSchema causing 500 errors during card addition - fixed syntax issue in shared/schema.ts
+  - **Messaging system correction**: Fixed user list in "Envoyer un message" modal by switching from followed users to social users endpoint (/api/social/users)
+  - **UI polish**: Added proper error messages, improved user feedback for messaging system, and enhanced camera icon positioning
+  - **Authentication flow**: Resolved issues where users appeared as "nobody" in chat interfaces
+  - All three core issues (image upload UX, card addition errors, messaging authentication) resolved successfully
 - June 29, 2025. Fixed card modification interface and schema validation for personal cards
   - **Interface improvements**: Repositioned check button between title and close button in card modification modal
   - **Button optimization**: Reduced button sizes (p-1.5, w-4 h-4 icons) for cleaner interface
