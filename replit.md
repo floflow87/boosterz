@@ -126,10 +126,11 @@ The application follows a modern full-stack architecture with clear separation b
   - **Circular halo effects**: Modified TrophyAvatar to display circular neon halos AROUND avatar instead of borders
   - **Dual-layer halo system**: Created outer and inner radial gradient halos with blur effects for depth
   - **Level-based halo colors**: Different halo colors for gray, green, blue, purple, gold, and rainbow trophy levels
+  - **Clickable avatar**: Made TrophyAvatar clickable to redirect to trophy page (/settings/trophees) with hover scale effect
   - **List view optimization**: Removed images from collection list view for cleaner display
-  - **Autograph completion**: Added missing Enzo Francescoli autograph with all numbering variants to Score Ligue 1 23/24
-  - **Database refresh**: Updated collection with 2856 total cards including new autograph variants
-  - Users now see clean halo effects around avatars and optimized list view without image clutter
+  - **Expanded autographs**: Added missing autographs including Enzo Francescoli, Lorik Cana, Dimitri Payet, Florian Thauvin, Steve Mandanda, Morgan Schneiderlin, and Kasper Dolberg
+  - **Database refresh**: Updated collection with 2869 total cards including all new autograph variants
+  - Users can now click their avatar to view trophies and enjoy optimized list view without image clutter
 - June 30, 2025. Fixed card display and deck numbering system
   - **Card display restoration**: Fixed `/api/cards/all` endpoint to use authenticated user instead of hardcoded ID
   - **Authentication requirement**: Added proper authentication middleware to cards endpoint

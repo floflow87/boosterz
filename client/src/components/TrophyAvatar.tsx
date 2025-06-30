@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 
 interface TrophyAvatarProps {
   userId?: number;
@@ -41,11 +42,17 @@ const sizeClasses = {
 };
 
 export default function TrophyAvatar({ userId, avatar, size = "md", className = "" }: TrophyAvatarProps) {
+  const [, setLocation] = useLocation();
+  
   // Récupération des cartes personnelles pour calculer le niveau
   const { data: personalCards } = useQuery({
     queryKey: userId ? [`/api/users/${userId}/personal-cards`] : ['/api/personal-cards'],
     enabled: !!userId || true
   });
+
+  const handleAvatarClick = () => {
+    setLocation("/settings/trophees");
+  };
 
   // Calcul du niveau d'avatar
   const avatarLevel = useMemo(() => {
@@ -138,7 +145,10 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
   const neonStyle = avatarLevel ? getNeonStyles(avatarLevel) : null;
 
   return (
-    <div className={`relative ${sizeClasses[size]} ${className}`}>
+    <div 
+      className={`relative ${sizeClasses[size]} ${className} cursor-pointer transition-transform hover:scale-105`}
+      onClick={handleAvatarClick}
+    >
       {/* Halo circulaire néon AUTOUR de l'avatar */}
       {avatarLevel && neonStyle && (
         <>
