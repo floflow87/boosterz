@@ -44,14 +44,25 @@ const sizeClasses = {
 export default function TrophyAvatar({ userId, avatar, size = "md", className = "" }: TrophyAvatarProps) {
   const [, setLocation] = useLocation();
   
+  // Récupération de l'utilisateur connecté pour vérifier si c'est son propre avatar
+  const { data: currentUser } = useQuery({
+    queryKey: ['/api/auth/me'],
+    staleTime: 5 * 60 * 1000 // 5 minutes
+  });
+  
   // Récupération des cartes personnelles pour calculer le niveau
   const { data: personalCards } = useQuery({
     queryKey: userId ? [`/api/users/${userId}/personal-cards`] : ['/api/personal-cards'],
     enabled: !!userId || true
   });
 
+  // Vérifier si c'est l'avatar de l'utilisateur connecté
+  const isOwnAvatar = !userId || (currentUser && (currentUser as any).id === userId);
+
   const handleAvatarClick = () => {
-    setLocation("/settings/trophees");
+    if (isOwnAvatar) {
+      setLocation("/settings/trophees");
+    }
   };
 
   // Calcul du niveau d'avatar
@@ -146,8 +157,8 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
 
   return (
     <div 
-      className={`relative ${sizeClasses[size]} ${className} cursor-pointer transition-transform hover:scale-105`}
-      onClick={handleAvatarClick}
+      className={`relative ${sizeClasses[size]} ${className} ${isOwnAvatar ? 'cursor-pointer transition-transform hover:scale-105' : ''}`}
+      onClick={isOwnAvatar ? handleAvatarClick : undefined}
     >
       {/* Halo circulaire néon AUTOUR de l'avatar */}
       {avatarLevel && neonStyle && (
