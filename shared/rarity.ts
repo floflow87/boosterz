@@ -73,6 +73,11 @@ export const RARITY_CONFIG: Record<RarityLevel, RarityInfo> = {
  * Détermine la rareté d'une carte basée sur son type et sa numérotation
  */
 export function determineRarity(cardType: string, numbering?: string | null): RarityLevel {
+  // Spéciales sont forcément uniques
+  if (cardType.toLowerCase().includes('special') || cardType === 'special_1_1' || numbering === '1/1') {
+    return 'unique';
+  }
+
   // Cas spéciaux pour les cartes de base
   if (cardType === 'base' || cardType === 'Base') {
     return 'base';

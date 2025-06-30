@@ -622,9 +622,34 @@ export default function CollectionDetail() {
       return numberedVariants;
     }
     
-    // Pour les inserts : pas de variantes (1 seule version)
+    // Pour les inserts : créer les variantes selon le type
     if (card.cardType?.includes("Insert")) {
-      return [card];
+      // Les hits ont différentes variantes selon leur type
+      const hitVariants = [];
+      
+      // Variante de base
+      hitVariants.push({ ...card, id: card.id });
+      
+      // Ajouter des variantes avec différentes numérotations selon le type d'insert
+      if (card.cardType.includes("Goal")) {
+        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/25" });
+        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/10" });
+      } else if (card.cardType.includes("Future")) {
+        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/35" });
+        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/15" });
+      } else if (card.cardType.includes("National")) {
+        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/30" });
+        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/10" });
+      } else if (card.cardType.includes("Rising")) {
+        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/25" });
+        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/5" });
+      } else {
+        // Pour les autres types d'inserts
+        hitVariants.push({ ...card, id: card.id + 1000, numbering: "/25" });
+        hitVariants.push({ ...card, id: card.id + 2000, numbering: "/10" });
+      }
+      
+      return hitVariants;
     }
     
     // Pour les autographes : pas de variantes (1 seule version)
@@ -1485,7 +1510,23 @@ export default function CollectionDetail() {
                       <div className="flex justify-between">
                         <span className="text-gray-400">Numérotation:</span>
                         <span className="text-white">
-                          {currentCard?.numbering ? currentCard.numbering.replace(/^\d+/, '') : 'N/A'}
+                          {(() => {
+                            if (!currentCard?.numbering) return 'N/A';
+                            
+                            let numbering = currentCard.numbering.replace(/^\d+/, '');
+                            
+                            // Pour les bases numérotées, ajouter laser/swirl selon le cardSubType
+                            if (currentCard.cardType === "Parallel Numbered" && currentCard.cardSubType) {
+                              const subType = currentCard.cardSubType.toLowerCase();
+                              if (subType === 'laser') {
+                                numbering += ' laser';
+                              } else if (subType === 'swirl') {
+                                numbering += ' swirl';
+                              }
+                            }
+                            
+                            return numbering;
+                          })()}
                         </span>
                       </div>
                       <div className="flex justify-between">
