@@ -166,8 +166,8 @@ export default function CollectionDetail() {
       let includeCard = false;
       switch (filter) {
         case "bases": 
-          // "Bases num." = Parallel Laser et Swirl (vos 9 variantes par joueur)
-          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
+          // "Bases num." = Parallel Numbered (les 9 variantes par joueur)
+          includeCard = card.cardType === "Parallel Numbered";
           break;
 
         case "autographs": 
@@ -1431,7 +1431,7 @@ export default function CollectionDetail() {
                       {/* Navigation Arrows for Variants */}
                       {(() => {
                         const variants = getCardVariants(selectedCard);
-                        console.log(`Debugging variants for ${selectedCard.playerName} (${selectedCard.cardType}):`, variants.length, variants);
+                        console.log(`Debugging variants for ${selectedCard.playerName} (${selectedCard.cardType}):`, variants.length, variants.map(v => v.cardSubType + " " + v.numbering));
                         if (variants.length <= 1) return null;
                         
                         const currentIndex = variants.findIndex(v => v.id === currentCard?.id);
