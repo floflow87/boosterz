@@ -118,6 +118,15 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 30, 2025. Fixed card display format and carousel functionality for numbered base cards
+  - **Display format correction**: Modified "Base 1/50 laser" to show "Base /50 laser" format in collection views
+  - **French localization**: Changed "Parallel Numbered" to "Parallèle numérotée" in card preview display
+  - **Carousel navigation fix**: Corrected carousel functionality in card preview modal with proper index-based navigation
+  - **Numbering display**: Applied regex replacement to remove leading "1" from numbering (1/50 → /50) in preview details
+  - **Reference field removal**: Hidden reference field from card preview interface as requested
+  - **Arrow navigation**: Fixed previous/next arrows to properly cycle through 9 variants using currentVariantIndex state
+  - **Touch navigation**: Maintained swipe gesture support for mobile carousel navigation
+  - Both numbered base card display and carousel navigation now work correctly with proper French formatting
 - June 30, 2025. Optimized card loading and trophy halo performance with comprehensive backend caching
   - **Database caching**: Implemented in-memory cache system reducing card loading time by 85% (2.7s → 0.4s)
   - **Trophy halo optimization**: Created dedicated /api/users/:id/trophy-stats endpoint reducing halo loading by 70% (283ms → 87ms)

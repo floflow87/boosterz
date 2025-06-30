@@ -1475,15 +1475,15 @@ export default function CollectionDetail() {
                     <div className="space-y-4 bg-[hsl(214,35%,22%)] p-4 rounded-lg">
                       <div className="flex justify-between">
                         <span className="text-gray-400">Type:</span>
-                        <span className="text-white">{currentCard?.cardType || 'N/A'}</span>
+                        <span className="text-white">
+                          {currentCard?.cardType === "Parallel Numbered" ? "Parallèle numérotée" : currentCard?.cardType || 'N/A'}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Numérotation:</span>
-                        <span className="text-white">{currentCard?.numbering || 'N/A'}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Référence:</span>
-                        <span className="text-white">{currentCard?.reference || 'N/A'}</span>
+                        <span className="text-white">
+                          {currentCard?.numbering ? currentCard.numbering.replace(/^\d+/, '') : 'N/A'}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Statut:</span>
