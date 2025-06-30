@@ -508,20 +508,20 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   condition: true,
 }).extend({
   // Rendre la plupart des champs optionnels sauf userId et cardType
-  playerName: z.string().optional(),
-  teamName: z.string().optional(),
-  reference: z.string().optional(),
-  numbering: z.string().optional(),
-  season: z.string().optional(),
-  imageUrl: z.string().optional(),
-  salePrice: z.string().optional(),
-  saleDescription: z.string().optional(),
+  playerName: z.string().nullable().optional(),
+  teamName: z.string().nullable().optional(),
+  reference: z.string().nullable().optional(),
+  numbering: z.string().nullable().optional(),
+  season: z.string().nullable().optional(),
+  imageUrl: z.string().nullable().optional(),
+  salePrice: z.string().nullable().optional(),
+  saleDescription: z.string().nullable().optional(),
   isForSale: z.boolean().optional(),
   isForTrade: z.boolean().optional(),
-  tradePrice: z.string().optional(),
-  tradeDescription: z.string().optional(),
+  tradePrice: z.string().nullable().optional(),
+  tradeDescription: z.string().nullable().optional(),
   tradeOnly: z.boolean().optional(),
-  condition: z.string().optional(),
+  condition: z.string().nullable().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

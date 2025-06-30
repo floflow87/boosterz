@@ -205,7 +205,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!conversation) {
         // Créer une nouvelle conversation si elle n'existe pas
-        conversation = await storage.createConversation(currentUserId, otherUserId);
+        conversation = await storage.createConversation({
+          user1Id: Math.min(currentUserId, otherUserId),
+          user2Id: Math.max(currentUserId, otherUserId)
+        });
       }
       
       res.json(conversation);
@@ -1182,7 +1185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const followingId = parseInt(req.params.followingId);
       const followerId = req.user!.id;
       
-      await storage.deleteSubscription(followerId, followingId);
+      await storage.deleteSubscription(followingId);
       res.json({ success: true, message: "Abonnement supprimé" });
     } catch (error) {
       console.error("Error deleting subscription:", error);
