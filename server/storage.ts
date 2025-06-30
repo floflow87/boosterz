@@ -9,6 +9,44 @@ import {
 import { db } from "./db";
 import { eq, and, or, sql, desc, asc, inArray } from "drizzle-orm";
 
+// Cache simple en mémoire pour les cartes
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+  ttl: number;
+}
+
+class SimpleCache {
+  private cache = new Map<string, CacheEntry<any>>();
+
+  set<T>(key: string, data: T, ttlSeconds: number = 300): void {
+    this.cache.set(key, {
+      data,
+      timestamp: Date.now(),
+      ttl: ttlSeconds * 1000
+    });
+  }
+
+  get<T>(key: string): T | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+    
+    const now = Date.now();
+    if (now - entry.timestamp > entry.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return entry.data;
+  }
+
+  clear(): void {
+    this.cache.clear();
+  }
+}
+
+const cache = new SimpleCache();
+
 export interface IStorage {
   // Users
   getUser(id: number): Promise<User | undefined>;
@@ -234,7 +272,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCardsByCollectionId(collectionId: number): Promise<Card[]> {
-    return await db.select().from(cards).where(eq(cards.collectionId, collectionId));
+    const cacheKey = `cards_collection_${collectionId}`;
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<Card[]>(cacheKey);
+    if (cached) {
+      console.log(`📦 Cards for collection ${collectionId} from cache - ${cached.length} cards`);
+      return cached;
+    }
+    
+    const startTime = Date.now();
+    const result = await db
+      .select()
+      .from(cards)
+      .where(eq(cards.collectionId, collectionId))
+      .orderBy(cards.reference);
+    
+    const endTime = Date.now();
+    console.log(`✅ Cards for collection ${collectionId} loaded from DB in ${endTime - startTime}ms - ${result.length} cards`);
+    
+    // Mettre en cache pour 10 minutes
+    cache.set(cacheKey, result, 600);
+    
+    return result;
   }
 
   async getCard(id: number): Promise<Card | undefined> {
@@ -243,7 +303,31 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllCards(): Promise<Card[]> {
-    return await db.select().from(cards);
+    const cacheKey = 'all_cards';
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<Card[]>(cacheKey);
+    if (cached) {
+      console.log(`📦 getAllCards from cache - ${cached.length} cards`);
+      return cached;
+    }
+    
+    // Si pas en cache, charger depuis la base
+    const startTime = Date.now();
+    console.log("🔍 Starting getAllCards database query...");
+    
+    const result = await db
+      .select()
+      .from(cards)
+      .orderBy(cards.playerName, cards.teamName);
+    
+    const endTime = Date.now();
+    console.log(`✅ getAllCards loaded from DB in ${endTime - startTime}ms - ${result.length} cards, caching for 5 minutes`);
+    
+    // Mettre en cache pour 5 minutes
+    cache.set(cacheKey, result, 300);
+    
+    return result;
   }
 
   async createCard(insertCard: InsertCard): Promise<Card> {
@@ -251,6 +335,10 @@ export class DatabaseStorage implements IStorage {
       .insert(cards)
       .values(insertCard)
       .returning();
+    
+    // Invalider le cache des cartes après création
+    cache.clear();
+    
     return card;
   }
 
