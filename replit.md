@@ -143,15 +143,14 @@ The application follows a modern full-stack architecture with clear separation b
   - **Laser/Swirl specification**: Enhanced numbering display shows "/50 laser" or "/25 swirl" for numbered base cards
   - **Complete variant structure**: Bases (1), Parallels (9), Hits (2), Specials (9), Autographs (1), Special cases (1)
   - System now properly reflects Score Ligue 1 23/24 structure with complete variant coverage
-- June 30, 2025. Fixed card display format and carousel functionality for numbered base cards
-  - **Display format correction**: Modified "Base 1/50 laser" to show "Base /50 laser" format in collection views
-  - **French localization**: Changed "Parallel Numbered" to "Parallèle numérotée" in card preview display
-  - **Carousel navigation fix**: Corrected carousel functionality in card preview modal with proper index-based navigation
-  - **Numbering display**: Applied regex replacement to remove leading "1" from numbering (1/50 → /50) in preview details
-  - **Reference field removal**: Hidden reference field from card preview interface as requested
-  - **Arrow navigation**: Fixed previous/next arrows to properly cycle through 9 variants using currentVariantIndex state
-  - **Touch navigation**: Maintained swipe gesture support for mobile carousel navigation
-  - Both numbered base card display and carousel navigation now work correctly with proper French formatting
+- June 30, 2025. Enhanced trophy system with legendary badges and persistent achievements
+  - **Legendary badges added**: All unnamed social trophies now display "légendaire" rarity for premium feel
+  - **Special cards redefinition**: Trophy system now counts 1/1 cards (numbering contains "1/1") as special cards instead of cardType
+  - **Persistent trophies**: Trophies remain unlocked even if cards are sold/deleted - first achievement matters most
+  - **Visual trophy indicators**: Added golden trophy icons next to completed achievement titles for instant recognition
+  - **Comprehensive calculation**: Both trophy page and avatar system use consistent 1/1 numbering logic for special cards
+  - **Real-time updates**: Trophy stats update immediately when cards are added/removed while preserving unlocked status
+  - Trophy system now accurately reflects Score Ligue 1 23/24 special card structure with permanent achievement tracking
 - June 30, 2025. Optimized card loading and trophy halo performance with comprehensive backend caching
   - **Database caching**: Implemented in-memory cache system reducing card loading time by 85% (2.7s → 0.4s)
   - **Trophy halo optimization**: Created dedicated /api/users/:id/trophy-stats endpoint reducing halo loading by 70% (283ms → 87ms)

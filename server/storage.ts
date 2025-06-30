@@ -453,10 +453,9 @@ export class DatabaseStorage implements IStorage {
     
     const totalCards = personalCardsData.length;
     const autographs = personalCardsData.filter(card => card.cardType?.includes('AUTO')).length;
+    // Compter les cartes spéciales = toutes les cartes 1/1 (numbering contient "1/1")
     const specials = personalCardsData.filter(card => 
-      card.cardType && 
-      !card.cardType.includes('AUTO') && 
-      card.cardType !== 'BASE'
+      card.numbering?.includes('1/1')
     ).length;
     
     const result = { totalCards, autographs, specials };
