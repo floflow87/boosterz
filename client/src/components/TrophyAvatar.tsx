@@ -9,6 +9,12 @@ interface TrophyAvatarProps {
   className?: string;
 }
 
+interface TrophyStats {
+  totalCards: number;
+  autographs: number;
+  specials: number;
+}
+
 // Configuration des jalons pour calculer le niveau d'avatar
 const MILESTONE_CONFIG = {
   collection: [
@@ -51,7 +57,7 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
   });
   
   // Récupération des statistiques de trophées optimisées
-  const { data: trophyStats } = useQuery({
+  const { data: trophyStats } = useQuery<TrophyStats>({
     queryKey: userId ? [`/api/users/${userId}/trophy-stats`] : ['/api/users/me/trophy-stats'],
     enabled: !!userId || !!currentUser
   });
@@ -67,13 +73,11 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
 
   // Calcul du niveau d'avatar
   const avatarLevel = useMemo(() => {
-    if (!personalCards || !Array.isArray(personalCards)) {
+    if (!trophyStats) {
       return null;
     }
 
-    const totalCards = personalCards.length;
-    const autographsCount = personalCards.filter((card: any) => card.cardType?.includes('AUTO')).length;
-    const specialsCount = personalCards.filter((card: any) => card.cardType && !card.cardType.includes('AUTO') && card.cardType !== 'BASE').length;
+    const { totalCards, autographs, specials } = trophyStats as TrophyStats;
 
     const allMilestones = [
       ...MILESTONE_CONFIG.collection,
@@ -85,8 +89,8 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
     for (const milestone of allMilestones) {
       let currentCount = 0;
       if (milestone.id.includes('card')) currentCount = totalCards;
-      else if (milestone.id.includes('auto')) currentCount = autographsCount;
-      else if (milestone.id.includes('special')) currentCount = specialsCount;
+      else if (milestone.id.includes('auto')) currentCount = autographs;
+      else if (milestone.id.includes('special')) currentCount = specials;
 
       if (currentCount >= milestone.count && milestone.rarity) {
         highestColor = milestone.color;
@@ -94,7 +98,7 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
     }
 
     return highestColor;
-  }, [personalCards]);
+  }, [trophyStats]);
 
   // Générer un gradient d'avatar par défaut si pas d'avatar fourni
   const defaultGradient = `linear-gradient(135deg, #FF6B35, #F7931E)`;

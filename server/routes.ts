@@ -76,6 +76,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint optimisé pour les statistiques de trophées de l'utilisateur connecté
+  app.get("/api/users/me/trophy-stats", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const startTime = performance.now();
+      
+      const trophyStats = await storage.getTrophyStats(userId);
+      
+      const endTime = performance.now();
+      console.log(`✅ Trophy stats for user ${userId} calculated in ${Math.round(endTime - startTime)}ms - ${trophyStats.totalCards} total, ${trophyStats.autographs} autos, ${trophyStats.specials} specials`);
+      
+      res.json(trophyStats);
+    } catch (error) {
+      console.error('Error fetching trophy stats:', error);
+      res.status(500).json({ error: 'Failed to fetch trophy stats' });
+    }
+  });
+
   // Endpoint optimisé pour les statistiques de trophées (halos d'avatar)
   app.get("/api/users/:id/trophy-stats", optionalAuth, async (req: AuthRequest, res) => {
     try {
