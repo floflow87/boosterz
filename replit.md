@@ -118,6 +118,15 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- June 30, 2025. Implemented new rarity system for Score Ligue 1 23/24 based on numbering
+  - **Rarity levels**: Base, Commune (/50), Peu commune (/35,/30,/25), Rare (/20,/15), Épique (/10), Légendaire (/5), Unique (/1)
+  - **Autograph handling**: Autographs start from épique level and follow same numbering rules
+  - **Color-coded badges**: Each rarity level has distinct colors (gray→emerald→sky→violet→red→orange→amber)
+  - **Smart detection**: Automatic rarity determination based on card type and numbering patterns
+  - **French localization**: All rarity labels in French (Base, Commune, Peu commune, Rare, Épique, Légendaire, Unique)
+  - **CardDisplay integration**: Updated both grid and list views to show new rarity badges instead of card type
+  - **Preview integration**: Card preview modal shows proper rarity with color coding
+  - Rarity system now accurately reflects Score Ligue 1 23/24 distribution and value hierarchy
 - June 30, 2025. Fixed card display format and carousel functionality for numbered base cards
   - **Display format correction**: Modified "Base 1/50 laser" to show "Base /50 laser" format in collection views
   - **French localization**: Changed "Parallel Numbered" to "Parallèle numérotée" in card preview display
