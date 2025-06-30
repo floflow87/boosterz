@@ -1393,6 +1393,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
               id: otherUser.id,
               name: otherUser.name,
               username: otherUser.username,
+              avatar: otherUser.avatar,
             },
             lastMessage: lastMessage ? {
               content: lastMessage.content.startsWith('data:image/') ? '📷 Image' : lastMessage.content,

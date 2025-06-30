@@ -1862,12 +1862,10 @@ export default function Social() {
                           className="text-white hover:bg-gray-700 cursor-pointer px-3 py-2 flex items-center"
                           onClick={() => {
                             setShowDropdownMenu(false);
+                            if (selectedMarketplaceCard?.userId) {
+                              setLocation(`/chat/${selectedMarketplaceCard.userId}`);
+                            }
                             setSelectedMarketplaceCard(null);
-                            toast({
-                              title: "Fonctionnalité à venir",
-                              description: "La messagerie pour contacter les vendeurs sera bientôt disponible",
-                              className: "bg-blue-600 border-blue-600 text-white",
-                            });
                           }}
                         >
                           <MessageCircle className="w-4 h-4 mr-2" />
