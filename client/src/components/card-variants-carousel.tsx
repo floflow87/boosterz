@@ -19,7 +19,9 @@ const getFormattedCardType = (card: Card) => {
   
   // Pour les bases numérotées
   if (card.cardType === "Parallel Numbered") {
-    return `Base /${card.numbering || "X"}`;
+    const numbering = card.numbering || "X";
+    const subType = card.cardSubType ? ` ${card.cardSubType.toLowerCase()}` : "";
+    return `Base ${numbering}${subType}`;
   }
   
   // Pour les inserts
@@ -30,7 +32,7 @@ const getFormattedCardType = (card: Card) => {
   
   // Pour les autographes
   if (card.cardType?.includes("Autograph")) {
-    return `Autographe /${card.numbering || "X"}`;
+    return `Autographe ${card.numbering || "/X"}`;
   }
   
   // Défaut

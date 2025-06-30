@@ -604,29 +604,21 @@ export default function CollectionDetail() {
       return [swirlCard, laserCard];
     }
     
-    // Pour les bases numérotées : récupérer toutes les variantes /X
+    // Pour les bases numérotées : créer les 9 variantes spécifiques
     if (card.cardType === "Parallel Numbered") {
-      return cards.filter(c => 
-        c.playerName === card.playerName && 
-        c.teamName === card.teamName &&
-        c.collectionId === card.collectionId &&
-        c.cardType === "Parallel Numbered"
-      ).sort((a, b) => {
-        const getRarityOrder = (subType: string) => {
-          if (subType === "Blue") return 1;
-          if (subType === "Red") return 2;
-          if (subType === "Green") return 3;
-          if (subType === "Gold") return 4;
-          if (subType === "Silver") return 5;
-          if (subType === "Purple") return 6;
-          if (subType === "Orange") return 7;
-          if (subType === "Black") return 8;
-          if (subType === "Rainbow") return 9;
-          return 10;
-        };
-        
-        return getRarityOrder(a.cardSubType || "") - getRarityOrder(b.cardSubType || "");
-      });
+      const numberedVariants = [
+        { ...card, id: card.id + 1000, numbering: "1/50", cardSubType: "Laser" },
+        { ...card, id: card.id + 2000, numbering: "1/35", cardSubType: "Laser" },
+        { ...card, id: card.id + 3000, numbering: "1/30", cardSubType: "Swirl" },
+        { ...card, id: card.id + 4000, numbering: "1/25", cardSubType: "Swirl" },
+        { ...card, id: card.id + 5000, numbering: "1/20", cardSubType: "Swirl" },
+        { ...card, id: card.id + 6000, numbering: "1/15", cardSubType: "Swirl" },
+        { ...card, id: card.id + 7000, numbering: "1/15", cardSubType: "Laser" },
+        { ...card, id: card.id + 8000, numbering: "1/10", cardSubType: "Swirl" },
+        { ...card, id: card.id + 9000, numbering: "1/5", cardSubType: "Laser" }
+      ];
+      
+      return numberedVariants;
     }
     
     // Pour les inserts : pas de variantes (1 seule version)
@@ -725,7 +717,9 @@ export default function CollectionDetail() {
     
     // Pour les bases numérotées
     if (card.cardType === "Parallel Numbered") {
-      return `Base /${card.numbering || "X"}`;
+      const numbering = card.numbering || "X";
+      const subType = card.cardSubType ? ` ${card.cardSubType.toLowerCase()}` : "";
+      return `Base ${numbering}${subType}`;
     }
     
     // Pour les inserts
@@ -736,7 +730,7 @@ export default function CollectionDetail() {
     
     // Pour les autographes
     if (card.cardType?.includes("Autograph")) {
-      return `Autographe /${card.numbering || "X"}`;
+      return `Autographe ${card.numbering || "/X"}`;
     }
     
     // Défaut
