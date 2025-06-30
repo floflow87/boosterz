@@ -1911,7 +1911,7 @@ export default function Collections() {
                     
                       {/* Image upload section */}
                       <div className="space-y-4">
-                        {/* Current image preview */}
+                        {/* Current image preview with overlay icon */}
                         {editImagePreview && (
                           <div className="w-48 h-60 mx-auto mb-4 rounded-lg overflow-hidden relative">
                             <img 
@@ -1919,6 +1919,16 @@ export default function Collections() {
                               alt="Aperçu" 
                               className="w-full h-full object-cover"
                             />
+                            {/* Bouton de changement d'image */}
+                            <label className="absolute top-2 left-2 bg-[hsl(9,85%,67%)] hover:bg-[hsl(9,85%,60%)] text-white p-2 rounded-lg transition-colors shadow-lg cursor-pointer" title="Changer l'image">
+                              <Camera className="w-4 h-4" />
+                              <input 
+                                type="file" 
+                                className="hidden" 
+                                accept="image/*"
+                                onChange={handleEditImageUpload}
+                              />
+                            </label>
                             {/* Bouton de retouche */}
                             <button
                               onClick={() => openImageEditor(editImagePreview)}
@@ -1930,24 +1940,26 @@ export default function Collections() {
                           </div>
                         )}
                         
-                        {/* File upload */}
-                        <div className="flex items-center justify-center w-full">
-                          <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-[hsl(214,35%,25%)] hover:bg-[hsl(214,35%,30%)] transition-colors">
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                              <Camera className="w-10 h-10 mb-4 text-gray-400" />
-                              <p className="mb-2 text-base text-gray-400">
-                                <span className="font-semibold">Cliquer pour uploader</span> ou glisser-déposer
-                              </p>
-                              <p className="text-sm text-gray-500">PNG, JPG ou JPEG</p>
-                            </div>
-                            <input 
-                              type="file" 
-                              className="hidden" 
-                              accept="image/*"
-                              onChange={handleEditImageUpload}
-                            />
-                          </label>
-                        </div>
+                        {/* File upload initial (si pas d'image) */}
+                        {!editImagePreview && (
+                          <div className="flex items-center justify-center w-full">
+                            <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-gray-600 border-dashed rounded-lg cursor-pointer bg-[hsl(214,35%,25%)] hover:bg-[hsl(214,35%,30%)] transition-colors">
+                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <Camera className="w-10 h-10 mb-4 text-gray-400" />
+                                <p className="mb-2 text-base text-gray-400">
+                                  <span className="font-semibold">Cliquer pour uploader</span> ou glisser-déposer
+                                </p>
+                                <p className="text-sm text-gray-500">PNG, JPG ou JPEG</p>
+                              </div>
+                              <input 
+                                type="file" 
+                                className="hidden" 
+                                accept="image/*"
+                                onChange={handleEditImageUpload}
+                              />
+                            </label>
+                          </div>
+                        )}
                       </div>
 
                       {/* Collection selector */}
