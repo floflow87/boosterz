@@ -436,6 +436,7 @@ const autographeCards: AutoCard[] = [
   { id: 17, playerName: "David Trezeguet", teamName: "AS Monaco", numberings: ["/199"] },
   { id: 18, playerName: "Eric Cantona", teamName: "Olympique de Marseille", numberings: ["/199"] },
   { id: 19, playerName: "Alexis Sánchez", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
+  { id: 20, playerName: "Enzo Francescoli", teamName: "Olympique de Marseille", numberings: ["/199", "/99", "/49", "/25", "/10", "/5", "/3", "/2"] },
   { id: 29, playerName: "Rémy Cabella", teamName: "LOSC Lille", numberings: ["/199", "/25", "/10", "/3", "/2", "/1"] },
   { id: 30, playerName: "Alexandre Lacazette", teamName: "Olympique Lyonnais", numberings: ["/199", "/25", "/10", "/3", "/2", "/1"] },
   { id: 31, playerName: "Rayan Cherki", teamName: "Olympique Lyonnais", numberings: ["/199", "/25", "/10", "/3", "/2", "/1"] },

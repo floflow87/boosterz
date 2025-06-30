@@ -139,51 +139,53 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
 
   return (
     <div className={`relative ${sizeClasses[size]} ${className}`}>
-      {/* Effet néon externe - halo de lumière parfaitement rond */}
+      {/* Halo circulaire néon AUTOUR de l'avatar */}
       {avatarLevel && neonStyle && (
         <>
-          {/* Halo extérieur parfaitement rond */}
-          <div className={`absolute -inset-3 rounded-full blur-xl opacity-70 ${neonStyle.animation}`}
+          {/* Halo extérieur - anneau lumineux */}
+          <div className={`absolute -inset-4 rounded-full opacity-80 ${neonStyle.animation}`}
                style={{
-                 background: avatarLevel === 'rainbow' 
-                   ? 'radial-gradient(circle, rgba(248,113,113,0.6) 0%, rgba(250,204,21,0.6) 20%, rgba(34,197,94,0.6) 40%, rgba(59,130,246,0.6) 60%, rgba(168,85,247,0.6) 80%, rgba(248,113,113,0.6) 100%)'
-                   : avatarLevel === 'gold'
-                   ? 'radial-gradient(circle, rgba(250,204,21,0.7) 0%, rgba(250,204,21,0.4) 70%, transparent 100%)'
-                   : avatarLevel === 'purple'
-                   ? 'radial-gradient(circle, rgba(168,85,247,0.7) 0%, rgba(168,85,247,0.4) 70%, transparent 100%)'
-                   : avatarLevel === 'blue'
-                   ? 'radial-gradient(circle, rgba(59,130,246,0.7) 0%, rgba(59,130,246,0.4) 70%, transparent 100%)'
-                   : avatarLevel === 'green'
-                   ? 'radial-gradient(circle, rgba(34,197,94,0.7) 0%, rgba(34,197,94,0.4) 70%, transparent 100%)'
-                   : 'radial-gradient(circle, rgba(156,163,175,0.5) 0%, rgba(156,163,175,0.2) 70%, transparent 100%)'
+                 background: `radial-gradient(circle, transparent 40%, ${
+                   avatarLevel === 'rainbow' 
+                     ? 'rgba(248,113,113,0.4) 50%, rgba(250,204,21,0.4) 55%, rgba(34,197,94,0.4) 60%, rgba(59,130,246,0.4) 65%, rgba(168,85,247,0.4) 70%, transparent 85%'
+                     : avatarLevel === 'gold'
+                     ? 'rgba(250,204,21,0.6) 50%, rgba(250,204,21,0.3) 65%, transparent 85%'
+                     : avatarLevel === 'purple'
+                     ? 'rgba(168,85,247,0.6) 50%, rgba(168,85,247,0.3) 65%, transparent 85%'
+                     : avatarLevel === 'blue'
+                     ? 'rgba(59,130,246,0.6) 50%, rgba(59,130,246,0.3) 65%, transparent 85%'
+                     : avatarLevel === 'green'
+                     ? 'rgba(34,197,94,0.6) 50%, rgba(34,197,94,0.3) 65%, transparent 85%'
+                     : 'rgba(156,163,175,0.4) 50%, rgba(156,163,175,0.2) 65%, transparent 85%'
+                 })`,
+                 filter: 'blur(8px)'
                }}>
           </div>
           
-          {/* Bordure néon principale parfaitement ronde */}
-          <div className={`absolute inset-0 rounded-full ${neonStyle.animation}`}
+          {/* Halo moyen - anneau lumineux plus net */}
+          <div className={`absolute -inset-2 rounded-full opacity-60 ${neonStyle.animation}`}
                style={{
-                 padding: '2px',
-                 background: avatarLevel === 'rainbow' 
-                   ? 'conic-gradient(from 0deg, #f87171, #facc15, #22c55e, #3b82f6, #a855f7, #f87171)'
-                   : avatarLevel === 'gold'
-                   ? 'linear-gradient(45deg, #facc15, #fbbf24, #facc15)'
-                   : avatarLevel === 'purple'
-                   ? 'linear-gradient(45deg, #a855f7, #9333ea, #a855f7)'
-                   : avatarLevel === 'blue'
-                   ? 'linear-gradient(45deg, #3b82f6, #2563eb, #3b82f6)'
-                   : avatarLevel === 'green'
-                   ? 'linear-gradient(45deg, #22c55e, #16a34a, #22c55e)'
-                   : 'linear-gradient(45deg, #9ca3af, #6b7280, #9ca3af)',
-                 borderRadius: '50%',
-                 boxShadow: neonStyle.shadow
+                 background: `radial-gradient(circle, transparent 35%, ${
+                   avatarLevel === 'rainbow' 
+                     ? 'rgba(248,113,113,0.5) 45%, rgba(250,204,21,0.5) 50%, rgba(34,197,94,0.5) 55%, rgba(59,130,246,0.5) 60%, rgba(168,85,247,0.5) 65%, transparent 80%'
+                     : avatarLevel === 'gold'
+                     ? 'rgba(250,204,21,0.7) 45%, rgba(250,204,21,0.4) 60%, transparent 80%'
+                     : avatarLevel === 'purple'
+                     ? 'rgba(168,85,247,0.7) 45%, rgba(168,85,247,0.4) 60%, transparent 80%'
+                     : avatarLevel === 'blue'
+                     ? 'rgba(59,130,246,0.7) 45%, rgba(59,130,246,0.4) 60%, transparent 80%'
+                     : avatarLevel === 'green'
+                     ? 'rgba(34,197,94,0.7) 45%, rgba(34,197,94,0.4) 60%, transparent 80%'
+                     : 'rgba(156,163,175,0.5) 45%, rgba(156,163,175,0.3) 60%, transparent 80%'
+                 })`,
+                 filter: 'blur(4px)'
                }}>
-            <div className="w-full h-full bg-[hsl(216,46%,13%)] rounded-full" style={{ borderRadius: '50%' }}></div>
           </div>
         </>
       )}
       
-      {/* Avatar principal avec effet de lueur */}
-      <div className={`relative w-full h-full rounded-full overflow-hidden ${avatarLevel && neonStyle ? neonStyle.glow : ''}`}>
+      {/* Avatar principal sans bordure */}
+      <div className="relative w-full h-full rounded-full overflow-hidden">
         {avatar ? (
           <img 
             src={avatar} 
@@ -200,16 +202,16 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
       
       {/* Particules scintillantes pour le niveau rainbow */}
       {avatarLevel === 'rainbow' && (
-        <div className="absolute inset-0 pointer-events-none">
-          {[...Array(6)].map((_, i) => (
+        <div className="absolute -inset-6 pointer-events-none">
+          {[...Array(8)].map((_, i) => (
             <div
               key={i}
               className="absolute w-1 h-1 bg-white rounded-full animate-ping"
               style={{
-                top: `${10 + Math.random() * 80}%`,
-                left: `${10 + Math.random() * 80}%`,
-                animationDelay: `${i * 0.3}s`,
-                animationDuration: '2s'
+                top: `${20 + Math.random() * 60}%`,
+                left: `${20 + Math.random() * 60}%`,
+                animationDelay: `${i * 0.4}s`,
+                animationDuration: '3s'
               }}
             />
           ))}

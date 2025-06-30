@@ -1251,13 +1251,7 @@ export default function Collections() {
                           VENDUE
                         </div>
                       )}
-                      {card.imageUrl && (
-                        <img 
-                          src={card.imageUrl} 
-                          alt={`${card.playerName || 'Carte'}`}
-                          className={`w-20 h-28 object-cover rounded-md flex-shrink-0 ${card.isSold ? 'grayscale' : ''}`}
-                        />
-                      )}
+
                       <div className="flex-1 space-y-1">
                         {card.playerName && (
                           <h4 className="text-white font-medium">{card.playerName}</h4>

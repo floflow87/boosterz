@@ -123,10 +123,13 @@ The application follows a modern full-stack architecture with clear separation b
   - **Multiple card selection**: Added checkbox-based multi-selection system for adding cards to decks
   - **Visual selection indicators**: Implemented checkboxes, selection overlays, and "Select All" toggle functionality
   - **Enhanced user feedback**: Added real-time counter showing selected cards and batch addition capability
-  - **Neon avatar effects**: Enhanced TrophyAvatar component with dramatic neon glow effects based on trophy level
-  - **Level-based styling**: Different colors and intensities for gray, green, blue, purple, gold, and rainbow trophy levels
-  - **Advanced visual effects**: Added outer halo, drop shadows, and animated particles for rainbow level
-  - Users can now select multiple cards at once and add them to decks with improved visual feedback and avatar prestige effects
+  - **Circular halo effects**: Modified TrophyAvatar to display circular neon halos AROUND avatar instead of borders
+  - **Dual-layer halo system**: Created outer and inner radial gradient halos with blur effects for depth
+  - **Level-based halo colors**: Different halo colors for gray, green, blue, purple, gold, and rainbow trophy levels
+  - **List view optimization**: Removed images from collection list view for cleaner display
+  - **Autograph completion**: Added missing Enzo Francescoli autograph with all numbering variants to Score Ligue 1 23/24
+  - **Database refresh**: Updated collection with 2856 total cards including new autograph variants
+  - Users now see clean halo effects around avatars and optimized list view without image clutter
 - June 30, 2025. Fixed card display and deck numbering system
   - **Card display restoration**: Fixed `/api/cards/all` endpoint to use authenticated user instead of hardcoded ID
   - **Authentication requirement**: Added proper authentication middleware to cards endpoint
