@@ -682,9 +682,14 @@ export default function CollectionDetail() {
   const getCardAnimationName = (card: Card) => {
     if (!card.isOwned) return null;
     
-    // Vert pour les bases (maintenant juste "Base")
+    // Vert pour les bases
     if (card.cardType === "Base") {
       return "pulse-shadow-green";
+    }
+    
+    // Bleu pour les bases numérotées
+    if (card.cardType === "Parallel Numbered") {
+      return "pulse-shadow-blue";
     }
     
     // Violet pour les hits (Insert)
