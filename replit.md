@@ -118,6 +118,14 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 01, 2025. Enhanced trophy unlock animation with custom confetti effects and personalized card imagery
+  - **Custom confetti system**: Implemented user-specified confetti with spread 460, ticks 50, gold/yellow colors (FFE400, FFBD00, E89400, FFCA6C, FDFFB8)
+  - **Personalized card display**: Replaced generic card design with user's custom image (f455cf2a-3d9e-456f-a921-3ac0c4507202_1751356672019.png)
+  - **Text removal**: Eliminated "nouvelle carte ajoutée" message for cleaner card presentation
+  - **Enhanced text animation**: Added fadeInUp CSS keyframes with progressive delays for smooth text appearance
+  - **Improved timing**: Confetti triggers at 200ms for immediate visual impact during card rotation phase
+  - **Dual-stage card imagery**: Custom image displayed in both static (stage 0) and spinning (stage 1) phases
+  - Trophy unlock now features personalized card imagery with custom confetti effects and smooth text transitions
 - January 01, 2025. Optimized card loading performance and trophy animation transitions for professional user experience
   - **Card loading optimization**: Implemented aggressive caching with 5-minute staleTime for all cards, 10-minute staleTime for collection cards
   - **Professional loading screen**: Created elegant animated card stack loading interface with progress indicators
