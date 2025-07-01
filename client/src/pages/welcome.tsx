@@ -154,11 +154,11 @@ export default function Welcome() {
               
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 border border-transparent shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 to-purple-500 border border-transparent shadow-md relative">
                     <div className="absolute inset-0 rounded-full shadow-[0_0_12px_3px_rgba(147,51,234,0.8)] animate-pulse"></div>
                   </div>
                 </div>
-                <span className="text-[10px] bg-gradient-to-r from-red-400 via-yellow-400 to-purple-400 bg-clip-text text-transparent font-bold">Légendaire</span>
+                <span className="text-[10px] bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 to-purple-500 bg-clip-text text-transparent font-bold">Légendaire</span>
               </div>
             </div>
             
