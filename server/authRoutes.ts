@@ -6,6 +6,54 @@ import { z } from 'zod';
 
 const router = Router();
 
+// Test de production pour Supabase
+router.get('/production-test', async (req, res) => {
+  try {
+    console.log('=== PRODUCTION DATABASE TEST ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    
+    // Test de base de données basique
+    const testQuery = await storage.getAllUsers();
+    console.log('Database query successful');
+    console.log('Users found:', testQuery.length);
+    
+    // Test utilisateur spécifique Floflow87
+    const floflow87 = await storage.getUserByUsername('Floflow87');
+    console.log('Floflow87 lookup result:', floflow87 ? 'FOUND' : 'NOT FOUND');
+    
+    if (floflow87) {
+      console.log('Floflow87 details:', {
+        id: floflow87.id,
+        username: floflow87.username,
+        email: floflow87.email,
+        isActive: floflow87.isActive,
+        hasPassword: !!floflow87.password
+      });
+    }
+    
+    res.json({
+      success: true,
+      environment: process.env.NODE_ENV,
+      databaseConnection: 'OK',
+      totalUsers: testQuery.length,
+      floflow87Found: !!floflow87,
+      floflow87Active: floflow87?.isActive,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('=== PRODUCTION TEST ERROR ===');
+    console.error('Error message:', error instanceof Error ? error.message : 'Unknown');
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+    
+    res.status(500).json({ 
+      success: false, 
+      message: 'Production test failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+      environment: process.env.NODE_ENV
+    });
+  }
+});
+
 // Test endpoint pour diagnostiquer les problèmes de production
 // Test endpoint for login debugging
 router.post('/login-test', async (req, res) => {
@@ -224,7 +272,14 @@ router.post('/login', async (req, res) => {
     }
 
     console.log('Looking for user:', username);
+    console.log('getUserByUsername called with:', username);
     const user = await storage.getUserByUsername(username);
+    console.log('getUserByUsername result:', user ? {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isActive: user.isActive
+    } : 'NULL');
     console.log('User found:', user ? 'YES' : 'NO');
     
     if (!user) {
