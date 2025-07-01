@@ -168,80 +168,58 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login user
+// Ultra-simplified login for production debugging
 router.post('/login', async (req, res) => {
   try {
-    console.log('Login attempt:', { 
-      body: { ...req.body, password: '[REDACTED]' },
-      env: process.env.NODE_ENV 
-    });
+    console.log('=== ULTRA LOGIN START ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Request body received:', req.body ? 'YES' : 'NO');
     
-    const { email, username, password } = req.body;
-    console.log('Parsed login data:', { email, username, hasPassword: !!password });
-    
-    // Simple validation
-    if (!password || password.length < 6) {
-      console.log('Invalid password provided');
-      return res.status(400).json({ message: 'Mot de passe requis (minimum 6 caractères)' });
-    }
-    
-    if (!email && !username) {
-      console.log('No login identifier provided');
-      return res.status(400).json({ message: 'Email ou nom d\'utilisateur requis' });
-    }
-    
-    // Try to find user by email or username
-    let user;
-    if (email) {
-      console.log('Searching user by email:', email);
-      // First try by email
-      user = await storage.getUserByEmail(email);
-      console.log('User found by email:', user ? { id: user.id, username: user.username, isActive: user.isActive } : 'Not found');
-      
-      // If not found and email looks like a username, try by username
-      if (!user && !email.includes('@')) {
-        console.log('Email looks like username, trying username search:', email);
-        user = await storage.getUserByUsername(email);
-        console.log('User found by username (via email field):', user ? { id: user.id, username: user.username, isActive: user.isActive } : 'Not found');
-      }
-    }
-    
-    if (username) {
-      console.log('Searching user by username:', username);
-      user = await storage.getUserByUsername(username);
-      console.log('User found by username:', user ? { id: user.id, username: user.username, isActive: user.isActive } : 'Not found');
-    }
-    
-    if (!user || !user.password) {
-      console.log('Login failed: User not found or no password');
-      return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
+    if (!req.body) {
+      console.log('No body received');
+      return res.status(400).json({ message: 'Corps de requête manquant' });
     }
 
-    // Check if user account is active
-    if (user.isActive === false) {
-      console.log('Login failed: Account disabled for user', user.id);
+    const username = req.body.username;
+    const password = req.body.password;
+    
+    console.log('Username received:', username ? 'YES' : 'NO');
+    console.log('Password received:', password ? 'YES' : 'NO');
+    
+    if (!username || !password) {
+      console.log('Missing credentials');
+      return res.status(400).json({ message: 'Identifiants manquants' });
+    }
+
+    console.log('Looking for user:', username);
+    const user = await storage.getUserByUsername(username);
+    console.log('User found:', user ? 'YES' : 'NO');
+    
+    if (!user) {
+      console.log('User not found');
+      return res.status(401).json({ message: 'Utilisateur introuvable' });
+    }
+
+    console.log('User active:', user.isActive);
+    if (!user.isActive) {
+      console.log('User inactive');
       return res.status(401).json({ message: 'Compte désactivé' });
     }
 
-    console.log('Verifying password for user:', user.id);
-    // Verify password
-    const isValidPassword = await AuthService.verifyPassword(password, user.password);
-    console.log('Password verification result:', isValidPassword);
+    console.log('Checking password...');
+    const isValid = await AuthService.verifyPassword(password, user.password);
+    console.log('Password valid:', isValid);
     
-    if (!isValidPassword) {
-      console.log('Login failed: Invalid password for user', user.id);
-      return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
+    if (!isValid) {
+      console.log('Invalid password');
+      return res.status(401).json({ message: 'Mot de passe incorrect' });
     }
 
-    console.log('Creating session for user:', user.id);
-    // Create session
+    console.log('Creating token...');
     const token = await AuthService.createSession(user.id);
-    console.log('Session created successfully, token length:', token?.length);
-    
-    // Store user ID in session
-    (req as any).session.userId = user.id;
+    console.log('Token created:', token ? 'YES' : 'NO');
 
-    console.log('Login successful for user:', user.id);
+    console.log('=== LOGIN SUCCESS ===');
     res.json({
       message: 'Connexion réussie',
       token,
@@ -254,16 +232,16 @@ router.post('/login', async (req, res) => {
       },
     });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.log('Login validation error:', error.errors);
-      return res.status(400).json({ message: 'Données invalides', errors: error.errors });
-    }
-    console.error('Login error - Full details:', {
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : 'No stack trace',
-      error: error
+    console.error('=== LOGIN FATAL ERROR ===');
+    console.error('Error type:', typeof error);
+    console.error('Error message:', error instanceof Error ? error.message : 'Unknown');
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+    console.error('Full error:', error);
+    
+    res.status(500).json({ 
+      message: 'Erreur fatale de connexion',
+      error: error instanceof Error ? error.message : String(error)
     });
-    res.status(500).json({ message: 'Erreur lors de la connexion' });
   }
 });
 
