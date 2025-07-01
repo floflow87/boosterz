@@ -81,6 +81,8 @@ export default function TrophyUnlock() {
     const timer1 = setTimeout(() => setStage(1), 800); // Show card for 0.8s
     const timer2 = setTimeout(() => {
       setStage(2); // Transition fluide vers le trophée
+      // Confetti réaliste au moment de l'apparition du trophée
+      generateRealisticConfetti();
     }, 3000); // Transition plus tôt pour éliminer la coupure
     const timer3 = setTimeout(() => {
       setStage(3); // Affichage du texte final
@@ -124,6 +126,44 @@ export default function TrophyUnlock() {
     setTimeout(shoot, 0);
     setTimeout(shoot, 100);
     setTimeout(shoot, 200);
+  };
+
+  const generateRealisticConfetti = () => {
+    const count = 200;
+    const defaults = {
+      origin: { y: 0.7 }
+    };
+
+    function fire(particleRatio: number, opts: any) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      });
+    }
+
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+    fire(0.2, {
+      spread: 60,
+    });
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
   };
 
   const handleContinue = () => {
@@ -172,21 +212,12 @@ export default function TrophyUnlock() {
         transition: 'all 4s ease-in-out'
       }}
     >
-      {/* Progressive background darkening overlay */}
+      {/* Background darkening synchronized with trophy appearance */}
       <div 
-        className="absolute inset-0 transition-all duration-[4000ms] ease-in-out"
+        className="absolute inset-0 transition-all duration-[800ms] ease-in-out"
         style={{
-          background: stage >= 1 ? 'linear-gradient(135deg, rgba(17, 24, 39, 0.4) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(0, 0, 0, 0.8) 100%)' : 'transparent',
-          opacity: stage >= 2 ? 1 : stage >= 1 ? 0.5 : 0
-        }}
-      />
-      
-      {/* Final dark overlay for trophy celebration */}
-      <div 
-        className="absolute inset-0 transition-all duration-[2000ms] ease-in-out"
-        style={{
-          background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.9) 100%)',
-          opacity: stage >= 3 ? 1 : 0
+          background: stage >= 2 ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.9) 50%, rgba(0, 0, 0, 0.95) 100%)' : 'transparent',
+          opacity: stage >= 2 ? 1 : 0
         }}
       />
 
@@ -250,16 +281,16 @@ export default function TrophyUnlock() {
           </div>
         )}
 
-        {/* Stage 2 & 3: Trophy - Unified smooth transition */}
+        {/* Stage 2 & 3: Trophy - Position finale directe */}
         {(stage === 2 || stage === 3) && (
-          <div className="transform scale-100 transition-all duration-[2000ms] ease-in-out">
-            {/* Trophy Container */}
+          <div className="transform scale-100 transition-all duration-[800ms] ease-in-out">
+            {/* Trophy Container - Position finale directe pour éviter les saccades */}
             <div 
-              className="relative mx-auto mb-8 flex items-center justify-center transition-all duration-[2000ms] ease-in-out"
+              className="relative mx-auto mb-8 flex items-center justify-center transition-all duration-[800ms] ease-in-out"
               style={{ 
                 width: '192px', 
                 height: '192px',
-                transform: stage === 3 ? 'translateY(-20px)' : 'translateY(0px)'
+                transform: 'translateY(-20px)' // Position finale directe dès le stage 2
               }}
             >
               {/* Glow Effect */}
