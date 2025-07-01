@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'wouter';
 import { Trophy, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import confetti from 'canvas-confetti';
 
 interface TrophyUnlockProps {
   trophyData: {
@@ -49,7 +50,6 @@ const RARITY_COLORS = {
 export default function TrophyUnlock() {
   const [, setLocation] = useLocation();
   const [stage, setStage] = useState(0); // 0: card, 1: transition, 2: trophy, 3: celebration
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number; color: string; rotation: number; vx: number; vy: number; life: number }>>([]);
   const [isLoaded, setIsLoaded] = useState(false);
   
   // Récupération des données du trophée depuis les paramètres URL
@@ -90,49 +90,41 @@ export default function TrophyUnlock() {
   }, []);
 
   const generateConfetti = () => {
-    const newConfetti = [];
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    
-    for (let i = 0; i < 100; i++) {
-      // Explosion parfaitement radiale dans tous les sens
-      const angle = (Math.PI * 2 * i) / 100 + Math.random() * 0.2;
-      const velocity = 4 + Math.random() * 8; // Vitesse plus élevée
-      
-      newConfetti.push({
-        id: i,
-        x: centerX + (Math.random() - 0.5) * 50, // Position plus centrée
-        y: centerY + (Math.random() - 0.5) * 50,
-        color: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF69B4', '#32CD32', '#FF4757', '#7bed9f'][Math.floor(Math.random() * 10)],
-        rotation: Math.random() * 360,
-        vx: Math.cos(angle) * velocity,
-        vy: Math.sin(angle) * velocity,
-        life: 1.0,
-        size: 0.8 + Math.random() * 0.4 // Taille variable
-      });
-    }
-    setConfetti(newConfetti);
-
-    // Animation des confettis avec physique
-    const animateConfetti = () => {
-      setConfetti(prevConfetti => 
-        prevConfetti.map(piece => ({
-          ...piece,
-          x: piece.x + piece.vx,
-          y: piece.y + piece.vy,
-          vx: piece.vx * 0.99, // Friction air
-          vy: piece.vy + 0.15, // Gravité plus forte
-          rotation: piece.rotation + (piece.vx * 0.5),
-          life: piece.life - 0.006 // Durée plus longue
-        })).filter(piece => piece.life > 0)
-      );
+    const count = 200;
+    const defaults = {
+      origin: { y: 0.7 }
     };
 
-    const interval = setInterval(animateConfetti, 16);
-    setTimeout(() => {
-      clearInterval(interval);
-      setConfetti([]);
-    }, 5000); // Durée plus longue
+    function fire(particleRatio: number, opts: any) {
+      confetti({
+        ...defaults,
+        ...opts,
+        particleCount: Math.floor(count * particleRatio)
+      });
+    }
+
+    fire(0.25, {
+      spread: 26,
+      startVelocity: 55,
+    });
+    fire(0.2, {
+      spread: 60,
+    });
+    fire(0.35, {
+      spread: 100,
+      decay: 0.91,
+      scalar: 0.8
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 25,
+      decay: 0.92,
+      scalar: 1.2
+    });
+    fire(0.1, {
+      spread: 120,
+      startVelocity: 45,
+    });
   };
 
   const handleContinue = () => {
@@ -183,20 +175,7 @@ export default function TrophyUnlock() {
                   : 'linear-gradient(135deg, #0f172a 0%, #111827 20%, #000000 100%)'
       }}
     >
-      {/* Confetti */}
-      {(stage === 2 || stage === 3) && confetti.map((piece) => (
-        <div
-          key={piece.id}
-          className="absolute w-1 h-6 confetti-piece"
-          style={{
-            left: piece.x,
-            top: piece.y,
-            backgroundColor: piece.color,
-            transform: `rotate(${piece.rotation}deg)`,
-            opacity: piece.life || 0.8
-          }}
-        />
-      ))}
+
 
       <div className="text-center">
         {/* Stage 0: Card */}
