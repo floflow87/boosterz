@@ -21,15 +21,31 @@ if (isProduction) {
   }
   databaseUrl = prodUrl;
   console.log('🗄️  Database: Production (Supabase)');
+  console.log('Database URL configured:', prodUrl.substring(0, 50) + '...');
   
-  const pool = new PgPool({ 
-    connectionString: databaseUrl,
-    ssl: {
-      rejectUnauthorized: false
-    }
-  });
-  
-  db = drizzlePg(pool, { schema });
+  try {
+    const pool = new PgPool({ 
+      connectionString: databaseUrl,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    });
+    
+    // Test database connection
+    pool.connect((err, client, release) => {
+      if (err) {
+        console.error('Error connecting to database:', err);
+      } else {
+        console.log('✅ Database connection successful');
+        release();
+      }
+    });
+    
+    db = drizzlePg(pool, { schema });
+  } catch (error) {
+    console.error('Error setting up database:', error);
+    throw error;
+  }
 } else {
   // En développement, utilise Neon
   neonConfig.webSocketConstructor = ws;

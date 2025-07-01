@@ -6,6 +6,46 @@ import { z } from 'zod';
 
 const router = Router();
 
+// Test endpoint pour diagnostiquer les problèmes de production
+router.get('/test', async (req, res) => {
+  try {
+    console.log('=== AUTH TEST ENDPOINT ===');
+    console.log('NODE_ENV:', process.env.NODE_ENV);
+    console.log('Database connection test...');
+    
+    // Test simple de connexion à la base de données
+    const testUser = await storage.getUserByEmail('test@example.com');
+    console.log('Database query successful');
+    
+    // Test de connexion avec un utilisateur existant
+    const floflow87 = await storage.getUserByUsername('Floflow87');
+    console.log('Floflow87 user found:', floflow87 ? { id: floflow87.id, username: floflow87.username, isActive: floflow87.isActive } : 'Not found');
+    
+    res.json({
+      success: true,
+      environment: process.env.NODE_ENV,
+      databaseConnected: true,
+      floflow87Found: !!floflow87,
+      floflow87Active: floflow87?.isActive,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('=== AUTH TEST ERROR ===');
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      error: error
+    });
+    
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      environment: process.env.NODE_ENV,
+      timestamp: new Date().toISOString()
+    });
+  }
+});
+
 // Login schema - accept either email or username
 const loginSchema = z.object({
   email: z.string().min(1).optional(),
