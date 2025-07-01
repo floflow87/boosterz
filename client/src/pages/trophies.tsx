@@ -212,50 +212,54 @@ export default function Trophies() {
           const { progress, isUnlocked, progressPercentage } = getMilestoneProgress(milestone);
           const colorStyle = COLOR_STYLES[milestone.color as keyof typeof COLOR_STYLES];
 
+          const isFullyUnlocked = progressPercentage === 100;
+          
           return (
             <div
               key={milestone.id}
-              onClick={() => showTrophyAnimation(milestone)}
+              onClick={isFullyUnlocked ? () => showTrophyAnimation(milestone) : undefined}
               className={`p-4 rounded-lg border transition-all ${
-                isUnlocked
+                isFullyUnlocked
                   ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg} cursor-pointer hover:bg-[hsl(214,35%,24%)] hover:scale-[1.02]`
+                  : isUnlocked
+                  ? `bg-[hsl(214,35%,20%)] border-[hsl(214,35%,22%)] ${colorStyle.bg}`
                   : "bg-[hsl(214,35%,18%)] border-[hsl(214,35%,20%)]"
               }`}
             >
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center space-x-2">
-                  <h3 className={`font-medium ${isUnlocked ? 'text-white' : 'text-gray-400'}`}>
+                  <h3 className={`font-medium ${isFullyUnlocked ? 'text-white' : isUnlocked ? 'text-gray-200' : 'text-gray-400'}`}>
                     {milestone.title}
                   </h3>
-                  {isUnlocked && (
+                  {isFullyUnlocked && (
                     <Trophy className={`w-4 h-4 ${colorStyle.text}`} />
                   )}
 
                 </div>
                 {milestone.rarity && (
-                  <span className={`text-xs px-2 py-1 rounded-full ${colorStyle.bg} ${colorStyle.text}`}>
+                  <span className={`text-xs px-2 py-1 rounded-full ${colorStyle.bg} ${colorStyle.text} capitalize`}>
                     {milestone.rarity}
                   </span>
                 )}
               </div>
               
-              <p className={`text-sm mb-3 ${isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}`}>
+              <p className={`text-sm mb-3 ${isFullyUnlocked ? 'text-[hsl(212,23%,69%)]' : isUnlocked ? 'text-[hsl(212,23%,60%)]' : 'text-gray-500'}`}>
                 {milestone.description}
               </p>
 
               <div className="mb-2">
                 <div className="flex justify-between text-xs mb-1">
-                  <span className={isUnlocked ? 'text-[hsl(212,23%,69%)]' : 'text-gray-500'}>
+                  <span className={isFullyUnlocked ? 'text-[hsl(212,23%,69%)]' : isUnlocked ? 'text-[hsl(212,23%,60%)]' : 'text-gray-500'}>
                     Progression
                   </span>
-                  <span className={isUnlocked ? 'text-white' : 'text-gray-400'}>
+                  <span className={isFullyUnlocked ? 'text-white' : isUnlocked ? 'text-gray-200' : 'text-gray-400'}>
                     {progress}/{milestone.count}
                   </span>
                 </div>
                 <div className="w-full bg-[hsl(214,35%,15%)] rounded-full h-2">
                   <div
                     className={`h-2 rounded-full transition-all duration-300 ${
-                      isUnlocked ? colorStyle.progress : 'bg-gray-600'
+                      isFullyUnlocked ? colorStyle.progress : isUnlocked ? `${colorStyle.progress} opacity-60` : 'bg-gray-600'
                     }`}
                     style={{ width: `${progressPercentage}%` }}
                   />
@@ -301,6 +305,15 @@ export default function Trophies() {
               )}
               <Trophy className="w-8 h-8 text-[hsl(31,84%,55%)] absolute inset-2" />
             </div>
+          </div>
+        </div>
+        
+        {/* Message informatif */}
+        <div className="px-4 pt-2 pb-2">
+          <div className="bg-[hsl(214,35%,20%)] border border-[hsl(214,35%,25%)] rounded-lg p-3">
+            <p className="text-xs text-[hsl(212,23%,69%)] text-center">
+              💡 Cliquez sur les trophées <span className="text-[hsl(31,84%,55%)]">🏆</span> complétés à 100% pour relancer leur animation
+            </p>
           </div>
         </div>
       </div>
