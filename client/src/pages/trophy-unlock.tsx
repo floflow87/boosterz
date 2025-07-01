@@ -66,6 +66,9 @@ export default function TrophyUnlock() {
   const colors = RARITY_COLORS[trophyData.color as keyof typeof RARITY_COLORS] || RARITY_COLORS.gray;
 
   useEffect(() => {
+    // Immediate load
+    setIsLoaded(true);
+    
     // Animation sequence
     const timer1 = setTimeout(() => setStage(1), 1000); // Show card for 1s
     const timer2 = setTimeout(() => setStage(2), 2000); // Transition at 2s
@@ -145,6 +148,18 @@ export default function TrophyUnlock() {
     };
     return names[rarity] || 'Nouveau';
   };
+
+  // Loading screen
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p className="text-white text-lg">Préparation de l'animation...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative">
