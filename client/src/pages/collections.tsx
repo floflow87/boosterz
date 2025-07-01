@@ -50,7 +50,7 @@ const getThemeTextColor = (themeColors: string) => {
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("collections");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -457,21 +457,47 @@ export default function Collections() {
     ? (cardsResponse?.cards || [])
     : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
 
-  // Auto-sélection de la collection Score Ligue 1 23/24 par défaut
+  // Auto-sélection FORCÉE de la collection Score Ligue 1 par défaut sur TOUS les comptes
   useEffect(() => {
-    if (!collections || collections.length === 0) return;
+    if (!collections || collections.length === 0) {
+      console.log('❌ Collections pas encore chargées');
+      return;
+    }
     
-    // Chercher la collection "Score Ligue 1 23/24" et la sélectionner automatiquement
+    console.log('🔍 Collections disponibles:', collections.map(c => c.name));
+    
+    // Chercher la collection "SCORE LIGUE 1" et la sélectionner automatiquement
     const scoreLigue1Collection = collections.find(collection => 
-      collection.name.toLowerCase().includes('score ligue 1 23/24') ||
-      collection.name.toLowerCase().includes('score ligue 1 2023')
+      collection.name.toLowerCase().includes('score ligue 1') ||
+      collection.name.toLowerCase().includes('score ligue') ||
+      collection.season === '23/24'
     );
     
-    if (scoreLigue1Collection && selectedCollection === null) {
-      setSelectedCollection(scoreLigue1Collection.id);
-      setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
+    console.log('🎯 Collection Score Ligue 1 trouvée:', scoreLigue1Collection?.name, 'ID:', scoreLigue1Collection?.id);
+    console.log('📍 Collection actuellement sélectionnée:', selectedCollection);
+    
+    // FORCE la sélection même si une autre collection était sélectionnée
+    if (scoreLigue1Collection && selectedCollection !== scoreLigue1Collection.id) {
+      console.log('✅ FORÇAGE auto-sélection de la collection:', scoreLigue1Collection.name, 'ID:', scoreLigue1Collection.id);
+      
+      // Petite temporisation pour s'assurer que tout est bien chargé
+      setTimeout(() => {
+        setSelectedCollection(scoreLigue1Collection.id);
+        setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
+        console.log('🔄 Collection forcée vers:', scoreLigue1Collection.name);
+      }, 100);
+    } else if (!scoreLigue1Collection) {
+      console.log('⚠️ Aucune collection Score Ligue 1 trouvée dans:', collections.map(c => c.name));
     }
-  }, [collections, selectedCollection]);
+  }, [collections, selectedCollection]); // Remettre selectedCollection pour suivre les changements
+
+  // Effet séparé pour basculer sur l'onglet cartes quand une collection est sélectionnée
+  useEffect(() => {
+    if (selectedCollection && activeTab !== "cards") {
+      console.log('🔄 Basculement automatique vers onglet Cartes pour collection ID:', selectedCollection);
+      setActiveTab("cards");
+    }
+  }, [selectedCollection, activeTab]);
 
   // Effect to check for milestones when collections data changes
   useEffect(() => {
