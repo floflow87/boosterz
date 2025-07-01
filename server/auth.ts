@@ -2,8 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { db } from './db';
-import { users, sessions } from '@shared/schema';
-import { eq, and, gt } from 'drizzle-orm';
+import { users } from '@shared/schema';
 import { storage } from './storage';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
@@ -43,50 +42,31 @@ export class AuthService {
     }
   }
 
-  // Create session
+  // Create session (simplified - just return JWT token)
   static async createSession(userId: number): Promise<string> {
-    const token = this.generateToken(userId);
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-
-    await db.insert(sessions).values({
-      userId,
-      token,
-      expiresAt,
-    });
-
-    return token;
+    return this.generateToken(userId);
   }
 
-  // Remove session
+  // Remove session (simplified - no database operation needed for JWT)
   static async removeSession(token: string): Promise<void> {
-    await db.delete(sessions).where(eq(sessions.token, token));
+    // With JWT, we don't need to store sessions in database
+    // Token expiration is handled by JWT itself
   }
 
-  // Get user by session token
+  // Get user by token (simplified - use JWT verification only)
   static async getUserByToken(token: string) {
-    const session = await db
-      .select()
-      .from(sessions)
-      .where(and(eq(sessions.token, token), gt(sessions.expiresAt, new Date())))
-      .limit(1);
+    try {
+      const decoded = this.verifyToken(token);
+      if (!decoded) {
+        return null;
+      }
 
-    if (session.length === 0) return null;
-
-    const user = await db
-      .select({
-        id: users.id,
-        username: users.username,
-        email: users.email,
-        name: users.name,
-        avatar: users.avatar,
-        bio: users.bio,
-        isActive: users.isActive,
-      })
-      .from(users)
-      .where(and(eq(users.id, session[0].userId), eq(users.isActive, true)))
-      .limit(1);
-
-    return user[0] || null;
+      const user = await storage.getUser(decoded.userId);
+      return user || null;
+    } catch (error) {
+      console.error('Error getting user by token:', error);
+      return null;
+    }
   }
 }
 
