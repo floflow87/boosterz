@@ -497,6 +497,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get current user collections
+  app.get("/api/users/me/collections", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const collections = await storage.getCollectionsByUserId(req.user!.id);
+      res.json(collections);
+    } catch (error) {
+      console.error("Error fetching current user collections:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  });
+
   // Update current user profile
   app.put("/api/auth/profile", authenticateToken, async (req: AuthRequest, res) => {
     try {

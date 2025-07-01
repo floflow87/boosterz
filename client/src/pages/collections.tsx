@@ -280,16 +280,18 @@ export default function Collections() {
     retry: false,
   });
 
+  // Use authenticated user data directly for better production compatibility
   const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["/api/users/1"],
+    queryKey: ["/api/users/me"],
+    enabled: !!currentUser,
   });
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ["/api/users/1/collections"],
+    queryKey: ["/api/users/me/collections"],
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 15 * 60 * 1000, // 15 minutes
     refetchOnWindowFocus: false,
-    enabled: !!currentUser?.user?.id, // Only fetch when we have a user
+    enabled: !!currentUser, // Only fetch when we have authenticated user
   });
 
   // Query pour les cartes personnelles

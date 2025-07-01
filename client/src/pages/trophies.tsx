@@ -292,18 +292,32 @@ export default function Trophies() {
             </div>
           </div>
           <div className="relative">
-            {/* Avatar avec décoration */}
-            <div className="relative w-12 h-12">
+            {/* Icône de coupe colorée selon le palier débloqué */}
+            <div className="relative w-14 h-14 flex items-center justify-center">
               {avatarLevel && (
-                <div className={`absolute inset-0 rounded-full p-0.5 ${
+                <div className={`absolute inset-0 rounded-full flex items-center justify-center ${
                   avatarLevel === 'rainbow' 
-                    ? 'bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 animate-pulse' 
-                    : `border-2 ${COLOR_STYLES[avatarLevel as keyof typeof COLOR_STYLES]?.progress.replace('bg-', 'border-')}`
+                    ? 'bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 animate-pulse shadow-lg' 
+                    : `bg-gradient-to-br ${
+                        avatarLevel === 'gray' ? 'from-gray-400 to-gray-600' :
+                        avatarLevel === 'green' ? 'from-green-400 to-green-600' :
+                        avatarLevel === 'blue' ? 'from-blue-400 to-blue-600' :
+                        avatarLevel === 'purple' ? 'from-purple-400 to-purple-600' :
+                        avatarLevel === 'gold' ? 'from-yellow-400 to-yellow-600' : 'from-gray-400 to-gray-600'
+                      } shadow-lg`
                 }`}>
-                  <div className="w-full h-full bg-[hsl(216,46%,13%)] rounded-full"></div>
                 </div>
               )}
-              <Trophy className="w-8 h-8 text-[hsl(31,84%,55%)] absolute inset-2" />
+              <Trophy 
+                className={`w-8 h-8 relative z-10 ${
+                  avatarLevel === 'rainbow' ? 'text-white' :
+                  avatarLevel === 'gray' ? 'text-gray-100' :
+                  avatarLevel === 'green' ? 'text-green-100' :
+                  avatarLevel === 'blue' ? 'text-blue-100' :
+                  avatarLevel === 'purple' ? 'text-purple-100' :
+                  avatarLevel === 'gold' ? 'text-yellow-100' : 'text-gray-100'
+                } drop-shadow-md`} 
+              />
             </div>
           </div>
         </div>
