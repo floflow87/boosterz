@@ -249,6 +249,18 @@ export const deckCards = pgTable("deck_cards", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Unlocked trophies table
+export const unlockedTrophies = pgTable("unlocked_trophies", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  trophyId: text("trophy_id").notNull(), // e.g., "first_card", "ten_followers"
+  category: text("category").notNull(), // 'collection', 'autographs', 'specials', 'social'
+  color: text("color").notNull(), // 'gray', 'green', 'blue', 'purple', 'gold', 'rainbow'
+  unlockedAt: timestamp("unlocked_at").defaultNow().notNull(),
+}, (table) => ({
+  uniqueUserTrophy: unique().on(table.userId, table.trophyId),
+}));
+
 
 
 // Relations
@@ -264,6 +276,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   activities: many(activities),
   posts: many(posts),
   decks: many(decks),
+  unlockedTrophies: many(unlockedTrophies),
 }));
 
 export const followsRelations = relations(follows, ({ one }) => ({
@@ -405,6 +418,13 @@ export const deckCardsRelations = relations(deckCards, ({ one }) => ({
   personalCard: one(personalCards, {
     fields: [deckCards.personalCardId],
     references: [personalCards.id],
+  }),
+}));
+
+export const unlockedTrophiesRelations = relations(unlockedTrophies, ({ one }) => ({
+  user: one(users, {
+    fields: [unlockedTrophies.userId],
+    references: [users.id],
   }),
 }));
 
@@ -553,7 +573,16 @@ export type Message = typeof messages.$inferSelect;
 export type InsertSession = z.infer<typeof insertSessionSchema>;
 export type Session = typeof sessions.$inferSelect;
 
+// Trophy types
+export type InsertUnlockedTrophy = z.infer<typeof insertUnlockedTrophySchema>;
+export type UnlockedTrophy = typeof unlockedTrophies.$inferSelect;
+
 // Subscription schemas
+export const insertUnlockedTrophySchema = createInsertSchema(unlockedTrophies).omit({
+  id: true,
+  unlockedAt: true,
+});
+
 export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({
   id: true,
   createdAt: true,

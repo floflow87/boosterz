@@ -27,11 +27,11 @@ const MILESTONE_CONFIG = {
     { id: "fifty_specials", count: 50, title: "Maître des Spéciales", description: "Obtenir 50 cartes spéciales", rarity: "légendaire", color: "rainbow" },
   ],
   social: [
-    { id: "first_follower", count: 1, title: "Premier Abonné", description: "Obtenir votre premier abonné", rarity: "légendaire", color: "gray" },
-    { id: "ten_followers", count: 10, title: "Influenceur Débutant", description: "Obtenir 10 abonnés", rarity: "légendaire", color: "green" },
-    { id: "fifty_followers", count: 50, title: "Influenceur", description: "Obtenir 50 abonnés", rarity: "légendaire", color: "blue" },
-    { id: "hundred_followers", count: 100, title: "Star", description: "Obtenir 100 abonnés", rarity: "légendaire", color: "purple" },
-    { id: "twohundred_followers", count: 200, title: "Célébrité", description: "Obtenir 200 abonnés", rarity: "légendaire", color: "gold" },
+    { id: "first_follower", count: 1, title: "Premier Abonné", description: "Obtenir votre premier abonné", rarity: "débutant", color: "gray" },
+    { id: "ten_followers", count: 10, title: "Influenceur Débutant", description: "Obtenir 10 abonnés", rarity: "commun", color: "green" },
+    { id: "fifty_followers", count: 50, title: "Influenceur", description: "Obtenir 50 abonnés", rarity: "avancé", color: "blue" },
+    { id: "hundred_followers", count: 100, title: "Star", description: "Obtenir 100 abonnés", rarity: "rare", color: "purple" },
+    { id: "twohundred_followers", count: 200, title: "Célébrité", description: "Obtenir 200 abonnés", rarity: "épique", color: "gold" },
     { id: "fivehundred_followers", count: 500, title: "Légende Sociale", description: "Obtenir 500 abonnés", rarity: "légendaire", color: "rainbow" },
   ]
 };
