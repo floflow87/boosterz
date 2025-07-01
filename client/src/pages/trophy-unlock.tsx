@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { Trophy, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import confetti from 'canvas-confetti';
+import cardImage from '@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1751356672019.png';
 
 interface TrophyUnlockProps {
   trophyData: {
@@ -71,11 +72,13 @@ export default function TrophyUnlock() {
       setIsLoaded(true);
     }, 100); // Minimal preload time
     
+    // Effet confetti personnalisé au début de l'ouverture
+    const customConfettiTimer = setTimeout(() => {
+      generateCustomConfetti();
+    }, 200); // Confetti dès l'ouverture
+    
     // Unified animation sequence with smooth transitions
     const timer1 = setTimeout(() => setStage(1), 800); // Show card for 0.8s
-    const confettiTimer = setTimeout(() => {
-      generateConfetti(); // Explosion des confettis pendant la rotation
-    }, 2600); // Confettis pendant la rotation
     const timer2 = setTimeout(() => {
       setStage(2); // Transition fluide vers le trophée
     }, 3000); // Transition plus tôt pour éliminer la coupure
@@ -85,49 +88,42 @@ export default function TrophyUnlock() {
 
     return () => {
       clearTimeout(preloadTimer);
+      clearTimeout(customConfettiTimer);
       clearTimeout(timer1);
-      clearTimeout(confettiTimer);
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
   }, []);
 
-  const generateConfetti = () => {
-    const count = 200;
+  const generateCustomConfetti = () => {
     const defaults = {
-      origin: { y: 0.7 }
+      spread: 460,
+      ticks: 50,
+      gravity: 0,
+      decay: 0.94,
+      startVelocity: 20,
+      colors: ['FFE400', 'FFBD00', 'E89400', 'FFCA6C', 'FDFFB8']
     };
 
-    function fire(particleRatio: number, opts: any) {
+    function shoot() {
       confetti({
         ...defaults,
-        ...opts,
-        particleCount: Math.floor(count * particleRatio)
+        particleCount: 40,
+        scalar: 1.2,
+        shapes: ['star']
+      });
+
+      confetti({
+        ...defaults,
+        particleCount: 20,
+        scalar: 0.75,
+        shapes: ['circle']
       });
     }
 
-    fire(0.25, {
-      spread: 26,
-      startVelocity: 55,
-    });
-    fire(0.2, {
-      spread: 60,
-    });
-    fire(0.35, {
-      spread: 100,
-      decay: 0.91,
-      scalar: 0.8
-    });
-    fire(0.1, {
-      spread: 120,
-      startVelocity: 25,
-      decay: 0.92,
-      scalar: 1.2
-    });
-    fire(0.1, {
-      spread: 120,
-      startVelocity: 45,
-    });
+    setTimeout(shoot, 0);
+    setTimeout(shoot, 100);
+    setTimeout(shoot, 200);
   };
 
   const handleContinue = () => {
@@ -198,32 +194,17 @@ export default function TrophyUnlock() {
         {/* Stage 0: Card */}
         {stage === 0 && (
           <div className="transform scale-100 transition-all duration-1000">
-            <div className="w-52 h-80 bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 rounded-2xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-blue-400 relative overflow-hidden animate-[flipY_0.6s_ease-in-out] transform-gpu">
-              {/* Holographic effect */}
+            <div className="w-52 h-80 rounded-2xl shadow-2xl mx-auto mb-8 relative overflow-hidden animate-[flipY_0.6s_ease-in-out] transform-gpu">
+              {/* Image de la carte */}
+              <img 
+                src={cardImage} 
+                alt="Carte collection"
+                className="w-full h-full object-cover rounded-2xl"
+              />
+              
+              {/* Holographic effect par-dessus l'image */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20 animate-pulse" />
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent transform rotate-45 animate-pulse" />
-              
-              {/* Card Content */}
-              <div className="relative z-10 text-center p-6">
-                {/* Logo/Icon */}
-                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
-                  <div className="text-white font-bold text-2xl drop-shadow-lg">⚽</div>
-                </div>
-                
-                {/* Title */}
-                <div className="text-white font-bold text-xl mb-2 drop-shadow-lg">SCORE</div>
-                <div className="text-blue-200 text-lg font-semibold mb-2">Ligue 1</div>
-                <div className="text-blue-300 text-sm mb-4">2023/24</div>
-                
-                {/* Decorative elements */}
-                <div className="flex justify-center space-x-2 mb-2">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
-                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping" style={{animationDelay: '0.4s'}}></div>
-                </div>
-                
-                <div className="text-blue-200 text-xs uppercase tracking-wider">Collection</div>
-              </div>
               
               {/* Corner effects */}
               <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-blue-300 rounded-tl"></div>
@@ -231,7 +212,6 @@ export default function TrophyUnlock() {
               <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-blue-300 rounded-bl"></div>
               <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-blue-300 rounded-br"></div>
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Nouvelle carte ajoutée !</h2>
           </div>
         )}
 
@@ -244,37 +224,22 @@ export default function TrophyUnlock() {
               animationDelay: '0s'
             }}>
             <div 
-              className="w-52 h-80 bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 rounded-2xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-blue-400 relative overflow-hidden transform-gpu"
+              className="w-52 h-80 rounded-2xl shadow-2xl mx-auto mb-8 relative overflow-hidden transform-gpu"
               style={{
                 animation: 'cardSpinAccelerate 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, cardGlow 2.4s ease-in-out forwards',
                 transformStyle: 'preserve-3d'
               }}
             >
+              {/* Image de la carte pendant la rotation */}
+              <img 
+                src={cardImage} 
+                alt="Carte collection"
+                className="w-full h-full object-cover rounded-2xl"
+              />
+              
               {/* Enhanced holographic effect during spinning */}
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 via-purple-400/30 to-pink-400/30 animate-pulse" />
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transform rotate-45 animate-pulse" />
-              
-              {/* Card Content */}
-              <div className="relative z-10 text-center p-6">
-                {/* Logo/Icon */}
-                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg animate-pulse">
-                  <div className="text-white font-bold text-2xl drop-shadow-lg">⚽</div>
-                </div>
-                
-                {/* Title */}
-                <div className="text-white font-bold text-xl mb-2 drop-shadow-lg">SCORE</div>
-                <div className="text-blue-200 text-lg font-semibold mb-2">Ligue 1</div>
-                <div className="text-blue-300 text-sm mb-4">2023/24</div>
-                
-                {/* Decorative elements with faster animation */}
-                <div className="flex justify-center space-x-2 mb-2">
-                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
-                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
-                </div>
-                
-                <div className="text-blue-200 text-xs uppercase tracking-wider">Collection</div>
-              </div>
               
               {/* Corner effects */}
               <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-blue-300 rounded-tl"></div>
@@ -282,7 +247,6 @@ export default function TrophyUnlock() {
               <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-blue-300 rounded-bl"></div>
               <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-blue-300 rounded-br"></div>
             </div>
-            <h2 className="text-xl font-bold text-white mb-2 animate-pulse">Trophée en cours de déblocage...</h2>
           </div>
         )}
 

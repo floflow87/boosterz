@@ -280,6 +280,17 @@
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @keyframes shooting-star {
   0% {
     transform: translateX(-100px) translateY(-100px) rotate(45deg);
