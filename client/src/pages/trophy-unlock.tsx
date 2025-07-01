@@ -170,17 +170,31 @@ export default function TrophyUnlock() {
 
   return (
     <div 
-      className="min-h-screen flex items-center justify-center overflow-hidden relative animate-fade-in transition-all duration-1000"
+      className="min-h-screen flex items-center justify-center overflow-hidden relative animate-fade-in"
       style={{
-        background: stage === 0 ? 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)' 
-                  : stage === 1 ? 'linear-gradient(135deg, #1f2937 0%, #374151 40%, #111827 100%)'
-                  : stage === 2 ? 'linear-gradient(135deg, #111827 0%, #1f2937 30%, #0f172a 100%)'
-                  : 'linear-gradient(135deg, #0f172a 0%, #111827 20%, #000000 100%)'
+        background: 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)',
+        transition: 'all 4s ease-in-out'
       }}
     >
+      {/* Progressive background darkening overlay */}
+      <div 
+        className="absolute inset-0 transition-all duration-[4000ms] ease-in-out"
+        style={{
+          background: stage >= 1 ? 'linear-gradient(135deg, rgba(17, 24, 39, 0.4) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(0, 0, 0, 0.8) 100%)' : 'transparent',
+          opacity: stage >= 2 ? 1 : stage >= 1 ? 0.5 : 0
+        }}
+      />
+      
+      {/* Final dark overlay for trophy celebration */}
+      <div 
+        className="absolute inset-0 transition-all duration-[2000ms] ease-in-out"
+        style={{
+          background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.9) 100%)',
+          opacity: stage >= 3 ? 1 : 0
+        }}
+      />
 
-
-      <div className="text-center">
+      <div className="text-center relative z-10">
         {/* Stage 0: Card */}
         {stage === 0 && (
           <div className="transform scale-100 transition-all duration-1000">
@@ -267,39 +281,46 @@ export default function TrophyUnlock() {
           </div>
         )}
 
-        {/* Stage 2 & 3: Trophy */}
+        {/* Stage 2 & 3: Trophy - Unified smooth transition */}
         {(stage === 2 || stage === 3) && (
-          <div className="transform scale-100 transition-all duration-1000">
+          <div className="transform scale-100 transition-all duration-[2000ms] ease-in-out">
             {/* Trophy Container */}
             <div 
-              className="relative mx-auto mb-8 flex items-center justify-center"
-              style={{ width: '192px', height: '192px' }}
+              className="relative mx-auto mb-8 flex items-center justify-center transition-all duration-[2000ms] ease-in-out"
+              style={{ 
+                width: '192px', 
+                height: '192px',
+                transform: stage === 3 ? 'translateY(-20px)' : 'translateY(0px)'
+              }}
             >
               {/* Glow Effect */}
               <div 
-                className={`absolute inset-0 rounded-full ${stage === 3 ? 'animate-pulse' : ''}`}
+                className="absolute inset-0 rounded-full transition-all duration-[2000ms] ease-in-out"
                 style={{
                   background: colors.primary,
                   filter: `blur(20px)`,
-                  opacity: stage === 3 ? 0.8 : 0.4
+                  opacity: stage === 3 ? 0.8 : 0.4,
+                  transform: stage === 3 ? 'scale(1.3)' : 'scale(1.0)'
                 }}
               />
               
               {/* Trophy Base */}
               <div 
-                className={`relative w-32 h-32 rounded-full flex items-center justify-center shadow-2xl border-4 ${stage === 3 ? 'animate-[trophyGlow_2s_ease-in-out_infinite]' : ''}`}
+                className="relative w-32 h-32 rounded-full flex items-center justify-center shadow-2xl border-4 transition-all duration-[2000ms] ease-in-out"
                 style={{
                   background: trophyData.color === 'rainbow' 
                     ? colors.primary 
                     : `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
                   borderColor: colors.primary,
                   boxShadow: `0 0 ${stage === 3 ? '40px' : '20px'} ${colors.glow}`,
-                  filter: stage === 3 ? `drop-shadow(0 0 15px ${colors.glow})` : 'none'
+                  filter: stage === 3 ? `drop-shadow(0 0 15px ${colors.glow})` : 'none',
+                  transform: stage === 3 ? 'scale(1.1)' : 'scale(1.0)',
+                  animation: stage === 3 ? 'trophyGlow 2s ease-in-out infinite' : 'none'
                 }}
               >
                 <Trophy 
                   size={64} 
-                  className={`${trophyData.color === 'rainbow' ? 'text-white' : 'text-white'} ${stage === 3 ? 'animate-pulse' : ''}`}
+                  className={`${trophyData.color === 'rainbow' ? 'text-white' : 'text-white'} transition-all duration-[2000ms] ease-in-out ${stage === 3 ? 'animate-pulse' : ''}`}
                 />
               </div>
 
@@ -329,8 +350,15 @@ export default function TrophyUnlock() {
               )}
             </div>
 
-            {/* Trophy Title */}
-            <div className="mb-6">
+            {/* Trophy Title - Always present but with smooth opacity transition */}
+            <div 
+              className="mb-6 transition-all duration-[2000ms] ease-in-out"
+              style={{
+                opacity: stage === 3 ? 1 : 0,
+                transform: stage === 3 ? 'translateY(0px)' : 'translateY(20px)',
+                filter: stage === 3 ? 'blur(0px)' : 'blur(4px)'
+              }}
+            >
               <h1 className="text-2xl font-bold text-white mb-2">
                 🏆 Trophée Débloqué !
               </h1>

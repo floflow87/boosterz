@@ -421,17 +421,30 @@ export default function Collections() {
     return { totalCards: 0, ownedCards: 0, percentage: 0 };
   };
 
-  // Query for all user cards when no collection is selected
-  const { data: allUserCardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
+  // Query for all user cards when no collection is selected - Optimized with aggressive caching
+  const { data: allUserCardsResponse, isLoading: allCardsLoading } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: ["/api/cards/all"],
     enabled: !selectedCollection && activeTab === "cards",
+    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
+    gcTime: 15 * 60 * 1000, // Garde en cache 15 minutes
+    refetchOnWindowFocus: false, // Ne pas refetch au focus
+    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
+    refetchInterval: false, // Pas de refetch automatique
   });
 
-  // Query for specific collection cards
-  const { data: cardsResponse } = useQuery<{cards: Card[], pagination?: any}>({
+  // Query for specific collection cards - Optimized with aggressive caching
+  const { data: cardsResponse, isLoading: collectionCardsLoading } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
+    staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes pour les collections spécifiques
+    gcTime: 20 * 60 * 1000, // Garde en cache 20 minutes
+    refetchOnWindowFocus: false, // Ne pas refetch au focus
+    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
+    refetchInterval: false, // Pas de refetch automatique
   });
+
+  // Loading state for cards
+  const cardsLoading = allCardsLoading || collectionCardsLoading;
 
   // Extract cards from response - use all user cards if no collection selected
   const cards = selectedCollection 
