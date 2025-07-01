@@ -71,19 +71,22 @@ export default function TrophyUnlock() {
       setIsLoaded(true);
     }, 100); // Minimal preload time
     
-    // Fast animation sequence
-    const timer1 = setTimeout(() => setStage(1), 600); // Show card for 0.6s
+    // Extended animation sequence with longer card spinning
+    const timer1 = setTimeout(() => setStage(1), 800); // Show card for 0.8s
+    const confettiTimer = setTimeout(() => {
+      generateConfetti(); // Explosion des confettis pendant la rotation
+    }, 2800); // Confettis après 2.8s de rotation
     const timer2 = setTimeout(() => {
-      setStage(2);
-      generateConfetti(); // Confettis dès l'apparition du trophée
-    }, 1000); // Transition at 1s
+      setStage(2); // Transition vers le trophée
+    }, 3200); // Transition at 3.2s
     const timer3 = setTimeout(() => {
-      setStage(3);
-    }, 1400); // Trophy celebration at 1.4s
+      setStage(3); // Affichage du texte final
+    }, 3800); // Trophy celebration at 3.8s
 
     return () => {
       clearTimeout(preloadTimer);
       clearTimeout(timer1);
+      clearTimeout(confettiTimer);
       clearTimeout(timer2);
       clearTimeout(timer3);
     };
@@ -218,12 +221,49 @@ export default function TrophyUnlock() {
           </div>
         )}
 
-        {/* Stage 1: Transition */}
+        {/* Stage 1: Card Spinning with Acceleration */}
         {stage === 1 && (
-          <div className="transform scale-110 transition-all duration-1000 opacity-50">
-            <div className="w-48 h-72 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-2xl mx-auto mb-8 flex items-center justify-center border-4 border-blue-400 animate-pulse">
-              <Sparkles className="text-white text-6xl animate-spin" size={60} />
+          <div className="transform scale-100 transition-all duration-1000">
+            <div 
+              className="w-52 h-80 bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 rounded-2xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-blue-400 relative overflow-hidden transform-gpu"
+              style={{
+                animation: 'cardSpinAccelerate 2.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards, cardGlow 2.4s ease-in-out forwards',
+                transformStyle: 'preserve-3d'
+              }}
+            >
+              {/* Enhanced holographic effect during spinning */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 via-purple-400/30 to-pink-400/30 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transform rotate-45 animate-pulse" />
+              
+              {/* Card Content */}
+              <div className="relative z-10 text-center p-6">
+                {/* Logo/Icon */}
+                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg animate-pulse">
+                  <div className="text-white font-bold text-2xl drop-shadow-lg">⚽</div>
+                </div>
+                
+                {/* Title */}
+                <div className="text-white font-bold text-xl mb-2 drop-shadow-lg">SCORE</div>
+                <div className="text-blue-200 text-lg font-semibold mb-2">Ligue 1</div>
+                <div className="text-blue-300 text-sm mb-4">2023/24</div>
+                
+                {/* Decorative elements with faster animation */}
+                <div className="flex justify-center space-x-2 mb-2">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
+                </div>
+                
+                <div className="text-blue-200 text-xs uppercase tracking-wider">Collection</div>
+              </div>
+              
+              {/* Corner effects */}
+              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-blue-300 rounded-tl"></div>
+              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-blue-300 rounded-tr"></div>
+              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-blue-300 rounded-bl"></div>
+              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-blue-300 rounded-br"></div>
             </div>
+            <h2 className="text-xl font-bold text-white mb-2 animate-pulse">Trophée en cours de déblocage...</h2>
           </div>
         )}
 
