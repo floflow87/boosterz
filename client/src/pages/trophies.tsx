@@ -55,7 +55,6 @@ const COLOR_STYLES = {
 export default function Trophies() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
-  const { unlockTrophy } = useTrophyUnlock();
 
   // Récupération des données utilisateur
   const { data: currentUser } = useQuery({
@@ -147,19 +146,12 @@ export default function Trophies() {
     const { isUnlocked } = getMilestoneProgress(milestone);
     if (!isUnlocked) return;
     
-    // Utiliser directement la fonction d'animation
-    const trophyData = {
-      id: milestone.id,
-      rarity: milestone.rarity,
-      color: milestone.color,
-      title: milestone.title,
-      description: milestone.description
-    };
-    
-    // Importer et utiliser showTrophyUnlockAnimation directement
-    import('@/lib/trophyAnimations').then(({ showTrophyUnlockAnimation }) => {
-      showTrophyUnlockAnimation(trophyData);
-    });
+    // Appeler directement showTrophyUnlockAnimation avec les bons paramètres
+    showTrophyUnlockAnimation(
+      milestone.id,
+      milestone.rarity,
+      milestone.color
+    );
   };
 
   // Effet pour débloquer automatiquement les nouveaux trophées
@@ -238,6 +230,7 @@ export default function Trophies() {
                   {isUnlocked && (
                     <Trophy className={`w-4 h-4 ${colorStyle.text}`} />
                   )}
+
                 </div>
                 {milestone.rarity && (
                   <span className={`text-xs px-2 py-1 rounded-full ${colorStyle.bg} ${colorStyle.text}`}>
@@ -331,6 +324,13 @@ export default function Trophies() {
             <div className="text-xl font-bold text-green-400">{stats.followersCount}</div>
             <div className="text-xs text-[hsl(212,23%,69%)]">Abonnés</div>
           </div>
+        </div>
+        
+        {/* Message d'information */}
+        <div className="mt-4 bg-[hsl(214,35%,18%)] border border-[hsl(214,35%,22%)] rounded-lg p-3">
+          <p className="text-sm text-[hsl(212,23%,69%)] text-center">
+            💡 Cliquez sur vos trophées débloqués pour revoir l'animation de célébration
+          </p>
         </div>
       </div>
 
