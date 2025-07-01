@@ -47,7 +47,7 @@ export default function Welcome() {
       // Marquer l'utilisateur comme ayant terminé l'onboarding
       localStorage.setItem('onboarding_completed', 'true');
       // Forcer le rechargement de la page pour que le Router détecte le changement
-      window.location.href = '/collections';
+      window.location.href = '/';
     }
   };
 

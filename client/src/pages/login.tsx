@@ -33,16 +33,16 @@ export default function Login() {
       // Sauvegarder le token avec le même nom que App.tsx
       localStorage.setItem('authToken', data.token);
       
-      // Marquer l'onboarding comme terminé pour les utilisateurs existants
-      localStorage.setItem('onboarding_completed', 'true');
+      // Ne pas marquer l'onboarding comme terminé - laisser le Router décider
+      // localStorage.setItem('onboarding_completed', 'true'); // Supprimé
       
       toast({
         title: "Connexion réussie",
         description: `Bienvenue ${data.user.name}!`,
       });
       
-      // Rediriger vers les collections comme landing.tsx
-      window.location.href = '/collections';
+      // Rediriger vers la page d'accueil
+      window.location.href = '/';
     } catch (error) {
       toast({
         title: "Erreur de connexion",
