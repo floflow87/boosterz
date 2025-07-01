@@ -28,6 +28,7 @@ import CardExamples from "@/pages/card-examples";
 import AddCard from "@/pages/add-card";
 import CreateDeck from "@/pages/create-deck";
 import DeckDetail from "@/pages/deck-detail";
+import TrophyUnlock from "@/pages/trophy-unlock";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -69,6 +70,7 @@ function Router() {
       <Route path="/create-deck" component={CreateDeck} />
       <Route path="/deck/:id" component={DeckDetail} />
       <Route path="/card-examples" component={CardExamples} />
+      <Route path="/trophy-unlock" component={TrophyUnlock} />
       <Route path="/welcome" component={Welcome} />
       <Route path="/landing" component={Landing} />
       <Route path="/login" component={Landing} />
