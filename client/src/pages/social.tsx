@@ -1355,7 +1355,7 @@ export default function Social() {
                           onClick={() => setLocation(`/chat/${user.id}`)}
                           variant="outline"
                           size="sm"
-                          className="border-gray-400 text-gray-400 hover:bg-gray-700"
+                          className="bg-purple-600 border-purple-600 text-white hover:bg-purple-700 hover:border-purple-700"
                         >
                           <MessageCircle className="w-4 h-4" />
                         </Button>

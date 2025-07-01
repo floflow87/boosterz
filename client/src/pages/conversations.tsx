@@ -186,11 +186,6 @@ export default function Conversations() {
                           <Ban className="w-4 h-4 text-red-500 flex-shrink-0" />
                         )}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <span className={`text-xs ${!conversation.lastMessage.isRead ? 'text-[hsl(9,85%,67%)]' : 'text-gray-400'}`}>
-                          {formatTime(conversation.lastMessage.timestamp)}
-                        </span>
-                      </div>
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <p className={`text-sm truncate ${!conversation.lastMessage.isRead ? 'text-gray-300' : 'text-gray-400'}`}>
@@ -200,8 +195,11 @@ export default function Conversations() {
                     <p className="text-xs text-gray-500 mt-1">@{conversation.user.username}</p>
                   </div>
 
-                  {/* More Options */}
-                  <div className="flex-shrink-0">
+                  {/* Time and More Options */}
+                  <div className="flex-shrink-0 flex flex-col items-end space-y-2">
+                    <span className={`text-xs ${!conversation.lastMessage.isRead ? 'text-[hsl(9,85%,67%)]' : 'text-gray-400'}`}>
+                      {formatTime(conversation.lastMessage.timestamp)}
+                    </span>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button 
