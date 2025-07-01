@@ -21,7 +21,7 @@ export default function Auth() {
 
   const loginMutation = useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
-      return apiRequest("POST", "/api/auth/login", data);
+      return apiRequest("POST", "/api/auth/login", { username: data.email, password: data.password });
     },
     onSuccess: (data: any) => {
       localStorage.setItem("authToken", data.token);

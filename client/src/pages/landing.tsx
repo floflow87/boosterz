@@ -22,9 +22,9 @@ export default function Landing() {
     mutationFn: async (data: typeof formData) => {
       const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
       
-      // For login, send username as email field since backend expects email field
+      // For login, send username field as backend expects it
       const requestData = isLogin 
-        ? { email: data.username, password: data.password }
+        ? { username: data.username, password: data.password }
         : data;
       
       return await apiRequest("POST", endpoint, requestData);
