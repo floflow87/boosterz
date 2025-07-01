@@ -106,10 +106,11 @@ export default function Welcome() {
         {currentStep === 3 && (
           <div className="mb-6 mt-8">
             <div className="flex justify-center space-x-3 mb-4">
-              {/* Exemples d'avatars avec halos - réduits */}
+              {/* Exemples de trophées avec icônes */}
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 border border-gray-500 shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 border border-gray-500 shadow-md relative flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-gray-200" />
                     <div className="absolute inset-0 rounded-full shadow-[0_0_6px_1px_rgba(156,163,175,0.5)]"></div>
                   </div>
                 </div>
@@ -118,7 +119,8 @@ export default function Welcome() {
               
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border border-green-500 shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border border-green-500 shadow-md relative flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-green-100" />
                     <div className="absolute inset-0 rounded-full shadow-[0_0_6px_1px_rgba(34,197,94,0.5)]"></div>
                   </div>
                 </div>
@@ -127,7 +129,8 @@ export default function Welcome() {
               
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-blue-500 shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-blue-500 shadow-md relative flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-blue-100" />
                     <div className="absolute inset-0 rounded-full shadow-[0_0_6px_1px_rgba(59,130,246,0.5)]"></div>
                   </div>
                 </div>
@@ -136,7 +139,8 @@ export default function Welcome() {
               
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-purple-500 shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-purple-500 shadow-md relative flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-purple-100" />
                     <div className="absolute inset-0 rounded-full shadow-[0_0_8px_2px_rgba(147,51,234,0.6)]"></div>
                   </div>
                 </div>
@@ -145,7 +149,8 @@ export default function Welcome() {
               
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 border border-yellow-500 shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 border border-yellow-500 shadow-md relative flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-yellow-100" />
                     <div className="absolute inset-0 rounded-full shadow-[0_0_10px_2px_rgba(251,191,36,0.7)] animate-pulse"></div>
                   </div>
                 </div>
@@ -154,7 +159,8 @@ export default function Welcome() {
               
               <div className="flex flex-col items-center space-y-1">
                 <div className="relative">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 to-purple-500 border border-transparent shadow-md relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-red-500 via-orange-500 via-yellow-500 via-green-500 via-cyan-500 via-blue-500 to-purple-500 border border-transparent shadow-md relative flex items-center justify-center">
+                    <Trophy className="w-4 h-4 text-white" />
                     <div className="absolute inset-0 rounded-full shadow-[0_0_12px_3px_rgba(147,51,234,0.8)] animate-pulse"></div>
                   </div>
                 </div>
