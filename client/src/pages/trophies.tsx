@@ -308,14 +308,7 @@ export default function Trophies() {
           </div>
         </div>
         
-        {/* Message informatif */}
-        <div className="px-4 pt-2 pb-2">
-          <div className="bg-[hsl(214,35%,20%)] border border-[hsl(214,35%,25%)] rounded-lg p-3">
-            <p className="text-xs text-[hsl(212,23%,69%)] text-center">
-              💡 Cliquez sur les trophées <span className="text-[hsl(31,84%,55%)]">🏆</span> complétés à 100% pour relancer leur animation
-            </p>
-          </div>
-        </div>
+
       </div>
 
       {/* Statistiques générales */}

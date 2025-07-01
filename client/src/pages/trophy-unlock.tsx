@@ -202,19 +202,38 @@ export default function TrophyUnlock() {
         {/* Stage 0: Card */}
         {stage === 0 && (
           <div className="transform scale-100 transition-all duration-1000">
-            <div className="w-48 h-72 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-slate-500 relative overflow-hidden animate-pulse transform-gpu perspective-1000 animate-[flipY_2s_ease-in-out]">
-              {/* Card Background Pattern */}
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-600/20 to-slate-800/20" />
+            <div className="w-52 h-80 bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 rounded-2xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-blue-400 relative overflow-hidden animate-[flipY_0.6s_ease-in-out] transform-gpu">
+              {/* Holographic effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 via-purple-400/20 to-pink-400/20 animate-pulse" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent transform rotate-45 animate-pulse" />
               
               {/* Card Content */}
-              <div className="relative z-10 text-center p-4">
-                <div className="w-16 h-16 bg-slate-400 rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <div className="text-slate-700 font-bold text-xl">⚽</div>
+              <div className="relative z-10 text-center p-6">
+                {/* Logo/Icon */}
+                <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg">
+                  <div className="text-white font-bold text-2xl drop-shadow-lg">⚽</div>
                 </div>
-                <div className="text-white font-bold text-lg mb-2">CARTE</div>
-                <div className="text-slate-300 text-sm">Score Ligue 1</div>
-                <div className="text-slate-300 text-xs mt-2">23/24</div>
+                
+                {/* Title */}
+                <div className="text-white font-bold text-xl mb-2 drop-shadow-lg">SCORE</div>
+                <div className="text-blue-200 text-lg font-semibold mb-2">Ligue 1</div>
+                <div className="text-blue-300 text-sm mb-4">2023/24</div>
+                
+                {/* Decorative elements */}
+                <div className="flex justify-center space-x-2 mb-2">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full animate-ping"></div>
+                  <div className="w-2 h-2 bg-blue-400 rounded-full animate-ping" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-2 h-2 bg-purple-400 rounded-full animate-ping" style={{animationDelay: '0.4s'}}></div>
+                </div>
+                
+                <div className="text-blue-200 text-xs uppercase tracking-wider">Collection</div>
               </div>
+              
+              {/* Corner effects */}
+              <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-blue-300 rounded-tl"></div>
+              <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-blue-300 rounded-tr"></div>
+              <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-blue-300 rounded-bl"></div>
+              <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-blue-300 rounded-br"></div>
             </div>
             <h2 className="text-xl font-bold text-white mb-2">Nouvelle carte ajoutée !</h2>
           </div>
