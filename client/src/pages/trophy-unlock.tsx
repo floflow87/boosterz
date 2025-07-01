@@ -124,13 +124,12 @@ export default function TrophyUnlock() {
       {stage === 3 && confetti.map((piece) => (
         <div
           key={piece.id}
-          className="absolute w-3 h-3 opacity-80 animate-bounce"
+          className="absolute w-3 h-3 opacity-80 confetti-piece"
           style={{
             left: piece.x,
             top: piece.y,
             backgroundColor: piece.color,
-            transform: `rotate(${piece.rotation}deg) translateY(-20px)`,
-            animation: `confetti-fall-${piece.id} 4s ease-out forwards`
+            transform: `rotate(${piece.rotation}deg)`
           }}
         />
       ))}

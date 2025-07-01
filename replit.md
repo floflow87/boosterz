@@ -118,11 +118,25 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 01, 2025. Created trophy unlock animation system with popup window and visual celebration
+  - **Animation page created**: New trophy-unlock.tsx page with card-to-trophy transition sequence
+  - **Popup window system**: Opens in centered 800x600 popup window with proper focus handling
+  - **Card to trophy transition**: Animated sequence: card (1s) → sparkles (2s) → trophy celebration (3s+)
+  - **Visual celebration effects**: Trophy scintillation, color illumination, sparkle animations, and confetti explosion
+  - **Confetti system**: 50 colorful pieces with physics-based falling animation and rotation
+  - **Trophy coloring**: Dynamic trophy colors matching rarity levels (gray→green→blue→purple→gold→rainbow)
+  - **Tier name display**: Shows proper French tier names (Débutant, Commun, Avancé, Rare, Épique, Légendaire)
+  - **Auto-integration**: Trophy unlock hook checks stats after card addition and triggers animation automatically
+  - **Return navigation**: Continue button redirects to previous page or closes popup window
+  - **Database integration**: Modified unlock endpoint to return animation trigger flags for new trophies
+  - **Complete automation**: System automatically detects trophy milestones and shows celebration without user intervention
+  - Trophy unlock now provides immersive celebration experience with professional animations and effects
 - January 01, 2025. Enhanced guided tour with comprehensive trophy system explanation
   - **Trophy slide added**: Comprehensive trophy explanation slide added in 4th position (before final gift slide)
   - **Visual progression**: 6 trophy levels with authentic colors (Débutant→Commun→Avancé→Rare→Épique→Légendaire)
   - **Rainbow legendary badge**: Exact rainbow gradient matching user's design (red→orange→yellow→green→cyan→blue→purple)
   - **Special cards trophy progression updated**: Added "5 special cards" milestone as rare tier, moved "1 special card" from rare to advanced
+  - **Trophy icons in guided tour**: Replaced colored dots with Trophy icons in authentic colors for each tier
   - **Compact design**: Reduced badge sizes (8x8) with 10px text for optimal space usage
   - **Consistent spacing**: Added mt-8 margin to match other slides' title positioning
   - **Educational content**: Explains trophy persistence, avatar halo effects, and clickable avatar functionality
