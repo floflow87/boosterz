@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Star, Gift, Trophy, Users, ArrowLeft } from "lucide-react";
+import { Star, Gift, Trophy, Users, ArrowLeft, Award } from "lucide-react";
 import HaloBlur from "@/components/halo-blur";
 
 export default function Welcome() {
@@ -24,6 +24,12 @@ export default function Welcome() {
       icon: Trophy,
       title: "Prêt à commencer !",
       description: "Ta collection t'attend. Explore, collectionne et deviens le plus gros collectionneur de ton cercle d'amis !",
+      buttonText: "Continuer"
+    },
+    {
+      icon: Award,
+      title: "Système de Trophées",
+      description: "Gagne des trophées en collectionnant des cartes ! Plus tu en as, plus ton avatar brille. Une fois débloqué, un trophée reste acquis pour toujours. Clique sur ton avatar pour voir tes accomplissements.",
       buttonText: "Continuer"
     },
     {
@@ -95,6 +101,77 @@ export default function Welcome() {
         <p className="text-gray-300 mb-8 leading-relaxed">
           {step.description}
         </p>
+
+        {/* Trophée visual for trophy step */}
+        {currentStep === 3 && (
+          <div className="mb-6 mt-8">
+            <div className="flex justify-center space-x-3 mb-4">
+              {/* Exemples d'avatars avec halos - réduits */}
+              <div className="flex flex-col items-center space-y-1">
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gray-400 to-gray-600 border border-gray-500 shadow-md relative">
+                    <div className="absolute inset-0 rounded-full shadow-[0_0_6px_1px_rgba(156,163,175,0.5)]"></div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-gray-400">Débutant</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-400 to-green-600 border border-green-500 shadow-md relative">
+                    <div className="absolute inset-0 rounded-full shadow-[0_0_6px_1px_rgba(34,197,94,0.5)]"></div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-green-400">Commun</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border border-blue-500 shadow-md relative">
+                    <div className="absolute inset-0 rounded-full shadow-[0_0_6px_1px_rgba(59,130,246,0.5)]"></div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-blue-400">Avancé</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border border-purple-500 shadow-md relative">
+                    <div className="absolute inset-0 rounded-full shadow-[0_0_8px_2px_rgba(147,51,234,0.6)]"></div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-purple-400">Rare</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 border border-yellow-500 shadow-md relative">
+                    <div className="absolute inset-0 rounded-full shadow-[0_0_10px_2px_rgba(251,191,36,0.7)] animate-pulse"></div>
+                  </div>
+                </div>
+                <span className="text-[10px] text-yellow-400">Épique</span>
+              </div>
+              
+              <div className="flex flex-col items-center space-y-1">
+                <div className="relative">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-red-400 via-yellow-400 via-green-400 via-blue-400 to-purple-400 border border-transparent shadow-md relative">
+                    <div className="absolute inset-0 rounded-full shadow-[0_0_12px_3px_rgba(147,51,234,0.8)] animate-pulse"></div>
+                  </div>
+                </div>
+                <span className="text-[10px] bg-gradient-to-r from-red-400 via-yellow-400 to-purple-400 bg-clip-text text-transparent font-bold">Légendaire</span>
+              </div>
+            </div>
+            
+            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 backdrop-blur border border-purple-500/30 rounded-lg p-3 text-center">
+              <div className="flex items-center justify-center space-x-2 mb-1">
+                <Award className="w-4 h-4 text-yellow-400" />
+                <span className="text-xs font-semibold text-yellow-400">Accomplissement permanent</span>
+                <Award className="w-4 h-4 text-yellow-400" />
+              </div>
+              <p className="text-[10px] text-gray-300">Tes trophées restent acquis même si tu vends des cartes</p>
+            </div>
+          </div>
+        )}
 
         {/* Badge for last step */}
         {currentStep === steps.length - 1 && (
