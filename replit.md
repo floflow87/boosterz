@@ -125,10 +125,12 @@ The application follows a modern full-stack architecture with clear separation b
     - Cache toutes cartes utilisateur étendu à 1 heure, mémoire cache 3 heures
     - Chargement conditionnel intelligent pour éviter les écrans de chargement inutiles
     - Réduction des tentatives de retry à 1 pour accélérer l'affichage en cas d'erreur
-  - **Affichage par défaut collection Score Ligue 1 23/24** : 
-    - Auto-sélection automatique de la collection "Score Ligue 1 23/24" au chargement
-    - Basculement automatique vers l'onglet "Cartes" lors de la sélection
-    - Navigation fonctionnelle vers les détails de la collection comme en développement
+  - **Affichage par défaut collection Score Ligue 1 forcé sur TOUS les comptes** : 
+    - Auto-sélection FORCÉE de la collection "SCORE LIGUE 1" au chargement (même sur compte Floflow87)
+    - Recherche flexible par nom ("score ligue 1", "score ligue") et par saison ("23/24")
+    - Basculement automatique et forcé vers l'onglet "Cartes" pour tous les utilisateurs  
+    - Logs détaillés de débogage pour suivre le processus d'auto-sélection
+    - Correction onglet par défaut changé de "collections" vers "cards" pour compatibilité
   - **Icône de coupe colorée sur page Trophées** : Affichage en haut à droite selon le palier débloqué
     - Couleurs dégradées par niveau : gris, vert, bleu, violet, or, arc-en-ciel avec animation pulse
     - Taille agrandie (14x14) avec ombres et effets visuels pour meilleure visibilité
