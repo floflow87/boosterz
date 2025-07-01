@@ -62,6 +62,11 @@ export default function Trophies() {
     queryKey: ['/api/personal-cards'],
   });
 
+  // Récupération des trophées débloqués
+  const { data: unlockedTrophies } = useQuery({
+    queryKey: ['/api/trophies/unlocked'],
+  });
+
   // Calcul des statistiques
   const stats = useMemo(() => {
     if (!personalCards || !Array.isArray(personalCards) || !currentUser) return { totalCards: 0, autographsCount: 0, specialsCount: 0, followersCount: 0 };
@@ -107,10 +112,14 @@ export default function Trophies() {
     else if (milestone.id.includes('follower')) currentCount = stats.followersCount;
 
     const progress = Math.min(currentCount, milestone.count);
-    const isUnlocked = currentCount >= milestone.count;
+    const canUnlock = currentCount >= milestone.count;
+    
+    // Vérifier si le trophée est déjà débloqué en base de données
+    const isUnlocked = unlockedTrophies?.some((trophy: any) => trophy.trophyId === milestone.id) || false;
+    
     const progressPercentage = (progress / milestone.count) * 100;
 
-    return { progress, isUnlocked, progressPercentage, currentCount };
+    return { progress, isUnlocked, canUnlock, progressPercentage, currentCount };
   };
 
   // Calcul des statistiques globales

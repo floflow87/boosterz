@@ -1,6 +1,6 @@
 import { 
   users, collections, cards, userCards, personalCards, conversations, messages, 
-  posts, activities, follows, decks, deckCards, postLikes, postComments, notifications, type User, type InsertUser,
+  posts, activities, follows, decks, deckCards, postLikes, postComments, notifications, unlockedTrophies, type User, type InsertUser,
   type Collection, type InsertCollection, type Card, type InsertCard,
   type UserCard, type InsertUserCard, type PersonalCard, type InsertPersonalCard,
   type Conversation, type InsertConversation, type Message, type InsertMessage,
@@ -85,6 +85,11 @@ export interface IStorage {
   
   // Trophy Stats (optimized for avatar halos)
   getTrophyStats(userId: number): Promise<{ totalCards: number; autographs: number; specials: number }>;
+  
+  // Trophy operations
+  getUnlockedTrophies(userId: number): Promise<any[]>;
+  unlockTrophy(userId: number, trophyId: string, category: string, color: string): Promise<any>;
+  getHighestTrophyColor(userId: number): Promise<string | null>;
 
   // Personal Cards (pour "Mes cartes")
   getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]>;
@@ -1020,6 +1025,63 @@ export class DatabaseStorage implements IStorage {
       .update(notifications)
       .set({ isRead: true })
       .where(eq(notifications.userId, userId));
+  }
+
+  // Trophy operations
+  async getUnlockedTrophies(userId: number): Promise<any[]> {
+    const trophies = await db
+      .select()
+      .from(unlockedTrophies)
+      .where(eq(unlockedTrophies.userId, userId));
+    
+    return trophies;
+  }
+
+  async unlockTrophy(userId: number, trophyId: string, category: string, color: string): Promise<any> {
+    try {
+      const trophy = await db
+        .insert(unlockedTrophies)
+        .values({
+          userId,
+          trophyId,
+          category,
+          color
+        })
+        .returning()
+        .onConflictDoNothing();
+      
+      return trophy[0];
+    } catch (error) {
+      // Trophy already exists, return null
+      return null;
+    }
+  }
+
+  async getHighestTrophyColor(userId: number): Promise<string | null> {
+    const trophies = await this.getUnlockedTrophies(userId);
+    
+    // Order by priority: rainbow > gold > purple > blue > green > gray
+    const colorPriority = {
+      'rainbow': 6,
+      'gold': 5,
+      'purple': 4,
+      'blue': 3,
+      'green': 2,
+      'gray': 1
+    };
+    
+    let highestColor = null;
+    let highestPriority = 0;
+    
+    for (const trophy of trophies) {
+      const priority = colorPriority[trophy.color as keyof typeof colorPriority] || 0;
+      if (priority > highestPriority) {
+        highestPriority = priority;
+        highestColor = trophy.color;
+      }
+    }
+    
+    return highestColor;
   }
 }
 
