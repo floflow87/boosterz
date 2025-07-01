@@ -50,6 +50,7 @@ export default function TrophyUnlock() {
   const [, setLocation] = useLocation();
   const [stage, setStage] = useState(0); // 0: card, 1: transition, 2: trophy, 3: celebration
   const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number; color: string; rotation: number; vx: number; vy: number; life: number }>>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   
   // Récupération des données du trophée depuis les paramètres URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -166,7 +167,7 @@ export default function TrophyUnlock() {
         {/* Stage 0: Card */}
         {stage === 0 && (
           <div className="transform scale-100 transition-all duration-1000">
-            <div className="w-48 h-72 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-slate-500 relative overflow-hidden">
+            <div className="w-48 h-72 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-slate-500 relative overflow-hidden animate-pulse transform-gpu perspective-1000 animate-[flipY_2s_ease-in-out]">
               {/* Card Background Pattern */}
               <div className="absolute inset-0 bg-gradient-to-br from-slate-600/20 to-slate-800/20" />
               
@@ -180,7 +181,7 @@ export default function TrophyUnlock() {
                 <div className="text-slate-300 text-xs mt-2">23/24</div>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Nouvelle carte ajoutée !</h2>
+            <h2 className="text-xl font-bold text-white mb-2">Nouvelle carte ajoutée !</h2>
           </div>
         )}
 
@@ -213,18 +214,19 @@ export default function TrophyUnlock() {
               
               {/* Trophy Base */}
               <div 
-                className="relative w-32 h-32 rounded-full flex items-center justify-center shadow-2xl border-4"
+                className={`relative w-32 h-32 rounded-full flex items-center justify-center shadow-2xl border-4 ${stage === 3 ? 'animate-[trophyGlow_2s_ease-in-out_infinite]' : ''}`}
                 style={{
                   background: trophyData.color === 'rainbow' 
                     ? colors.primary 
                     : `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`,
                   borderColor: colors.primary,
-                  boxShadow: `0 0 ${stage === 3 ? '40px' : '20px'} ${colors.glow}`
+                  boxShadow: `0 0 ${stage === 3 ? '40px' : '20px'} ${colors.glow}`,
+                  filter: stage === 3 ? `drop-shadow(0 0 15px ${colors.glow})` : 'none'
                 }}
               >
                 <Trophy 
                   size={64} 
-                  className={`${trophyData.color === 'rainbow' ? 'text-white' : 'text-white'} ${stage === 3 ? 'animate-bounce' : ''}`}
+                  className={`${trophyData.color === 'rainbow' ? 'text-white' : 'text-white'} ${stage === 3 ? 'animate-pulse' : ''}`}
                 />
               </div>
 
@@ -232,18 +234,23 @@ export default function TrophyUnlock() {
               {stage === 3 && (
                 <>
                   <Sparkles 
-                    className="absolute top-4 right-4 text-yellow-300 animate-ping" 
-                    size={24} 
+                    className="absolute top-4 right-4 text-yellow-300 animate-[sparkleShine_1.5s_ease-in-out_infinite]" 
+                    size={20} 
                   />
                   <Sparkles 
-                    className="absolute bottom-4 left-4 text-yellow-300 animate-ping" 
-                    size={20}
+                    className="absolute bottom-4 left-4 text-yellow-300 animate-[sparkleShine_1.8s_ease-in-out_infinite]" 
+                    size={16}
                     style={{ animationDelay: '0.5s' }}
                   />
                   <Sparkles 
-                    className="absolute top-8 left-8 text-yellow-300 animate-ping" 
-                    size={16}
+                    className="absolute top-8 left-8 text-yellow-300 animate-[sparkleShine_1.3s_ease-in-out_infinite]" 
+                    size={14}
                     style={{ animationDelay: '1s' }}
+                  />
+                  <Sparkles 
+                    className="absolute bottom-8 right-8 text-yellow-300 animate-[sparkleShine_2s_ease-in-out_infinite]" 
+                    size={12}
+                    style={{ animationDelay: '1.5s' }}
                   />
                 </>
               )}
@@ -251,11 +258,11 @@ export default function TrophyUnlock() {
 
             {/* Trophy Title */}
             <div className="mb-6">
-              <h1 className="text-4xl font-bold text-white mb-2">
+              <h1 className="text-2xl font-bold text-white mb-2">
                 🏆 Trophée Débloqué !
               </h1>
               <h2 
-                className="text-3xl font-bold mb-2"
+                className="text-2xl font-bold mb-2"
                 style={{
                   color: trophyData.color === 'rainbow' ? 'transparent' : colors.primary,
                   background: trophyData.color === 'rainbow' ? colors.primary : 'transparent',
@@ -265,14 +272,14 @@ export default function TrophyUnlock() {
               >
                 {getRarityDisplayName(trophyData.rarity)}
               </h2>
-              <p className="text-lg text-gray-300">{trophyData.description}</p>
+              <p className="text-sm text-gray-300">{trophyData.description}</p>
             </div>
 
             {/* Continue Button */}
             {stage === 3 && (
               <Button
                 onClick={handleContinue}
-                className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                className="bg-[hsl(9,85%,67%)] text-white hover:bg-[hsl(9,85%,62%)] px-6 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105"
               >
                 Continuer
               </Button>
