@@ -94,20 +94,21 @@ export default function TrophyUnlock() {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
     
-    for (let i = 0; i < 80; i++) {
-      // Angle aléatoire pour explosion dans toutes les directions
-      const angle = (Math.PI * 2 * i) / 80 + Math.random() * 0.5;
-      const velocity = 2 + Math.random() * 4; // Vitesse variable
+    for (let i = 0; i < 100; i++) {
+      // Explosion parfaitement radiale dans tous les sens
+      const angle = (Math.PI * 2 * i) / 100 + Math.random() * 0.2;
+      const velocity = 4 + Math.random() * 8; // Vitesse plus élevée
       
       newConfetti.push({
         id: i,
-        x: centerX + (Math.random() - 0.5) * 100, // Position proche du centre
-        y: centerY + (Math.random() - 0.5) * 100,
-        color: ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6'][Math.floor(Math.random() * 7)],
+        x: centerX + (Math.random() - 0.5) * 50, // Position plus centrée
+        y: centerY + (Math.random() - 0.5) * 50,
+        color: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FECA57', '#FF69B4', '#32CD32', '#FF4757', '#7bed9f'][Math.floor(Math.random() * 10)],
         rotation: Math.random() * 360,
-        vx: Math.cos(angle) * velocity, // Vitesse X basée sur l'angle
-        vy: Math.sin(angle) * velocity, // Vitesse Y basée sur l'angle
-        life: 1.0 // Durée de vie du confetti
+        vx: Math.cos(angle) * velocity,
+        vy: Math.sin(angle) * velocity,
+        life: 1.0,
+        size: 0.8 + Math.random() * 0.4 // Taille variable
       });
     }
     setConfetti(newConfetti);
@@ -119,18 +120,19 @@ export default function TrophyUnlock() {
           ...piece,
           x: piece.x + piece.vx,
           y: piece.y + piece.vy,
-          vy: piece.vy + 0.1, // Gravité
-          rotation: piece.rotation + 3,
-          life: piece.life - 0.008 // Réduction de la durée de vie
-        })).filter(piece => piece.life > 0) // Supprimer les confettis morts
+          vx: piece.vx * 0.99, // Friction air
+          vy: piece.vy + 0.15, // Gravité plus forte
+          rotation: piece.rotation + (piece.vx * 0.5),
+          life: piece.life - 0.006 // Durée plus longue
+        })).filter(piece => piece.life > 0)
       );
     };
 
-    const interval = setInterval(animateConfetti, 16); // 60 FPS
+    const interval = setInterval(animateConfetti, 16);
     setTimeout(() => {
       clearInterval(interval);
       setConfetti([]);
-    }, 4000);
+    }, 5000); // Durée plus longue
   };
 
   const handleContinue = () => {
@@ -151,7 +153,7 @@ export default function TrophyUnlock() {
       'gold': 'Épique',
       'rainbow': 'Légendaire'
     };
-    return names[rarity] || 'Nouveau';
+    return names[rarity] || names[trophyData.color] || 'Débutant';
   };
 
   // Optimized loading screen with instant transition
@@ -172,7 +174,15 @@ export default function TrophyUnlock() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative animate-fade-in">
+    <div 
+      className="min-h-screen flex items-center justify-center overflow-hidden relative animate-fade-in transition-all duration-1000"
+      style={{
+        background: stage === 0 ? 'linear-gradient(135deg, #1f2937 0%, #374151 50%, #1f2937 100%)' 
+                  : stage === 1 ? 'linear-gradient(135deg, #1f2937 0%, #374151 40%, #111827 100%)'
+                  : stage === 2 ? 'linear-gradient(135deg, #111827 0%, #1f2937 30%, #0f172a 100%)'
+                  : 'linear-gradient(135deg, #0f172a 0%, #111827 20%, #000000 100%)'
+      }}
+    >
       {/* Confetti */}
       {(stage === 2 || stage === 3) && confetti.map((piece) => (
         <div
