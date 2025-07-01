@@ -118,17 +118,23 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- January 01, 2025. **OPTIMISATION PERFORMANCES + ICÔNE COUPE TROPHÉES + COMPTEURS ANIMÉS**
-  - **Performances page Cartes optimisées** : Cache étendu à 15 minutes (au lieu de 5), gcTime augmenté à 30 minutes
-    - Endpoint `/api/users/me` et `/api/users/me/collections` ajoutés pour l'authentification en production
-    - Réduction significative des requêtes réseau pour améliorer les temps de chargement
+- January 01, 2025. **OPTIMISATION PERFORMANCES PRODUCTION + AFFICHAGE PAR DÉFAUT SCORE LIGUE 1 23/24**
+  - **Performances page Collections optimisées pour la production** : 
+    - Cache collections étendu à 20 minutes (au lieu de 10), mémoire cache 1 heure
+    - Cache cartes collection étendu à 30 minutes, mémoire cache 2 heures
+    - Cache toutes cartes utilisateur étendu à 1 heure, mémoire cache 3 heures
+    - Chargement conditionnel intelligent pour éviter les écrans de chargement inutiles
+    - Réduction des tentatives de retry à 1 pour accélérer l'affichage en cas d'erreur
+  - **Affichage par défaut collection Score Ligue 1 23/24** : 
+    - Auto-sélection automatique de la collection "Score Ligue 1 23/24" au chargement
+    - Basculement automatique vers l'onglet "Cartes" lors de la sélection
+    - Navigation fonctionnelle vers les détails de la collection comme en développement
   - **Icône de coupe colorée sur page Trophées** : Affichage en haut à droite selon le palier débloqué
     - Couleurs dégradées par niveau : gris, vert, bleu, violet, or, arc-en-ciel avec animation pulse
     - Taille agrandie (14x14) avec ombres et effets visuels pour meilleure visibilité
   - **Compteurs animés sur KPIs** : Effet de compteur progressif avec Framer Motion
     - Durées différentielles : cartes (2s), decks (2.2s), abonnés (2.5s)
     - Gestion spéciale pour les valeurs nulles pour éviter les warnings d'animation
-  - **Corrections production** : Utilisation des données utilisateur authentifiées pour compatibilité en production
 - January 01, 2025. **ERREUR 500 RÉSOLUE + VISITE GUIDÉE ET PAGE D'ACCUEIL CORRIGÉES** 
   - **Erreur 500 résolue définitivement** : Suppression complète des dépendances aux sessions
     - Erreur `relation "sessions" does not exist` en production causée par les appels à la table sessions
