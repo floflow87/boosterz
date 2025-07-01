@@ -2415,7 +2415,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const trophy = await storage.unlockTrophy(userId, trophyId, category, color);
-      res.json(trophy);
+      
+      if (trophy) {
+        // Return success with animation data
+        res.json({
+          ...trophy,
+          isNew: true,
+          showAnimation: true
+        });
+      } else {
+        // Trophy already exists
+        res.json({
+          trophyId,
+          category,
+          color,
+          isNew: false,
+          showAnimation: false
+        });
+      }
     } catch (error) {
       console.error('Error unlocking trophy:', error);
       res.status(500).json({ error: 'Failed to unlock trophy' });

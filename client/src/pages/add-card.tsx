@@ -8,6 +8,7 @@ import { ArrowLeft, Camera, Upload, X } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useTrophyUnlock, checkAndUnlockTrophies } from "@/hooks/useTrophyUnlock";
 
 interface Player {
   playerName: string;
@@ -20,9 +21,17 @@ export default function AddCard() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { unlockTrophy } = useTrophyUnlock();
   
   // Step management
   const [currentStep, setCurrentStep] = useState<Step>("import");
+
+  // Get current user stats for trophy checking
+  const { data: userStats } = useQuery({
+    queryKey: ["/api/users/me/trophy-stats"],
+    queryFn: () => apiRequest("GET", "/api/users/me/trophy-stats"),
+    staleTime: 30 * 1000,
+  });
   
   // Form data - pour les cartes personnelles
   const [selectedCollectionId, setSelectedCollectionId] = useState<number | null>(null);
@@ -164,9 +173,37 @@ export default function AddCard() {
       queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
       queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
       queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/users/me/trophy-stats"] });
+      
+      // Check and unlock trophies after successful card addition
+      if (userStats) {
+        const newStats = {
+          totalCards: (userStats.totalCards || 0) + 1,
+          specialCards: userStats.specialCards || 0,
+          autographs: userStats.autographs || 0,
+          followers: userStats.followers || 0,
+        };
+        
+        // Check if this is a special card type and update count
+        if (cardType && (cardType.includes('1/1') || numbering?.includes('1/1'))) {
+          newStats.specialCards += 1;
+        }
+        
+        // Check if this is an autograph and update count
+        if (cardType && cardType.toLowerCase().includes('auto')) {
+          newStats.autographs += 1;
+        }
+        
+        // Check and unlock trophies based on new stats
+        setTimeout(() => {
+          checkAndUnlockTrophies(newStats, unlockTrophy);
+        }, 500); // Small delay to ensure cache invalidation completes
+      }
       
       // Navigate back to collections page
-      setLocation("/collections");
+      setTimeout(() => {
+        setLocation("/collections");
+      }, 1000); // Delay navigation to allow trophy animation to trigger
     },
     onError: (error: any) => {
       console.error("Client: Error adding personal card:", error);
