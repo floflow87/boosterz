@@ -15,12 +15,12 @@ import { eq, desc, and, inArray, not, or, ilike, asc, like, sql } from "drizzle-
 const initializeSampleData = async () => {
   try {
     // Check if conversation already exists
-    const existingConv = await storage.getConversation(1, 999);
+    const existingConv = await storage.getConversation(1, 2);
     if (!existingConv) {
       // Create sample conversation
       const conversation = await storage.createConversation({
         user1Id: 1,
-        user2Id: 999
+        user2Id: 2
       });
       
       // Create sample messages
