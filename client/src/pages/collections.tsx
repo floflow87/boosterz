@@ -428,8 +428,8 @@ export default function Collections() {
   const { data: allUserCardsResponse, isLoading: allCardsLoading } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: ["/api/cards/all"],
     enabled: !selectedCollection && activeTab === "cards",
-    staleTime: 5 * 60 * 1000, // Cache pendant 5 minutes
-    gcTime: 15 * 60 * 1000, // Garde en cache 15 minutes
+    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes pour réduire les requêtes
+    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
     refetchOnWindowFocus: false, // Ne pas refetch au focus
     refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
     refetchInterval: false, // Pas de refetch automatique
