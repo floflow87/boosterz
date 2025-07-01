@@ -7,6 +7,31 @@ import { z } from 'zod';
 const router = Router();
 
 // Test endpoint pour diagnostiquer les problèmes de production
+// Test endpoint for login debugging
+router.post('/login-test', async (req, res) => {
+  try {
+    console.log('=== LOGIN TEST ENDPOINT ===');
+    console.log('Request headers:', req.headers);
+    console.log('Request body:', req.body);
+    console.log('Content-Type:', req.headers['content-type']);
+    
+    res.json({
+      success: true,
+      message: 'Login test endpoint reached successfully',
+      bodyReceived: req.body,
+      environment: process.env.NODE_ENV,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Login test error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Login test failed',
+      error: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 router.get('/test', async (req, res) => {
   try {
     console.log('=== AUTH TEST ENDPOINT ===');
