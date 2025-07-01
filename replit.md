@@ -118,6 +118,15 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 01, 2025. Implemented persistent trophy system with database storage and social trophy scaling
+  - **Persistent trophy storage**: Created unlocked_trophies table in database for permanent trophy tracking
+  - **Trophy API endpoints**: Added /api/trophies/unlocked, /api/trophies/unlock, and /api/users/:id/highest-trophy endpoints
+  - **Automatic trophy unlocking**: Trophies are automatically unlocked when conditions are met and stored permanently
+  - **Persistent avatar halo**: Avatar halo color reflects highest trophy ever earned, never decreases
+  - **Social trophy scales restored**: Previous social trophy progression with only final tier as "Légendaire"
+  - **Rainbow badge for legendary**: Legendary tier displays rainbow gradient badge as requested
+  - **Database integration**: Complete trophy system with server-side persistence and client-side real-time updates
+  - Trophy achievements are now permanently stored and avatar halos show minimum earned trophy color
 - June 30, 2025. Implemented new rarity system for Score Ligue 1 23/24 based on numbering
   - **Rarity levels**: Base, Commune (/50), Peu commune (/35,/30,/25), Rare (/20,/15), Épique (/10), Légendaire (/5), Unique (/1)
   - **Autograph handling**: Autographs start from épique level and follow same numbering rules

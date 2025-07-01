@@ -62,6 +62,12 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
     enabled: !!userId || !!currentUser
   });
 
+  // Récupération du plus haut trophée débloqué pour l'utilisateur
+  const { data: highestTrophyData } = useQuery({
+    queryKey: [`/api/users/${userId || (currentUser as any)?.user?.id}/highest-trophy`],
+    enabled: !!(userId || (currentUser as any)?.user?.id)
+  });
+
   // Vérifier si c'est l'avatar de l'utilisateur connecté  
   const isOwnAvatar = currentUser && (!userId || (currentUser as any).user?.id === userId);
 
@@ -71,8 +77,14 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
     }
   };
 
-  // Calcul du niveau d'avatar
+  // Calcul du niveau d'avatar basé sur les trophées persistants
   const avatarLevel = useMemo(() => {
+    // Priorité : utiliser le plus haut trophée persistant depuis la base de données
+    if (highestTrophyData?.color) {
+      return highestTrophyData.color;
+    }
+
+    // Fallback : calcul basé sur les statistiques actuelles
     if (!trophyStats) {
       return null;
     }
@@ -98,7 +110,7 @@ export default function TrophyAvatar({ userId, avatar, size = "md", className = 
     }
 
     return highestColor;
-  }, [trophyStats]);
+  }, [highestTrophyData, trophyStats]);
 
   // Générer un gradient d'avatar par défaut si pas d'avatar fourni
   const defaultGradient = `linear-gradient(135deg, #FF6B35, #F7931E)`;
