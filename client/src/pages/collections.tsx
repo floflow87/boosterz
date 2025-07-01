@@ -19,6 +19,7 @@ import MilestoneCelebration from "@/components/MilestoneCelebration";
 import { MilestoneDetector, type MilestoneData } from "@/utils/milestoneDetector";
 import MilestoneTestTriggers from "@/utils/milestoneTestTriggers";
 import TrophyAvatar from "@/components/TrophyAvatar";
+import AnimatedCounter from "@/components/AnimatedCounter";
 
 const getThemeGradient = (themeColors: string) => {
   const themeStyles: Record<string, string> = {
@@ -983,7 +984,7 @@ export default function Collections() {
               }`}
             >
               <Layers className="w-4 h-4" />
-              Collections
+              Check-lists
             </button>
 
             <button
@@ -1004,7 +1005,7 @@ export default function Collections() {
         {/* Collections Tab Content */}
         {activeTab === "collections" && (
           <div className="space-y-4">
-            <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes Collections</h3>
+            <h3 className="text-lg font-bold text-white font-poppins mb-4">Toutes les check-lists</h3>
             {/* Add Collection Button - Moved to top */}
             <div 
               onClick={() => setLocation("/add-card")}
@@ -1013,7 +1014,7 @@ export default function Collections() {
               <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                 <Plus className="w-5 h-5 text-white" />
               </div>
-              <h3 className="font-bold text-white font-poppins text-base">Nouvelle Collection</h3>
+              <h3 className="font-bold text-white font-poppins text-base">Nouvelle check-list</h3>
             </div>
 
             {collections?.map((collection) => {

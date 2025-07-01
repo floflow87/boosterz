@@ -706,12 +706,48 @@ export async function seedDatabase() {
       });
     }
 
-    // 4. Create Autographe cards with player-specific variants (excluding /1)
+    // 4. Create Special 1/1 cards from autographe cards that have /1 variants
+    console.log("⭐ Creating Special 1/1 cards...");
+    const specialVariants = [
+      { color: "Orange", numbering: "/1" },
+      { color: "Violet", numbering: "/1" },
+      { color: "Vert", numbering: "/1" },
+      { color: "Bleu", numbering: "/1" },
+      { color: "Rouge", numbering: "/1" },
+      { color: "Jaune", numbering: "/1" },
+      { color: "Rose", numbering: "/1" },
+      { color: "Noir", numbering: "/1" },
+      { color: "Argent", numbering: "/1" }
+    ];
+
+    for (const autoCard of autographeCards) {
+      // Only create special 1/1 cards for players that have /1 in their numberings
+      if (autoCard.numberings.includes("/1")) {
+        for (const variant of specialVariants) {
+          cardsToInsert.push({
+            id: cardId++,
+            collectionId: 1,
+            reference: `SPEC-${autoCard.id.toString().padStart(2, '0')}-${variant.color}`,
+            playerName: autoCard.playerName,
+            teamName: autoCard.teamName,
+            cardType: "special_1_1",
+            cardSubType: variant.color,
+            rarity: "Unique",
+            numbering: variant.numbering,
+            season: "23/24",
+            isOwned: false,
+            imageUrl: null
+          });
+        }
+      }
+    }
+
+    // 5. Create Autographe cards with player-specific variants (excluding /1)
     console.log("✍️ Creating player-specific autographe variants...");
     for (const autoCard of autographeCards) {
       // Each player has their own specific numberings from the file
       for (const numbering of autoCard.numberings) {
-        // Skip 1/1 cards (they go to special 1/1 tab)
+        // Skip 1/1 cards (they now go to special 1/1 section above)
         if (numbering === "/1") continue;
         
         const getRarityFromNumbering = (num: string) => {
