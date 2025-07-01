@@ -27,12 +27,18 @@ router.get('/test', async (req, res) => {
     } : 'Not found');
     
     // Test de vérification du mot de passe
+    let passwordTestResult = 'User not found';
+    let passwordHashInfo = 'No user';
+    
     if (floflow87) {
+      passwordHashInfo = floflow87.password ? floflow87.password.substring(0, 10) + '...' : 'No password';
       try {
         const testPassword = 'Test25';
         const isValidPassword = await AuthService.verifyPassword(testPassword, floflow87.password);
+        passwordTestResult = isValidPassword ? 'Password verification SUCCESS' : 'Password verification FAILED';
         console.log('Password verification test:', isValidPassword);
       } catch (passwordError) {
+        passwordTestResult = `Password verification ERROR: ${passwordError instanceof Error ? passwordError.message : 'Unknown error'}`;
         console.error('Password verification error:', passwordError);
       }
     }
@@ -43,6 +49,8 @@ router.get('/test', async (req, res) => {
       databaseConnected: true,
       floflow87Found: !!floflow87,
       floflow87Active: floflow87?.isActive,
+      passwordHashInfo,
+      passwordTestResult,
       timestamp: new Date().toISOString()
     });
   } catch (error) {
