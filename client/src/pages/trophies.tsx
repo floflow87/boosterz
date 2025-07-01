@@ -3,6 +3,7 @@ import { ArrowLeft, Trophy, Medal, Star, Award } from "lucide-react";
 import { useLocation } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { showTrophyUnlockAnimation } from "@/lib/trophyAnimations";
 
 // Configuration des jalons
 const MILESTONE_CONFIG = {
@@ -54,6 +55,7 @@ const COLOR_STYLES = {
 export default function Trophies() {
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const { unlockTrophy } = useTrophyUnlock();
 
   // Récupération des données utilisateur
   const { data: currentUser } = useQuery({
@@ -140,6 +142,26 @@ export default function Trophies() {
     return { progress, isUnlocked, canUnlock, progressPercentage, currentCount };
   };
 
+  // Fonction pour afficher l'animation d'un trophée débloqué
+  const showTrophyAnimation = (milestone: any) => {
+    const { isUnlocked } = getMilestoneProgress(milestone);
+    if (!isUnlocked) return;
+    
+    // Utiliser directement la fonction d'animation
+    const trophyData = {
+      id: milestone.id,
+      rarity: milestone.rarity,
+      color: milestone.color,
+      title: milestone.title,
+      description: milestone.description
+    };
+    
+    // Importer et utiliser showTrophyUnlockAnimation directement
+    import('@/lib/trophyAnimations').then(({ showTrophyUnlockAnimation }) => {
+      showTrophyUnlockAnimation(trophyData);
+    });
+  };
+
   // Effet pour débloquer automatiquement les nouveaux trophées
   useEffect(() => {
     if (!stats || !Array.isArray(unlockedTrophies)) return;
@@ -201,9 +223,10 @@ export default function Trophies() {
           return (
             <div
               key={milestone.id}
+              onClick={() => showTrophyAnimation(milestone)}
               className={`p-4 rounded-lg border transition-all ${
                 isUnlocked
-                  ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg}`
+                  ? `bg-[hsl(214,35%,22%)] border-[hsl(214,35%,25%)] ${colorStyle.bg} cursor-pointer hover:bg-[hsl(214,35%,24%)] hover:scale-[1.02]`
                   : "bg-[hsl(214,35%,18%)] border-[hsl(214,35%,20%)]"
               }`}
             >
