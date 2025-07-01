@@ -297,6 +297,60 @@
   }
 }
 
+/* Optimized Trophy Animation - Unified transitions for seamless experience */
+@keyframes cardToTrophyTransform {
+  0% {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(0.3) rotateY(900deg);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.2) rotateY(1800deg);
+    opacity: 0;
+  }
+}
+
+@keyframes trophyEmergence {
+  0% {
+    transform: scale(0) rotateY(1800deg);
+    opacity: 0;
+  }
+  30% {
+    transform: scale(0.6) rotateY(0deg);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes backgroundDarken {
+  0% {
+    background: rgba(0, 0, 0, 0);
+  }
+  50% {
+    background: rgba(0, 0, 0, 0.4);
+  }
+  100% {
+    background: rgba(0, 0, 0, 0.8);
+  }
+}
+
+@keyframes textFadeUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Touch-friendly scrolling for carousel */
 .card-carousel-container {
   scroll-behavior: smooth;

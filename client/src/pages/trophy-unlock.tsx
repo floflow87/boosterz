@@ -71,17 +71,17 @@ export default function TrophyUnlock() {
       setIsLoaded(true);
     }, 100); // Minimal preload time
     
-    // Extended animation sequence with longer card spinning
+    // Unified animation sequence with smooth transitions
     const timer1 = setTimeout(() => setStage(1), 800); // Show card for 0.8s
     const confettiTimer = setTimeout(() => {
       generateConfetti(); // Explosion des confettis pendant la rotation
-    }, 2800); // Confettis après 2.8s de rotation
+    }, 2600); // Confettis pendant la rotation
     const timer2 = setTimeout(() => {
-      setStage(2); // Transition vers le trophée
-    }, 3200); // Transition at 3.2s
+      setStage(2); // Transition fluide vers le trophée
+    }, 3000); // Transition plus tôt pour éliminer la coupure
     const timer3 = setTimeout(() => {
       setStage(3); // Affichage du texte final
-    }, 3800); // Trophy celebration at 3.8s
+    }, 3600); // Texte plus tôt pour un enchaînement fluide
 
     return () => {
       clearTimeout(preloadTimer);
@@ -235,9 +235,14 @@ export default function TrophyUnlock() {
           </div>
         )}
 
-        {/* Stage 1: Card Spinning with Acceleration */}
+        {/* Stage 1: Card Spinning with smooth transformation */}
         {stage === 1 && (
-          <div className="transform scale-100 transition-all duration-1000">
+          <div 
+            className="transform"
+            style={{
+              animation: 'cardToTrophyTransform 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards',
+              animationDelay: '0s'
+            }}>
             <div 
               className="w-52 h-80 bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 rounded-2xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-blue-400 relative overflow-hidden transform-gpu"
               style={{
