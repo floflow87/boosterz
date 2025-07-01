@@ -68,8 +68,8 @@ export default function Chat() {
   // Create fallback user data when user doesn't exist
   const fallbackUser = userError ? {
     id: userId,
-    name: userId === 999 ? "Max la menace" : `Utilisateur ${userId}`,
-    username: userId === 999 ? "maxlamenace" : `user${userId}`
+    name: userId === 2 ? "Max la menace" : `Utilisateur ${userId}`,
+    username: userId === 2 ? "maxlamenace" : `user${userId}`
   } : null;
 
   const sendMessageMutation = useMutation({

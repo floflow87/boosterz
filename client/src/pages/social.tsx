@@ -142,7 +142,7 @@ export default function Social() {
 
 
   const currentUserId = currentUser?.user?.id?.toString() || "1";
-  const userId = "999"; // Pour les profils consultés (maxlamenace)
+  const userId = "2"; // Pour les profils consultés (maxlamenace)
 
   // Profile data queries
   const { data: user, isLoading: userLoading } = useQuery<UserType>({

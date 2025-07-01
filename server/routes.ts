@@ -26,13 +26,13 @@ const initializeSampleData = async () => {
       // Create sample messages
       await storage.createMessage({
         conversationId: conversation.id,
-        senderId: 999,
+        senderId: 2,
         content: "Salut ! J'ai vu ta collection, elle est impressionnante !"
       });
       
       await storage.createMessage({
         conversationId: conversation.id,
-        senderId: 999,
+        senderId: 2,
         content: "Tu as des cartes rares que j'aimerais bien avoir dans ma collection"
       });
     }
