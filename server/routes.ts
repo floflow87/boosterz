@@ -2388,6 +2388,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ====================
+  // TROPHY ROUTES
+  // ====================
+
+  // Get unlocked trophies for user
+  app.get("/api/trophies/unlocked", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const trophies = await storage.getUnlockedTrophies(userId);
+      res.json(trophies);
+    } catch (error) {
+      console.error('Error fetching unlocked trophies:', error);
+      res.status(500).json({ error: 'Failed to fetch trophies' });
+    }
+  });
+
+  // Unlock a trophy for user
+  app.post("/api/trophies/unlock", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const userId = req.user!.id;
+      const { trophyId, category, color } = req.body;
+      
+      if (!trophyId || !category || !color) {
+        return res.status(400).json({ error: 'Trophy ID, category, and color are required' });
+      }
+      
+      const trophy = await storage.unlockTrophy(userId, trophyId, category, color);
+      res.json(trophy);
+    } catch (error) {
+      console.error('Error unlocking trophy:', error);
+      res.status(500).json({ error: 'Failed to unlock trophy' });
+    }
+  });
+
+  // Get highest trophy color for user (for avatar halo)
+  app.get("/api/users/:id/highest-trophy", optionalAuth, async (req: AuthRequest, res) => {
+    try {
+      const userId = parseInt(req.params.id);
+      if (isNaN(userId)) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+      }
+      
+      const color = await storage.getHighestTrophyColor(userId);
+      res.json({ color });
+    } catch (error) {
+      console.error('Error getting highest trophy:', error);
+      res.status(500).json({ error: 'Failed to get highest trophy' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

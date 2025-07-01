@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { ArrowLeft, Trophy, Medal, Star, Award } from "lucide-react";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 
 // Configuration des jalons
 const MILESTONE_CONFIG = {
@@ -51,6 +52,7 @@ const COLOR_STYLES = {
 
 export default function Trophies() {
   const [, setLocation] = useLocation();
+  const queryClient = useQueryClient();
 
   // Récupération des données utilisateur
   const { data: currentUser } = useQuery({
@@ -65,6 +67,21 @@ export default function Trophies() {
   // Récupération des trophées débloqués
   const { data: unlockedTrophies } = useQuery({
     queryKey: ['/api/trophies/unlocked'],
+  });
+
+  // Mutation pour débloquer un trophée
+  const unlockTrophyMutation = useMutation({
+    mutationFn: async (trophy: { trophyId: string; category: string; color: string }) => {
+      const response = await fetch('/api/trophies/unlock', {
+        method: 'POST',
+        body: JSON.stringify(trophy),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/trophies/unlocked'] });
+    }
   });
 
   // Calcul des statistiques
@@ -115,12 +132,42 @@ export default function Trophies() {
     const canUnlock = currentCount >= milestone.count;
     
     // Vérifier si le trophée est déjà débloqué en base de données
-    const isUnlocked = unlockedTrophies?.some((trophy: any) => trophy.trophyId === milestone.id) || false;
+    const isUnlocked = Array.isArray(unlockedTrophies) && unlockedTrophies.some((trophy: any) => trophy.trophyId === milestone.id);
     
     const progressPercentage = (progress / milestone.count) * 100;
 
     return { progress, isUnlocked, canUnlock, progressPercentage, currentCount };
   };
+
+  // Effet pour débloquer automatiquement les nouveaux trophées
+  useEffect(() => {
+    if (!stats || !Array.isArray(unlockedTrophies)) return;
+
+    const allMilestones = [
+      ...MILESTONE_CONFIG.collection,
+      ...MILESTONE_CONFIG.autographs,
+      ...MILESTONE_CONFIG.specials,
+      ...MILESTONE_CONFIG.social
+    ];
+
+    // Vérifier chaque jalon pour voir s'il peut être débloqué
+    allMilestones.forEach((milestone) => {
+      const { canUnlock, isUnlocked } = getMilestoneProgress(milestone);
+      
+      // Si le jalon peut être débloqué mais ne l'est pas encore, le débloquer
+      if (canUnlock && !isUnlocked) {
+        const category = milestone.id.includes('card') ? 'collection' :
+                        milestone.id.includes('auto') ? 'autographs' :
+                        milestone.id.includes('special') ? 'specials' : 'social';
+        
+        unlockTrophyMutation.mutate({
+          trophyId: milestone.id,
+          category,
+          color: milestone.color
+        });
+      }
+    });
+  }, [stats, unlockedTrophies, unlockTrophyMutation]);
 
   // Calcul des statistiques globales
   const allMilestones = [
