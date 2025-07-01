@@ -118,18 +118,6 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- January 1, 2025. Enhanced trophy system and updated Score Ligue 1 23/24 variant structure
-  - **Trophy system persistence**: Added unlocked_trophies table for permanent trophy storage in database
-  - **Social trophy scaling**: Restored original scales (débutant→commun→avancé→rare→épique→légendaire) with rainbow badges for legendary tier
-  - **Special cards redefinition**: Trophy system counts 1/1 cards (numbering contains "1/1") as special cards for consistent tracking
-  - **Persistent achievements**: Trophies remain unlocked forever once earned, independent of current card counts
-  - **Database APIs**: Added /api/trophies/unlocked, /api/trophies/unlock, and /api/trophies/highest-color endpoints
-  - **Score Ligue 1 23/24 variants**: Updated variant structure for authentic checklist compliance:
-    - Bases: 3 variants (Base, Swirl /50, Laser /25) all with Unique rarity
-    - Inserts: No variants, single card with Unique rarity
-    - Autographs: All 1/1 without variants, Unique rarity
-  - **Avatar halo system**: Avatar displays minimum earned trophy color based on highest unlocked achievement
-  - Trophy system now provides permanent progression tracking with accurate Score Ligue 1 23/24 variant structure
 - June 30, 2025. Implemented new rarity system for Score Ligue 1 23/24 based on numbering
   - **Rarity levels**: Base, Commune (/50), Peu commune (/35,/30,/25), Rare (/20,/15), Épique (/10), Légendaire (/5), Unique (/1)
   - **Autograph handling**: Autographs start from épique level and follow same numbering rules

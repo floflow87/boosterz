@@ -596,14 +596,9 @@ export default function CollectionDetail() {
   const getCardVariants = (card: Card) => {
     if (!cards) return [card];
     
-    // Pour les cartes Base : ajouter les variantes swirl et laser (rareté unique)
+    // Pour les cartes Base : pas de variantes
     if (card.cardType === "Base") {
-      const baseVariants = [
-        { ...card, id: card.id, cardSubType: null, numbering: null },
-        { ...card, id: card.id + 1000, cardSubType: "Swirl", numbering: "/50", rarity: "Unique" },
-        { ...card, id: card.id + 2000, cardSubType: "Laser", numbering: "/25", rarity: "Unique" }
-      ];
-      return baseVariants;
+      return [card];
     }
     
     // Pour les bases numérotées : créer les 9 variantes spécifiques
@@ -623,14 +618,30 @@ export default function CollectionDetail() {
       return numberedVariants;
     }
     
-    // Pour les inserts : pas de variantes (rareté unique)
+    // Pour les inserts : gérer les cas spéciaux et variantes
     if (card.cardType?.includes("Insert")) {
-      return [{ ...card, rarity: "Unique" }];
+      // Cas spéciaux : Intergalactic, Next Up, Pennants = 1 seule carte
+      if (card.cardType.includes("Intergalactic") || 
+          card.cardType.includes("Next Up") || 
+          card.cardType.includes("Pennant")) {
+        return [card];
+      }
+      
+      // Pour les autres hits : 2 variantes seulement (/15 et /10)
+      const hitVariants = [];
+      
+      // Variante de base avec /15
+      hitVariants.push({ ...card, id: card.id, numbering: "/15" });
+      
+      // Variante numérotée avec /10
+      hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10" });
+      
+      return hitVariants;
     }
     
-    // Pour les autographes : tous en 1/1 sans variante (rareté unique)
+    // Pour les autographes : pas de variantes (1 seule version)
     if (card.cardType?.includes("Autograph")) {
-      return [{ ...card, numbering: "1/1", rarity: "Unique" }];
+      return [card];
     }
     
     // Pour les cartes spéciales : créer toutes les variantes
