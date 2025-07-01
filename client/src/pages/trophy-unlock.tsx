@@ -49,7 +49,7 @@ const RARITY_COLORS = {
 export default function TrophyUnlock() {
   const [, setLocation] = useLocation();
   const [stage, setStage] = useState(0); // 0: card, 1: transition, 2: trophy, 3: celebration
-  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number; color: string; rotation: number }>>([]);
+  const [confetti, setConfetti] = useState<Array<{ id: number; x: number; y: number; color: string; rotation: number; vx: number; vy: number; life: number }>>([]);
   
   // Récupération des données du trophée depuis les paramètres URL
   const urlParams = new URLSearchParams(window.location.search);
@@ -82,19 +82,46 @@ export default function TrophyUnlock() {
 
   const generateConfetti = () => {
     const newConfetti = [];
-    for (let i = 0; i < 50; i++) {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 80; i++) {
+      // Angle aléatoire pour explosion dans toutes les directions
+      const angle = (Math.PI * 2 * i) / 80 + Math.random() * 0.5;
+      const velocity = 2 + Math.random() * 4; // Vitesse variable
+      
       newConfetti.push({
         id: i,
-        x: Math.random() * window.innerWidth,
-        y: -20,
+        x: centerX + (Math.random() - 0.5) * 100, // Position proche du centre
+        y: centerY + (Math.random() - 0.5) * 100,
         color: ['#ef4444', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#3b82f6', '#8b5cf6'][Math.floor(Math.random() * 7)],
-        rotation: Math.random() * 360
+        rotation: Math.random() * 360,
+        vx: Math.cos(angle) * velocity, // Vitesse X basée sur l'angle
+        vy: Math.sin(angle) * velocity, // Vitesse Y basée sur l'angle
+        life: 1.0 // Durée de vie du confetti
       });
     }
     setConfetti(newConfetti);
 
-    // Animate confetti falling
-    setTimeout(() => setConfetti([]), 4000);
+    // Animation des confettis avec physique
+    const animateConfetti = () => {
+      setConfetti(prevConfetti => 
+        prevConfetti.map(piece => ({
+          ...piece,
+          x: piece.x + piece.vx,
+          y: piece.y + piece.vy,
+          vy: piece.vy + 0.1, // Gravité
+          rotation: piece.rotation + 3,
+          life: piece.life - 0.008 // Réduction de la durée de vie
+        })).filter(piece => piece.life > 0) // Supprimer les confettis morts
+      );
+    };
+
+    const interval = setInterval(animateConfetti, 16); // 60 FPS
+    setTimeout(() => {
+      clearInterval(interval);
+      setConfetti([]);
+    }, 4000);
   };
 
   const handleContinue = () => {
@@ -124,12 +151,13 @@ export default function TrophyUnlock() {
       {stage === 3 && confetti.map((piece) => (
         <div
           key={piece.id}
-          className="absolute w-3 h-3 opacity-80 confetti-piece"
+          className="absolute w-1 h-6 confetti-piece"
           style={{
             left: piece.x,
             top: piece.y,
             backgroundColor: piece.color,
-            transform: `rotate(${piece.rotation}deg)`
+            transform: `rotate(${piece.rotation}deg)`,
+            opacity: piece.life || 0.8
           }}
         />
       ))}
@@ -138,8 +166,19 @@ export default function TrophyUnlock() {
         {/* Stage 0: Card */}
         {stage === 0 && (
           <div className="transform scale-100 transition-all duration-1000">
-            <div className="w-48 h-72 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl shadow-2xl mx-auto mb-8 flex items-center justify-center border-4 border-blue-400">
-              <div className="text-white text-6xl">🃏</div>
+            <div className="w-48 h-72 bg-gradient-to-br from-slate-700 to-slate-900 rounded-xl shadow-2xl mx-auto mb-8 flex flex-col items-center justify-center border-4 border-slate-500 relative overflow-hidden">
+              {/* Card Background Pattern */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-600/20 to-slate-800/20" />
+              
+              {/* Card Content */}
+              <div className="relative z-10 text-center p-4">
+                <div className="w-16 h-16 bg-slate-400 rounded-full mx-auto mb-3 flex items-center justify-center">
+                  <div className="text-slate-700 font-bold text-xl">⚽</div>
+                </div>
+                <div className="text-white font-bold text-lg mb-2">CARTE</div>
+                <div className="text-slate-300 text-sm">Score Ligue 1</div>
+                <div className="text-slate-300 text-xs mt-2">23/24</div>
+              </div>
             </div>
             <h2 className="text-2xl font-bold text-white mb-2">Nouvelle carte ajoutée !</h2>
           </div>
@@ -233,7 +272,7 @@ export default function TrophyUnlock() {
             {stage === 3 && (
               <Button
                 onClick={handleContinue}
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
+                className="bg-white text-black hover:bg-gray-100 px-8 py-3 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
               >
                 Continuer
               </Button>
