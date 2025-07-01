@@ -165,13 +165,35 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.username, username));
-    return user || undefined;
+    try {
+      console.log('getUserByUsername called with:', username);
+      const [user] = await db.select().from(users).where(eq(users.username, username));
+      console.log('getUserByUsername result:', user ? { id: user.id, username: user.username, email: user.email, isActive: user.isActive } : 'User not found');
+      return user || undefined;
+    } catch (error) {
+      console.error('Error in getUserByUsername:', {
+        username,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
+      throw error;
+    }
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user || undefined;
+    try {
+      console.log('getUserByEmail called with:', email);
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      console.log('getUserByEmail result:', user ? { id: user.id, username: user.username, email: user.email, isActive: user.isActive } : 'User not found');
+      return user || undefined;
+    } catch (error) {
+      console.error('Error in getUserByEmail:', {
+        email,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        stack: error instanceof Error ? error.stack : 'No stack trace'
+      });
+      throw error;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {

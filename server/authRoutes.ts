@@ -82,40 +82,66 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', async (req, res) => {
   try {
+    console.log('Login attempt:', { 
+      body: { ...req.body, password: '[REDACTED]' },
+      env: process.env.NODE_ENV 
+    });
+    
     const { email, username, password } = loginSchema.parse(req.body);
+    console.log('Parsed login data:', { email, username, hasPassword: !!password });
     
     // Try to find user by email or username
     let user;
     if (email) {
+      console.log('Searching user by email:', email);
       // First try by email
       user = await storage.getUserByEmail(email);
+      console.log('User found by email:', user ? { id: user.id, username: user.username, isActive: user.isActive } : 'Not found');
       
       // If not found and email looks like a username, try by username
       if (!user && !email.includes('@')) {
+        console.log('Email looks like username, trying username search:', email);
         user = await storage.getUserByUsername(email);
+        console.log('User found by username (via email field):', user ? { id: user.id, username: user.username, isActive: user.isActive } : 'Not found');
       }
     }
     
     if (username) {
+      console.log('Searching user by username:', username);
       user = await storage.getUserByUsername(username);
+      console.log('User found by username:', user ? { id: user.id, username: user.username, isActive: user.isActive } : 'Not found');
     }
     
     if (!user || !user.password) {
+      console.log('Login failed: User not found or no password');
       return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
     }
 
+    // Check if user account is active
+    if (user.isActive === false) {
+      console.log('Login failed: Account disabled for user', user.id);
+      return res.status(401).json({ message: 'Compte désactivé' });
+    }
+
+    console.log('Verifying password for user:', user.id);
     // Verify password
     const isValidPassword = await AuthService.verifyPassword(password, user.password);
+    console.log('Password verification result:', isValidPassword);
+    
     if (!isValidPassword) {
+      console.log('Login failed: Invalid password for user', user.id);
       return res.status(401).json({ message: 'Identifiant ou mot de passe incorrect' });
     }
 
+    console.log('Creating session for user:', user.id);
     // Create session
     const token = await AuthService.createSession(user.id);
+    console.log('Session created successfully, token length:', token?.length);
     
     // Store user ID in session
     (req as any).session.userId = user.id;
 
+    console.log('Login successful for user:', user.id);
     res.json({
       message: 'Connexion réussie',
       token,
@@ -129,9 +155,14 @@ router.post('/login', async (req, res) => {
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
+      console.log('Login validation error:', error.errors);
       return res.status(400).json({ message: 'Données invalides', errors: error.errors });
     }
-    console.error('Login error:', error);
+    console.error('Login error - Full details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace',
+      error: error
+    });
     res.status(500).json({ message: 'Erreur lors de la connexion' });
   }
 });
