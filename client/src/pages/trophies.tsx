@@ -115,7 +115,7 @@ export default function Trophies() {
     const canUnlock = currentCount >= milestone.count;
     
     // Vérifier si le trophée est déjà débloqué en base de données
-    const isUnlocked = unlockedTrophies?.some((trophy: any) => trophy.trophyId === milestone.id) || false;
+    const isUnlocked = Array.isArray(unlockedTrophies) && unlockedTrophies.some((trophy: any) => trophy.trophyId === milestone.id);
     
     const progressPercentage = (progress / milestone.count) * 100;
 

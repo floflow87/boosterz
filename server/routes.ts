@@ -2388,6 +2388,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Trophy routes
+  app.get("/api/trophies/unlocked", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const trophies = await storage.getUnlockedTrophies(req.user!.id);
+      res.json(trophies);
+    } catch (error) {
+      console.error("Failed to get unlocked trophies:", error);
+      res.status(500).json({ error: "Failed to get unlocked trophies" });
+    }
+  });
+
+  app.post("/api/trophies/unlock", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { trophyId, category, color } = req.body;
+      const trophy = await storage.unlockTrophy(req.user!.id, trophyId, category, color);
+      res.json(trophy);
+    } catch (error) {
+      console.error("Failed to unlock trophy:", error);
+      res.status(500).json({ error: "Failed to unlock trophy" });
+    }
+  });
+
+  app.get("/api/trophies/highest-color", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const color = await storage.getHighestTrophyColor(req.user!.id);
+      res.json({ color });
+    } catch (error) {
+      console.error("Failed to get highest trophy color:", error);
+      res.status(500).json({ error: "Failed to get highest trophy color" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
