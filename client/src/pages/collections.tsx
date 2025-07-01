@@ -50,7 +50,7 @@ const getThemeTextColor = (themeColors: string) => {
 
 export default function Collections() {
   const [, setLocation] = useLocation();
-  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
+  const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("collections");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
 
@@ -288,9 +288,10 @@ export default function Collections() {
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
     queryKey: ["/api/users/me/collections"],
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: 20 * 60 * 1000, // 20 minutes pour réduire les requêtes en production
+    gcTime: 60 * 60 * 1000, // 1 heure en mémoire
     refetchOnWindowFocus: false,
+    refetchOnMount: false, // Ne pas recharger automatiquement
     enabled: !!currentUser, // Only fetch when we have authenticated user
   });
 
@@ -428,22 +429,24 @@ export default function Collections() {
   const { data: allUserCardsResponse, isLoading: allCardsLoading } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: ["/api/cards/all"],
     enabled: !selectedCollection && activeTab === "cards",
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes pour réduire les requêtes
-    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
+    staleTime: 60 * 60 * 1000, // Cache pendant 1 heure pour performance maximale
+    gcTime: 3 * 60 * 60 * 1000, // Garde en cache 3 heures
     refetchOnWindowFocus: false, // Ne pas refetch au focus
     refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
     refetchInterval: false, // Pas de refetch automatique
+    retry: 1, // Réduire les tentatives pour accélérer l'affichage
   });
 
   // Query for specific collection cards - Optimized with aggressive caching
   const { data: cardsResponse, isLoading: collectionCardsLoading } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${selectedCollection}/cards`],
     enabled: !!selectedCollection && activeTab === "cards",
-    staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes pour les collections spécifiques
-    gcTime: 20 * 60 * 1000, // Garde en cache 20 minutes
+    staleTime: 30 * 60 * 1000, // Cache pendant 30 minutes pour réduire les requêtes en production
+    gcTime: 2 * 60 * 60 * 1000, // Garde en cache 2 heures
     refetchOnWindowFocus: false, // Ne pas refetch au focus
     refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
     refetchInterval: false, // Pas de refetch automatique
+    retry: 1, // Réduire les tentatives pour accélérer l'affichage en cas d'erreur
   });
 
   // Loading state for cards
@@ -453,6 +456,22 @@ export default function Collections() {
   const cards = selectedCollection 
     ? (cardsResponse?.cards || [])
     : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
+
+  // Auto-sélection de la collection Score Ligue 1 23/24 par défaut
+  useEffect(() => {
+    if (!collections || collections.length === 0) return;
+    
+    // Chercher la collection "Score Ligue 1 23/24" et la sélectionner automatiquement
+    const scoreLigue1Collection = collections.find(collection => 
+      collection.name.toLowerCase().includes('score ligue 1 23/24') ||
+      collection.name.toLowerCase().includes('score ligue 1 2023')
+    );
+    
+    if (scoreLigue1Collection && selectedCollection === null) {
+      setSelectedCollection(scoreLigue1Collection.id);
+      setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
+    }
+  }, [collections, selectedCollection]);
 
   // Effect to check for milestones when collections data changes
   useEffect(() => {
@@ -920,7 +939,8 @@ export default function Collections() {
     });
   };
 
-  if (userLoading || collectionsLoading) {
+  // Affichage conditionnel du chargement - Ne montrer LoadingScreen que lors du premier chargement
+  if ((userLoading && !user) || (collectionsLoading && !collections)) {
     return <LoadingScreen />;
   }
 
