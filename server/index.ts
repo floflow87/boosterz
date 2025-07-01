@@ -31,7 +31,7 @@ app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
 // Add middleware to catch JSON parsing errors
 app.use((err: any, req: any, res: any, next: any) => {
-  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+  if (err instanceof SyntaxError && 'body' in err) {
     console.error('JSON Parse error:', err.message);
     return res.status(400).json({ message: 'Invalid JSON format' });
   }
@@ -66,6 +66,19 @@ app.use((req, res, next) => {
   });
 
   next();
+});
+
+// Ultra-simple test endpoint BEFORE all middlewares
+app.post('/api/debug/simple-test', (req, res) => {
+  console.log('=== ULTRA SIMPLE TEST ENDPOINT HIT ===');
+  console.log('Body exists:', !!req.body);
+  console.log('Raw body type:', typeof req.body);
+  res.json({ 
+    success: true, 
+    message: 'Ultra simple test works',
+    bodyExists: !!req.body,
+    timestamp: new Date().toISOString()
+  });
 });
 
 (async () => {

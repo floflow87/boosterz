@@ -176,8 +176,19 @@ router.post('/login', async (req, res) => {
       env: process.env.NODE_ENV 
     });
     
-    const { email, username, password } = loginSchema.parse(req.body);
+    const { email, username, password } = req.body;
     console.log('Parsed login data:', { email, username, hasPassword: !!password });
+    
+    // Simple validation
+    if (!password || password.length < 6) {
+      console.log('Invalid password provided');
+      return res.status(400).json({ message: 'Mot de passe requis (minimum 6 caractères)' });
+    }
+    
+    if (!email && !username) {
+      console.log('No login identifier provided');
+      return res.status(400).json({ message: 'Email ou nom d\'utilisateur requis' });
+    }
     
     // Try to find user by email or username
     let user;
