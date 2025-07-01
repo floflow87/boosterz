@@ -122,6 +122,7 @@ The application follows a modern full-stack architecture with clear separation b
   - **Trophy slide added**: Comprehensive trophy explanation slide added in 4th position (before final gift slide)
   - **Visual progression**: 6 trophy levels with authentic colors (Débutant→Commun→Avancé→Rare→Épique→Légendaire)
   - **Rainbow legendary badge**: Exact rainbow gradient matching user's design (red→orange→yellow→green→cyan→blue→purple)
+  - **Special cards trophy progression updated**: Added "5 special cards" milestone as rare tier, moved "1 special card" from rare to advanced
   - **Compact design**: Reduced badge sizes (8x8) with 10px text for optimal space usage
   - **Consistent spacing**: Added mt-8 margin to match other slides' title positioning
   - **Educational content**: Explains trophy persistence, avatar halo effects, and clickable avatar functionality

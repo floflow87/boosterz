@@ -23,7 +23,8 @@ const MILESTONE_CONFIG = {
     { id: "twohundred_autos", count: 200, title: "Dieu des Autographes", description: "Obtenir 200 autographes", rarity: "légendaire", color: "rainbow" },
   ],
   specials: [
-    { id: "first_special", count: 1, title: "Première Spéciale", description: "Obtenir votre première carte spéciale", rarity: "rare", color: "purple" },
+    { id: "first_special", count: 1, title: "Première Spéciale", description: "Obtenir votre première carte spéciale", rarity: "avancé", color: "blue" },
+    { id: "five_specials", count: 5, title: "Collectionneur de Spéciales", description: "Obtenir 5 cartes spéciales", rarity: "rare", color: "purple" },
     { id: "ten_specials", count: 10, title: "Chasseur de Spéciales", description: "Obtenir 10 cartes spéciales", rarity: "épique", color: "gold" },
     { id: "fifty_specials", count: 50, title: "Maître des Spéciales", description: "Obtenir 50 cartes spéciales", rarity: "légendaire", color: "rainbow" },
   ],

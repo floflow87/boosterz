@@ -34,7 +34,8 @@ const MILESTONE_CONFIG = {
     { id: "twohundred_autos", count: 200, rarity: "légendaire", color: "rainbow" },
   ],
   specials: [
-    { id: "first_special", count: 1, rarity: "rare", color: "purple" },
+    { id: "first_special", count: 1, rarity: "avancé", color: "blue" },
+    { id: "five_specials", count: 5, rarity: "rare", color: "purple" },
     { id: "ten_specials", count: 10, rarity: "épique", color: "gold" },
     { id: "fifty_specials", count: 50, rarity: "légendaire", color: "rainbow" },
   ]
