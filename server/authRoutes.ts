@@ -95,6 +95,38 @@ router.get('/test', async (req, res) => {
   }
 });
 
+// Diagnostic endpoint pour comparer dev vs prod
+router.post('/login-diagnostic', async (req, res) => {
+  try {
+    console.log('=== LOGIN DIAGNOSTIC ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Request headers:', req.headers);
+    console.log('Raw body type:', typeof req.body);
+    console.log('Body keys:', req.body ? Object.keys(req.body) : 'NO BODY');
+    console.log('Body content:', req.body);
+    console.log('Username value:', req.body?.username);
+    console.log('Password present:', !!req.body?.password);
+    
+    const diagnosticInfo = {
+      environment: process.env.NODE_ENV,
+      bodyReceived: !!req.body,
+      bodyType: typeof req.body,
+      bodyKeys: req.body ? Object.keys(req.body) : null,
+      usernamePresent: !!req.body?.username,
+      passwordPresent: !!req.body?.password,
+      contentType: req.headers['content-type'],
+      userAgent: req.headers['user-agent'],
+      timestamp: new Date().toISOString()
+    };
+    
+    console.log('Diagnostic info:', diagnosticInfo);
+    res.json(diagnosticInfo);
+  } catch (error) {
+    console.error('Diagnostic error:', error);
+    res.status(500).json({ error: String(error) });
+  }
+});
+
 // Login schema - accept either email or username
 const loginSchema = z.object({
   email: z.string().min(1).optional(),

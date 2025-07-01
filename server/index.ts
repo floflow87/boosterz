@@ -81,6 +81,70 @@ app.post('/api/debug/simple-test', (req, res) => {
   });
 });
 
+// Direct login endpoint to bypass routing issues
+app.post('/api/auth/direct-login', async (req, res) => {
+  try {
+    console.log('=== DIRECT LOGIN START ===');
+    console.log('Environment:', process.env.NODE_ENV);
+    console.log('Body received:', !!req.body);
+    console.log('Body type:', typeof req.body);
+    console.log('Body content:', req.body);
+    
+    if (!req.body || typeof req.body !== 'object') {
+      console.log('Invalid body');
+      return res.status(400).json({ message: 'Corps de requête invalide' });
+    }
+
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+      console.log('Missing credentials');
+      return res.status(400).json({ message: 'Identifiants manquants' });
+    }
+
+    console.log('Looking for user...');
+    const { storage } = await import('./storage');
+    const user = await storage.getUserByUsername(username);
+    
+    if (!user || !user.isActive) {
+      console.log('User not found or inactive');
+      return res.status(401).json({ message: 'Utilisateur invalide' });
+    }
+
+    console.log('Verifying password...');
+    const { AuthService } = await import('./auth');
+    const isValid = await AuthService.verifyPassword(password, user.password);
+    
+    if (!isValid) {
+      console.log('Invalid password');
+      return res.status(401).json({ message: 'Mot de passe incorrect' });
+    }
+
+    console.log('Creating token...');
+    const token = await AuthService.createSession(user.id);
+
+    console.log('=== DIRECT LOGIN SUCCESS ===');
+    res.json({
+      message: 'Connexion réussie',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        avatar: user.avatar,
+      },
+    });
+  } catch (error) {
+    console.error('=== DIRECT LOGIN ERROR ===');
+    console.error('Error:', error);
+    res.status(500).json({ 
+      message: 'Erreur de connexion directe',
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+});
+
 (async () => {
   const server = await registerRoutes(app);
 
