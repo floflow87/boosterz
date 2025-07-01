@@ -253,6 +253,7 @@ router.post('/login', async (req, res) => {
   try {
     console.log('=== ULTRA LOGIN START ===');
     console.log('Environment:', process.env.NODE_ENV);
+    console.log('Database URL type:', process.env.DATABASE_URL ? 'NEON' : (process.env.SUPABASE_DATABASE_URL ? 'SUPABASE' : 'NONE'));
     console.log('Request body received:', req.body ? 'YES' : 'NO');
     
     if (!req.body) {
@@ -269,6 +270,19 @@ router.post('/login', async (req, res) => {
     if (!username || !password) {
       console.log('Missing credentials');
       return res.status(400).json({ message: 'Identifiants manquants' });
+    }
+
+    // Test de connexion base de données AVANT de chercher l'utilisateur
+    console.log('Testing database connection...');
+    try {
+      const dbTest = await storage.getAllUsers();
+      console.log('Database connection OK - found', dbTest.length, 'users');
+    } catch (dbError) {
+      console.error('DATABASE CONNECTION FAILED:', dbError);
+      return res.status(500).json({ 
+        message: 'Erreur de base de données',
+        error: dbError instanceof Error ? dbError.message : 'Database connection failed'
+      });
     }
 
     console.log('Looking for user:', username);
