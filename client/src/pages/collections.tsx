@@ -938,22 +938,32 @@ export default function Collections() {
             <h2 className="text-xl font-bold text-white mb-2 font-luckiest">{user.name || user.username}</h2>
             <div className="flex items-center space-x-4 text-sm text-[hsl(212,23%,69%)]">
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">
-                  {(() => {
+                <AnimatedCounter 
+                  targetValue={(() => {
                     // Compter uniquement les cartes personnelles affichées dans l'onglet "Cartes"
                     // (en excluant les vendues pour correspondre au filtrage de l'onglet)
                     const visibleCardsCount = personalCards?.filter(card => !card.isSold).length || 0;
                     return visibleCardsCount;
-                  })()}
-                </span>
+                  })()} 
+                  duration={2}
+                  className="font-medium text-white"
+                />
                 <span>cartes</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{userDecks?.length || 0}</span>
+                <AnimatedCounter 
+                  targetValue={userDecks?.length || 0} 
+                  duration={2.2}
+                  className="font-medium text-white"
+                />
                 <span>decks</span>
               </div>
               <div className="flex items-center space-x-1">
-                <span className="font-medium text-white">{user.followersCount || 0}</span>
+                <AnimatedCounter 
+                  targetValue={user.followersCount || 0} 
+                  duration={2.5}
+                  className="font-medium text-white"
+                />
                 <span>abonnés</span>
               </div>
             </div>
