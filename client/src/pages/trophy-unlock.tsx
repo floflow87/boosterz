@@ -66,18 +66,23 @@ export default function TrophyUnlock() {
   const colors = RARITY_COLORS[trophyData.color as keyof typeof RARITY_COLORS] || RARITY_COLORS.gray;
 
   useEffect(() => {
-    // Immediate load
-    setIsLoaded(true);
+    // Instant load with optimized sequence
+    const preloadTimer = setTimeout(() => {
+      setIsLoaded(true);
+    }, 100); // Minimal preload time
     
-    // Animation sequence
-    const timer1 = setTimeout(() => setStage(1), 1000); // Show card for 1s
-    const timer2 = setTimeout(() => setStage(2), 2000); // Transition at 2s
+    // Fast animation sequence
+    const timer1 = setTimeout(() => setStage(1), 600); // Show card for 0.6s
+    const timer2 = setTimeout(() => {
+      setStage(2);
+      generateConfetti(); // Confettis dès l'apparition du trophée
+    }, 1000); // Transition at 1s
     const timer3 = setTimeout(() => {
       setStage(3);
-      generateConfetti();
-    }, 3000); // Trophy appears and confetti at 3s
+    }, 1400); // Trophy celebration at 1.4s
 
     return () => {
+      clearTimeout(preloadTimer);
       clearTimeout(timer1);
       clearTimeout(timer2);
       clearTimeout(timer3);
@@ -149,22 +154,27 @@ export default function TrophyUnlock() {
     return names[rarity] || 'Nouveau';
   };
 
-  // Loading screen
+  // Optimized loading screen with instant transition
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Préparation de l'animation...</p>
+        <div className="text-center animate-fade-in">
+          <div className="relative">
+            <Trophy className="w-16 h-16 text-gray-400 mx-auto mb-4 animate-pulse" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white opacity-60"></div>
+            </div>
+          </div>
+          <p className="text-white text-sm opacity-80">🏆 Chargement...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center overflow-hidden relative animate-fade-in">
       {/* Confetti */}
-      {stage === 3 && confetti.map((piece) => (
+      {(stage === 2 || stage === 3) && confetti.map((piece) => (
         <div
           key={piece.id}
           className="absolute w-1 h-6 confetti-piece"
