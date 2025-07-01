@@ -19,7 +19,23 @@ router.get('/test', async (req, res) => {
     
     // Test de connexion avec un utilisateur existant
     const floflow87 = await storage.getUserByUsername('Floflow87');
-    console.log('Floflow87 user found:', floflow87 ? { id: floflow87.id, username: floflow87.username, isActive: floflow87.isActive } : 'Not found');
+    console.log('Floflow87 user found:', floflow87 ? { 
+      id: floflow87.id, 
+      username: floflow87.username, 
+      isActive: floflow87.isActive,
+      passwordHashPrefix: floflow87.password ? floflow87.password.substring(0, 10) + '...' : 'No password'
+    } : 'Not found');
+    
+    // Test de vérification du mot de passe
+    if (floflow87) {
+      try {
+        const testPassword = 'Test25';
+        const isValidPassword = await AuthService.verifyPassword(testPassword, floflow87.password);
+        console.log('Password verification test:', isValidPassword);
+      } catch (passwordError) {
+        console.error('Password verification error:', passwordError);
+      }
+    }
     
     res.json({
       success: true,
