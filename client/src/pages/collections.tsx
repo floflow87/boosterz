@@ -54,6 +54,81 @@ export default function Collections() {
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
   const [isInitialAutoSelection, setIsInitialAutoSelection] = useState(false);
+  
+  // États pour le système de création de check-lists
+  const [showChecklistModal, setShowChecklistModal] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState<string>('');
+  const [selectedChecklistCollection, setSelectedChecklistCollection] = useState<string>('');
+  const [selectedYear, setSelectedYear] = useState<string>('');
+
+  // Données pour les sélecteurs de marques et collections
+  const brands = [
+    { id: 'panini', name: 'Panini' },
+    { id: 'topps', name: 'Topps' },
+    { id: 'score', name: 'Score' },
+    { id: 'upper-deck', name: 'Upper Deck' }
+  ];
+
+  const collectionsByBrand: Record<string, string[]> = {
+    'panini': ['Prizm', 'Select', 'Mosaic', 'Donruss'],
+    'topps': ['Chrome', 'Stadium Club', 'Finest', 'Heritage'],
+    'score': ['LIGUE 1', 'PREMIER LEAGUE', 'BUNDESLIGA', 'SERIE A'],
+    'upper-deck': ['MVP', 'Series 1', 'Series 2', 'Artifacts']
+  };
+
+  const availableYears = ['2021/22', '2022/23', '2023/24', '2024/25'];
+
+  // Fonction pour gérer la création de nouvelles check-lists
+  const handleCreateChecklist = async () => {
+    if (!selectedBrand || !selectedChecklistCollection || !selectedYear) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const checklistName = `${selectedBrand.toUpperCase()} ${selectedChecklistCollection} ${selectedYear}`;
+      
+      const newCollection = {
+        name: checklistName,
+        season: selectedYear
+      };
+
+      const response = await apiRequest(`/api/collections`, {
+        method: "POST",
+        body: JSON.stringify(newCollection),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        // Invalider le cache des collections pour recharger la liste
+        queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+        
+        toast({
+          title: "Check-list créée !",
+          description: `La check-list ${checklistName} a été créée avec succès`,
+          className: "bg-green-600 text-white",
+        });
+
+        // Réinitialiser le formulaire et fermer la modal
+        setSelectedBrand('');
+        setSelectedChecklistCollection('');
+        setSelectedYear('');
+        setShowChecklistModal(false);
+      } else {
+        throw new Error('Erreur lors de la création');
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer la check-list",
+        variant: "destructive",
+      });
+    }
+  };
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
@@ -411,19 +486,21 @@ export default function Collections() {
     setShowSuggestions(suggestions.length > 0 && searchQuery.trim().length > 0);
   }, [searchQuery]);
 
-  // Fonction pour calculer le pourcentage de completion en utilisant les données de la collection
+  // Fonction pour calculer le pourcentage de completion RÉEL avec données personnelles
   const getCollectionCompletion = (collection: Collection) => {
-    // Utiliser d'abord les données de la collection si disponibles
-    if (collection.totalCards && collection.ownedCards !== undefined) {
-      return {
-        totalCards: collection.totalCards,
-        ownedCards: collection.ownedCards,
-        percentage: Math.round((collection.ownedCards / collection.totalCards) * 100)
-      };
-    }
+    // Calculer à partir des cartes personnelles de l'utilisateur pour cette collection
+    const collectionPersonalCards = personalCards.filter(
+      card => card.collectionId === collection.id
+    );
     
-    // Valeurs par défaut si pas de données
-    return { totalCards: 0, ownedCards: 0, percentage: 0 };
+    const ownedCount = collectionPersonalCards.length;
+    const totalCards = collection.totalCards || 0;
+    
+    return {
+      totalCards,
+      ownedCards: ownedCount,
+      percentage: totalCards > 0 ? Math.round((ownedCount / totalCards) * 100) : 0
+    };
   };
 
   // Query for all user cards when no collection is selected - Optimized with aggressive caching
@@ -1063,7 +1140,7 @@ export default function Collections() {
             <h3 className="text-lg font-bold text-white font-poppins mb-4">Toutes les check-lists</h3>
             {/* Add Collection Button - Moved to top */}
             <div 
-              onClick={() => setLocation("/add-card")}
+              onClick={() => setShowChecklistModal(true)}
               className="w-full bg-[hsl(214,35%,22%)] rounded-2xl border-2 border-dashed border-[hsl(214,35%,30%)] cursor-pointer hover:border-[hsl(9,85%,67%)] transition-colors group p-4 flex flex-col items-center justify-center text-center"
             >
               <div className="w-10 h-10 bg-[hsl(9,85%,67%)] rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
