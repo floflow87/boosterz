@@ -118,6 +118,24 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **SYSTÈME OWNERSHIP CHECKLIST COMPLET + INTÉGRATION FRONTEND FINALISÉE**
+  - **Erreur contrainte clé étrangère résolue** : Fonction initialize_user_checklist_ownership corrigée
+    - Problème mapping card_id entre checklist_cards et cards résolu
+    - Function utilise maintenant directement les ID de checklist_cards 
+    - Initialisation ownership réussie pour tous utilisateurs sans erreur
+  - **Test API ownership complet** : Validation système backend/frontend
+    - API `/api/collections/1/checklist-ownership` retourne 397 enregistrements
+    - Système d'authentification fonctionnel avec tokens
+    - Données ownership correctement structurées et accessibles
+  - **Refactoring frontend terminé** : Suppression complète mutations cache manuelles
+    - Collection-detail.tsx nettoyé de toutes références isOwned obsolètes
+    - Toutes fonctions (handleMarkAsOwned, handleMarkAsNotOwned, handlePhotoSave) simplifiées
+    - Système ownershipMap entièrement intégré et fonctionnel
+  - **Architecture complète opérationnelle** : checklist_cards + user_card_ownership
+    - Table user_card_ownership avec 794 enregistrements (2 utilisateurs × 397 cartes)
+    - Utilisateur Floflow87 : 4 cartes acquises, 393 manquantes
+    - Utilisateur maxlamenace : 0 cartes acquises, 397 manquantes
+    - Système prêt pour gestion individuelle ownership sur check-lists partagées
 - January 02, 2025. **SYSTÈME TROPHÉES ULTIME + CODES COULEUR FINALISÉS**
   - **Badge RC affiché pour toutes cartes isRookieCard=true** : Badge fourni par utilisateur intégré avec succès
     - Affichage en bas-droite des cartes en vue grille (8x8px)
