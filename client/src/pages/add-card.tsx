@@ -45,7 +45,6 @@ export default function AddCard() {
   const [reference, setReference] = useState("");
   const [numbering, setNumbering] = useState("");
   const [season, setSeason] = useState("");
-  const [collectionType, setCollectionType] = useState("");
   const [condition, setCondition] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleDescription, setSaleDescription] = useState("");
@@ -66,21 +65,7 @@ export default function AddCard() {
     { type: "special_1_1", label: "Spéciale 1/1" }
   ];
 
-  // Définition des collections et saisons liées
-  const seasonsByCollection: Record<string, string[]> = {
-    'OM 125 ans': ['2024/25'],
-    'Score ligue 1': ['2023/24'],
-    'Immaculate': ['2022/23', '2024/25'],
-    'Iconz': ['2024/25'],
-    'UCC Flagship': ['2023/24', '2024/25']
-  };
-
-  // Fonction pour obtenir les années disponibles selon la collection
-  const getAvailableYears = (collection: string) => {
-    return seasonsByCollection[collection] || [];
-  };
-
-  // Fetch collections for selection
+  // Fetch all collections for selection and autocomplete
   const { data: collections = [] } = useQuery<any[]>({
     queryKey: ["/api/users/1/collections"],
     staleTime: 5 * 60 * 1000,
@@ -96,6 +81,29 @@ export default function AddCard() {
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  // Get seasons for selected collection
+  const getAvailableSeasonsForCollection = (collectionId: number | null) => {
+    if (!collectionId || !collections) return [];
+    const collection = collections.find(c => c.id === collectionId);
+    if (!collection) return [];
+    
+    // Return season based on collection name/type
+    if (collection.name.includes('Score ligue 1') || collection.name.includes('SCORE LIGUE 1')) {
+      return ['2023/24'];
+    } else if (collection.name.includes('OM 125 ans')) {
+      return ['2024/25'];
+    } else if (collection.name.includes('Immaculate')) {
+      return ['2022/23', '2024/25'];
+    } else if (collection.name.includes('Iconz')) {
+      return ['2024/25'];
+    } else if (collection.name.includes('UCC Flagship')) {
+      return ['2023/24', '2024/25'];
+    }
+    
+    // Default pour autres collections
+    return ['2023/24'];
+  };
 
   // Fetch all players including autographs and inserts
   const { data: allPlayers = [] } = useQuery<Player[]>({
@@ -280,10 +288,10 @@ export default function AddCard() {
   };
 
   const handleSubmitCard = async () => {
-    if (!cardType) {
+    if (!cardType || !selectedCollectionId || !season) {
       toast({
         title: "Informations manquantes",
-        description: "Veuillez sélectionner un type de carte",
+        description: "Veuillez sélectionner la collection, la saison et le type de carte",
         variant: "destructive",
       });
       return;
@@ -296,6 +304,7 @@ export default function AddCard() {
       reference: reference || null,
       numbering: numbering || null,
       season: season || null,
+      collectionId: selectedCollectionId,
       imageUrl: editedImage || null,
       condition: condition || null,
       salePrice: isForSale ? salePrice : null,
@@ -439,35 +448,40 @@ export default function AddCard() {
                 </p>
               </div>
 
-              {/* Type de collection et saison liée */}
+              {/* Collection et saison sur la même ligne */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="collectionType" className="text-white mb-2 block">Type de collection *</Label>
-                  <Select value={collectionType} onValueChange={(value) => {
-                    setCollectionType(value);
-                    setSeason(""); // Reset saison quand on change le type
+                  <Label htmlFor="collection" className="text-white mb-2 block">Collection *</Label>
+                  <Select value={selectedCollectionId?.toString() || ""} onValueChange={(value) => {
+                    const collectionId = value ? parseInt(value) : null;
+                    setSelectedCollectionId(collectionId);
+                    setSeason(""); // Reset saison quand on change la collection
                   }}>
                     <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                      <SelectValue placeholder="Type de collection" />
+                      <SelectValue placeholder="Sélectionne une collection" />
                     </SelectTrigger>
                     <SelectContent className="bg-zinc-800 border-zinc-700">
-                      <SelectItem value="Score ligue 1" className="text-white hover:bg-zinc-700">Score ligue 1</SelectItem>
-                      <SelectItem value="OM 125 ans" className="text-white hover:bg-zinc-700">OM 125 ans</SelectItem>
-                      <SelectItem value="Immaculate" className="text-white hover:bg-zinc-700">Immaculate</SelectItem>
-                      <SelectItem value="Iconz" className="text-white hover:bg-zinc-700">Iconz</SelectItem>
-                      <SelectItem value="UCC Flagship" className="text-white hover:bg-zinc-700">UCC Flagship</SelectItem>
+                      {collections.map((collection) => (
+                        <SelectItem 
+                          key={collection.id} 
+                          value={collection.id.toString()} 
+                          className="text-white hover:bg-zinc-700"
+                        >
+                          {collection.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <Label htmlFor="season" className="text-white mb-2 block">Saison *</Label>
-                  <Select value={season} onValueChange={setSeason} disabled={!collectionType}>
+                  <Select value={season} onValueChange={setSeason} disabled={!selectedCollectionId}>
                     <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                      <SelectValue placeholder={collectionType ? "Sélectionne la saison" : "Choisir d'abord le type"} />
+                      <SelectValue placeholder={selectedCollectionId ? "Sélectionne la saison" : "Choisir d'abord la collection"} />
                     </SelectTrigger>
                     <SelectContent className="bg-zinc-800 border-zinc-700">
-                      {getAvailableYears(collectionType).map((year) => (
+                      {getAvailableSeasonsForCollection(selectedCollectionId).map((year) => (
                         <SelectItem key={year} value={year} className="text-white hover:bg-zinc-700">
                           {year}
                         </SelectItem>
