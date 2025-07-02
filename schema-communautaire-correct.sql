@@ -268,6 +268,7 @@ SELECT
 
 -- Vérifier les données de base
 SELECT 
+    u.id,
     u.username,
     c.name as collection_name,
     c.total_cards,
@@ -275,5 +276,5 @@ SELECT
 FROM users u
 CROSS JOIN collections c
 LEFT JOIN cards ON cards.collection_id = c.id
-GROUP BY u.username, c.name, c.total_cards
+GROUP BY u.id, u.username, c.name, c.total_cards
 ORDER BY u.id;
