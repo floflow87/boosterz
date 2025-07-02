@@ -118,17 +118,22 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- January 02, 2025. **SÉLECTEUR TYPE DE CARTE AJOUTÉ À LA MODIFICATION + MIGRATION SÉCURISÉE PRÉPARÉE**
-  - **Sélecteur type de carte en modification** : Remplacé champ texte par sélecteur déroulant
-    - Options standardisées : Base, Base Numérotée, Insert, Autographe, Numérotée, Spéciale
-    - Interface cohérente avec la création de cartes
-    - Validation des types de cartes pour éviter les erreurs de saisie
-  - **Migration sécurisée créée** : Script de migration communautaire non destructif
+- January 02, 2025. **PROBLÈME D'ENCODAGE SQL RÉSOLU + SCRIPTS PRODUCTION PRÊTS**
+  - **Erreur SQL "Skip to content" corrigée** : Problème d'encodage UTF-8 identifié et résolu
+    - Fichiers SQL corrompus détectés (caractères M-CM-^I au lieu d'accents)
+    - Versions corrigées créées : schema-communautaire-fixed.sql et migration-communautaire-safe-fixed.sql
+    - Encodage ASCII propre sans erreurs SQL
+    - Scripts testés et validés pour déploiement
+  - **Sélecteur type de carte en modification** : Interface standardisée ajoutée
+    - Options déroulantes : Base, Base Numérotée, Insert, Autographe, Numérotée, Spéciale
+    - Cohérence avec la page de création de cartes
+    - Validation des types pour éviter erreurs de saisie
+  - **Migration sécurisée finalisée** : Script production sans corruption d'encodage
     - Préserve les 18 tables existantes dans Neon
-    - Ajoute user_card_ownership pour logique individuelle
-    - Migre données existantes avant suppressions
-    - Vérifications complètes pré et post-migration
-    - Prêt pour déploiement en production Supabase
+    - Ajoute user_card_ownership pour logique individuelle  
+    - Migrations de données complètes avec vérifications
+    - Documentation technique : probleme-encodage-resolu.md
+    - Prêt pour déploiement Supabase sans erreurs
 - January 02, 2025. **INTERFACE FINALISÉE + SAISON 2022/23 AJOUTÉE**
   - **Types de carte simplifiés** : Suppression des underscores dans toutes les qualités
     - "base_numbered" → "base numbered", "special_1_1" → "special 1 1"
