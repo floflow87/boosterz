@@ -93,6 +93,7 @@ export interface IStorage {
 
   // Personal Cards (pour "Mes cartes")
   getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]>;
+  getPersonalCardsByCollectionId(collectionId: number, userId: number): Promise<PersonalCard[]>;
   getAllPersonalCards(): Promise<PersonalCard[]>;
   getPersonalCard(id: number): Promise<PersonalCard | undefined>;
   createPersonalCard(personalCard: InsertPersonalCard): Promise<PersonalCard>;
@@ -498,6 +499,21 @@ export class DatabaseStorage implements IStorage {
 
   async getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]> {
     return await db.select().from(personalCards).where(eq(personalCards.userId, userId));
+  }
+
+  async getPersonalCardsByCollectionId(collectionId: number, userId: number): Promise<PersonalCard[]> {
+    // Les personal cards n'ont pas de collectionId direct
+    // On filtre plutôt par saison correspondante à la collection
+    const collection = await this.getCollection(collectionId);
+    if (!collection) return [];
+    
+    return await db.select().from(personalCards)
+      .where(
+        and(
+          eq(personalCards.userId, userId),
+          eq(personalCards.season, collection.season)
+        )
+      );
   }
 
   async getAllPersonalCards(): Promise<PersonalCard[]> {
