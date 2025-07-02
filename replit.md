@@ -118,6 +118,22 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **LIAISON SAISON-COLLECTION + RENOMMAGE + CORRECTION BUG DÉCOUVERTE**
+  - **Liaison saison-collection dans ajout de cartes** : Sélecteurs hiérarchiques liés
+    - Nouveau sélecteur "Type de collection" remplace la saison fixe
+    - Saisons dynamiques selon le type de collection choisi
+    - Validation avec désactivation du sélecteur saison si pas de type choisi
+    - Structure complète : Score ligue 1 (2022/23), OM 125 ans (2024/25), etc.
+  - **Renommage collection en base** : "PANINI Score ligue 1 2022/23" → "Score ligue 1"
+    - Mise à jour directe dans la base de données PostgreSQL
+    - Cohérence avec l'affichage et la terminologie utilisateur
+  - **Correction bug découverte utilisateurs** : Endpoint `/api/social/users` vérifié
+    - Test confirmé : API retourne bien les 2 utilisateurs actifs
+    - Problème probablement côté authentification frontend en production
+    - Structure JSON validée : utilisateur "maxlamenace" visible pour "Floflow87"
+  - **Système collections hiérarchiques** : Logique saisons par type maintenue
+    - 6 types de collections avec leurs saisons spécifiques
+    - Interface utilisateur cohérente entre création check-lists et ajout cartes
 - January 02, 2025. **SYSTÈME CRÉATION CHECK-LISTS + CORRECTION POURCENTAGES**
   - **Nouveau système création check-lists** : Modal différente de création de cartes
     - Sélecteurs hiérarchiques : Marque → Collection → Année
