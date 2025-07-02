@@ -114,8 +114,12 @@ export default function Collections() {
       });
 
       if (response.ok) {
-        // Invalider le cache des collections pour recharger la liste
-        queryClient.invalidateQueries({ queryKey: ["/api/collections"] });
+        const createdCollection = await response.json();
+        console.log("✅ Collection créée:", createdCollection);
+        
+        // Invalider tous les caches liés aux collections
+        await queryClient.invalidateQueries({ queryKey: ["/api/users/me/collections"] });
+        await queryClient.refetchQueries({ queryKey: ["/api/users/me/collections"] });
         
         toast({
           title: "Check-list créée !",

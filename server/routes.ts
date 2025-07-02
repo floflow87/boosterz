@@ -508,6 +508,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new collection
+  app.post("/api/collections", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const { name, season } = req.body;
+      const userId = req.user!.id;
+
+      console.log("Creating collection:", { name, season, userId });
+
+      if (!name || !season) {
+        return res.status(400).json({ error: "Name and season are required" });
+      }
+
+      // Create new collection
+      const newCollection = await storage.createCollection({
+        name,
+        season,
+        userId,
+        totalCards: 0 // Will be updated when cards are added
+      });
+
+      console.log("Collection created successfully:", newCollection);
+      res.json(newCollection);
+    } catch (error) {
+      console.error("Error creating collection:", error);
+      res.status(500).json({ error: "Failed to create collection" });
+    }
+  });
+
   // Update current user profile
   app.put("/api/auth/profile", authenticateToken, async (req: AuthRequest, res) => {
     try {
