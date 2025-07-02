@@ -64,19 +64,29 @@ export default function Collections() {
   // Données pour les sélecteurs de marques et collections
   const brands = [
     { id: 'panini', name: 'Panini' },
-    { id: 'topps', name: 'Topps' },
-    { id: 'score', name: 'Score' },
-    { id: 'upper-deck', name: 'Upper Deck' }
+    { id: 'futera', name: 'Futera' },
+    { id: 'topps', name: 'Topps' }
   ];
 
   const collectionsByBrand: Record<string, string[]> = {
-    'panini': ['Prizm', 'Select', 'Mosaic', 'Donruss'],
-    'topps': ['Chrome', 'Stadium Club', 'Finest', 'Heritage'],
-    'score': ['LIGUE 1', 'PREMIER LEAGUE', 'BUNDESLIGA', 'SERIE A'],
-    'upper-deck': ['MVP', 'Series 1', 'Series 2', 'Artifacts']
+    'panini': ['OM 125 ans', 'Score ligue 1', 'Immaculate', 'Iconz'],
+    'futera': ['Set OM'],
+    'topps': ['UCC Flagship']
   };
 
-  const availableYears = ['2021/22', '2022/23', '2023/24', '2024/25'];
+  const seasonsByCollection: Record<string, string[]> = {
+    'OM 125 ans': ['2024/25'], // Édition spéciale
+    'Score ligue 1': ['2022/23'],
+    'Immaculate': ['2022/23', '2024/25'],
+    'Iconz': ['2024/25'],
+    'Set OM': ['2021/22', '2022/23', '2024/25'],
+    'UCC Flagship': ['2023/24', '2024/25']
+  };
+
+  // Fonction pour obtenir les années disponibles selon la collection
+  const getAvailableYears = (collection: string) => {
+    return seasonsByCollection[collection] || [];
+  };
 
   // Fonction pour gérer la création de nouvelles check-lists
   const handleCreateChecklist = async () => {
@@ -2835,7 +2845,10 @@ export default function Collections() {
                 </label>
                 <select
                   value={selectedChecklistCollection}
-                  onChange={(e) => setSelectedChecklistCollection(e.target.value)}
+                  onChange={(e) => {
+                    setSelectedChecklistCollection(e.target.value);
+                    setSelectedYear(''); // Reset année quand collection change
+                  }}
                   disabled={!selectedBrand}
                   className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50"
                 >
@@ -2856,10 +2869,11 @@ export default function Collections() {
                 <select
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
-                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)]"
+                  disabled={!selectedChecklistCollection}
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50"
                 >
                   <option value="">Sélectionner une année</option>
-                  {availableYears.map((year) => (
+                  {selectedChecklistCollection && getAvailableYears(selectedChecklistCollection).map((year) => (
                     <option key={year} value={year}>
                       {year}
                     </option>

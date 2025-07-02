@@ -121,8 +121,12 @@ The application follows a modern full-stack architecture with clear separation b
 - January 02, 2025. **SYSTÈME CRÉATION CHECK-LISTS + CORRECTION POURCENTAGES**
   - **Nouveau système création check-lists** : Modal différente de création de cartes
     - Sélecteurs hiérarchiques : Marque → Collection → Année
-    - Pas d'image, uniquement choix parmi marques prédéfinies (Panini, Topps, Score, Upper Deck)
-    - Collections dépendantes de la marque sélectionnée
+    - Pas d'image, uniquement choix parmi marques exactes (Panini, Futera, Topps)
+    - Collections spécifiques par marque :
+      * Panini : OM 125 ans, Score ligue 1, Immaculate, Iconz
+      * Futera : Set OM  
+      * Topps : UCC Flagship
+    - Années dynamiques selon collection sélectionnée
     - Validation avec tous les champs requis pour créer la check-list
   - **Correction calcul pourcentages check-lists** :
     - Utilise maintenant les cartes personnelles réelles de l'utilisateur
