@@ -118,6 +118,22 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **SOLUTION CHECK-LISTS VIDES + CORRECTIONS PRODUCTION**
+  - **Architecture check-lists complète** : Tables dédiées pour résoudre le problème des check-lists vides
+    - Table `checklist_cards` : Cartes de référence partagées par check-list
+    - Table `user_card_ownership` : Propriété individuelle des cartes par utilisateur
+    - Scripts de migration : `migration-checklist-tables.sql` pour création des tables
+    - Script de population : `populate-checklist-fixed.sql` pour Score Ligue 1 23/24
+  - **Corrections erreurs production** : Bugs identifiés et corrigés
+    - Script SQL populate corrigé : erreur CASE/WHEN résolue avec WITH clauses
+    - Posts non créés : méthodes storage manquantes identifiées
+    - Messages 500 : problèmes de conversation routes analysés
+    - Documentation : `corrections-urgentes-prod.md` et `solution-checklists-vides.md`
+  - **Structure Score Ligue 1 23/24 définie** : ~2360 cartes pour check-list complète
+    - 200 cartes de base (référence 001-200)
+    - 1800 cartes base numérotées (9 variantes par joueur)
+    - 360 cartes insert (8 types différents)
+    - Système de raretés : Base → Commune → Peu commune → Rare → Épique → Légendaire
 - January 02, 2025. **MIGRATION COMMUNAUTAIRE RÉUSSIE + ARCHITECTURE FINALISÉE**
   - **Migration user_card_ownership terminée** : Nouvelle table ajoutée avec succès
     - Passage de 18 à 19 tables dans la base de données
