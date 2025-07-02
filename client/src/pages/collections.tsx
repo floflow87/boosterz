@@ -367,44 +367,56 @@ export default function Collections() {
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
     queryKey: ["/api/users/me/collections"],
-    staleTime: 20 * 60 * 1000, // 20 minutes pour réduire les requêtes en production
-    gcTime: 60 * 60 * 1000, // 1 heure en mémoire
+    staleTime: 30 * 60 * 1000, // 30 minutes cache optimisé
+    gcTime: 2 * 60 * 60 * 1000, // 2 heures en mémoire
     refetchOnWindowFocus: false,
-    refetchOnMount: false, // Ne pas recharger automatiquement
-    enabled: !!currentUser, // Only fetch when we have authenticated user
+    refetchOnMount: false,
+    refetchInterval: false,
+    retry: 1, // Réduire les tentatives de retry
+    enabled: !!currentUser,
   });
 
-  // Query pour les cartes personnelles
+  // Query pour les cartes personnelles - optimisée pour réduire la charge
   const { data: personalCards = [], isLoading: personalCardsLoading } = useQuery<any[]>({
     queryKey: ["/api/personal-cards"],
-    staleTime: 5 * 60 * 1000,
-    enabled: activeTab === "cards",
+    staleTime: 30 * 60 * 1000, // Cache étendu à 30 minutes
+    gcTime: 3 * 60 * 60 * 1000, // 3 heures en mémoire
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    retry: 1,
+    enabled: activeTab === "cards" && !!currentUser,
   });
 
-  // Query pour les decks de l'utilisateur avec cache optimisé
+  // Query pour les decks - chargement conditionnel et cache optimisé
   const { data: userDecks = [], isLoading: decksLoading } = useQuery<any[]>({
     queryKey: ["/api/decks"],
-    staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes
-    gcTime: 20 * 60 * 1000, // Garde en cache 20 minutes  
-    refetchOnWindowFocus: false, // Ne pas refetch au focus
-    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
+    staleTime: 20 * 60 * 1000, // Cache étendu à 20 minutes
+    gcTime: 40 * 60 * 1000, // Garde en cache 40 minutes  
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    retry: 1,
+    enabled: activeTab === "deck" && !!currentUser, // Chargement conditionnel
   });
 
-  // Query pour obtenir les détails complets des decks avec cartes pour prévisualisation
+  // Preview des decks optimisé - ne charge que si nécessaire
   const { data: deckPreviews = [] } = useQuery({
     queryKey: ['/api/decks/previews', userDecks?.map(d => d.id).join(',')],
     queryFn: async () => {
       if (!userDecks?.length) return [];
       
+      // Limite à 6 previews maximum pour réduire la charge
+      const limitedDecks = userDecks.slice(0, 6);
       const previews = await Promise.all(
-        userDecks.map(async (deck: any) => {
+        limitedDecks.map(async (deck: any) => {
           try {
             const response = await fetch(`/api/decks/${deck.id}`);
             if (response.ok) {
               const deckWithCards = await response.json();
               return {
                 ...deck,
-                previewCards: deckWithCards.cards.slice(0, 3),
+                previewCards: deckWithCards.cards.slice(0, 2), // Réduit à 2 cartes preview
                 totalCards: deckWithCards.cards.length,
                 cardCount: deckWithCards.cards.length
               };
@@ -418,10 +430,12 @@ export default function Collections() {
       return previews;
     },
     enabled: activeTab === "deck" && !!userDecks?.length,
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
-    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
-    refetchOnWindowFocus: false, // Ne pas refetch au focus
-    refetchOnMount: false, // Ne pas refetch au montage si on a des données en cache
+    staleTime: 30 * 60 * 1000, // Cache étendu à 30 minutes
+    gcTime: 60 * 60 * 1000, // Garde en cache 1 heure
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    retry: 1,
   });
 
   // Filtrer et rechercher les cartes personnelles
@@ -1039,9 +1053,22 @@ export default function Collections() {
     });
   };
 
-  // Affichage conditionnel du chargement - Ne montrer LoadingScreen que lors du premier chargement
-  if ((userLoading && !user) || (collectionsLoading && !collections)) {
-    return <LoadingScreen />;
+  // Chargement optimisé - affichage progressif plutôt qu'écran de chargement complet
+  const isInitialLoading = (userLoading && !user) || (collectionsLoading && !collections);
+  
+  if (isInitialLoading) {
+    return (
+      <div className="min-h-screen relative overflow-hidden bg-[hsl(216,46%,13%)]">
+        <HaloBlur />
+        <Header title="Mes cartes" />
+        <main className="relative z-10 px-4 pb-24 flex items-center justify-center">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-[hsl(9,85%,67%)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Chargement de vos collections...</p>
+          </div>
+        </main>
+      </div>
+    );
   }
 
   return (

@@ -97,7 +97,7 @@ export default function Profile() {
   const [showCardMenu, setShowCardMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const { data: profileUser, isLoading: isUserLoading, error: userError } = useQuery({
+  const { data: profileUser, isLoading: isUserLoading, error: userError } = useQuery<User>({
     queryKey: [`/api/users/${userId}`],
     enabled: !!userId,
   });
@@ -108,17 +108,17 @@ export default function Profile() {
   console.log("Is loading:", isUserLoading);
   console.log("Error:", userError);
 
-  const { data: posts = [], isLoading: isPostsLoading } = useQuery({
+  const { data: posts = [], isLoading: isPostsLoading } = useQuery<Post[]>({
     queryKey: [`/api/users/${userId}/posts`],
     enabled: !!userId,
   });
 
-  const { data: saleCards = [], isLoading: isSaleCardsLoading } = useQuery({
+  const { data: saleCards = [], isLoading: isSaleCardsLoading } = useQuery<Card[]>({
     queryKey: [`/api/users/${userId}/sale-cards`],
     enabled: !!userId,
   });
 
-  const { data: userDecks = [], isLoading: isDecksLoading } = useQuery({
+  const { data: userDecks = [], isLoading: isDecksLoading } = useQuery<Deck[]>({
     queryKey: [`/api/users/${userId}/decks`],
     enabled: !!userId,
   });
@@ -318,19 +318,49 @@ export default function Profile() {
     );
   }
 
-  if (!profileUser && !isUserLoading) {
+  // Écran de chargement amélioré
+  if (isUserLoading) {
+    return (
+      <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
+        <div className="relative px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="relative flex items-center space-x-3">
+              <div className="absolute -left-8 top-1/2 transform -translate-y-1/2 w-32 h-32 bg-[hsl(9,85%,67%)] opacity-15 rounded-full blur-2xl"></div>
+              <button 
+                onClick={() => setLocation("/social")}
+                className="text-white hover:text-gray-300 transition-colors relative z-10"
+              >
+                <ArrowLeft className="w-6 h-6" />
+              </button>
+              <h1 className="text-white font-bold text-lg z-10" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
+                BOOSTER<span className="text-[hsl(9,85%,67%)]">Z</span>
+              </h1>
+            </div>
+          </div>
+        </div>
+        <main className="pb-6 flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="w-12 h-12 border-4 border-[hsl(9,85%,67%)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-400">Chargement du profil...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!profileUser) {
     return (
       <div className="min-h-screen bg-[hsl(214,35%,11%)] flex items-center justify-center">
         <div className="text-white text-center">
           <h2 className="text-xl font-bold mb-2">Utilisateur introuvable</h2>
           <p className="text-gray-400">Cet utilisateur n'existe pas ou a été supprimé.</p>
-          <p className="text-xs text-gray-500 mt-2">ID: {id}</p>
+          <p className="text-xs text-gray-500 mt-2">ID: {userId}</p>
         </div>
       </div>
     );
   }
 
-  const isOwnProfile = currentUser?.user?.id === profileUser.id;
+  const isOwnProfile = currentUser?.user?.id === profileUser?.id;
 
   return (
     <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white">
@@ -377,29 +407,33 @@ export default function Profile() {
         {/* Header centré */}
         <div className="text-center px-6 py-8">
           {/* Avatar dynamique avec système de trophées */}
-          <div className="flex justify-center mb-3">
-            <TrophyAvatar 
-              userId={profileUser.id}
-              avatar={profileUser.avatar || undefined}
-              size="xl"
-            />
-          </div>
+          {profileUser && (
+            <>
+              <div className="flex justify-center mb-3">
+                <TrophyAvatar 
+                  userId={profileUser.id}
+                  avatar={profileUser.avatar || undefined}
+                  size="xl"
+                />
+              </div>
 
-          {/* Nom avec taille ajustée */}
-          <h1 className="text-lg font-bold text-white mb-1" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
-            {profileUser.name.toUpperCase()}
-          </h1>
-          <p className="text-gray-400 mb-3 text-sm">@{profileUser.username}</p>
+              {/* Nom avec taille ajustée */}
+              <h1 className="text-lg font-bold text-white mb-1" style={{ fontFamily: 'Luckiest Guy, cursive' }}>
+                {profileUser.name?.toUpperCase() || profileUser.username?.toUpperCase()}
+              </h1>
+              <p className="text-gray-400 mb-3 text-sm">@{profileUser.username}</p>
 
-          {/* Description */}
-          {profileUser.bio && (
-            <p className="text-gray-300 text-sm leading-relaxed mb-4 max-w-md mx-auto">
-              {profileUser.bio}
-            </p>
+              {/* Description */}
+              {profileUser.bio && (
+                <p className="text-gray-300 text-sm leading-relaxed mb-4 max-w-md mx-auto">
+                  {profileUser.bio}
+                </p>
+              )}
+            </>
           )}
 
           {/* Bouton Follow seulement */}
-          {!isOwnProfile && !profileUser.isFollowing && (
+          {profileUser && !isOwnProfile && !profileUser.isFollowing && (
             <Button
               onClick={handleFollow}
               disabled={followMutation.isPending}
@@ -410,20 +444,22 @@ export default function Profile() {
           )}
 
           {/* KPIs dans l'ordre demandé */}
-          <div className="flex justify-center space-x-8 mt-6">
-            <div className="text-center">
-              <div className="text-xl font-bold text-white">{profileUser.totalCards || 0}</div>
-              <div className="text-sm text-gray-400">Cartes</div>
+          {profileUser && (
+            <div className="flex justify-center space-x-8 mt-6">
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">{profileUser.totalCards || 0}</div>
+                <div className="text-sm text-gray-400">Cartes</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">{profileUser.followersCount || 0}</div>
+                <div className="text-sm text-gray-400">Abonnés</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold text-white">{profileUser.collectionsCount || 0}</div>
+                <div className="text-sm text-gray-400">Decks</div>
+              </div>
             </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-white">{profileUser.followersCount || 0}</div>
-              <div className="text-sm text-gray-400">Abonnés</div>
-            </div>
-            <div className="text-center">
-              <div className="text-xl font-bold text-white">{profileUser.collectionsCount || 0}</div>
-              <div className="text-sm text-gray-400">Decks</div>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Onglets */}
