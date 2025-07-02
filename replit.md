@@ -118,6 +118,22 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **SUPPRESSION SÉLECTEUR COLLECTION + SUPPRESSION SET OM + CORRECTION AFFICHAGE SCORE LIGUE 1**
+  - **Suppression premier sélecteur collection** : Interface simplifiée dans l'ajout de cartes
+    - Suppression sélecteur "Type de collection" dans add-card.tsx
+    - Saison fixe 2023/24 pour toutes les cartes ajoutées
+    - Interface plus fluide avec affichage saison en lecture seule
+  - **Suppression collection "Set OM"** : Nettoyage des données et références
+    - Suppression références "Set OM" dans collectionsByBrand (Futera vide)
+    - Nettoyage interface utilisateur sans collection inutilisée
+  - **Correction collection Score ligue 1 2023/24** : Affichage par défaut assuré
+    - Mise à jour noms collections : "Score ligue 1 2023/24" avec saison "2023/24"
+    - Création collection par défaut pour utilisateur ID 2 (maxlamenace)
+    - Correction recherche auto-sélection : `season === '2023/24'` au lieu de '23/24'
+    - Collections avec 2869 cartes total pour check-list complète
+  - **Interface utilisateur cohérente** : Simplification navigation et sélection
+    - Plus de sélecteurs en cascade dans ajout cartes
+    - Affichage par défaut garanti sur tous les comptes
 - January 02, 2025. **LIAISON SAISON-COLLECTION + RENOMMAGE + CORRECTION BUG DÉCOUVERTE**
   - **Liaison saison-collection dans ajout de cartes** : Sélecteurs hiérarchiques liés
     - Nouveau sélecteur "Type de collection" remplace la saison fixe

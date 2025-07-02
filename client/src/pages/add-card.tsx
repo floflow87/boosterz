@@ -113,7 +113,7 @@ export default function AddCard() {
                      player.cardTypes.has('Autographe Gold') ||
                      player.cardTypes.has('Autographe Red') ||
                      player.cardTypes.has('Autographe Silver'),
-        hasInsert: Array.from(player.cardTypes).some((type: string) => type.includes('Insert'))
+        hasInsert: Array.from(player.cardTypes).some(type => String(type).includes('Insert'))
       }));
     },
     staleTime: 5 * 60 * 1000,
