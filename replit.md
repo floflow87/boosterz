@@ -118,6 +118,25 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **IMPORT CSV COMPLET SCORE LIGUE 1 23/24 RÉUSSI + SYSTÈME OWNERSHIP FINALISÉ**
+  - **397 cartes CSV importées avec succès** : Import complet du fichier utilisateur réalisé 
+    - Fichier source : `Checklist-Score-Ligue-1-23-24_1751494480119.csv` (398 lignes avec header)
+    - Script Node.js développé pour parsing CSV intelligent avec gestion encodage
+    - Contrainte unique supprimée temporairement pour faciliter import bulk
+    - Base de données : 397 cartes Score Ligue 1 23/24 complètement peuplée
+  - **Architecture user_card_ownership opérationnelle** : 397 enregistrements ownership initialisés
+    - API `initialize-ownership` fonctionnelle pour les 2 utilisateurs (ID 1 et 2)
+    - Table `user_card_ownership` avec champ `owned` (non `is_owned`)
+    - Système prêt pour gestion individuelle des check-lists partagées
+  - **Interface complètement fonctionnelle** : URL /collection/1 affiche 397 cartes
+    - Logs navigateur confirment "397 cards loaded" 
+    - Auto-sélection collection Score Ligue 1 opérationnelle
+    - Backend + frontend entièrement intégrés et validés
+    - API `/collections/1/checklist-ownership` retourne données ownership correctes
+  - **Structure CSV validée** : 17 colonnes avec variants, numérotation, raretés
+    - Cartes "Spéciale" avec rareté "Unique" et numérotation "1/1"
+    - Rookie cards marquées avec `is_rookie_card=true`
+    - Données complètes : joueurs Monaco, Clermont, Lorient, Metz, Nantes, Havre
 - January 02, 2025. **SYSTÈME OWNERSHIP CHECKLIST COMPLET + INTÉGRATION FRONTEND FINALISÉE**
   - **Erreur contrainte clé étrangère résolue** : Fonction initialize_user_checklist_ownership corrigée
     - Problème mapping card_id entre checklist_cards et cards résolu
