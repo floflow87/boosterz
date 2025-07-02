@@ -59,16 +59,16 @@ export default function AddCard() {
   // Types de cartes disponibles pour les cartes personnelles
   const cardTypes = [
     { type: "base", label: "Base" },
-    { type: "base_numbered", label: "Base Numérotée" },
+    { type: "base numbered", label: "Base Numérotée" },
     { type: "insert", label: "Insert" },
     { type: "autograph", label: "Autographe" },
     { type: "numbered", label: "Numérotée" },
-    { type: "special_1_1", label: "Spéciale" }
+    { type: "special 1 1", label: "Spéciale" }
   ];
 
   // Définition des types de collections et saisons liées
   const collectionTypes = [
-    { id: 'Score ligue 1', name: 'Score ligue 1', seasons: ['2023/24'] },
+    { id: 'Score ligue 1', name: 'Score ligue 1', seasons: ['2022/23', '2023/24'] },
     { id: 'OM 125 ans', name: 'OM 125 ans', seasons: ['2024/25'] },
     { id: 'Immaculate', name: 'Immaculate', seasons: ['2022/23', '2024/25'] },
     { id: 'Iconz', name: 'Iconz', seasons: ['2024/25'] },
@@ -97,7 +97,7 @@ export default function AddCard() {
       const seasonToCheck = season;
       
       // Matching logic based on collection type and season
-      if (typeToCheck.includes('score ligue 1') && seasonToCheck === '2023/24') {
+      if (typeToCheck.includes('score ligue 1') && (seasonToCheck === '2022/23' || seasonToCheck === '2023/24')) {
         return collectionName.includes('score ligue') || collectionName.includes('score ligue 1');
       } else if (typeToCheck.includes('om 125 ans') && seasonToCheck === '2024/25') {
         return collectionName.includes('om 125 ans');
@@ -453,15 +453,7 @@ export default function AddCard() {
             <h2 className="text-2xl font-bold mb-6">Détails de la carte</h2>
             
             <div className="grid gap-6 max-w-2xl">
-              {/* Message d'information pour l'auto-complétion */}
-              <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4">
-                <p className="text-sm text-zinc-400">
-                  {collectionType && season ? 
-                    `🎯 Auto-complétion activée pour : ${collectionType} (${season})` :
-                    "Sélectionne le type de collection et la saison pour activer l'auto-complétion ciblée"
-                  }
-                </p>
-              </div>
+
 
               {/* Type de collection et saison côte à côte */}
               <div className="grid grid-cols-2 gap-4">
