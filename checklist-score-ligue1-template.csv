@@ -1,0 +1,201 @@
+collection_id,reference,player_name,team_name,card_type,season,rarity
+2,001,Kylian Mbappé,Paris Saint-Germain,base,23/24,Base
+2,002,Lionel Messi,Paris Saint-Germain,base,23/24,Base
+2,003,Neymar Jr,Paris Saint-Germain,base,23/24,Base
+2,004,Achraf Hakimi,Paris Saint-Germain,base,23/24,Base
+2,005,Marco Verratti,Paris Saint-Germain,base,23/24,Base
+2,006,Gianluigi Donnarumma,Paris Saint-Germain,base,23/24,Base
+2,007,Sergio Ramos,Paris Saint-Germain,base,23/24,Base
+2,008,Marquinhos,Paris Saint-Germain,base,23/24,Base
+2,009,Presnel Kimpembe,Paris Saint-Germain,base,23/24,Base
+2,010,Fabián Ruiz,Paris Saint-Germain,base,23/24,Base
+2,011,Dimitri Payet,Olympique de Marseille,base,23/24,Base
+2,012,Alexis Sánchez,Olympique de Marseille,base,23/24,Base
+2,013,Mattéo Guendouzi,Olympique de Marseille,base,23/24,Base
+2,014,Pau López,Olympique de Marseille,base,23/24,Base
+2,015,Valentin Rongier,Olympique de Marseille,base,23/24,Base
+2,016,Jordan Veretout,Olympique de Marseille,base,23/24,Base
+2,017,Chancel Mbemba,Olympique de Marseille,base,23/24,Base
+2,018,Leonardo Balerdi,Olympique de Marseille,base,23/24,Base
+2,019,Jonathan Clauss,Olympique de Marseille,base,23/24,Base
+2,020,Cengiz Ünder,Olympique de Marseille,base,23/24,Base
+2,021,Wissam Ben Yedder,AS Monaco,base,23/24,Base
+2,022,Folarin Balogun,AS Monaco,base,23/24,Base
+2,023,Takumi Minamino,AS Monaco,base,23/24,Base
+2,024,Youssouf Fofana,AS Monaco,base,23/24,Base
+2,025,Aleksandr Golovin,AS Monaco,base,23/24,Base
+2,026,Philipp Köhn,AS Monaco,base,23/24,Base
+2,027,Axel Disasi,AS Monaco,base,23/24,Base
+2,028,Vanderson,AS Monaco,base,23/24,Base
+2,029,Caio Henrique,AS Monaco,base,23/24,Base
+2,030,Eliesse Ben Seghir,AS Monaco,base,23/24,Base
+2,031,Alexandre Lacazette,Olympique Lyonnais,base,23/24,Base
+2,032,Rayan Cherki,Olympique Lyonnais,base,23/24,Base
+2,033,Johann Lepenant,Olympique Lyonnais,base,23/24,Base
+2,034,Anthony Lopes,Olympique Lyonnais,base,23/24,Base
+2,035,Nicolás Tagliafico,Olympique Lyonnais,base,23/24,Base
+2,036,Dejan Lovren,Olympique Lyonnais,base,23/24,Base
+2,037,Castello Lukeba,Olympique Lyonnais,base,23/24,Base
+2,038,Sael Kumbedi,Olympique Lyonnais,base,23/24,Base
+2,039,Corentin Tolisso,Olympique Lyonnais,base,23/24,Base
+2,040,Maxence Caqueret,Olympique Lyonnais,base,23/24,Base
+2,041,Lois Openda,RC Lens,base,23/24,Base
+2,042,Florian Sotoca,RC Lens,base,23/24,Base
+2,043,Seko Fofana,RC Lens,base,23/24,Base
+2,044,Brice Samba,RC Lens,base,23/24,Base
+2,045,Przemysław Frankowski,RC Lens,base,23/24,Base
+2,046,Kevin Danso,RC Lens,base,23/24,Base
+2,047,Jonathan Gradit,RC Lens,base,23/24,Base
+2,048,Facundo Medina,RC Lens,base,23/24,Base
+2,049,Deiver Machado,RC Lens,base,23/24,Base
+2,050,Adrien Thomasson,RC Lens,base,23/24,Base
+2,051,Amine Gouiri,Stade Rennais,base,23/24,Base
+2,052,Martin Terrier,Stade Rennais,base,23/24,Base
+2,053,Benjamin Bourigeaud,Stade Rennais,base,23/24,Base
+2,054,Steve Mandanda,Stade Rennais,base,23/24,Base
+2,055,Hamari Traoré,Stade Rennais,base,23/24,Base
+2,056,Arthur Theate,Stade Rennais,base,23/24,Base
+2,057,Joe Rodon,Stade Rennais,base,23/24,Base
+2,058,Adrien Truffert,Stade Rennais,base,23/24,Base
+2,059,Lovro Majer,Stade Rennais,base,23/24,Base
+2,060,Flavien Tait,Stade Rennais,base,23/24,Base
+2,061,Terem Moffi,OGC Nice,base,23/24,Base
+2,062,Gaëtan Laborde,OGC Nice,base,23/24,Base
+2,063,Khéphren Thuram,OGC Nice,base,23/24,Base
+2,064,Kasper Schmeichel,OGC Nice,base,23/24,Base
+2,065,Youcef Atal,OGC Nice,base,23/24,Base
+2,066,Jean-Clair Todibo,OGC Nice,base,23/24,Base
+2,067,Dante,OGC Nice,base,23/24,Base
+2,068,Jordan Lotomba,OGC Nice,base,23/24,Base
+2,069,Aaron Ramsey,OGC Nice,base,23/24,Base
+2,070,Sofiane Diop,OGC Nice,base,23/24,Base
+2,071,Jonathan David,Lille OSC,base,23/24,Base
+2,072,Edon Zhegrova,Lille OSC,base,23/24,Base
+2,073,Angel Gomes,Lille OSC,base,23/24,Base
+2,074,Lucas Chevalier,Lille OSC,base,23/24,Base
+2,075,Tiago Djaló,Lille OSC,base,23/24,Base
+2,076,José Fonte,Lille OSC,base,23/24,Base
+2,077,Alexsandro,Lille OSC,base,23/24,Base
+2,078,Ismaily,Lille OSC,base,23/24,Base
+2,079,Benjamin André,Lille OSC,base,23/24,Base
+2,080,Rémy Cabella,Lille OSC,base,23/24,Base
+2,081,Folarin Balogun,Stade de Reims,base,23/24,Base
+2,082,Marshall Munetsi,Stade de Reims,base,23/24,Base
+2,083,Junya Ito,Stade de Reims,base,23/24,Base
+2,084,Yehvann Diouf,Stade de Reims,base,23/24,Base
+2,085,Thomas Foket,Stade de Reims,base,23/24,Base
+2,086,Yunis Abdelhamid,Stade de Reims,base,23/24,Base
+2,087,Emmanuel Agbadou,Stade de Reims,base,23/24,Base
+2,088,Thibault De Smet,Stade de Reims,base,23/24,Base
+2,089,Azor Matusiwa,Stade de Reims,base,23/24,Base
+2,090,Kamory Doumbia,Stade de Reims,base,23/24,Base
+2,091,Habib Diallo,RC Strasbourg,base,23/24,Base
+2,092,Kevin Gameiro,RC Strasbourg,base,23/24,Base
+2,093,Jean-Ricner Bellegarde,RC Strasbourg,base,23/24,Base
+2,094,Matz Sels,RC Strasbourg,base,23/24,Base
+2,095,Frédéric Guilbert,RC Strasbourg,base,23/24,Base
+2,096,Gerzino Nyamsi,RC Strasbourg,base,23/24,Base
+2,097,Alexander Djiku,RC Strasbourg,base,23/24,Base
+2,098,Thomas Delaine,RC Strasbourg,base,23/24,Base
+2,099,Jean Eudes Aholou,RC Strasbourg,base,23/24,Base
+2,100,Sanjin Prcić,RC Strasbourg,base,23/24,Base
+2,101,Téji Savanier,Montpellier HSC,base,23/24,Base
+2,102,Elye Wahi,Montpellier HSC,base,23/24,Base
+2,103,Jordan Ferri,Montpellier HSC,base,23/24,Base
+2,104,Benjamin Lecomte,Montpellier HSC,base,23/24,Base
+2,105,Enzo Tchato,Montpellier HSC,base,23/24,Base
+2,106,Christopher Jullien,Montpellier HSC,base,23/24,Base
+2,107,Mamadou Sakho,Montpellier HSC,base,23/24,Base
+2,108,Nicolas Cozza,Montpellier HSC,base,23/24,Base
+2,109,Joris Chotard,Montpellier HSC,base,23/24,Base
+2,110,Arnaud Nordin,Montpellier HSC,base,23/24,Base
+2,111,Mostafa Mohamed,FC Nantes,base,23/24,Base
+2,112,Ludovic Blas,FC Nantes,base,23/24,Base
+2,113,Pedro Chirivella,FC Nantes,base,23/24,Base
+2,114,Alban Lafont,FC Nantes,base,23/24,Base
+2,115,Fabio,FC Nantes,base,23/24,Base
+2,116,Jean-Charles Castelletto,FC Nantes,base,23/24,Base
+2,117,Andrei Girotto,FC Nantes,base,23/24,Base
+2,118,Charles Traoré,FC Nantes,base,23/24,Base
+2,119,Moussa Sissoko,FC Nantes,base,23/24,Base
+2,120,Moses Simon,FC Nantes,base,23/24,Base
+2,121,Steve Mounié,Stade Brestois,base,23/24,Base
+2,122,Romain Del Castillo,Stade Brestois,base,23/24,Base
+2,123,Pierre Lees-Melou,Stade Brestois,base,23/24,Base
+2,124,Marco Bizot,Stade Brestois,base,23/24,Base
+2,125,Kenny Lala,Stade Brestois,base,23/24,Base
+2,126,Brendan Chardonnet,Stade Brestois,base,23/24,Base
+2,127,Lilian Brassier,Stade Brestois,base,23/24,Base
+2,128,Jean-Kévin Duverne,Stade Brestois,base,23/24,Base
+2,129,Haris Belkebla,Stade Brestois,base,23/24,Base
+2,130,Franck Honorat,Stade Brestois,base,23/24,Base
+2,131,Nabil Alioui,Le Havre AC,base,23/24,Base
+2,132,Andy Logbo,Le Havre AC,base,23/24,Base
+2,133,Daler Kuzyaev,Le Havre AC,base,23/24,Base
+2,134,Arthur Desmas,Le Havre AC,base,23/24,Base
+2,135,Arouna Sangante,Le Havre AC,base,23/24,Base
+2,136,Gautier Lloris,Le Havre AC,base,23/24,Base
+2,137,Étienne Youté,Le Havre AC,base,23/24,Base
+2,138,Christopher Opéri,Le Havre AC,base,23/24,Base
+2,139,Abdoulaye Touré,Le Havre AC,base,23/24,Base
+2,140,Emmanuel Sabbi,Le Havre AC,base,23/24,Base
+2,141,Georges Mikautadze,FC Metz,base,23/24,Base
+2,142,Lamine Camara,FC Metz,base,23/24,Base
+2,143,Danilo Pereira,FC Metz,base,23/24,Base
+2,144,Alexandre Oukidja,FC Metz,base,23/24,Base
+2,145,Koffi Kouao,FC Metz,base,23/24,Base
+2,146,Fali Candé,FC Metz,base,23/24,Base
+2,147,Sadibou Sané,FC Metz,base,23/24,Base
+2,148,Matthieu Udol,FC Metz,base,23/24,Base
+2,149,Kevin N'Doram,FC Metz,base,23/24,Base
+2,150,Arthur Atta,FC Metz,base,23/24,Base
+2,151,Thijs Dallinga,Toulouse FC,base,23/24,Base
+2,152,Zakaria Aboukhlal,Toulouse FC,base,23/24,Base
+2,153,Stijn Spierings,Toulouse FC,base,23/24,Base
+2,154,Guillaume Restes,Toulouse FC,base,23/24,Base
+2,155,Mikkel Desler,Toulouse FC,base,23/24,Base
+2,156,Rasmus Nicolaisen,Toulouse FC,base,23/24,Base
+2,157,Logan Costa,Toulouse FC,base,23/24,Base
+2,158,Gabriel Suazo,Toulouse FC,base,23/24,Base
+2,159,Vincent Sierro,Toulouse FC,base,23/24,Base
+2,160,Branco van den Boomen,Toulouse FC,base,23/24,Base
+2,161,Muhammed Cham,Clermont Foot,base,23/24,Base
+2,162,Grejohn Kyei,Clermont Foot,base,23/24,Base
+2,163,Johan Gastien,Clermont Foot,base,23/24,Base
+2,164,Mory Diaw,Clermont Foot,base,23/24,Base
+2,165,Neto Borges,Clermont Foot,base,23/24,Base
+2,166,Florent Ogier,Clermont Foot,base,23/24,Base
+2,167,Alidu Seidu,Clermont Foot,base,23/24,Base
+2,168,Neto Borges,Clermont Foot,base,23/24,Base
+2,169,Habib Keita,Clermont Foot,base,23/24,Base
+2,170,Jim Allevinah,Clermont Foot,base,23/24,Base
+2,171,Terem Moffi,FC Lorient,base,23/24,Base
+2,172,Enzo Le Fée,FC Lorient,base,23/24,Base
+2,173,Ibrahima Koné,FC Lorient,base,23/24,Base
+2,174,Yvon Mvogo,FC Lorient,base,23/24,Base
+2,175,Gédéon Kalulu,FC Lorient,base,23/24,Base
+2,176,Montassar Talbi,FC Lorient,base,23/24,Base
+2,177,Julien Laporte,FC Lorient,base,23/24,Base
+2,178,Théo Le Bris,FC Lorient,base,23/24,Base
+2,179,Laurent Abergel,FC Lorient,base,23/24,Base
+2,180,Romain Faivre,FC Lorient,base,23/24,Base
+2,181,Denis Bouanga,AS Saint-Étienne,base,23/24,Base
+2,182,Wahbi Khazri,AS Saint-Étienne,base,23/24,Base
+2,183,Zaydou Youssouf,AS Saint-Étienne,base,23/24,Base
+2,184,Étienne Green,AS Saint-Étienne,base,23/24,Base
+2,185,Yvann Maçon,AS Saint-Étienne,base,23/24,Base
+2,186,Mickael Nade,AS Saint-Étienne,base,23/24,Base
+2,187,Dylan Chambost,AS Saint-Étienne,base,23/24,Base
+2,188,Timothée Kolodziejczak,AS Saint-Étienne,base,23/24,Base
+2,189,Mahdi Camara,AS Saint-Étienne,base,23/24,Base
+2,190,Ryad Boudebouz,AS Saint-Étienne,base,23/24,Base
+2,191,Sofiane Boufal,Angers SCO,base,23/24,Base
+2,192,Abdallah Sima,Angers SCO,base,23/24,Base
+2,193,Batista Mendy,Angers SCO,base,23/24,Base
+2,194,Paul Bernardoni,Angers SCO,base,23/24,Base
+2,195,Yan Valery,Angers SCO,base,23/24,Base
+2,196,Cédric Hountondji,Angers SCO,base,23/24,Base
+2,197,Miha Blazic,Angers SCO,base,23/24,Base
+2,198,Souleyman Doumbia,Angers SCO,base,23/24,Base
+2,199,Nabil Bentaleb,Angers SCO,base,23/24,Base
+2,200,Himad Abdelli,Angers SCO,base,23/24,Base
