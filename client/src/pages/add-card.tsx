@@ -159,8 +159,8 @@ export default function AddCard() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Get players from selected collection or all players as fallback
-  const playersForSuggestions = selectedCollectionId ? 
+  // Get players from matching collection based on type and season
+  const playersForSuggestions = (collectionType && season && matchingCollection) ? 
     collectionCards.map(card => ({
       playerName: card.playerName,
       teamName: card.teamName
@@ -476,7 +476,10 @@ export default function AddCard() {
                   </SelectContent>
                 </Select>
                 <p className="text-sm text-zinc-400 mt-1">
-                  Sélectionne une collection pour voir uniquement ses joueurs dans l'autocomplétion
+                  {collectionType && season ? 
+                    `Auto-complétion activée pour : ${collectionType} (${season})` :
+                    "Sélectionne le type de collection et la saison pour activer l'auto-complétion ciblée"
+                  }
                 </p>
               </div>
 
@@ -555,10 +558,20 @@ export default function AddCard() {
                   }}
                   onFocus={() => setShowPlayerSuggestions(playerName.length > 0)}
                   className="bg-zinc-800 border-zinc-700 text-white"
-                  placeholder="Ex: Kylian Mbappé"
+                  placeholder={collectionType && season ? 
+                    `Joueur de ${collectionType} (${season})` : 
+                    "Ex: Kylian Mbappé"
+                  }
                 />
                 {showPlayerSuggestions && getPlayerSuggestions().length > 0 && (
                   <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {(collectionType && season) && (
+                      <div className="px-3 py-2 bg-zinc-700 border-b border-zinc-600">
+                        <div className="text-xs text-green-400 font-medium">
+                          🎯 Filtré pour : {collectionType} ({season})
+                        </div>
+                      </div>
+                    )}
                     {getPlayerSuggestions().map((player, index) => (
                       <div
                         key={index}
@@ -593,10 +606,20 @@ export default function AddCard() {
                   }}
                   onFocus={() => setShowTeamSuggestions(teamName.length > 0)}
                   className="bg-zinc-800 border-zinc-700 text-white"
-                  placeholder="Ex: Paris Saint-Germain"
+                  placeholder={collectionType && season ? 
+                    `Équipe de ${collectionType} (${season})` : 
+                    "Ex: Paris Saint-Germain"
+                  }
                 />
                 {showTeamSuggestions && getTeamSuggestions().length > 0 && (
                   <div className="absolute z-10 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    {(collectionType && season) && (
+                      <div className="px-3 py-2 bg-zinc-700 border-b border-zinc-600">
+                        <div className="text-xs text-green-400 font-medium">
+                          🎯 Filtré pour : {collectionType} ({season})
+                        </div>
+                      </div>
+                    )}
                     {getTeamSuggestions().map((team, index) => (
                       <div
                         key={index}
