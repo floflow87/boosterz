@@ -97,7 +97,7 @@ export default function Collections() {
         season: selectedYear
       };
 
-      const response = await apiRequest(`/api/collections`, {
+      const response = await fetch(`/api/collections`, {
         method: "POST",
         body: JSON.stringify(newCollection),
         headers: { "Content-Type": "application/json" },
@@ -2789,6 +2789,102 @@ export default function Collections() {
         >
           <Plus className="w-5 h-5" />
         </button>
+      )}
+
+      {/* Modal de création de check-lists */}
+      {showChecklistModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-[hsl(214,35%,22%)] rounded-2xl p-6 max-w-md w-full border border-[hsl(214,35%,30%)]">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-white">Créer une nouvelle check-list</h3>
+              <button
+                onClick={() => setShowChecklistModal(false)}
+                className="p-2 text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {/* Sélecteur de marque */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Marque
+                </label>
+                <select
+                  value={selectedBrand}
+                  onChange={(e) => {
+                    setSelectedBrand(e.target.value);
+                    setSelectedChecklistCollection(''); // Reset collection quand marque change
+                  }}
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)]"
+                >
+                  <option value="">Sélectionner une marque</option>
+                  {brands.map((brand) => (
+                    <option key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sélecteur de collection */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Collection
+                </label>
+                <select
+                  value={selectedChecklistCollection}
+                  onChange={(e) => setSelectedChecklistCollection(e.target.value)}
+                  disabled={!selectedBrand}
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50"
+                >
+                  <option value="">Sélectionner une collection</option>
+                  {selectedBrand && collectionsByBrand[selectedBrand]?.map((collection) => (
+                    <option key={collection} value={collection}>
+                      {collection}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Sélecteur d'année */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Année
+                </label>
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(e.target.value)}
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)]"
+                >
+                  <option value="">Sélectionner une année</option>
+                  {availableYears.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            <div className="flex gap-3 pt-6">
+              <button
+                onClick={() => setShowChecklistModal(false)}
+                className="flex-1 px-4 py-2 text-sm bg-[hsl(214,35%,30%)] text-white rounded-lg hover:bg-[hsl(214,35%,35%)] transition-colors"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleCreateChecklist}
+                disabled={!selectedBrand || !selectedChecklistCollection || !selectedYear}
+                className="flex-1 px-4 py-2 text-sm bg-[hsl(9,85%,67%)] text-white rounded-lg hover:bg-[hsl(9,85%,60%)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Créer
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       <Navigation />

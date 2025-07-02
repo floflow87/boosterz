@@ -118,6 +118,22 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **SYSTÈME CRÉATION CHECK-LISTS + CORRECTION POURCENTAGES**
+  - **Nouveau système création check-lists** : Modal différente de création de cartes
+    - Sélecteurs hiérarchiques : Marque → Collection → Année
+    - Pas d'image, uniquement choix parmi marques prédéfinies (Panini, Topps, Score, Upper Deck)
+    - Collections dépendantes de la marque sélectionnée
+    - Validation avec tous les champs requis pour créer la check-list
+  - **Correction calcul pourcentages check-lists** :
+    - Utilise maintenant les cartes personnelles réelles de l'utilisateur
+    - Pourcentage basé sur collectionPersonalCards.length / collection.totalCards
+    - Affichage correct du nombre de cartes acquises sur aperçu check-lists
+  - **Correction navigation onglets** : Plus de retour forcé sur "Cartes" depuis "Check-list"
+    - Auto-sélection Score Ligue 1 limitée à l'initialisation uniquement
+    - Navigation libre entre onglets "Cartes" et "Check-list" maintenant fonctionnelle
+  - **Bouton "Nouvelle check-list"** : Ouvre la nouvelle modal au lieu de rediriger vers /add-card
+    - Interface avec 3 sélecteurs en cascade pour création personnalisée
+    - Toast de confirmation vert lors de création réussie
 - January 01, 2025. **OPTIMISATION PERFORMANCES PRODUCTION + AFFICHAGE PAR DÉFAUT SCORE LIGUE 1 23/24**
   - **Performances page Collections optimisées pour la production** : 
     - Cache collections étendu à 20 minutes (au lieu de 10), mémoire cache 1 heure
