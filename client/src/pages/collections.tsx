@@ -753,7 +753,24 @@ export default function Collections() {
       return apiRequest("DELETE", `/api/collections/${collectionId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      // Invalider tous les caches liés aux collections et cartes pour rafraîchissement instantané
+      queryClient.invalidateQueries({ queryKey: ["/api/users/me/collections"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/personal-cards"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/all"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/decks"] });
+      
+      // Forcer le rechargement immédiat avec un cache à 0
+      queryClient.refetchQueries({ 
+        queryKey: ["/api/users/me/collections"],
+        staleTime: 0,
+        type: 'active'
+      });
+      
+      // Réinitialiser l'état local pour revenir à l'affichage principal
+      setSelectedCollection(null);
+      setActiveTab("collections");
+      
       toast({
         title: "Collection supprimée",
         description: "La collection a été supprimée avec succès.",

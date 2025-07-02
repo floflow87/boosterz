@@ -118,6 +118,21 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **RAFRAÎCHISSEMENT INSTANTANÉ CHECK-LISTS + NAVIGATION CORRIGÉE**
+  - **Suppression check-lists avec rafraîchissement instantané** : Invalidation complète des caches + rechargement automatique
+    - Mutation deleteCollectionMutation améliorée avec refetchQueries pour rechargement immédiat
+    - Réinitialisation état local (selectedCollection = null, activeTab = "collections")
+    - Cache à 0 pour forcer le rechargement des données collection
+    - Retour automatique à l'onglet "collections" après suppression
+  - **Navigation libre entre onglets maintenue** : Auto-sélection Score Ligue 1 limitée à l'initialisation uniquement
+    - Condition `selectedCollection` ajoutée pour éviter la redirection forcée
+    - Navigation Check-lists ↔ Mes cartes fonctionnelle sans interférence
+    - Préservation du choix utilisateur lors des changements de collection
+  - **Scripts Supabase prêts** : Architecture dual dev/prod documentée avec scripts complets
+    - `supabase-schema-complet.sql` : Structure complète toutes tables
+    - `migration-checklist-complet.sql` : Migration modèle étendu 11 colonnes  
+    - `checklist-score-ligue1-complet.csv` : 110 cartes Score Ligue 1 23/24
+    - Détection automatique environnement via NODE_ENV
 - January 02, 2025. **MODÈLE DE DONNÉES CHECKLIST ÉTENDU + CSV COMPLET**
   - **Nouvelles colonnes ajoutées** : Extension complète du modèle checklist_cards
     - `collection_name` : Nom de la collection ("Score Ligue 1")
