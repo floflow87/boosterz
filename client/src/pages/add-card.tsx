@@ -45,6 +45,7 @@ export default function AddCard() {
   const [reference, setReference] = useState("");
   const [numbering, setNumbering] = useState("");
   const [season, setSeason] = useState("");
+  const [collectionType, setCollectionType] = useState("");
   const [condition, setCondition] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleDescription, setSaleDescription] = useState("");
@@ -65,45 +66,65 @@ export default function AddCard() {
     { type: "special_1_1", label: "Spéciale 1/1" }
   ];
 
-  // Fetch all collections for selection and autocomplete
+  // Définition des types de collections et saisons liées
+  const collectionTypes = [
+    { id: 'Score ligue 1', name: 'Score ligue 1', seasons: ['2023/24'] },
+    { id: 'OM 125 ans', name: 'OM 125 ans', seasons: ['2024/25'] },
+    { id: 'Immaculate', name: 'Immaculate', seasons: ['2022/23', '2024/25'] },
+    { id: 'Iconz', name: 'Iconz', seasons: ['2024/25'] },
+    { id: 'UCC Flagship', name: 'UCC Flagship', seasons: ['2023/24', '2024/25'] }
+  ];
+
+  // Fonction pour obtenir les saisons selon le type de collection
+  const getAvailableSeasonsForCollection = (collectionType: string) => {
+    const collection = collectionTypes.find(c => c.id === collectionType);
+    return collection ? collection.seasons : [];
+  };
+
+  // Fetch all collections for autocomplete (based on selected type and season)
   const { data: collections = [] } = useQuery<any[]>({
     queryKey: ["/api/users/1/collections"],
     staleTime: 5 * 60 * 1000,
   });
 
-  // Fetch cards from selected collection for player suggestions
+  // Find matching collection based on type and season
+  const getMatchingCollection = () => {
+    if (!collectionType || !season) return null;
+    
+    return collections.find(collection => {
+      const collectionName = collection.name.toLowerCase();
+      const typeToCheck = collectionType.toLowerCase();
+      const seasonToCheck = season;
+      
+      // Matching logic based on collection type and season
+      if (typeToCheck.includes('score ligue 1') && seasonToCheck === '2023/24') {
+        return collectionName.includes('score ligue') || collectionName.includes('score ligue 1');
+      } else if (typeToCheck.includes('om 125 ans') && seasonToCheck === '2024/25') {
+        return collectionName.includes('om 125 ans');
+      } else if (typeToCheck.includes('immaculate')) {
+        return collectionName.includes('immaculate');
+      } else if (typeToCheck.includes('iconz')) {
+        return collectionName.includes('iconz');
+      } else if (typeToCheck.includes('ucc flagship')) {
+        return collectionName.includes('ucc flagship');
+      }
+      
+      return false;
+    });
+  };
+
+  const matchingCollection = getMatchingCollection();
+
+  // Fetch cards from matching collection for player suggestions
   const { data: collectionCards = [] } = useQuery<any[]>({
-    queryKey: [`/api/collections/${selectedCollectionId}/cards`],
-    enabled: !!selectedCollectionId,
+    queryKey: [`/api/collections/${matchingCollection?.id}/cards`],
+    enabled: !!matchingCollection?.id,
     select: (data: any) => {
       const cards = Array.isArray(data) ? data : (data?.cards || []);
       return cards;
     },
     staleTime: 5 * 60 * 1000,
   });
-
-  // Get seasons for selected collection
-  const getAvailableSeasonsForCollection = (collectionId: number | null) => {
-    if (!collectionId || !collections) return [];
-    const collection = collections.find(c => c.id === collectionId);
-    if (!collection) return [];
-    
-    // Return season based on collection name/type
-    if (collection.name.includes('Score ligue 1') || collection.name.includes('SCORE LIGUE 1')) {
-      return ['2023/24'];
-    } else if (collection.name.includes('OM 125 ans')) {
-      return ['2024/25'];
-    } else if (collection.name.includes('Immaculate')) {
-      return ['2022/23', '2024/25'];
-    } else if (collection.name.includes('Iconz')) {
-      return ['2024/25'];
-    } else if (collection.name.includes('UCC Flagship')) {
-      return ['2023/24', '2024/25'];
-    }
-    
-    // Default pour autres collections
-    return ['2023/24'];
-  };
 
   // Fetch all players including autographs and inserts
   const { data: allPlayers = [] } = useQuery<Player[]>({
@@ -288,10 +309,21 @@ export default function AddCard() {
   };
 
   const handleSubmitCard = async () => {
-    if (!cardType || !selectedCollectionId || !season) {
+    if (!cardType || !collectionType || !season) {
       toast({
         title: "Informations manquantes",
-        description: "Veuillez sélectionner la collection, la saison et le type de carte",
+        description: "Veuillez sélectionner le type de collection, la saison et le type de carte",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Find the matching collection in database based on type and season
+    const targetCollection = getMatchingCollection();
+    if (!targetCollection) {
+      toast({
+        title: "Collection introuvable",
+        description: "Aucune collection correspondante trouvée en base de données",
         variant: "destructive",
       });
       return;
@@ -304,7 +336,7 @@ export default function AddCard() {
       reference: reference || null,
       numbering: numbering || null,
       season: season || null,
-      collectionId: selectedCollectionId,
+      collectionId: targetCollection.id,
       imageUrl: editedImage || null,
       condition: condition || null,
       salePrice: isForSale ? salePrice : null,
@@ -448,23 +480,22 @@ export default function AddCard() {
                 </p>
               </div>
 
-              {/* Collection et saison sur la même ligne */}
+              {/* Type de collection et saison côte à côte */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="collection" className="text-white mb-2 block">Collection *</Label>
-                  <Select value={selectedCollectionId?.toString() || ""} onValueChange={(value) => {
-                    const collectionId = value ? parseInt(value) : null;
-                    setSelectedCollectionId(collectionId);
-                    setSeason(""); // Reset saison quand on change la collection
+                  <Label htmlFor="collectionType" className="text-white mb-2 block">Type de collection *</Label>
+                  <Select value={collectionType} onValueChange={(value) => {
+                    setCollectionType(value);
+                    setSeason(""); // Reset saison quand on change le type
                   }}>
                     <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                      <SelectValue placeholder="Sélectionne une collection" />
+                      <SelectValue placeholder="Type de collection" />
                     </SelectTrigger>
                     <SelectContent className="bg-zinc-800 border-zinc-700">
-                      {collections.map((collection) => (
+                      {collectionTypes.map((collection) => (
                         <SelectItem 
                           key={collection.id} 
-                          value={collection.id.toString()} 
+                          value={collection.id} 
                           className="text-white hover:bg-zinc-700"
                         >
                           {collection.name}
@@ -476,12 +507,12 @@ export default function AddCard() {
 
                 <div>
                   <Label htmlFor="season" className="text-white mb-2 block">Saison *</Label>
-                  <Select value={season} onValueChange={setSeason} disabled={!selectedCollectionId}>
+                  <Select value={season} onValueChange={setSeason} disabled={!collectionType}>
                     <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                      <SelectValue placeholder={selectedCollectionId ? "Sélectionne la saison" : "Choisir d'abord la collection"} />
+                      <SelectValue placeholder={collectionType ? "Sélectionne la saison" : "Choisir d'abord le type"} />
                     </SelectTrigger>
                     <SelectContent className="bg-zinc-800 border-zinc-700">
-                      {getAvailableSeasonsForCollection(selectedCollectionId).map((year) => (
+                      {getAvailableSeasonsForCollection(collectionType).map((year) => (
                         <SelectItem key={year} value={year} className="text-white hover:bg-zinc-700">
                           {year}
                         </SelectItem>
