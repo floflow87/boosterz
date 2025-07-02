@@ -552,16 +552,15 @@ export default function Collections() {
     ? (cardsResponse?.cards || [])
     : (Array.isArray(allUserCardsResponse) ? allUserCardsResponse : (allUserCardsResponse?.cards || []));
 
-  // Auto-sélection FORCÉE de la collection Score Ligue 1 par défaut sur TOUS les comptes
+  // Auto-sélection initiale de la collection Score Ligue 1 (seulement si aucune collection sélectionnée)
   useEffect(() => {
-    if (!collections || collections.length === 0) {
-      console.log('❌ Collections pas encore chargées');
-      return;
+    if (!collections || collections.length === 0 || selectedCollection) {
+      return; // Ne pas forcer si collections pas chargées OU si déjà une collection sélectionnée
     }
     
     console.log('🔍 Collections disponibles:', collections.map(c => c.name));
     
-    // Chercher la collection "SCORE LIGUE 1" et la sélectionner automatiquement
+    // Chercher la collection "SCORE LIGUE 1" et la sélectionner automatiquement SEULEMENT à l'initialisation
     const scoreLigue1Collection = collections.find(collection => 
       (collection.name.toLowerCase().includes('score ligue 1') ||
        collection.name.toLowerCase().includes('score ligue')) &&
@@ -569,15 +568,14 @@ export default function Collections() {
     );
     
     console.log('🎯 Collection Score Ligue 1 trouvée:', scoreLigue1Collection?.name, 'ID:', scoreLigue1Collection?.id);
-    console.log('📍 Collection actuellement sélectionnée:', selectedCollection);
     
-    // FORCE la sélection de Score Ligue 1 2023/24 SYSTÉMATIQUEMENT
-    if (scoreLigue1Collection && selectedCollection !== scoreLigue1Collection.id) {
-      console.log('✅ FORÇAGE auto-sélection de la collection:', scoreLigue1Collection.name, 'ID:', scoreLigue1Collection.id);
+    // Auto-sélection UNIQUEMENT si aucune collection déjà sélectionnée
+    if (scoreLigue1Collection) {
+      console.log('✅ Auto-sélection initiale de la collection:', scoreLigue1Collection.name, 'ID:', scoreLigue1Collection.id);
       
       setSelectedCollection(scoreLigue1Collection.id);
-      setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
-      console.log('🔄 Collection forcée vers:', scoreLigue1Collection.name);
+      // NE PAS forcer le changement d'onglet - laisser l'utilisateur sur l'onglet actuel
+      console.log('🔄 Collection sélectionnée:', scoreLigue1Collection.name);
     } else if (!scoreLigue1Collection) {
       console.log('⚠️ Aucune collection Score Ligue 1 trouvée dans:', collections.map(c => c.name));
       console.log('📊 Collections disponibles:', collections.map(c => `${c.name} (${c.season})`));
