@@ -70,16 +70,15 @@ export default function Collections() {
 
   const collectionsByBrand: Record<string, string[]> = {
     'panini': ['OM 125 ans', 'Score ligue 1', 'Immaculate', 'Iconz'],
-    'futera': ['Set OM'],
+    'futera': [],
     'topps': ['UCC Flagship']
   };
 
   const seasonsByCollection: Record<string, string[]> = {
     'OM 125 ans': ['2024/25'], // Édition spéciale
-    'Score ligue 1': ['2022/23'],
+    'Score ligue 1': ['2023/24'],
     'Immaculate': ['2022/23', '2024/25'],
     'Iconz': ['2024/25'],
-    'Set OM': ['2021/22', '2022/23', '2024/25'],
     'UCC Flagship': ['2023/24', '2024/25']
   };
 
@@ -562,7 +561,7 @@ export default function Collections() {
     const scoreLigue1Collection = collections.find(collection => 
       collection.name.toLowerCase().includes('score ligue 1') ||
       collection.name.toLowerCase().includes('score ligue') ||
-      collection.season === '23/24'
+      collection.season === '2023/24'
     );
     
     console.log('🎯 Collection Score Ligue 1 trouvée:', scoreLigue1Collection?.name, 'ID:', scoreLigue1Collection?.id);

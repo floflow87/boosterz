@@ -13,6 +13,8 @@ import { useTrophyUnlock, checkAndUnlockTrophies } from "@/hooks/useTrophyUnlock
 interface Player {
   playerName: string;
   teamName: string;
+  hasAutograph?: boolean;
+  hasInsert?: boolean;
 }
 
 type Step = "import" | "edit" | "details" | "confirmation";
@@ -43,7 +45,7 @@ export default function AddCard() {
   const [reference, setReference] = useState("");
   const [numbering, setNumbering] = useState("");
   // Définition directe de la saison pour Score ligue 1
-  const fixedSeason = '2022/23';
+  const fixedSeason = '2023/24';
   const [season, setSeason] = useState(fixedSeason);
   const [condition, setCondition] = useState("");
   const [salePrice, setSalePrice] = useState("");
@@ -111,7 +113,7 @@ export default function AddCard() {
                      player.cardTypes.has('Autographe Gold') ||
                      player.cardTypes.has('Autographe Red') ||
                      player.cardTypes.has('Autographe Silver'),
-        hasInsert: Array.from(player.cardTypes).some(type => type.includes('Insert'))
+        hasInsert: Array.from(player.cardTypes).some((type: string) => type.includes('Insert'))
       }));
     },
     staleTime: 5 * 60 * 1000,
