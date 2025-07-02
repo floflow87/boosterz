@@ -53,6 +53,7 @@ export default function Collections() {
   const [activeTab, setActiveTab] = useState<"cards" | "collections" | "deck">("cards");
   const [viewMode, setViewMode] = useState<"grid" | "gallery" | "carousel" | "list">("list");
   const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
+  const [isInitialAutoSelection, setIsInitialAutoSelection] = useState(false);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection | null>(null);
@@ -477,13 +478,14 @@ export default function Collections() {
     console.log('📍 Collection actuellement sélectionnée:', selectedCollection);
     
     // FORCE la sélection même si une autre collection était sélectionnée
-    if (scoreLigue1Collection && selectedCollection !== scoreLigue1Collection.id) {
+    if (scoreLigue1Collection && selectedCollection !== scoreLigue1Collection.id && !isInitialAutoSelection) {
       console.log('✅ FORÇAGE auto-sélection de la collection:', scoreLigue1Collection.name, 'ID:', scoreLigue1Collection.id);
       
       // Petite temporisation pour s'assurer que tout est bien chargé
       setTimeout(() => {
         setSelectedCollection(scoreLigue1Collection.id);
         setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
+        setIsInitialAutoSelection(true); // Marquer que l'auto-sélection initiale est faite
         console.log('🔄 Collection forcée vers:', scoreLigue1Collection.name);
       }, 100);
     } else if (!scoreLigue1Collection) {
@@ -491,13 +493,8 @@ export default function Collections() {
     }
   }, [collections, selectedCollection]); // Remettre selectedCollection pour suivre les changements
 
-  // Effet séparé pour basculer sur l'onglet cartes quand une collection est sélectionnée
-  useEffect(() => {
-    if (selectedCollection && activeTab !== "cards") {
-      console.log('🔄 Basculement automatique vers onglet Cartes pour collection ID:', selectedCollection);
-      setActiveTab("cards");
-    }
-  }, [selectedCollection, activeTab]);
+  // Supprimer l'effet automatique qui force le retour sur cartes
+  // L'auto-sélection se fait maintenant uniquement dans le setTimeout ci-dessus
 
   // Effect to check for milestones when collections data changes
   useEffect(() => {
