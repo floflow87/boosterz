@@ -137,7 +137,10 @@ The application follows a modern full-stack architecture with clear separation b
     - Navigation libre entre onglets "Cartes" et "Check-list" maintenant fonctionnelle
   - **Bouton "Nouvelle check-list"** : Ouvre la nouvelle modal au lieu de rediriger vers /add-card
     - Interface avec 3 sélecteurs en cascade pour création personnalisée
+    - Sélecteurs avec hauteur augmentée (h-14) pour meilleure ergonomie
+    - Réinitialisation automatique des sélecteurs après création
     - Toast de confirmation vert lors de création réussie
+    - Nouvelles check-lists s'affichent automatiquement avec le même UI
 - January 01, 2025. **OPTIMISATION PERFORMANCES PRODUCTION + AFFICHAGE PAR DÉFAUT SCORE LIGUE 1 23/24**
   - **Performances page Collections optimisées pour la production** : 
     - Cache collections étendu à 20 minutes (au lieu de 10), mémoire cache 1 heure

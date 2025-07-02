@@ -2827,7 +2827,7 @@ export default function Collections() {
                     setSelectedBrand(e.target.value);
                     setSelectedChecklistCollection(''); // Reset collection quand marque change
                   }}
-                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)]"
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] h-14"
                 >
                   <option value="">Sélectionner une marque</option>
                   {brands.map((brand) => (
@@ -2850,7 +2850,7 @@ export default function Collections() {
                     setSelectedYear(''); // Reset année quand collection change
                   }}
                   disabled={!selectedBrand}
-                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50"
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50 h-14"
                 >
                   <option value="">Sélectionner une collection</option>
                   {selectedBrand && collectionsByBrand[selectedBrand]?.map((collection) => (
@@ -2870,7 +2870,7 @@ export default function Collections() {
                   value={selectedYear}
                   onChange={(e) => setSelectedYear(e.target.value)}
                   disabled={!selectedChecklistCollection}
-                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50"
+                  className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-4 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] disabled:opacity-50 h-14"
                 >
                   <option value="">Sélectionner une année</option>
                   {selectedChecklistCollection && getAvailableYears(selectedChecklistCollection).map((year) => (
