@@ -1,0 +1,111 @@
+collection_id,collection_name,season,numerotation,reference,player_name,team_name,card_type,category,rarity,isRookie
+9,Score Ligue 1,23/24,,001,Kylian Mbappé,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,002,Lionel Messi,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,003,Neymar Jr,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,004,Achraf Hakimi,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,005,Marco Verratti,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,006,Gianluigi Donnarumma,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,007,Sergio Ramos,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,008,Marquinhos,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,009,Presnel Kimpembe,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,010,Fabián Ruiz,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,011,Dimitri Payet,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,012,Alexis Sánchez,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,013,Mattéo Guendouzi,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,014,Pau López,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,015,Valentin Rongier,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,016,Jordan Veretout,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,017,Chancel Mbemba,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,018,Leonardo Balerdi,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,019,Jonathan Clauss,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,020,Cengiz Ünder,Olympique de Marseille,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,021,Wissam Ben Yedder,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,022,Folarin Balogun,AS Monaco,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,023,Takumi Minamino,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,024,Youssouf Fofana,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,025,Aleksandr Golovin,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,026,Philipp Köhn,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,027,Axel Disasi,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,028,Vanderson,AS Monaco,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,029,Caio Henrique,AS Monaco,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,030,Eliesse Ben Seghir,AS Monaco,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,031,Alexandre Lacazette,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,032,Rayan Cherki,Olympique Lyonnais,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,033,Johann Lepenant,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,034,Anthony Lopes,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,035,Nicolás Tagliafico,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,036,Dejan Lovren,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,037,Castello Lukeba,Olympique Lyonnais,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,038,Sael Kumbedi,Olympique Lyonnais,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,039,Corentin Tolisso,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,040,Maxence Caqueret,Olympique Lyonnais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,041,Lois Openda,RC Lens,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,042,Florian Sotoca,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,043,Seko Fofana,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,044,Brice Samba,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,045,Przemysław Frankowski,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,046,Kevin Danso,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,047,Jonathan Gradit,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,048,Facundo Medina,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,049,Deiver Machado,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,050,Adrien Thomasson,RC Lens,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,051,Amine Gouiri,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,052,Martin Terrier,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,053,Benjamin Bourigeaud,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,054,Steve Mandanda,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,055,Hamari Traoré,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,056,Arthur Theate,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,057,Joe Rodon,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,058,Adrien Truffert,Stade Rennais,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,059,Lovro Majer,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,060,Flavien Tait,Stade Rennais,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,061,Terem Moffi,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,062,Gaëtan Laborde,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,063,Khéphren Thuram,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,064,Kasper Schmeichel,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,065,Youcef Atal,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,066,Jean-Clair Todibo,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,067,Dante,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,068,Jordan Lotomba,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,069,Aaron Ramsey,OGC Nice,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,070,Sofiane Diop,OGC Nice,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,071,Jonathan David,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,072,Edon Zhegrova,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,073,Angel Gomes,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,074,Lucas Chevalier,Lille OSC,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,075,Tiago Djaló,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,076,José Fonte,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,077,Alexsandro,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,078,Ismaily,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,079,Benjamin André,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,080,Rémy Cabella,Lille OSC,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,081,Folarin Balogun,Stade de Reims,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,082,Marshall Munetsi,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,083,Junya Ito,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,084,Yehvann Diouf,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,085,Thomas Foket,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,086,Yunis Abdelhamid,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,087,Emmanuel Agbadou,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,088,Thibault De Smet,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,089,Azor Matusiwa,Stade de Reims,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,090,Kamory Doumbia,Stade de Reims,Base,Base numérotée,Base,TRUE
+9,Score Ligue 1,23/24,,091,Habib Diallo,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,092,Kevin Gameiro,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,093,Jean-Ricner Bellegarde,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,094,Matz Sels,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,095,Frédéric Guilbert,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,096,Gerzino Nyamsi,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,097,Alexander Djiku,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,098,Thomas Delaine,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,099,Jean Eudes Aholou,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,100,Sanjin Prcić,RC Strasbourg,Base,Base numérotée,Base,FALSE
+9,Score Ligue 1,23/24,,101,Kylian Mbappé,Paris Saint-Germain,Breakthrough,Hit,Commune,FALSE
+9,Score Ligue 1,23/24,/50,102,Dimitri Payet,Olympique de Marseille,Hot Rookies,Hit,Commune,FALSE
+9,Score Ligue 1,23/24,/25,103,Wissam Ben Yedder,AS Monaco,Intergalactic Hit,Hit,Rare,FALSE
+9,Score Ligue 1,23/24,/10,104,Alexandre Lacazette,Olympique Lyonnais,Next Up,Hit,Épique,FALSE
+9,Score Ligue 1,23/24,/5,105,Jonathan David,Lille OSC,Memorabilia,Hit,Légendaire,FALSE
+9,Score Ligue 1,23/24,1/1,106,Kylian Mbappé,Paris Saint-Germain,Autographe,Autographe,Unique,FALSE
+9,Score Ligue 1,23/24,1/1,107,Dimitri Payet,Olympique de Marseille,Autographe,Autographe,Unique,FALSE
+9,Score Ligue 1,23/24,1/1,108,Wissam Ben Yedder,AS Monaco,Autographe,Autographe,Unique,FALSE
+9,Score Ligue 1,23/24,1/1,109,Alexandre Lacazette,Olympique Lyonnais,Autographe,Autographe,Unique,FALSE
+9,Score Ligue 1,23/24,1/1,110,Jonathan David,Lille OSC,Autographe,Autographe,Unique,FALSE

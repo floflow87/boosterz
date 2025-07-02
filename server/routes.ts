@@ -740,6 +740,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get checklist cards in collection (nouvelle architecture check-lists)
+  app.get("/api/collections/:id/checklist-cards", async (req, res) => {
+    try {
+      const collectionId = parseInt(req.params.id);
+      console.log(`API: Loading checklist cards for collection ${collectionId}`);
+      
+      const startTime = Date.now();
+      const checklistCards = await storage.getChecklistCardsByCollectionId(collectionId);
+      const endTime = Date.now();
+      
+      console.log(`API: Loaded ${checklistCards.length} checklist cards in ${endTime - startTime}ms`);
+      
+      res.json({ cards: checklistCards });
+    } catch (error) {
+      console.error(`Error loading checklist cards for collection ${req.params.id}:`, error);
+      res.status(500).json({ error: "Erreur lors du chargement des cartes de la collection" });
+    }
+  });
+
   // Get cards in collection with pagination for production
   app.get("/api/collections/:id/cards", async (req, res) => {
     try {

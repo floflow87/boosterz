@@ -1,10 +1,13 @@
 import { 
   users, collections, cards, userCards, personalCards, conversations, messages, 
-  posts, activities, follows, decks, deckCards, postLikes, postComments, notifications, unlockedTrophies, type User, type InsertUser,
+  posts, activities, follows, decks, deckCards, postLikes, postComments, notifications, unlockedTrophies, 
+  checklistCards, userCardOwnership,
+  type User, type InsertUser,
   type Collection, type InsertCollection, type Card, type InsertCard,
   type UserCard, type InsertUserCard, type PersonalCard, type InsertPersonalCard,
   type Conversation, type InsertConversation, type Message, type InsertMessage,
-  type Post, type Activity, type Follow, type Deck, type DeckCard
+  type Post, type Activity, type Follow, type Deck, type DeckCard,
+  type ChecklistCard, type InsertChecklistCard, type UserCardOwnership, type InsertUserCardOwnership
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, or, sql, desc, asc, inArray } from "drizzle-orm";
@@ -98,6 +101,16 @@ export interface IStorage {
   getPersonalCard(id: number): Promise<PersonalCard | undefined>;
   createPersonalCard(personalCard: InsertPersonalCard): Promise<PersonalCard>;
   updatePersonalCard(id: number, updates: Partial<PersonalCard>): Promise<PersonalCard | undefined>;
+
+  // Checklist Cards (cartes de référence partagées)
+  getChecklistCardsByCollectionId(collectionId: number): Promise<ChecklistCard[]>;
+  getChecklistCard(id: number): Promise<ChecklistCard | undefined>;
+  createChecklistCard(checklistCard: InsertChecklistCard): Promise<ChecklistCard>;
+  
+  // User Card Ownership (propriété individuelle)
+  getUserCardOwnership(userId: number, cardId: number): Promise<UserCardOwnership | undefined>;
+  getUserCardOwnerships(userId: number): Promise<UserCardOwnership[]>;
+  setUserCardOwnership(userId: number, cardId: number, owned: boolean): Promise<UserCardOwnership>;
   deletePersonalCard(id: number): Promise<boolean>;
 
   // Chat system
@@ -1120,6 +1133,81 @@ export class DatabaseStorage implements IStorage {
     }
     
     return highestColor;
+  }
+
+  // Checklist Cards (cartes de référence partagées)
+  async getChecklistCardsByCollectionId(collectionId: number): Promise<ChecklistCard[]> {
+    const cacheKey = `checklist_cards_collection_${collectionId}`;
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<ChecklistCard[]>(cacheKey);
+    if (cached) {
+      console.log(`📦 Checklist cards for collection ${collectionId} from cache - ${cached.length} cards`);
+      return cached;
+    }
+    
+    const startTime = Date.now();
+    const result = await db
+      .select()
+      .from(checklistCards)
+      .where(eq(checklistCards.collectionId, collectionId))
+      .orderBy(checklistCards.reference);
+    
+    const endTime = Date.now();
+    console.log(`✅ Checklist cards for collection ${collectionId} loaded from DB in ${endTime - startTime}ms - ${result.length} cards`);
+    
+    // Mettre en cache pour 10 minutes
+    cache.set(cacheKey, result, 600);
+    
+    return result;
+  }
+
+  async getChecklistCard(id: number): Promise<ChecklistCard | undefined> {
+    const result = await db.select().from(checklistCards).where(eq(checklistCards.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createChecklistCard(checklistCard: InsertChecklistCard): Promise<ChecklistCard> {
+    const result = await db.insert(checklistCards).values(checklistCard).returning();
+    return result[0];
+  }
+
+  // User Card Ownership (propriété individuelle)
+  async getUserCardOwnership(userId: number, cardId: number): Promise<UserCardOwnership | undefined> {
+    const result = await db
+      .select()
+      .from(userCardOwnership)
+      .where(and(eq(userCardOwnership.userId, userId), eq(userCardOwnership.cardId, cardId)))
+      .limit(1);
+    return result[0];
+  }
+
+  async getUserCardOwnerships(userId: number): Promise<UserCardOwnership[]> {
+    return await db
+      .select()
+      .from(userCardOwnership)
+      .where(eq(userCardOwnership.userId, userId));
+  }
+
+  async setUserCardOwnership(userId: number, cardId: number, owned: boolean): Promise<UserCardOwnership> {
+    // D'abord essayer de mettre à jour l'enregistrement existant
+    const existingResult = await db
+      .update(userCardOwnership)
+      .set({ owned, updatedAt: new Date() })
+      .where(and(eq(userCardOwnership.userId, userId), eq(userCardOwnership.cardId, cardId)))
+      .returning();
+
+    if (existingResult.length > 0) {
+      return existingResult[0];
+    }
+
+    // Si pas d'enregistrement existant, en créer un nouveau
+    const newResult = await db
+      .insert(userCardOwnership)
+      .values({ userId, cardId, owned })
+      .returning();
+    
+    return newResult[0];
   }
 }
 

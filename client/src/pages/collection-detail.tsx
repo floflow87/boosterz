@@ -116,7 +116,7 @@ export default function CollectionDetail() {
   });
 
   const { data: cardsResponse, isLoading: cardsLoading, error: cardsError } = useQuery<{cards: Card[], pagination?: any}>({
-    queryKey: [`/api/collections/${collectionId}/cards`],
+    queryKey: [`/api/collections/${collectionId}/checklist-cards`],
     staleTime: 0,
     gcTime: 1 * 60 * 1000,
     refetchOnWindowFocus: true,
