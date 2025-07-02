@@ -95,16 +95,20 @@ export const personalCards = pgTable("personal_cards", {
 export const checklistCards = pgTable("checklist_cards", {
   id: serial("id").primaryKey(),
   collectionId: integer("collection_id").notNull().references(() => collections.id, { onDelete: "cascade" }),
-  collectionName: text("collection_name").notNull(), // Ex: "Score Ligue 1"
-  season: text("season").notNull(), // Ex: "23/24"
-  numerotation: text("numerotation"), // Ex: "/199", "/50", "/25", "1/1"
   reference: text("reference").notNull(), // Ex: "004"
   playerName: text("player_name"),
   teamName: text("team_name"),
-  cardType: text("card_type").notNull(), // Ex: "Base", "Breakthrough", "Hot Rookies"
-  category: text("category").notNull(), // "Spéciale", "Hit", "Autographe", "Base numérotée"
-  rarity: text("rarity").notNull(), // "Base", "Commune", "Peu commune", "Rare", "Épique", "Légendaire"
-  isRookie: boolean("is_rookie").default(false).notNull(), // Si TRUE -> affiche "Rookie Card"
+  cardType: text("card_type").notNull(), // Ex: "Spéciale", "Base"
+  cardSubType: text("card_sub_type"), // Ex: "Base"
+  season: text("season").notNull(), // Ex: "2023/24"
+  imageUrl: text("image_url"), // URL de l'image de la carte
+  isRookieCard: boolean("is_rookie_card").default(false).notNull(), // Si TRUE -> affiche "Rookie Card"
+  rarity: text("rarity").notNull(), // "Base", "Commune", "Peu commune", "Rare", "Épique", "Légendaire", "Unique"
+  serialNumber: text("serial_number"), // Numéro de série
+  numbering: text("numbering"), // Ex: "/199", "/50", "/25", "1/1"
+  baseCardId: text("base_card_id"), // ID de la carte de base associée
+  isVariant: boolean("is_variant").default(false).notNull(), // Si cette carte est une variante
+  variants: text("variants"), // Variantes disponibles
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
   uniqueCollectionReference: unique().on(table.collectionId, table.reference),
