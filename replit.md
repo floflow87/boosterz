@@ -118,12 +118,21 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- January 02, 2025. **BADGE ROOKIE CARD + CODES COULEUR RARETÉ FINALISÉS**
+- January 02, 2025. **SYSTÈME TROPHÉES ULTIME + CODES COULEUR FINALISÉS**
   - **Badge RC affiché pour toutes cartes isRookieCard=true** : Badge fourni par utilisateur intégré avec succès
     - Affichage en bas-droite des cartes en vue grille (8x8px)
     - Affichage en coin bas-droite en vue liste (4x4px)
     - Utilise la propriété `isRookieCard` du schéma (et non `isRookie`)
     - Badge visible sur cartes comme Folarin Balogun, Vanderson, Eliesse Ben Seghir, Rayan Cherki, etc.
+  - **Système trophées ULTIME ajouté** : Nouveau niveau maximum avec seuils défis extrêmes
+    - Autographes /300 (niveau Ultime noir brillant)
+    - Spéciales /100 (niveau Ultime noir brillant)
+    - Social /1000 (niveau Ultime noir brillant)
+  - **Codes couleur trophées mis à jour** : Palette cohérente avec système rareté
+    - Rare : orange (#ea580c)
+    - Épique : violet (#7c3aed)
+    - Légendaire : gold (#ffd700)
+    - Ultime : noir brillant (#1f2937)
   - **Codes couleur système rareté mis à jour** : Nouveaux codes selon spécifications utilisateur
     - Unique : noir brillant (#1f2937)
     - Légendaire : gold (#ffd700)

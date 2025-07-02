@@ -21,6 +21,7 @@ const TROPHY_DESCRIPTIONS: { [key: string]: string } = {
   'five_specials': 'Vous possédez maintenant 5 cartes spéciales',
   'ten_specials': 'Vous possédez maintenant 10 cartes spéciales',
   'fifty_specials': 'Vous possédez maintenant 50 cartes spéciales',
+  'hundred_specials': 'Niveau ULTIME : 100 cartes spéciales !',
   
   // Autograph trophies
   'first_auto': 'Votre premier autographe !',
@@ -30,6 +31,7 @@ const TROPHY_DESCRIPTIONS: { [key: string]: string } = {
   'fifty_autos': 'Vous possédez maintenant 50 autographes',
   'hundred_autos': 'Vous possédez maintenant 100 autographes',
   'twohundred_autos': 'Vous possédez maintenant 200 autographes',
+  'threehundred_autos': 'Niveau ULTIME : 300 autographes !',
   
   // Social trophies
   'first_follower': 'Votre premier abonné !',
@@ -50,8 +52,10 @@ const TROPHY_TITLES: { [key: string]: string } = {
   'gray': 'Débutant',
   'green': 'Commun',
   'blue': 'Avancé',
-  'purple': 'Rare',
-  'gold': 'Épique',
+  'orange': 'Rare',
+  'purple': 'Épique',
+  'gold': 'Légendaire',
+  'black': 'Ultime',
   'rainbow': 'Légendaire'
 };
 
@@ -103,7 +107,7 @@ export function checkAndShowTrophyUnlock(
 ): void {
   // Afficher l'animation pour le trophée de plus haut niveau débloqué
   if (newlyUnlockedTrophies.length > 0) {
-    const priorityOrder = ['rainbow', 'gold', 'purple', 'blue', 'green', 'gray'];
+    const priorityOrder = ['black', 'rainbow', 'gold', 'purple', 'orange', 'blue', 'green', 'gray'];
     
     // Trouver le trophée de plus haute priorité
     const highestTrophy = newlyUnlockedTrophies.reduce((highest, current) => {
@@ -129,8 +133,10 @@ function getTrophyRarity(color: string): string {
     'gray': 'débutant',
     'green': 'commun',
     'blue': 'avancé',
-    'purple': 'rare',
-    'gold': 'épique',
+    'orange': 'rare',
+    'purple': 'épique',
+    'gold': 'légendaire',
+    'black': 'ultime',
     'rainbow': 'légendaire'
   };
   

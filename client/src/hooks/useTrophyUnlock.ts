@@ -69,33 +69,35 @@ export function checkAndUnlockTrophies(
   if (totalCards >= 1) unlockTrophy({ trophyId: 'first_card', category: 'collection', color: 'gray' });
   if (totalCards >= 10) unlockTrophy({ trophyId: 'ten_cards', category: 'collection', color: 'green' });
   if (totalCards >= 25) unlockTrophy({ trophyId: 'twentyfive_cards', category: 'collection', color: 'blue' });
-  if (totalCards >= 50) unlockTrophy({ trophyId: 'fifty_cards', category: 'collection', color: 'purple' });
-  if (totalCards >= 100) unlockTrophy({ trophyId: 'hundred_cards', category: 'collection', color: 'gold' });
-  if (totalCards >= 200) unlockTrophy({ trophyId: 'twohundred_cards', category: 'collection', color: 'rainbow' });
+  if (totalCards >= 50) unlockTrophy({ trophyId: 'fifty_cards', category: 'collection', color: 'orange' });
+  if (totalCards >= 100) unlockTrophy({ trophyId: 'hundred_cards', category: 'collection', color: 'purple' });
+  if (totalCards >= 200) unlockTrophy({ trophyId: 'twohundred_cards', category: 'collection', color: 'gold' });
   if (totalCards >= 500) unlockTrophy({ trophyId: 'fivehundred_cards', category: 'collection', color: 'rainbow' });
 
   // Special cards trophies
   if (specialCards >= 1) unlockTrophy({ trophyId: 'first_special', category: 'specials', color: 'blue' });
-  if (specialCards >= 5) unlockTrophy({ trophyId: 'five_specials', category: 'specials', color: 'purple' });
-  if (specialCards >= 10) unlockTrophy({ trophyId: 'ten_specials', category: 'specials', color: 'gold' });
-  if (specialCards >= 50) unlockTrophy({ trophyId: 'fifty_specials', category: 'specials', color: 'rainbow' });
+  if (specialCards >= 5) unlockTrophy({ trophyId: 'five_specials', category: 'specials', color: 'orange' });
+  if (specialCards >= 10) unlockTrophy({ trophyId: 'ten_specials', category: 'specials', color: 'purple' });
+  if (specialCards >= 50) unlockTrophy({ trophyId: 'fifty_specials', category: 'specials', color: 'gold' });
+  if (specialCards >= 100) unlockTrophy({ trophyId: 'hundred_specials', category: 'specials', color: 'black' });
 
   // Autograph trophies
   if (autographs >= 1) unlockTrophy({ trophyId: 'first_auto', category: 'autographs', color: 'gray' });
   if (autographs >= 5) unlockTrophy({ trophyId: 'five_autos', category: 'autographs', color: 'green' });
   if (autographs >= 10) unlockTrophy({ trophyId: 'ten_autos', category: 'autographs', color: 'blue' });
-  if (autographs >= 25) unlockTrophy({ trophyId: 'twentyfive_autos', category: 'autographs', color: 'purple' });
+  if (autographs >= 25) unlockTrophy({ trophyId: 'twentyfive_autos', category: 'autographs', color: 'orange' });
   if (autographs >= 50) unlockTrophy({ trophyId: 'fifty_autos', category: 'autographs', color: 'purple' });
   if (autographs >= 100) unlockTrophy({ trophyId: 'hundred_autos', category: 'autographs', color: 'gold' });
   if (autographs >= 200) unlockTrophy({ trophyId: 'twohundred_autos', category: 'autographs', color: 'rainbow' });
+  if (autographs >= 300) unlockTrophy({ trophyId: 'threehundred_autos', category: 'autographs', color: 'black' });
 
   // Social trophies
-  if (followers >= 1) unlockTrophy({ trophyId: 'first_follower', category: 'social', color: 'rainbow' });
-  if (followers >= 10) unlockTrophy({ trophyId: 'ten_followers', category: 'social', color: 'rainbow' });
-  if (followers >= 50) unlockTrophy({ trophyId: 'fifty_followers', category: 'social', color: 'rainbow' });
-  if (followers >= 100) unlockTrophy({ trophyId: 'hundred_followers', category: 'social', color: 'rainbow' });
-  if (followers >= 500) unlockTrophy({ trophyId: 'fivehundred_followers', category: 'social', color: 'rainbow' });
-  if (followers >= 1000) unlockTrophy({ trophyId: 'thousand_followers', category: 'social', color: 'rainbow' });
+  if (followers >= 1) unlockTrophy({ trophyId: 'first_follower', category: 'social', color: 'gray' });
+  if (followers >= 10) unlockTrophy({ trophyId: 'ten_followers', category: 'social', color: 'green' });
+  if (followers >= 50) unlockTrophy({ trophyId: 'fifty_followers', category: 'social', color: 'blue' });
+  if (followers >= 100) unlockTrophy({ trophyId: 'hundred_followers', category: 'social', color: 'orange' });
+  if (followers >= 500) unlockTrophy({ trophyId: 'fivehundred_followers', category: 'social', color: 'purple' });
+  if (followers >= 1000) unlockTrophy({ trophyId: 'thousand_followers', category: 'social', color: 'black' });
 
   // Trading trophies (if applicable)
   if (trades >= 1) unlockTrophy({ trophyId: 'first_trade', category: 'trading', color: 'rainbow' });
