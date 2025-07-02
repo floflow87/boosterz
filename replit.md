@@ -118,12 +118,20 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- January 02, 2025. **BADGE ROOKIE CARD IMPLÉMENTÉ + CLARIFICATIONS TECHNIQUES**
+- January 02, 2025. **BADGE ROOKIE CARD + CODES COULEUR RARETÉ FINALISÉS**
   - **Badge RC affiché pour toutes cartes isRookieCard=true** : Badge fourni par utilisateur intégré avec succès
     - Affichage en bas-droite des cartes en vue grille (8x8px)
     - Affichage en coin bas-droite en vue liste (4x4px)
     - Utilise la propriété `isRookieCard` du schéma (et non `isRookie`)
     - Badge visible sur cartes comme Folarin Balogun, Vanderson, Eliesse Ben Seghir, Rayan Cherki, etc.
+  - **Codes couleur système rareté mis à jour** : Nouveaux codes selon spécifications utilisateur
+    - Unique : noir brillant (#1f2937)
+    - Légendaire : gold (#ffd700)
+    - Épique : violet (#7c3aed)
+    - Rare : orange (#ea580c)
+    - Peu commune : bleu (#2563eb)
+    - Commune : vert (#059669)
+    - Base : gris (#64748b)
   - **Clarifications techniques confirmées** : Questions utilisateur résolues
     - `created_at` ne se met PAS à jour automatiquement lors modifications (garde date création)
     - `updated_at` se met à jour automatiquement lors modifications

@@ -23,48 +23,48 @@ export const RARITY_CONFIG: Record<RarityLevel, RarityInfo> = {
     level: 'commune',
     label: 'Common',
     labelFr: 'Commune',
-    color: '#059669', // emerald-600
-    bgColor: '#d1fae5', // emerald-100
+    color: '#059669', // vert
+    bgColor: '#d1fae5', // vert-100
     order: 2
   },
   peu_commune: {
     level: 'peu_commune',
     label: 'Uncommon',
     labelFr: 'Peu commune',
-    color: '#0284c7', // sky-600
-    bgColor: '#e0f2fe', // sky-100
+    color: '#2563eb', // bleu
+    bgColor: '#dbeafe', // bleu-100
     order: 3
   },
   rare: {
     level: 'rare',
     label: 'Rare',
     labelFr: 'Rare',
-    color: '#7c3aed', // violet-600
-    bgColor: '#ede9fe', // violet-100
+    color: '#ea580c', // orange
+    bgColor: '#ffedd5', // orange-100
     order: 4
   },
   epique: {
     level: 'epique',
     label: 'Epic',
     labelFr: 'Épique',
-    color: '#dc2626', // red-600
-    bgColor: '#fef2f2', // red-100
+    color: '#7c3aed', // violet
+    bgColor: '#ede9fe', // violet-100
     order: 5
   },
   legendaire: {
     level: 'legendaire',
     label: 'Legendary',
     labelFr: 'Légendaire',
-    color: '#ea580c', // orange-600
-    bgColor: '#ffedd5', // orange-100
+    color: '#ffd700', // gold
+    bgColor: '#fffbeb', // gold-100
     order: 6
   },
   unique: {
     level: 'unique',
     label: 'Unique',
     labelFr: 'Unique',
-    color: '#fbbf24', // amber-400
-    bgColor: '#fef3c7', // amber-100
+    color: '#1f2937', // noir brillant
+    bgColor: '#f9fafb', // gray-50
     order: 7
   }
 };
