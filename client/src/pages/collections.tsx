@@ -106,14 +106,7 @@ export default function Collections() {
         season: selectedYear
       };
 
-      const response = await fetch(`/api/collections`, {
-        method: "POST",
-        body: JSON.stringify(newCollection),
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (response.ok) {
-        const createdCollection = await response.json();
+      const createdCollection = await apiRequest("/api/collections", "POST", newCollection);
         console.log("✅ Collection créée:", createdCollection);
         
         // Invalider tous les caches liés aux collections
@@ -559,8 +552,8 @@ export default function Collections() {
     
     // Chercher la collection "SCORE LIGUE 1" et la sélectionner automatiquement
     const scoreLigue1Collection = collections.find(collection => 
-      collection.name.toLowerCase().includes('score ligue 1') ||
-      collection.name.toLowerCase().includes('score ligue') ||
+      (collection.name.toLowerCase().includes('score ligue 1') ||
+       collection.name.toLowerCase().includes('score ligue')) &&
       collection.season === '2023/24'
     );
     
