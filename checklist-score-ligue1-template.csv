@@ -1,9 +1,9 @@
-collection_id,reference,player_name,team_name,card_type,season,rarity
-2,001,Kylian Mbappé,Paris Saint-Germain,base,23/24,Base
-2,002,Lionel Messi,Paris Saint-Germain,base,23/24,Base
-2,003,Neymar Jr,Paris Saint-Germain,base,23/24,Base
-2,004,Achraf Hakimi,Paris Saint-Germain,base,23/24,Base
-2,005,Marco Verratti,Paris Saint-Germain,base,23/24,Base
+collection_id,collection_name,season,numerotation,reference,player_name,team_name,card_type,category,rarity,isRookie
+2,Score Ligue 1,23/24,,001,Kylian Mbappé,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+2,Score Ligue 1,23/24,,002,Lionel Messi,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+2,Score Ligue 1,23/24,,003,Neymar Jr,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+2,Score Ligue 1,23/24,,004,Achraf Hakimi,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
+2,Score Ligue 1,23/24,,005,Marco Verratti,Paris Saint-Germain,Base,Base numérotée,Base,FALSE
 2,006,Gianluigi Donnarumma,Paris Saint-Germain,base,23/24,Base
 2,007,Sergio Ramos,Paris Saint-Germain,base,23/24,Base
 2,008,Marquinhos,Paris Saint-Germain,base,23/24,Base

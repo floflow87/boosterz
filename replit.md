@@ -118,6 +118,25 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **MODÈLE DE DONNÉES CHECKLIST ÉTENDU + CSV COMPLET**
+  - **Nouvelles colonnes ajoutées** : Extension complète du modèle checklist_cards
+    - `collection_name` : Nom de la collection ("Score Ligue 1")
+    - `season` : Saison ("23/24")
+    - `numerotation` : Numérotation des cartes ("/50", "/25", "1/1")
+    - `category` : Catégorie ("Spéciale", "Hit", "Autographe", "Base numérotée")
+    - `rarity` : Rareté ("Base", "Commune", "Peu commune", "Rare", "Épique", "Légendaire")
+    - `isRookie` : Boolean pour affichage "Rookie Card"
+  - **CSV complet fourni** : `checklist-score-ligue1-complet.csv`
+    - 100 cartes de base (référence 001-100)
+    - 5 cartes Hit avec numérotations différentes
+    - 5 cartes Autographes (toutes 1/1)
+    - Rookie Cards identifiées pour jeunes joueurs
+    - Structure complète avec toutes colonnes requises
+  - **Scripts de migration** : `migration-checklist-complet.sql`
+    - Ajout automatique des nouvelles colonnes
+    - Nettoyage et réorganisation de la table
+    - Index pour optimiser les performances
+  - **Guide mis à jour** : `guide-integration-csv-checklist.md` avec nouvelles instructions
 - January 02, 2025. **SOLUTION CHECK-LISTS VIDES + CORRECTIONS PRODUCTION**
   - **Architecture check-lists complète** : Tables dédiées pour résoudre le problème des check-lists vides
     - Table `checklist_cards` : Cartes de référence partagées par check-list

@@ -95,22 +95,17 @@ export const personalCards = pgTable("personal_cards", {
 export const checklistCards = pgTable("checklist_cards", {
   id: serial("id").primaryKey(),
   collectionId: integer("collection_id").notNull().references(() => collections.id, { onDelete: "cascade" }),
+  collectionName: text("collection_name").notNull(), // Ex: "Score Ligue 1"
+  season: text("season").notNull(), // Ex: "23/24"
+  numerotation: text("numerotation"), // Ex: "/199", "/50", "/25", "1/1"
   reference: text("reference").notNull(), // Ex: "004"
   playerName: text("player_name"),
   teamName: text("team_name"),
-  cardType: text("card_type").notNull(), // "base", "base numbered", "insert", "autographe", "numbered", "special"
-  cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", etc.
-  season: text("season"), // "22/23", "23/24", etc.
-  imageUrl: text("image_url"),
-  isRookieCard: boolean("is_rookie_card").default(false).notNull(),
-  rarity: text("rarity"), // "common", "rare", "super_rare", etc.
-  serialNumber: text("serial_number"), // pour les cartes numérotées
-  numbering: text("numbering"), // Ex: "125/199", "15/25", "1/1"
-  baseCardId: integer("base_card_id"), // Référence vers la carte de base pour les variantes
-  isVariant: boolean("is_variant").default(false).notNull(),
-  variants: text("variants"), // Nom des variantes (ex: "Gold", "Red", "Blue")
+  cardType: text("card_type").notNull(), // Ex: "Base", "Breakthrough", "Hot Rookies"
+  category: text("category").notNull(), // "Spéciale", "Hit", "Autographe", "Base numérotée"
+  rarity: text("rarity").notNull(), // "Base", "Commune", "Peu commune", "Rare", "Épique", "Légendaire"
+  isRookie: boolean("is_rookie").default(false).notNull(), // Si TRUE -> affiche "Rookie Card"
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({
   uniqueCollectionReference: unique().on(table.collectionId, table.reference),
 }));
