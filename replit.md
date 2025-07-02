@@ -118,6 +118,20 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **BADGE ROOKIE CARD IMPLÉMENTÉ + CLARIFICATIONS TECHNIQUES**
+  - **Badge RC affiché pour toutes cartes isRookieCard=true** : Badge fourni par utilisateur intégré avec succès
+    - Affichage en bas-droite des cartes en vue grille (8x8px)
+    - Affichage en coin bas-droite en vue liste (4x4px)
+    - Utilise la propriété `isRookieCard` du schéma (et non `isRookie`)
+    - Badge visible sur cartes comme Folarin Balogun, Vanderson, Eliesse Ben Seghir, Rayan Cherki, etc.
+  - **Clarifications techniques confirmées** : Questions utilisateur résolues
+    - `created_at` ne se met PAS à jour automatiquement lors modifications (garde date création)
+    - `updated_at` se met à jour automatiquement lors modifications
+    - Champ `variants` existe dans schéma mais non utilisé dans CSV Score Ligue 1 23/24
+    - Système rareté cohérent : Base + identification Rookie Cards via isRookieCard boolean
+  - **CSV Score Ligue 1 analysé** : Structure 11 colonnes validée avec 110 cartes de base identifiées
+    - Rookie Cards correctement marquées TRUE dans CSV fourni
+    - Collection "Score Ligue 1" saison "23/24" avec références 001-100+
 - January 02, 2025. **RAFRAÎCHISSEMENT INSTANTANÉ CHECK-LISTS + NAVIGATION CORRIGÉE**
   - **Suppression check-lists avec rafraîchissement instantané** : Invalidation complète des caches + rechargement automatique
     - Mutation deleteCollectionMutation améliorée avec refetchQueries pour rechargement immédiat

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import type { Card } from "@shared/schema";
 import { determineRarity, getRarityInfo } from "@shared/rarity";
 import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
+import rookieBadge from "@assets/rc_badge_1751486477447.png";
 
 interface CardDisplayProps {
   card: Card & {
@@ -149,6 +150,13 @@ export default function CardDisplay({
           {card.isFeatured && (
             <Star className="absolute -top-1 -right-1 w-3 h-3 text-yellow-400 fill-current drop-shadow-lg" />
           )}
+          {card.isRookieCard && (
+            <img 
+              src={rookieBadge}
+              alt="Rookie Card"
+              className="absolute -bottom-1 -right-1 w-4 h-4 drop-shadow-lg"
+            />
+          )}
         </div>
 
         {/* Content */}
@@ -286,6 +294,17 @@ export default function CardDisplay({
           <div className="absolute top-2 right-2 z-20">
             <Star 
               className="w-6 h-6 text-yellow-400 fill-current drop-shadow-lg animate-pulse" 
+            />
+          </div>
+        )}
+
+        {/* Rookie Card Badge */}
+        {card.isRookieCard && (
+          <div className="absolute bottom-2 right-2 z-20">
+            <img 
+              src={rookieBadge}
+              alt="Rookie Card"
+              className="w-8 h-8 drop-shadow-lg"
             />
           </div>
         )}
