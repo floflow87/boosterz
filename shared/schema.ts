@@ -91,6 +91,42 @@ export const personalCards = pgTable("personal_cards", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Table pour les cartes de référence des check-lists
+export const checklistCards = pgTable("checklist_cards", {
+  id: serial("id").primaryKey(),
+  collectionId: integer("collection_id").notNull().references(() => collections.id, { onDelete: "cascade" }),
+  reference: text("reference").notNull(), // Ex: "004"
+  playerName: text("player_name"),
+  teamName: text("team_name"),
+  cardType: text("card_type").notNull(), // "base", "base numbered", "insert", "autographe", "numbered", "special"
+  cardSubType: text("card_sub_type"), // "breakthrough", "hot_rookies", etc.
+  season: text("season"), // "22/23", "23/24", etc.
+  imageUrl: text("image_url"),
+  isRookieCard: boolean("is_rookie_card").default(false).notNull(),
+  rarity: text("rarity"), // "common", "rare", "super_rare", etc.
+  serialNumber: text("serial_number"), // pour les cartes numérotées
+  numbering: text("numbering"), // Ex: "125/199", "15/25", "1/1"
+  baseCardId: integer("base_card_id"), // Référence vers la carte de base pour les variantes
+  isVariant: boolean("is_variant").default(false).notNull(),
+  variants: text("variants"), // Nom des variantes (ex: "Gold", "Red", "Blue")
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  uniqueCollectionReference: unique().on(table.collectionId, table.reference),
+}));
+
+// Table pour la propriété individuelle des cartes de check-lists
+export const userCardOwnership = pgTable("user_card_ownership", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  cardId: integer("card_id").notNull().references(() => checklistCards.id, { onDelete: "cascade" }),
+  owned: boolean("owned").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  uniqueUserCard: unique().on(table.userId, table.cardId),
+}));
+
 export const userCards = pgTable("user_cards", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
@@ -268,6 +304,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   collections: many(collections),
   userCards: many(userCards),
   personalCards: many(personalCards),
+  userCardOwnership: many(userCardOwnership),
   followers: many(follows, { relationName: "followers" }),
   following: many(follows, { relationName: "following" }),
   subscriptionFollowers: many(subscriptions, { relationName: "subscriptionFollowers" }),
@@ -331,6 +368,7 @@ export const collectionsRelations = relations(collections, ({ one, many }) => ({
   }),
   cards: many(cards),
   userCards: many(userCards),
+  checklistCards: many(checklistCards),
 }));
 
 export const cardsRelations = relations(cards, ({ one, many }) => ({
@@ -425,6 +463,27 @@ export const unlockedTrophiesRelations = relations(unlockedTrophies, ({ one }) =
   user: one(users, {
     fields: [unlockedTrophies.userId],
     references: [users.id],
+  }),
+}));
+
+
+
+export const checklistCardsRelations = relations(checklistCards, ({ one, many }) => ({
+  collection: one(collections, {
+    fields: [checklistCards.collectionId],
+    references: [collections.id],
+  }),
+  userOwnership: many(userCardOwnership),
+}));
+
+export const userCardOwnershipRelations = relations(userCardOwnership, ({ one }) => ({
+  user: one(users, {
+    fields: [userCardOwnership.userId],
+    references: [users.id],
+  }),
+  card: one(checklistCards, {
+    fields: [userCardOwnership.cardId],
+    references: [checklistCards.id],
   }),
 }));
 
@@ -636,5 +695,23 @@ export type InsertDeck = z.infer<typeof insertDeckSchema>;
 export type Deck = typeof decks.$inferSelect;
 export type InsertDeckCard = z.infer<typeof insertDeckCardSchema>;
 export type DeckCard = typeof deckCards.$inferSelect;
+
+// Checklist schemas
+export const insertChecklistCardSchema = createInsertSchema(checklistCards).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertUserCardOwnershipSchema = createInsertSchema(userCardOwnership).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertChecklistCard = z.infer<typeof insertChecklistCardSchema>;
+export type ChecklistCard = typeof checklistCards.$inferSelect;
+export type InsertUserCardOwnership = z.infer<typeof insertUserCardOwnershipSchema>;
+export type UserCardOwnership = typeof userCardOwnership.$inferSelect;
 
 
