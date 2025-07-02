@@ -52,7 +52,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/personal-cards", authenticateToken, async (req: AuthRequest, res) => {
     try {
       const userId = req.user!.id;
-      const personalCards = await storage.getPersonalCardsByUserId(userId);
+      const collectionId = req.query.collectionId ? parseInt(req.query.collectionId as string) : undefined;
+      
+      console.log(`🃏 Fetching personal cards for user ${userId}, collection: ${collectionId || 'ALL'}`);
+      
+      let personalCards;
+      if (collectionId) {
+        personalCards = await storage.getPersonalCardsByCollectionId(collectionId, userId);
+        console.log(`📊 Found ${personalCards.length} personal cards for collection ${collectionId}`);
+      } else {
+        personalCards = await storage.getPersonalCardsByUserId(userId);
+        console.log(`📊 Found ${personalCards.length} total personal cards`);
+      }
+      
       res.json(personalCards);
     } catch (error) {
       console.error("Error fetching personal cards:", error);

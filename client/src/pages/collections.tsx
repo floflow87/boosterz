@@ -557,19 +557,16 @@ export default function Collections() {
     console.log('🎯 Collection Score Ligue 1 trouvée:', scoreLigue1Collection?.name, 'ID:', scoreLigue1Collection?.id);
     console.log('📍 Collection actuellement sélectionnée:', selectedCollection);
     
-    // FORCE la sélection même si une autre collection était sélectionnée
-    if (scoreLigue1Collection && selectedCollection !== scoreLigue1Collection.id && !isInitialAutoSelection) {
+    // FORCE la sélection de Score Ligue 1 2023/24 SYSTÉMATIQUEMENT
+    if (scoreLigue1Collection && selectedCollection !== scoreLigue1Collection.id) {
       console.log('✅ FORÇAGE auto-sélection de la collection:', scoreLigue1Collection.name, 'ID:', scoreLigue1Collection.id);
       
-      // Petite temporisation pour s'assurer que tout est bien chargé
-      setTimeout(() => {
-        setSelectedCollection(scoreLigue1Collection.id);
-        setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
-        setIsInitialAutoSelection(true); // Marquer que l'auto-sélection initiale est faite
-        console.log('🔄 Collection forcée vers:', scoreLigue1Collection.name);
-      }, 100);
+      setSelectedCollection(scoreLigue1Collection.id);
+      setActiveTab("cards"); // Basculer vers l'onglet cartes pour afficher la collection
+      console.log('🔄 Collection forcée vers:', scoreLigue1Collection.name);
     } else if (!scoreLigue1Collection) {
       console.log('⚠️ Aucune collection Score Ligue 1 trouvée dans:', collections.map(c => c.name));
+      console.log('📊 Collections disponibles:', collections.map(c => `${c.name} (${c.season})`));
     }
   }, [collections, selectedCollection]); // Remettre selectedCollection pour suivre les changements
 
