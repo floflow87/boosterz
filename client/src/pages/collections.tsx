@@ -107,26 +107,23 @@ export default function Collections() {
       };
 
       const createdCollection = await apiRequest("/api/collections", "POST", newCollection);
-        console.log("✅ Collection créée:", createdCollection);
-        
-        // Invalider tous les caches liés aux collections
-        await queryClient.invalidateQueries({ queryKey: ["/api/users/me/collections"] });
-        await queryClient.refetchQueries({ queryKey: ["/api/users/me/collections"] });
-        
-        toast({
-          title: "Check-list créée !",
-          description: `La check-list ${checklistName} a été créée avec succès`,
-          className: "bg-green-600 text-white",
-        });
+      console.log("✅ Collection créée:", createdCollection);
+      
+      // Invalider tous les caches liés aux collections
+      await queryClient.invalidateQueries({ queryKey: ["/api/users/me/collections"] });
+      await queryClient.refetchQueries({ queryKey: ["/api/users/me/collections"] });
+      
+      toast({
+        title: "Check-list créée !",
+        description: `La check-list ${checklistName} a été créée avec succès`,
+        className: "bg-green-600 text-white",
+      });
 
-        // Réinitialiser le formulaire et fermer la modal
-        setSelectedBrand('');
-        setSelectedChecklistCollection('');
-        setSelectedYear('');
-        setShowChecklistModal(false);
-      } else {
-        throw new Error('Erreur lors de la création');
-      }
+      // Réinitialiser le formulaire et fermer la modal
+      setSelectedBrand('');
+      setSelectedChecklistCollection('');
+      setSelectedYear('');
+      setShowChecklistModal(false);
     } catch (error) {
       toast({
         title: "Erreur",
