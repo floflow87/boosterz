@@ -76,7 +76,7 @@ export default function Collections() {
 
   const seasonsByCollection: Record<string, string[]> = {
     'OM 125 ans': ['2024/25'], // Édition spéciale
-    'Score ligue 1': ['2023/24'],
+    'Score ligue 1': ['2022/23', '2023/24'],
     'Immaculate': ['2022/23', '2024/25'],
     'Iconz': ['2024/25'],
     'UCC Flagship': ['2023/24', '2024/25']
