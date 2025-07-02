@@ -63,7 +63,7 @@ export default function AddCard() {
     { type: "insert", label: "Insert" },
     { type: "autograph", label: "Autographe" },
     { type: "numbered", label: "Numérotée" },
-    { type: "special_1_1", label: "Spéciale 1/1" }
+    { type: "special_1_1", label: "Spéciale" }
   ];
 
   // Définition des types de collections et saisons liées
@@ -434,7 +434,7 @@ export default function AddCard() {
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+                className="border-zinc-600 text-black hover:bg-zinc-800 hover:text-white"
               >
                 Retour
               </Button>
@@ -453,31 +453,11 @@ export default function AddCard() {
             <h2 className="text-2xl font-bold mb-6">Détails de la carte</h2>
             
             <div className="grid gap-6 max-w-2xl">
-              {/* Collection pour l'autocomplétion */}
-              <div>
-                <Label htmlFor="collection" className="text-white mb-2 block">Collection (pour l'autocomplétion des joueurs)</Label>
-                <Select value={selectedCollectionId?.toString() || ""} onValueChange={(value) => setSelectedCollectionId(value ? parseInt(value) : null)}>
-                  <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
-                    <SelectValue placeholder="Choisir une collection (optionnel)" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-zinc-800 border-zinc-700">
-                    <SelectItem value="all" className="text-white hover:bg-zinc-700">
-                      Toutes les collections
-                    </SelectItem>
-                    {collections.map((collection) => (
-                      <SelectItem 
-                        key={collection.id} 
-                        value={collection.id.toString()}
-                        className="text-white hover:bg-zinc-700"
-                      >
-                        {collection.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-zinc-400 mt-1">
+              {/* Message d'information pour l'auto-complétion */}
+              <div className="bg-zinc-800/50 border border-zinc-700 rounded-lg p-4">
+                <p className="text-sm text-zinc-400">
                   {collectionType && season ? 
-                    `Auto-complétion activée pour : ${collectionType} (${season})` :
+                    `🎯 Auto-complétion activée pour : ${collectionType} (${season})` :
                     "Sélectionne le type de collection et la saison pour activer l'auto-complétion ciblée"
                   }
                 </p>
@@ -723,7 +703,7 @@ export default function AddCard() {
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+                className="border-zinc-600 text-black hover:bg-zinc-800 hover:text-white"
               >
                 Retour
               </Button>
@@ -774,7 +754,7 @@ export default function AddCard() {
               <Button
                 variant="outline"
                 onClick={handlePrevStep}
-                className="border-zinc-600 text-zinc-300 hover:bg-zinc-800"
+                className="border-zinc-600 text-black hover:bg-zinc-800 hover:text-white"
               >
                 Retour
               </Button>

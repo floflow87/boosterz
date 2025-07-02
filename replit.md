@@ -118,6 +118,20 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **AUTO-COMPLÉTION CONNECTÉE AUX SÉLECTEURS + INTERFACE FINALISÉE**
+  - **Auto-complétion intelligente** : Système parfaitement connecté aux sélecteurs hiérarchiques
+    - Auto-complétion joueurs/équipes filtrée selon type de collection et saison sélectionnés
+    - Indicateurs visuels "🎯 Filtré pour : [Collection] ([Saison])" dans suggestions
+    - Placeholders adaptatifs selon sélection active (ex: "Joueur de Score ligue 1 (2023/24)")
+  - **Interface utilisateur optimisée** : Corrections selon feedback utilisateur
+    - Type de carte "Spéciale 1/1" renommé en "Spéciale" pour simplification
+    - Ancien champ "Collection (pour autocomplétion)" supprimé et remplacé par message informatif
+    - Boutons "Retour" : couleur de texte changée de zinc-300 vers noir avec hover blanc
+    - Message d'information encadré indiquant statut auto-complétion activée/désactivée
+  - **Système sélecteurs hiérarchiques complet** : Type de collection → Saison fonctionnel
+    - Collections définies : Score ligue 1 (2023/24), OM 125 ans (2024/25), Immaculate (2022/23, 2024/25), Iconz (2024/25), UCC Flagship (2023/24, 2024/25)
+    - Correspondance automatique avec collections en base de données pour soumission
+    - Validation complète avant ajout de carte avec vérification collection trouvée
 - January 02, 2025. **SÉLECTEURS COLLECTIONS COMPLÈTES + AUTO-COMPLÉTION CONNECTÉE + INTERFACE OPTIMISÉE**
   - **Sélecteur collections toutes disponibles** : Interface complète dans add-card.tsx
     - Sélecteur "Collection" affiche toutes les collections réelles de la base de données
