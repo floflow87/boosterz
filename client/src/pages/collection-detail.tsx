@@ -96,18 +96,14 @@ export default function CollectionDetail() {
     }
   });
 
+  // Legacy mutation (replaced by updateChecklistOwnershipMutation)
   const toggleOwnershipMutation = useMutation({
     mutationFn: async ({ cardId, isOwned }: { cardId: number; isOwned: boolean }) => {
-      return apiRequest("POST", `/api/cards/${cardId}/ownership`, { isOwned });
+      // Use new checklist ownership system
+      return updateChecklistOwnershipMutation.mutateAsync({ cardId, owned: isOwned });
     },
     onSuccess: (_, { cardId, isOwned }) => {
-      if (isOwned) {
-        // Déclencher l'effet de tirage (sans tremblement)
-        setPulledCardEffect(cardId);
-        setTimeout(() => setPulledCardEffect(null), 2000);
-      }
-      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/cards`] });
-      queryClient.invalidateQueries({ queryKey: ["/api/users/1/collections"] });
+      // Effects are handled by updateChecklistOwnershipMutation
     }
   });
 
@@ -128,6 +124,85 @@ export default function CollectionDetail() {
 
   // Extract cards from response (handle both old array format and new paginated format)
   const cards = cardsResponse?.cards || (Array.isArray(cardsResponse) ? cardsResponse : []);
+
+  // User checklist ownership queries
+  const { data: userOwnership, isLoading: ownershipLoading } = useQuery<{ownership: any[]}>({
+    queryKey: [`/api/collections/${collectionId}/checklist-ownership`],
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
+    gcTime: 10 * 60 * 1000,
+  });
+
+  const { data: completionStats } = useQuery<{stats: {totalCards: string, ownedCards: string, completionPercentage: number}}>({
+    queryKey: [`/api/collections/${collectionId}/completion-stats`],
+    staleTime: 1 * 60 * 1000, // 1 minute cache
+  });
+
+  // Create ownership map for quick lookup
+  const ownershipMap = new Map<number, boolean>();
+  if (userOwnership?.ownership) {
+    userOwnership.ownership.forEach((entry: any) => {
+      ownershipMap.set(entry.cardId, entry.owned);
+    });
+  }
+
+  // Initialize ownership for new users
+  const initializeOwnershipMutation = useMutation({
+    mutationFn: async () => {
+      return apiRequest("POST", `/api/collections/${collectionId}/initialize-ownership`, {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/completion-stats`] });
+      toast({
+        title: "✓ Propriété initialisée",
+        description: "Vos données de collection ont été configurées avec succès.",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Error initializing ownership:", error);
+      toast({
+        title: "Erreur d'initialisation",
+        description: "Impossible d'initialiser vos données de collection.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Update card ownership
+  const updateChecklistOwnershipMutation = useMutation({
+    mutationFn: async ({ cardId, owned }: { cardId: number; owned: boolean }) => {
+      return apiRequest("PATCH", `/api/checklist-cards/${cardId}/ownership`, { owned });
+    },
+    onSuccess: (_, { cardId, owned }) => {
+      // Mise à jour optimiste du cache
+      queryClient.setQueryData([`/api/collections/${collectionId}/checklist-ownership`], (oldData: any) => {
+        if (!oldData?.ownership) return oldData;
+        return {
+          ...oldData,
+          ownership: oldData.ownership.map((entry: any) =>
+            entry.cardId === cardId ? { ...entry, owned } : entry
+          )
+        };
+      });
+      
+      // Invalider les stats pour recalcul
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/completion-stats`] });
+      
+      if (owned) {
+        // Effet visuel pour carte obtenue
+        setPulledCardEffect(cardId);
+        setTimeout(() => setPulledCardEffect(null), 2000);
+      }
+    },
+    onError: (error: any) => {
+      console.error("Error updating ownership:", error);
+      toast({
+        title: "Erreur de mise à jour",
+        description: "Impossible de mettre à jour la propriété de la carte.",
+        variant: "destructive",
+      });
+    }
+  });
 
   // Scroll to top when page loads
   useEffect(() => {
@@ -352,8 +427,7 @@ export default function CollectionDetail() {
     try {
       // Déclencher l'effet d'étoiles pour toutes les cartes sélectionnées non possédées
       const cardsToMark = Array.from(selectedCards).filter(cardId => {
-        const card = cards?.find(c => c.id === cardId);
-        return card && !card.isOwned;
+        return !ownershipMap.get(cardId); // Card not owned
       });
       
       // Ajouter l'effet d'étoiles pour toutes les cartes à marquer
@@ -365,16 +439,9 @@ export default function CollectionDetail() {
         });
       });
       
-      // Mettre à jour immédiatement le cache pour un rendu instantané
-      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
-        if (!oldData) return oldData;
-        return oldData.map(card => 
-          cardsToMark.includes(card.id) ? { ...card, isOwned: true } : card
-        );
-      });
-      
+      // Mettre à jour ownership avec le nouveau système
       const promises = cardsToMark.map(async (cardId) => {
-        return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
+        return updateChecklistOwnershipMutation.mutateAsync({ cardId, owned: true });
       });
       await Promise.all(promises);
       
@@ -412,20 +479,12 @@ export default function CollectionDetail() {
   const handleBulkMarkAsNotOwned = async () => {
     try {
       const cardsToUnmark = Array.from(selectedCards).filter(cardId => {
-        const card = cards?.find(c => c.id === cardId);
-        return card && card.isOwned;
+        return ownershipMap.get(cardId); // Card is owned
       });
       
-      // Mettre à jour immédiatement le cache pour un rendu instantané
-      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
-        if (!oldData) return oldData;
-        return oldData.map(card => 
-          cardsToUnmark.includes(card.id) ? { ...card, isOwned: false } : card
-        );
-      });
-      
+      // Mettre à jour ownership avec le nouveau système
       const promises = cardsToUnmark.map(async (cardId) => {
-        return apiRequest("PATCH", `/api/cards/${cardId}/toggle`);
+        return updateChecklistOwnershipMutation.mutateAsync({ cardId, owned: false });
       });
       await Promise.all(promises);
       
@@ -465,19 +524,6 @@ export default function CollectionDetail() {
         return newSet;
       });
       
-      // Update local state immediately for visual feedback
-      if (selectedCard && selectedCard.id === cardId) {
-        setSelectedCard({ ...selectedCard, isOwned: true });
-      }
-      
-      // Mettre à jour immédiatement le cache pour un rendu instantané
-      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
-        if (!oldData) return oldData;
-        return oldData.map(card => 
-          card.id === cardId ? { ...card, isOwned: true } : card
-        );
-      });
-      
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: true });
       
       // Retirer l'effet d'étoiles après l'animation
@@ -498,17 +544,6 @@ export default function CollectionDetail() {
         className: "bg-green-900 border-green-700 text-green-100"
       });
     } catch (error) {
-      // Revert local state on error
-      if (selectedCard && selectedCard.id === cardId) {
-        setSelectedCard({ ...selectedCard, isOwned: false });
-      }
-      // Revert cache on error
-      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
-        if (!oldData) return oldData;
-        return oldData.map(card => 
-          card.id === cardId ? { ...card, isOwned: false } : card
-        );
-      });
       // Retirer l'effet d'étoiles en cas d'erreur
       setStarEffectCards(prev => {
         const newSet = new Set(prev);
@@ -525,19 +560,6 @@ export default function CollectionDetail() {
 
   const handleMarkAsNotOwned = async (cardId: number) => {
     try {
-      // Update local state immediately for visual feedback
-      if (selectedCard && selectedCard.id === cardId) {
-        setSelectedCard({ ...selectedCard, isOwned: false });
-      }
-      
-      // Mettre à jour immédiatement le cache pour un rendu instantané
-      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
-        if (!oldData) return oldData;
-        return oldData.map(card => 
-          card.id === cardId ? { ...card, isOwned: false } : card
-        );
-      });
-      
       await toggleOwnershipMutation.mutateAsync({ cardId, isOwned: false });
       toast({
         title: "Carte marquée comme manquante",
@@ -545,17 +567,6 @@ export default function CollectionDetail() {
         className: "bg-[hsl(9,85%,67%)] border-[hsl(9,85%,57%)] text-white"
       });
     } catch (error) {
-      // Revert local state on error
-      if (selectedCard && selectedCard.id === cardId) {
-        setSelectedCard({ ...selectedCard, isOwned: true });
-      }
-      // Revert cache on error
-      queryClient.setQueryData([`/api/collections/${collectionId}/cards`], (oldData: Card[] | undefined) => {
-        if (!oldData) return oldData;
-        return oldData.map(card => 
-          card.id === cardId ? { ...card, isOwned: true } : card
-        );
-      });
       toast({
         title: "Erreur",
         description: "Impossible de marquer la carte comme manquante.",
@@ -569,7 +580,7 @@ export default function CollectionDetail() {
       try {
         // Update local state immediately for visual feedback
         if (selectedCard && selectedCard.id === cardId) {
-          setSelectedCard({ ...selectedCard, imageUrl, isOwned: true });
+          setSelectedCard({ ...selectedCard, imageUrl });
         }
         
         // Update card image
@@ -666,7 +677,8 @@ export default function CollectionDetail() {
   };
 
   const getCardBorderColor = (card: Card) => {
-    if (!card.isOwned) return "border-gray-600";
+    const isOwned = ownershipMap.get(card.id);
+    if (!isOwned) return "border-gray-600";
     
     // Vert pour les bases
     if (card.cardType === "Base") {
@@ -702,7 +714,8 @@ export default function CollectionDetail() {
   };
 
   const getCardAnimationName = (card: Card) => {
-    if (!card.isOwned) return null;
+    const isOwned = ownershipMap.get(card.id);
+    if (!isOwned) return null;
     
     // Vert pour les bases
     if (card.cardType === "Base") {
@@ -1072,7 +1085,7 @@ export default function CollectionDetail() {
             };
             
             // Check if all variants are owned (card is complete)
-            const allVariantsOwned = variants.every(variant => variant.isOwned);
+            const allVariantsOwned = variants.every(variant => ownershipMap.get(variant.id));
             const animationName = getCardAnimationName(currentVariant);
             
             // Check if ANY variant for this player is selected
@@ -1168,7 +1181,7 @@ export default function CollectionDetail() {
                 </div>
                 
                 {/* Ownership Status */}
-                {currentVariant.isOwned && (
+                {ownershipMap.get(currentVariant.id) && (
                   <div className="absolute top-8 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
                     Acquise
                   </div>
@@ -1296,13 +1309,13 @@ export default function CollectionDetail() {
                       {variants.length} variant{variants.length > 1 ? 's' : ''}
                     </div>
                     <div className="text-gray-400 text-xs">
-                      {variants.filter(v => v.isOwned).length} / {variants.length} possédées
+                      {variants.filter(v => ownershipMap.get(v.id)).length} / {variants.length} possédées
                     </div>
                   </div>
 
                   {/* Status indicator */}
                   <div className="w-3 h-3 rounded-full flex-shrink-0" 
-                       style={{ backgroundColor: currentVariant.isOwned ? '#10B981' : '#EF4444' }}>
+                       style={{ backgroundColor: ownershipMap.get(currentVariant.id) ? '#10B981' : '#EF4444' }}>
                   </div>
                 </div>
               );
@@ -1535,8 +1548,8 @@ export default function CollectionDetail() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Statut:</span>
-                        <span className={currentCard?.isOwned ? "text-green-400" : "text-red-400"}>
-                          {currentCard?.isOwned ? "Possédée" : "Manquante"}
+                        <span className={ownershipMap.get(currentCard?.id) ? "text-green-400" : "text-red-400"}>
+                          {ownershipMap.get(currentCard?.id) ? "Possédée" : "Manquante"}
                         </span>
                       </div>
                       {/* Dispo à la vente */}
@@ -1717,10 +1730,13 @@ export default function CollectionDetail() {
                   onClick={async () => {
                     try {
                       const currentCard = getCurrentCard();
-                      if (selectedCard.isOwned) {
-                        await handleMarkAsNotOwned(currentCard?.id || selectedCard.id);
+                      const cardId = currentCard?.id || selectedCard.id;
+                      if (!cardId) return;
+                      const isOwned = ownershipMap.get(cardId);
+                      if (isOwned) {
+                        await handleMarkAsNotOwned(cardId);
                       } else {
-                        await handleMarkAsOwned(currentCard?.id || selectedCard.id, false);
+                        await handleMarkAsOwned(cardId, false);
                       }
                       setShowOptionsPanel(false);
                     } catch (error) {
@@ -1733,13 +1749,13 @@ export default function CollectionDetail() {
                   }}
                   className="w-full bg-gray-800 border border-gray-600 hover:bg-gray-700 text-white py-3 px-4 rounded-xl transition-all flex items-center gap-3 shadow-sm"
                 >
-                  <div className={`w-8 h-8 ${selectedCard.isOwned ? 'bg-red-600' : 'bg-green-600'} rounded-lg flex items-center justify-center`}>
-                    {selectedCard.isOwned ? 
+                  <div className={`w-8 h-8 ${ownershipMap.get(selectedCard.id) ? 'bg-red-600' : 'bg-green-600'} rounded-lg flex items-center justify-center`}>
+                    {ownershipMap.get(selectedCard.id) ? 
                       <Minus className="w-5 h-5 text-white" /> : 
                       <Check className="w-5 h-5 text-white" />
                     }
                   </div>
-                  <span className="text-sm">{selectedCard.isOwned ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
+                  <span className="text-sm">{ownershipMap.get(selectedCard.id) ? 'Marquer comme manquante' : 'Marquer comme acquise'}</span>
                 </button>
 
                 {/* Mettre à la une */}

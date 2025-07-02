@@ -10,7 +10,7 @@ import {
   type ChecklistCard, type InsertChecklistCard, type UserCardOwnership, type InsertUserCardOwnership
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, or, sql, desc, asc, inArray } from "drizzle-orm";
+import { eq, and, or, sql, desc, asc, inArray, isNull } from "drizzle-orm";
 
 // Cache simple en mémoire pour les cartes
 interface CacheEntry<T> {
@@ -112,6 +112,16 @@ export interface IStorage {
   getUserCardOwnerships(userId: number): Promise<UserCardOwnership[]>;
   setUserCardOwnership(userId: number, cardId: number, owned: boolean): Promise<UserCardOwnership>;
   deletePersonalCard(id: number): Promise<boolean>;
+
+  // User Checklist Card Ownership (check-lists communautaires)
+  getUserChecklistCardOwnership(userId: number, collectionId: number): Promise<UserCardOwnership[]>;
+  updateUserChecklistCardOwnership(userId: number, cardId: number, owned: boolean): Promise<UserCardOwnership>;
+  getCollectionCompletionStats(userId: number, collectionId: number): Promise<{
+    totalCards: number;
+    ownedCards: number;
+    completionPercentage: number;
+  }>;
+  initializeUserChecklistOwnership(userId: number, collectionId: number): Promise<void>;
 
   // Chat system
   getConversations(userId: number): Promise<Conversation[]>;
@@ -1160,6 +1170,185 @@ export class DatabaseStorage implements IStorage {
     cache.set(cacheKey, result, 600);
     
     return result;
+  }
+
+  // User Card Ownership (propriété individuelle des cartes checklist)
+  async getUserChecklistCardOwnership(userId: number, collectionId: number): Promise<UserCardOwnership[]> {
+    const cacheKey = `user_checklist_ownership_${userId}_${collectionId}`;
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<UserCardOwnership[]>(cacheKey);
+    if (cached) {
+      console.log(`📦 User checklist ownership for user ${userId}, collection ${collectionId} from cache - ${cached.length} cards`);
+      return cached;
+    }
+    
+    const startTime = Date.now();
+    const result = await db
+      .select()
+      .from(userCardOwnership)
+      .innerJoin(checklistCards, eq(userCardOwnership.cardId, checklistCards.id))
+      .where(
+        and(
+          eq(userCardOwnership.userId, userId),
+          eq(checklistCards.collectionId, collectionId)
+        )
+      );
+    
+    const endTime = Date.now();
+    console.log(`✅ User checklist ownership for user ${userId}, collection ${collectionId} loaded from DB in ${endTime - startTime}ms - ${result.length} cards`);
+    
+    // Transformer le résultat pour ne garder que les données d'ownership
+    const ownership = result.map(r => r.user_card_ownership);
+    
+    // Mettre en cache pour 5 minutes
+    cache.set(cacheKey, ownership, 300);
+    
+    return ownership;
+  }
+
+  async updateUserChecklistCardOwnership(userId: number, cardId: number, owned: boolean): Promise<UserCardOwnership> {
+    // Invalider le cache (simple clear pour éviter les erreurs)
+    cache.clear();
+    
+    // Vérifier si l'enregistrement existe
+    const existing = await db
+      .select()
+      .from(userCardOwnership)
+      .where(
+        and(
+          eq(userCardOwnership.userId, userId),
+          eq(userCardOwnership.cardId, cardId)
+        )
+      )
+      .limit(1);
+    
+    if (existing.length > 0) {
+      // Mettre à jour l'enregistrement existant
+      const result = await db
+        .update(userCardOwnership)
+        .set({ 
+          owned,
+          updatedAt: new Date()
+        })
+        .where(
+          and(
+            eq(userCardOwnership.userId, userId),
+            eq(userCardOwnership.cardId, cardId)
+          )
+        )
+        .returning();
+      
+      return result[0];
+    } else {
+      // Créer un nouvel enregistrement
+      const result = await db
+        .insert(userCardOwnership)
+        .values({
+          userId,
+          cardId,
+          owned,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      return result[0];
+    }
+  }
+
+  async getCollectionCompletionStats(userId: number, collectionId: number): Promise<{
+    totalCards: number;
+    ownedCards: number;
+    completionPercentage: number;
+  }> {
+    const cacheKey = `completion_stats_${userId}_${collectionId}`;
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<{totalCards: number; ownedCards: number; completionPercentage: number}>(cacheKey);
+    if (cached) {
+      console.log(`📦 Completion stats for user ${userId}, collection ${collectionId} from cache`);
+      return cached;
+    }
+    
+    const startTime = Date.now();
+    
+    // Compter le total de cartes dans la collection
+    const totalCardsResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(checklistCards)
+      .where(eq(checklistCards.collectionId, collectionId));
+    
+    const totalCards = totalCardsResult[0]?.count || 0;
+    
+    // Compter les cartes possédées par l'utilisateur
+    const ownedCardsResult = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(userCardOwnership)
+      .innerJoin(checklistCards, eq(userCardOwnership.cardId, checklistCards.id))
+      .where(
+        and(
+          eq(userCardOwnership.userId, userId),
+          eq(checklistCards.collectionId, collectionId),
+          eq(userCardOwnership.owned, true)
+        )
+      );
+    
+    const ownedCards = ownedCardsResult[0]?.count || 0;
+    
+    const completionPercentage = totalCards > 0 ? Math.round((ownedCards / totalCards) * 100) : 0;
+    
+    const endTime = Date.now();
+    console.log(`✅ Completion stats for user ${userId}, collection ${collectionId} loaded in ${endTime - startTime}ms - ${ownedCards}/${totalCards} (${completionPercentage}%)`);
+    
+    const stats = {
+      totalCards,
+      ownedCards,
+      completionPercentage
+    };
+    
+    // Mettre en cache pour 5 minutes
+    cache.set(cacheKey, stats, 300);
+    
+    return stats;
+  }
+
+  async initializeUserChecklistOwnership(userId: number, collectionId: number): Promise<void> {
+    // Invalider le cache (simple clear pour éviter les erreurs)
+    cache.clear();
+    
+    // Obtenir toutes les cartes de la collection qui n'ont pas encore d'ownership pour cet utilisateur
+    const cardsToInitialize = await db
+      .select({ id: checklistCards.id })
+      .from(checklistCards)
+      .leftJoin(
+        userCardOwnership, 
+        and(
+          eq(checklistCards.id, userCardOwnership.cardId),
+          eq(userCardOwnership.userId, userId)
+        )
+      )
+      .where(
+        and(
+          eq(checklistCards.collectionId, collectionId),
+          sql`${userCardOwnership.id} IS NULL`
+        )
+      );
+    
+    if (cardsToInitialize.length > 0) {
+      // Insérer les enregistrements d'ownership par défaut
+      const ownershipData = cardsToInitialize.map(card => ({
+        userId,
+        cardId: card.id,
+        owned: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }));
+      
+      await db.insert(userCardOwnership).values(ownershipData);
+      
+      console.log(`✅ Initialized ownership for ${cardsToInitialize.length} cards for user ${userId} in collection ${collectionId}`);
+    }
   }
 
   async getChecklistCard(id: number): Promise<ChecklistCard | undefined> {

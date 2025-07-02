@@ -759,6 +759,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get user's checklist card ownership for a collection
+  app.get("/api/collections/:id/checklist-ownership", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const collectionId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      console.log(`API: Loading checklist ownership for user ${userId}, collection ${collectionId}`);
+      
+      const ownership = await storage.getUserChecklistCardOwnership(userId, collectionId);
+      res.json({ ownership });
+    } catch (error) {
+      console.error('Error loading checklist ownership:', error);
+      res.status(500).json({ error: "Erreur lors du chargement de la propriété des cartes" });
+    }
+  });
+
+  // Update user's ownership of a checklist card
+  app.patch("/api/checklist-cards/:cardId/ownership", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const cardId = parseInt(req.params.cardId);
+      const userId = req.user!.id;
+      const { owned } = req.body;
+      
+      console.log(`API: Updating card ${cardId} ownership for user ${userId}: ${owned}`);
+      
+      const ownership = await storage.updateUserChecklistCardOwnership(userId, cardId, owned);
+      res.json({ ownership });
+    } catch (error) {
+      console.error('Error updating checklist ownership:', error);
+      res.status(500).json({ error: "Erreur lors de la mise à jour de la propriété" });
+    }
+  });
+
+  // Get completion stats for a user's collection
+  app.get("/api/collections/:id/completion-stats", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const collectionId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      console.log(`API: Loading completion stats for user ${userId}, collection ${collectionId}`);
+      
+      const stats = await storage.getCollectionCompletionStats(userId, collectionId);
+      res.json({ stats });
+    } catch (error) {
+      console.error('Error loading completion stats:', error);
+      res.status(500).json({ error: "Erreur lors du chargement des statistiques" });
+    }
+  });
+
+  // Initialize user's checklist ownership for a collection
+  app.post("/api/collections/:id/initialize-ownership", authenticateToken, async (req: AuthRequest, res) => {
+    try {
+      const collectionId = parseInt(req.params.id);
+      const userId = req.user!.id;
+      
+      console.log(`API: Initializing checklist ownership for user ${userId}, collection ${collectionId}`);
+      
+      await storage.initializeUserChecklistOwnership(userId, collectionId);
+      res.json({ success: true, message: "Propriété des cartes initialisée avec succès" });
+    } catch (error) {
+      console.error('Error initializing checklist ownership:', error);
+      res.status(500).json({ error: "Erreur lors de l'initialisation de la propriété" });
+    }
+  });
+
   // Get cards in collection with pagination for production
   app.get("/api/collections/:id/cards", async (req, res) => {
     try {
