@@ -2224,12 +2224,19 @@ export default function Collections() {
                             <label className="block text-sm font-medium text-gray-300 mb-2">
                               Type de carte
                             </label>
-                            <input
-                              type="text"
+                            <select
                               value={editData.cardType}
                               onChange={(e) => setEditData({...editData, cardType: e.target.value})}
-                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
-                            />
+                              className="w-full bg-[hsl(214,35%,30%)] border border-[hsl(214,35%,40%)] rounded-lg px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[hsl(9,85%,67%)] text-base"
+                            >
+                              <option value="">Sélectionner un type</option>
+                              <option value="base">Base</option>
+                              <option value="base numbered">Base Numérotée</option>
+                              <option value="insert">Insert</option>
+                              <option value="autograph">Autographe</option>
+                              <option value="numbered">Numérotée</option>
+                              <option value="special 1 1">Spéciale</option>
+                            </select>
                           </div>
                           
                           <div>

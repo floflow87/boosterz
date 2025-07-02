@@ -118,6 +118,17 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **SÉLECTEUR TYPE DE CARTE AJOUTÉ À LA MODIFICATION + MIGRATION SÉCURISÉE PRÉPARÉE**
+  - **Sélecteur type de carte en modification** : Remplacé champ texte par sélecteur déroulant
+    - Options standardisées : Base, Base Numérotée, Insert, Autographe, Numérotée, Spéciale
+    - Interface cohérente avec la création de cartes
+    - Validation des types de cartes pour éviter les erreurs de saisie
+  - **Migration sécurisée créée** : Script de migration communautaire non destructif
+    - Préserve les 18 tables existantes dans Neon
+    - Ajoute user_card_ownership pour logique individuelle
+    - Migre données existantes avant suppressions
+    - Vérifications complètes pré et post-migration
+    - Prêt pour déploiement en production Supabase
 - January 02, 2025. **INTERFACE FINALISÉE + SAISON 2022/23 AJOUTÉE**
   - **Types de carte simplifiés** : Suppression des underscores dans toutes les qualités
     - "base_numbered" → "base numbered", "special_1_1" → "special 1 1"
