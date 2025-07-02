@@ -118,11 +118,11 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
-- January 02, 2025. **SUPPRESSION SÉLECTEUR COLLECTION + SUPPRESSION SET OM + CORRECTION AFFICHAGE SCORE LIGUE 1**
-  - **Suppression premier sélecteur collection** : Interface simplifiée dans l'ajout de cartes
-    - Suppression sélecteur "Type de collection" dans add-card.tsx
-    - Saison fixe 2023/24 pour toutes les cartes ajoutées
-    - Interface plus fluide avec affichage saison en lecture seule
+- January 02, 2025. **SÉLECTEURS TYPE DE COLLECTION + SUPPRESSION SET OM + CORRECTION AFFICHAGE SCORE LIGUE 1**
+  - **Sélecteurs Type de collection et Saison liée** : Interface hiérarchique maintenue dans add-card.tsx
+    - Sélecteur "Type de collection" avec 5 options (Score ligue 1, OM 125 ans, etc.)
+    - Saisons dynamiques selon le type choisi (Score ligue 1 → 2023/24)
+    - Validation avec désactivation du sélecteur saison si pas de type choisi
   - **Suppression collection "Set OM"** : Nettoyage des données et références
     - Suppression références "Set OM" dans collectionsByBrand (Futera vide)
     - Nettoyage interface utilisateur sans collection inutilisée
@@ -131,9 +131,9 @@ The application follows a modern full-stack architecture with clear separation b
     - Création collection par défaut pour utilisateur ID 2 (maxlamenace)
     - Correction recherche auto-sélection : `season === '2023/24'` au lieu de '23/24'
     - Collections avec 2869 cartes total pour check-list complète
-  - **Interface utilisateur cohérente** : Simplification navigation et sélection
-    - Plus de sélecteurs en cascade dans ajout cartes
-    - Affichage par défaut garanti sur tous les comptes
+  - **Interface utilisateur cohérente** : Sélection hiérarchique dans ajout cartes
+    - Sélecteurs Type → Saison dans ajout cartes fonctionnels
+    - Auto-sélection collection Score ligue 1 garantie sur tous comptes
 - January 02, 2025. **LIAISON SAISON-COLLECTION + RENOMMAGE + CORRECTION BUG DÉCOUVERTE**
   - **Liaison saison-collection dans ajout de cartes** : Sélecteurs hiérarchiques liés
     - Nouveau sélecteur "Type de collection" remplace la saison fixe

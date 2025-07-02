@@ -44,9 +44,8 @@ export default function AddCard() {
   const [cardType, setCardType] = useState("");
   const [reference, setReference] = useState("");
   const [numbering, setNumbering] = useState("");
-  // Définition directe de la saison pour Score ligue 1
-  const fixedSeason = '2023/24';
-  const [season, setSeason] = useState(fixedSeason);
+  const [season, setSeason] = useState("");
+  const [collectionType, setCollectionType] = useState("");
   const [condition, setCondition] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleDescription, setSaleDescription] = useState("");
@@ -67,7 +66,19 @@ export default function AddCard() {
     { type: "special_1_1", label: "Spéciale 1/1" }
   ];
 
-  // Score ligue 1 utilise une saison fixe
+  // Définition des collections et saisons liées
+  const seasonsByCollection: Record<string, string[]> = {
+    'OM 125 ans': ['2024/25'],
+    'Score ligue 1': ['2023/24'],
+    'Immaculate': ['2022/23', '2024/25'],
+    'Iconz': ['2024/25'],
+    'UCC Flagship': ['2023/24', '2024/25']
+  };
+
+  // Fonction pour obtenir les années disponibles selon la collection
+  const getAvailableYears = (collection: string) => {
+    return seasonsByCollection[collection] || [];
+  };
 
   // Fetch collections for selection
   const { data: collections = [] } = useQuery<any[]>({
@@ -428,11 +439,41 @@ export default function AddCard() {
                 </p>
               </div>
 
-              {/* Saison fixe pour Score ligue 1 */}
-              <div>
-                <Label htmlFor="season" className="text-white mb-2 block">Saison</Label>
-                <div className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-2 text-white">
-                  {fixedSeason}
+              {/* Type de collection et saison liée */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="collectionType" className="text-white mb-2 block">Type de collection *</Label>
+                  <Select value={collectionType} onValueChange={(value) => {
+                    setCollectionType(value);
+                    setSeason(""); // Reset saison quand on change le type
+                  }}>
+                    <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                      <SelectValue placeholder="Type de collection" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-800 border-zinc-700">
+                      <SelectItem value="Score ligue 1" className="text-white hover:bg-zinc-700">Score ligue 1</SelectItem>
+                      <SelectItem value="OM 125 ans" className="text-white hover:bg-zinc-700">OM 125 ans</SelectItem>
+                      <SelectItem value="Immaculate" className="text-white hover:bg-zinc-700">Immaculate</SelectItem>
+                      <SelectItem value="Iconz" className="text-white hover:bg-zinc-700">Iconz</SelectItem>
+                      <SelectItem value="UCC Flagship" className="text-white hover:bg-zinc-700">UCC Flagship</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="season" className="text-white mb-2 block">Saison *</Label>
+                  <Select value={season} onValueChange={setSeason} disabled={!collectionType}>
+                    <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
+                      <SelectValue placeholder={collectionType ? "Sélectionne la saison" : "Choisir d'abord le type"} />
+                    </SelectTrigger>
+                    <SelectContent className="bg-zinc-800 border-zinc-700">
+                      {getAvailableYears(collectionType).map((year) => (
+                        <SelectItem key={year} value={year} className="text-white hover:bg-zinc-700">
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
