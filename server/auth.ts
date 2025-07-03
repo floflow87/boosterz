@@ -14,6 +14,12 @@ export interface AuthRequest extends Request {
     username: string;
     email: string;
     name: string;
+    isAdmin?: boolean;
+    canCreatePosts?: boolean;
+    canSendMessages?: boolean;
+    canManageCards?: boolean;
+    canManageDecks?: boolean;
+    canManageCollections?: boolean;
   };
 }
 
