@@ -118,6 +118,20 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **CHECKLIST COMPLÈTE IMPORTÉE + ONGLETS RÉORGANISÉS SELON DEMANDE UTILISATEUR**
+  - **2397 cartes CSV importées avec succès** : Import complet du nouveau fichier utilisateur réalisé
+    - Fichier source : `Checklist-Score-Ligue-1-23-24 (1)_1751523526854.csv` (2398 lignes avec header)
+    - Script Node.js développé pour nouveau format CSV avec 12 colonnes
+    - Répartition finale : 1800 Bases numérotées, 338 Spéciales, 200 Hits, 59 Autographes
+    - Base de données : 2397 cartes Score Ligue 1 23/24 complètement peuplée
+  - **Ordre des onglets modifié selon demande** : Bases → Hits → Autographes → Spéciales
+    - Onglet par défaut changé de "Spéciale" vers "Base numérotée"
+    - Interface organisée dans l'ordre souhaité par l'utilisateur
+    - Système de navigation par activeTab entièrement opérationnel
+  - **Structure complète check-list disponible** : Collection Score Ligue 1 23/24 finalisée
+    - Architecture user_card_ownership opérationnelle pour 2397 cartes
+    - Interface prête pour gestion individuelle des check-lists partagées
+    - Système de filtrage par card_type fonctionnel avec nouveaux onglets
 - January 02, 2025. **IMPORT CSV COMPLET SCORE LIGUE 1 23/24 RÉUSSI + SYSTÈME OWNERSHIP FINALISÉ**
   - **397 cartes CSV importées avec succès** : Import complet du fichier utilisateur réalisé 
     - Fichier source : `Checklist-Score-Ligue-1-23-24_1751494480119.csv` (398 lignes avec header)
