@@ -105,8 +105,22 @@ export default function CollectionDetail() {
     
     // Pour les autographes : détection par cardSubType "Autographe" dans les cartes Spéciales
     if (card.cardType === "Spéciale" && card.cardSubType === "Autographe") {
-      console.log(`✍️ Carte Autographe (Spéciale-Autographe) - carte unique selon fichier Excel`);
-      return [card];
+      console.log(`✍️ Carte Autographe (Spéciale-Autographe) - génération variantes numérotées`);
+      
+      // Générer les variantes d'autographes selon le fichier Excel
+      const autographVariants = [
+        { ...card, id: card.id, numbering: "/199", rarity: "Commune" },
+        { ...card, id: card.id + 1000, numbering: "/99", rarity: "Peu commune" },
+        { ...card, id: card.id + 2000, numbering: "/49", rarity: "Rare" },
+        { ...card, id: card.id + 3000, numbering: "/25", rarity: "Rare" },
+        { ...card, id: card.id + 4000, numbering: "/10", rarity: "Épique" },
+        { ...card, id: card.id + 5000, numbering: "/5", rarity: "Épique" },
+        { ...card, id: card.id + 6000, numbering: "/3", rarity: "Légendaire" },
+        { ...card, id: card.id + 7000, numbering: "/2", rarity: "Légendaire" }
+      ];
+      
+      console.log(`⭐ ${autographVariants.length} variantes Autographes générées`);
+      return autographVariants;
     }
     
     // Pour les cartes spéciales : créer toutes les variantes de couleur
