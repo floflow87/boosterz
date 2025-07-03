@@ -128,23 +128,10 @@ export default function CollectionDetail() {
       return autographVariants;
     }
     
-    // Pour les cartes spéciales : créer toutes les variantes de couleur
+    // Pour les cartes spéciales normales : une seule carte
     if (card.cardType === "Spéciale" || card.cardType === "special_1_1" || card.cardType?.toLowerCase().includes("special")) {
-      console.log(`🌟 Carte Spéciale - génération de 9 variantes couleur`);
-      const specialVariants = [
-        { ...card, id: card.id + 1000, cardSubType: "Orange", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 2000, cardSubType: "Violet", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 3000, cardSubType: "Vert", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 4000, cardSubType: "Bleu", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 5000, cardSubType: "Rouge", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 6000, cardSubType: "Jaune", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 7000, cardSubType: "Rose", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 8000, cardSubType: "Noir", numbering: "1/1", rarity: "Unique" },
-        { ...card, id: card.id + 9000, cardSubType: "Argent", numbering: "1/1", rarity: "Unique" }
-      ];
-      
-      console.log(`⭐ ${specialVariants.length} variantes Spéciales générées`);
-      return specialVariants;
+      console.log(`🌟 Carte Spéciale normale - carte unique`);
+      return [card];
     }
     
     // Pour les autres cartes, retourner la carte elle-même
