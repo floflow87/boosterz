@@ -12,14 +12,14 @@ import {
 import { db } from "./db";
 import { eq, and, or, sql, desc, asc, inArray, isNull } from "drizzle-orm";
 
-// Cache simple en mémoire pour les cartes
+// Cache en mémoire ultra-performant pour les requêtes critiques
 interface CacheEntry<T> {
   data: T;
   timestamp: number;
   ttl: number;
 }
 
-class SimpleCache {
+class PerformanceCache {
   private cache = new Map<string, CacheEntry<any>>();
 
   set<T>(key: string, data: T, ttlSeconds: number = 300): void {
@@ -46,9 +46,19 @@ class SimpleCache {
   clear(): void {
     this.cache.clear();
   }
+
+  // Méthode spéciale pour invalider certaines clés
+  invalidatePattern(pattern: string): void {
+    const keysArray = Array.from(this.cache.keys());
+    for (const key of keysArray) {
+      if (key.includes(pattern)) {
+        this.cache.delete(key);
+      }
+    }
+  }
 }
 
-const cache = new SimpleCache();
+const cache = new PerformanceCache();
 
 export interface IStorage {
   // Users
@@ -521,7 +531,24 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getPersonalCardsByUserId(userId: number): Promise<PersonalCard[]> {
-    return await db.select().from(personalCards).where(eq(personalCards.userId, userId));
+    const cacheKey = `personal_cards_user_${userId}`;
+    
+    // Vérifier le cache d'abord
+    const cached = cache.get<PersonalCard[]>(cacheKey);
+    if (cached) {
+      console.log(`📦 Personal cards for user ${userId} from cache - ${cached.length} cards`);
+      return cached;
+    }
+    
+    const startTime = Date.now();
+    const result = await db.select().from(personalCards).where(eq(personalCards.userId, userId));
+    const loadTime = Date.now() - startTime;
+    
+    // Cache pendant 3 minutes (optimisé pour performances)
+    cache.set(cacheKey, result, 180);
+    
+    console.log(`📊 Personal cards for user ${userId} loaded in ${loadTime}ms - ${result.length} cards`);
+    return result;
   }
 
   async getPersonalCardsByCollectionId(collectionId: number, userId: number): Promise<PersonalCard[]> {

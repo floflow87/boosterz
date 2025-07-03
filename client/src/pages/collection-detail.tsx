@@ -113,11 +113,10 @@ export default function CollectionDetail() {
 
   const { data: cardsResponse, isLoading: cardsLoading, error: cardsError } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${collectionId}/checklist-cards`],
-    staleTime: 0,
-    gcTime: 1 * 60 * 1000,
-    refetchOnWindowFocus: true,
-    retry: 2,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 10000),
+    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
+    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
+    refetchOnWindowFocus: false, // Pas de refetch au focus
+    retry: 1, // Réduire les tentatives pour accélérer
     refetchInterval: false,
     refetchIntervalInBackground: false,
   });
@@ -128,13 +127,18 @@ export default function CollectionDetail() {
   // User checklist ownership queries
   const { data: userOwnership, isLoading: ownershipLoading } = useQuery<{ownership: any[]}>({
     queryKey: [`/api/collections/${collectionId}/checklist-ownership`],
-    staleTime: 5 * 60 * 1000, // 5 minutes cache
-    gcTime: 10 * 60 * 1000,
+    staleTime: 10 * 60 * 1000, // Cache étendu à 10 minutes
+    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 
   const { data: completionStats } = useQuery<{stats: {totalCards: string, ownedCards: string, completionPercentage: number}}>({
     queryKey: [`/api/collections/${collectionId}/completion-stats`],
-    staleTime: 1 * 60 * 1000, // 1 minute cache
+    staleTime: 5 * 60 * 1000, // Cache étendu à 5 minutes
+    gcTime: 15 * 60 * 1000, // Garde en cache 15 minutes
+    refetchOnWindowFocus: false,
+    retry: 1,
   });
 
   // Create ownership map for quick lookup

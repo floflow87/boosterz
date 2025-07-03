@@ -164,11 +164,17 @@ export default function Social() {
   // Feed query (posts from followed users)
   const { data: feed = [], isLoading: feedLoading } = useQuery<Post[]>({
     queryKey: ["/api/users/feed"],
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 
   // My posts query - utilise l'ID de l'utilisateur connecté
   const { data: myPosts = [], isLoading: myPostsLoading } = useQuery<Post[]>({
     queryKey: [`/api/users/${currentUserId}/posts`],
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Charger les likes de l'utilisateur au démarrage
@@ -190,23 +196,34 @@ export default function Social() {
   // Récupérer les utilisateurs pour découverte (limité à 10)
   const { data: users = [], isLoading: usersLoading } = useQuery<SocialUser[]>({
     queryKey: ["/api/social/users", { limit: 10 }],
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes  
+    refetchOnWindowFocus: false,
   });
 
   // Recherche d'utilisateurs avec debounce
   const { data: searchResults = [], isLoading: searchLoading } = useQuery<SocialUser[]>({
     queryKey: ["/api/social/users", { search: searchTerm, limit: 50 }],
-    enabled: searchTerm.length > 1, // Start searching after 2 characters
-    staleTime: 5000, // Cache results for 5 seconds
+    enabled: searchTerm.length > 1,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Récupérer les activités
   const { data: activities = [], isLoading: activitiesLoading } = useQuery<Activity[]>({
     queryKey: ["/api/social/activities"],
+    staleTime: 3 * 60 * 1000, // 3 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Récupérer les notifications
   const { data: notifications = [], isLoading: notificationsLoading } = useQuery<NotificationItem[]>({
     queryKey: ["/api/social/notifications"],
+    staleTime: 1 * 60 * 1000, // 1 minute
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
   });
 
   // Delete post mutation
