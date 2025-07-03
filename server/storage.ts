@@ -688,23 +688,22 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createMessage(message: InsertMessage): Promise<Message> {
-    const [newMessage] = await db
-      .insert(messages)
-      .values({
-        conversationId: message.conversationId,
-        senderId: message.senderId,
-        content: message.content,
-        isRead: false
-      })
-      .returning();
-
-    // Update last message timestamp in conversation
-    await db
-      .update(conversations)
-      .set({ lastMessageAt: new Date() })
-      .where(eq(conversations.id, message.conversationId));
-
-    return newMessage;
+    try {
+      const [newMessage] = await db
+        .insert(messages)
+        .values({
+          conversationId: message.conversationId,
+          senderId: message.senderId,
+          content: message.content,
+          isRead: false
+        })
+        .returning();
+      
+      return newMessage;
+    } catch (error) {
+      console.error('Error creating message:', error);
+      throw error;
+    }
   }
 
   async markMessagesAsRead(conversationId: number, userId: number): Promise<void> {
