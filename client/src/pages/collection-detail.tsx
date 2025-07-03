@@ -41,6 +41,79 @@ export default function CollectionDetail() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Helper function to get card variants - moved up to avoid hoisting issues
+  const getCardVariants = (card: Card) => {
+    if (!cards) return [card];
+    
+    // Pour les cartes Base : pas de variantes
+    if (card.cardType === "Base") {
+      return [card];
+    }
+    
+    // Pour les bases numérotées : créer les 9 variantes spécifiques
+    if (card.cardType === "Parallel Numbered") {
+      const numberedVariants = [
+        { ...card, id: card.id + 1000, numbering: "1/50", cardSubType: "Laser" },
+        { ...card, id: card.id + 2000, numbering: "1/35", cardSubType: "Laser" },
+        { ...card, id: card.id + 3000, numbering: "1/30", cardSubType: "Swirl" },
+        { ...card, id: card.id + 4000, numbering: "1/25", cardSubType: "Swirl" },
+        { ...card, id: card.id + 5000, numbering: "1/20", cardSubType: "Swirl" },
+        { ...card, id: card.id + 6000, numbering: "1/15", cardSubType: "Swirl" },
+        { ...card, id: card.id + 7000, numbering: "1/15", cardSubType: "Laser" },
+        { ...card, id: card.id + 8000, numbering: "1/10", cardSubType: "Swirl" },
+        { ...card, id: card.id + 9000, numbering: "1/5", cardSubType: "Laser" }
+      ];
+      
+      return numberedVariants;
+    }
+    
+    // Pour les inserts : gérer les cas spéciaux et variantes
+    if (card.cardType?.includes("Insert")) {
+      // Cas spéciaux : Intergalactic, Next Up, Pennants = 1 seule carte
+      if (card.cardType.includes("Intergalactic") || 
+          card.cardType.includes("Next Up") || 
+          card.cardType.includes("Pennant")) {
+        return [card];
+      }
+      
+      // Pour les autres hits : 2 variantes seulement (/15 et /10)
+      const hitVariants = [];
+      
+      // Variante de base avec /15
+      hitVariants.push({ ...card, id: card.id, numbering: "/15" });
+      
+      // Variante numérotée avec /10
+      hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10" });
+      
+      return hitVariants;
+    }
+    
+    // Pour les autographes : pas de variantes (1 seule version)
+    if (card.cardType?.includes("Autograph")) {
+      return [card];
+    }
+    
+    // Pour les cartes spéciales : créer toutes les variantes
+    if (card.cardType === "special_1_1" || card.cardType?.toLowerCase().includes("special")) {
+      const specialVariants = [
+        { ...card, id: card.id + 1000, cardSubType: "Orange", numbering: "1/1" },
+        { ...card, id: card.id + 2000, cardSubType: "Violet", numbering: "1/1" },
+        { ...card, id: card.id + 3000, cardSubType: "Vert", numbering: "1/1" },
+        { ...card, id: card.id + 4000, cardSubType: "Bleu", numbering: "1/1" },
+        { ...card, id: card.id + 5000, cardSubType: "Rouge", numbering: "1/1" },
+        { ...card, id: card.id + 6000, cardSubType: "Jaune", numbering: "1/1" },
+        { ...card, id: card.id + 7000, cardSubType: "Rose", numbering: "1/1" },
+        { ...card, id: card.id + 8000, cardSubType: "Noir", numbering: "1/1" },
+        { ...card, id: card.id + 9000, cardSubType: "Argent", numbering: "1/1" }
+      ];
+      
+      return specialVariants;
+    }
+    
+    // Pour les autres cartes, retourner la carte elle-même
+    return [card];
+  };
+
   // Add scroll listener for background effect and sticky actions bar
   useEffect(() => {
     const handleScroll = () => {
@@ -582,78 +655,6 @@ export default function CollectionDetail() {
       }
     }
     setShowPhotoUpload(false);
-  };
-
-  const getCardVariants = (card: Card) => {
-    if (!cards) return [card];
-    
-    // Pour les cartes Base : pas de variantes
-    if (card.cardType === "Base") {
-      return [card];
-    }
-    
-    // Pour les bases numérotées : créer les 9 variantes spécifiques
-    if (card.cardType === "Parallel Numbered") {
-      const numberedVariants = [
-        { ...card, id: card.id + 1000, numbering: "1/50", cardSubType: "Laser" },
-        { ...card, id: card.id + 2000, numbering: "1/35", cardSubType: "Laser" },
-        { ...card, id: card.id + 3000, numbering: "1/30", cardSubType: "Swirl" },
-        { ...card, id: card.id + 4000, numbering: "1/25", cardSubType: "Swirl" },
-        { ...card, id: card.id + 5000, numbering: "1/20", cardSubType: "Swirl" },
-        { ...card, id: card.id + 6000, numbering: "1/15", cardSubType: "Swirl" },
-        { ...card, id: card.id + 7000, numbering: "1/15", cardSubType: "Laser" },
-        { ...card, id: card.id + 8000, numbering: "1/10", cardSubType: "Swirl" },
-        { ...card, id: card.id + 9000, numbering: "1/5", cardSubType: "Laser" }
-      ];
-      
-      return numberedVariants;
-    }
-    
-    // Pour les inserts : gérer les cas spéciaux et variantes
-    if (card.cardType?.includes("Insert")) {
-      // Cas spéciaux : Intergalactic, Next Up, Pennants = 1 seule carte
-      if (card.cardType.includes("Intergalactic") || 
-          card.cardType.includes("Next Up") || 
-          card.cardType.includes("Pennant")) {
-        return [card];
-      }
-      
-      // Pour les autres hits : 2 variantes seulement (/15 et /10)
-      const hitVariants = [];
-      
-      // Variante de base avec /15
-      hitVariants.push({ ...card, id: card.id, numbering: "/15" });
-      
-      // Variante numérotée avec /10
-      hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10" });
-      
-      return hitVariants;
-    }
-    
-    // Pour les autographes : pas de variantes (1 seule version)
-    if (card.cardType?.includes("Autograph")) {
-      return [card];
-    }
-    
-    // Pour les cartes spéciales : créer toutes les variantes
-    if (card.cardType === "special_1_1" || card.cardType?.toLowerCase().includes("special")) {
-      const specialVariants = [
-        { ...card, id: card.id + 1000, cardSubType: "Orange", numbering: "1/1" },
-        { ...card, id: card.id + 2000, cardSubType: "Violet", numbering: "1/1" },
-        { ...card, id: card.id + 3000, cardSubType: "Vert", numbering: "1/1" },
-        { ...card, id: card.id + 4000, cardSubType: "Bleu", numbering: "1/1" },
-        { ...card, id: card.id + 5000, cardSubType: "Rouge", numbering: "1/1" },
-        { ...card, id: card.id + 6000, cardSubType: "Jaune", numbering: "1/1" },
-        { ...card, id: card.id + 7000, cardSubType: "Rose", numbering: "1/1" },
-        { ...card, id: card.id + 8000, cardSubType: "Noir", numbering: "1/1" },
-        { ...card, id: card.id + 9000, cardSubType: "Argent", numbering: "1/1" }
-      ];
-      
-      return specialVariants;
-    }
-    
-    // Pour les autres cartes, retourner la carte elle-même
-    return [card];
   };
 
   const getCardBorderColor = (card: Card) => {
