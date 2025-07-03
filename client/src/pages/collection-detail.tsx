@@ -103,10 +103,23 @@ export default function CollectionDetail() {
     
 
     
-    // Pour les autographes : pas de variantes (1 seule version)
+    // Pour les autographes : créer des variantes avec différentes numérotations
     if (card.cardType === "Autographe" || card.cardType?.includes("Autograph")) {
-      console.log(`✍️ Carte Autographe - pas de variantes`);
-      return [card];
+      console.log(`✍️ Carte Autographe - génération de variantes numérotées`);
+      const autographVariants = [
+        { ...card, id: card.id, numbering: "/199", rarity: "Rare" },
+        { ...card, id: card.id + 1000, numbering: "/99", rarity: "Épique" },
+        { ...card, id: card.id + 2000, numbering: "/49", rarity: "Épique" },
+        { ...card, id: card.id + 3000, numbering: "/25", rarity: "Légendaire" },
+        { ...card, id: card.id + 4000, numbering: "/10", rarity: "Légendaire" },
+        { ...card, id: card.id + 5000, numbering: "/5", rarity: "Unique" },
+        { ...card, id: card.id + 6000, numbering: "/3", rarity: "Unique" },
+        { ...card, id: card.id + 7000, numbering: "/2", rarity: "Unique" },
+        { ...card, id: card.id + 8000, numbering: "/1", rarity: "Unique" }
+      ];
+      
+      console.log(`⭐ ${autographVariants.length} variantes Autographes générées`);
+      return autographVariants;
     }
     
     // Pour les cartes spéciales : créer toutes les variantes de couleur

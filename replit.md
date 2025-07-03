@@ -126,9 +126,11 @@ The application follows a modern full-stack architecture with clear separation b
   - **Variantes Hit** : 2 variantes avec navigation carrousel
     - /15 (Rare) et /10 (Épique) avec sliders gauche/droite
     - Compteur "1/2" affiché en bas à droite
+  - **Variantes Autographe** : 9 variantes numérotées avec carrousel complet
+    - /199 (Rare), /99-/49 (Épique), /25-/10 (Légendaire), /5-/3-/2-/1 (Unique)
+    - Système progressif de rareté selon la numérotation
   - **Variantes Spéciale** : 9 variantes couleur préparées
     - Orange, Violet, Vert, Bleu, Rouge, Jaune, Rose, Noir, Argent (toutes 1/1 Unique)
-  - **Autographes** : Carte unique sans variantes comme souhaité
   - **Interface carrousel** : Flèches navigation, compteur position, système complet
 - January 02, 2025. **CHECKLIST COMPLÈTE IMPORTÉE + ONGLETS RÉORGANISÉS SELON DEMANDE UTILISATEUR**
   - **2397 cartes CSV importées avec succès** : Import complet du nouveau fichier utilisateur réalisé
