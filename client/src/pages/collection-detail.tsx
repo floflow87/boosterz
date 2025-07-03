@@ -223,8 +223,8 @@ export default function CollectionDetail() {
 
   const { data: cardsResponse, isLoading: cardsLoading, error: cardsError } = useQuery<{cards: Card[], pagination?: any}>({
     queryKey: [`/api/collections/${collectionId}/checklist-cards`],
-    staleTime: 15 * 60 * 1000, // Cache pendant 15 minutes
-    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
+    staleTime: 0, // Pas de cache pour debug
+    gcTime: 0, // Pas de cache
     refetchOnWindowFocus: false, // Pas de refetch au focus
     retry: 1, // Réduire les tentatives pour accélérer
     refetchInterval: false,
