@@ -126,9 +126,8 @@ The application follows a modern full-stack architecture with clear separation b
   - **Variantes Hit** : 2 variantes avec navigation carrousel
     - /15 (Rare) et /10 (Épique) avec sliders gauche/droite
     - Compteur "1/2" affiché en bas à droite
-  - **Variantes Autographe** : 9 variantes numérotées avec carrousel complet
-    - /199 (Rare), /99-/49 (Épique), /25-/10 (Légendaire), /5-/3-/2-/1 (Unique)
-    - Système progressif de rareté selon la numérotation
+  - **Autographes** : Cartes uniques sans variantes selon fichier Excel de référence
+    - Structure conforme aux spécifications du fichier Excel utilisateur
   - **Variantes Spéciale** : 9 variantes couleur préparées
     - Orange, Violet, Vert, Bleu, Rouge, Jaune, Rose, Noir, Argent (toutes 1/1 Unique)
   - **Interface carrousel** : Flèches navigation, compteur position, système complet
