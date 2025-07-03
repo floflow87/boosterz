@@ -345,6 +345,8 @@ export default function CollectionDetail() {
   const getUniquePlayerCards = () => {
     if (!cards) return [];
     
+    console.log(`🔍 Filtrage ${activeTab} - Total cartes disponibles: ${cards.length}`);
+    
     const playerGroups = new Map();
     
     cards.forEach(card => {
@@ -361,17 +363,8 @@ export default function CollectionDetail() {
       if (activeTab === "Base numérotée") {
         includeCard = card.cardType === "Base numérotée";
       } else if (activeTab === "Hit") {
-        // Inclure toutes les cartes Hit/Insert
-        includeCard = card.cardType === "Hit" || 
-                     card.cardType?.includes("Insert") ||
-                     card.cardType === "Breakthrough" ||
-                     card.cardType === "Hot Rookies" ||
-                     card.cardType === "Intergalactic" ||
-                     card.cardType === "Keepers" ||
-                     card.cardType === "Next Up" ||
-                     card.cardType === "Pennants" ||
-                     card.cardType === "Pure Class" ||
-                     card.cardType === "Score Team";
+        // Toutes les cartes Hit ont exactement le cardType "Hit"
+        includeCard = card.cardType === "Hit";
       } else if (activeTab === "Autographe") {
         includeCard = card.cardType === "Autographe" || card.cardType?.includes("Autograph");
       } else if (activeTab === "Spéciale") {
@@ -391,6 +384,7 @@ export default function CollectionDetail() {
     });
     
     let sortedCards = Array.from(playerGroups.values());
+    console.log(`📊 ${activeTab} - Cartes trouvées après filtrage: ${sortedCards.length}`);
     
     // Pour les hits, trier par type de carte puis par joueur
     if (activeTab === "Hit") {
