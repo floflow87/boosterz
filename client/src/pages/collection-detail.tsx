@@ -45,34 +45,45 @@ export default function CollectionDetail() {
   const getCardVariants = (card: Card) => {
     if (!cards) return [card];
     
+    // Debug log
+    console.log(`🔍 Génération de variantes pour:`, {
+      playerName: card.playerName,
+      cardType: card.cardType
+    });
+    
     // Pour les cartes Base : pas de variantes
     if (card.cardType === "Base") {
+      console.log(`✅ Carte Base - pas de variantes`);
       return [card];
     }
     
     // Pour les bases numérotées : créer les 9 variantes spécifiques
-    if (card.cardType === "Parallel Numbered") {
+    if (card.cardType === "Parallel Numbered" || card.cardType === "Base numérotée") {
+      console.log(`🔢 Carte Base numérotée - génération de 9 variantes`);
       const numberedVariants = [
-        { ...card, id: card.id + 1000, numbering: "1/50", cardSubType: "Laser" },
-        { ...card, id: card.id + 2000, numbering: "1/35", cardSubType: "Laser" },
-        { ...card, id: card.id + 3000, numbering: "1/30", cardSubType: "Swirl" },
-        { ...card, id: card.id + 4000, numbering: "1/25", cardSubType: "Swirl" },
-        { ...card, id: card.id + 5000, numbering: "1/20", cardSubType: "Swirl" },
-        { ...card, id: card.id + 6000, numbering: "1/15", cardSubType: "Swirl" },
-        { ...card, id: card.id + 7000, numbering: "1/15", cardSubType: "Laser" },
-        { ...card, id: card.id + 8000, numbering: "1/10", cardSubType: "Swirl" },
-        { ...card, id: card.id + 9000, numbering: "1/5", cardSubType: "Laser" }
+        { ...card, id: card.id + 1000, numbering: "/50", cardSubType: "Laser", rarity: "Commune" },
+        { ...card, id: card.id + 2000, numbering: "/35", cardSubType: "Laser", rarity: "Commune" },
+        { ...card, id: card.id + 3000, numbering: "/30", cardSubType: "Swirl", rarity: "Peu commune" },
+        { ...card, id: card.id + 4000, numbering: "/25", cardSubType: "Swirl", rarity: "Peu commune" },
+        { ...card, id: card.id + 5000, numbering: "/20", cardSubType: "Swirl", rarity: "Rare" },
+        { ...card, id: card.id + 6000, numbering: "/15", cardSubType: "Swirl", rarity: "Rare" },
+        { ...card, id: card.id + 7000, numbering: "/15", cardSubType: "Laser", rarity: "Rare" },
+        { ...card, id: card.id + 8000, numbering: "/10", cardSubType: "Swirl", rarity: "Épique" },
+        { ...card, id: card.id + 9000, numbering: "/5", cardSubType: "Laser", rarity: "Légendaire" }
       ];
       
+      console.log(`⭐ ${numberedVariants.length} variantes générées pour Base numérotée`);
       return numberedVariants;
     }
     
     // Pour les inserts : gérer les cas spéciaux et variantes
     if (card.cardType?.includes("Insert")) {
+      console.log(`📄 Carte Insert détectée:`, card.cardType);
       // Cas spéciaux : Intergalactic, Next Up, Pennants = 1 seule carte
       if (card.cardType.includes("Intergalactic") || 
           card.cardType.includes("Next Up") || 
           card.cardType.includes("Pennant")) {
+        console.log(`🎯 Cas spécial Insert - pas de variantes`);
         return [card];
       }
       
@@ -85,8 +96,11 @@ export default function CollectionDetail() {
       // Variante numérotée avec /10
       hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10" });
       
+      console.log(`⭐ Génération de ${hitVariants.length} variantes Hit`);
       return hitVariants;
     }
+    
+
     
     // Pour les autographes : pas de variantes (1 seule version)
     if (card.cardType?.includes("Autograph")) {
