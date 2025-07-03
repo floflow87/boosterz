@@ -350,8 +350,7 @@ export default function CollectionDetail() {
       if (activeTab === "Base numérotée") {
         includeCard = card.cardType === "Base numérotée";
       } else if (activeTab === "Hit") {
-        // Toutes les cartes Hit ont exactement le cardType "Hit"
-        includeCard = card.cardType === "Hit";
+        includeCard = card.cardType?.startsWith("Insert ");
       } else if (activeTab === "Autographe") {
         includeCard = card.cardType === "Autographe" || card.cardType?.includes("Autograph");
       } else if (activeTab === "Spéciale") {
