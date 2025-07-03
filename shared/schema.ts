@@ -93,6 +93,7 @@ export const personalCards = pgTable("personal_cards", {
   tradeDescription: text("trade_description"),
   tradeOnly: boolean("trade_only").default(false).notNull(),
   condition: text("condition"),
+  checklistCardId: integer("checklist_card_id"), // Relation vers checklist (FK ajoutée après)
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -112,7 +113,7 @@ export const checklistCards = pgTable("checklist_cards", {
   rarity: text("rarity").notNull(), // "Base", "Commune", "Peu commune", "Rare", "Épique", "Légendaire", "Unique"
   serialNumber: text("serial_number"), // Numéro de série
   numbering: text("numbering"), // Ex: "/199", "/50", "/25", "1/1"
-  baseCardId: text("base_card_id"), // ID de la carte de base associée
+  baseCardId: integer("base_card_id").references(() => checklistCards.id), // ID de la carte de base associée
   isVariant: boolean("is_variant").default(false).notNull(), // Si cette carte est une variante
   variants: text("variants"), // Variantes disponibles
   createdAt: timestamp("created_at").defaultNow().notNull(),
