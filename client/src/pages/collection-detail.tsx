@@ -272,9 +272,14 @@ export default function CollectionDetail() {
   // Update card ownership
   const updateChecklistOwnershipMutation = useMutation({
     mutationFn: async ({ cardId, owned }: { cardId: number; owned: boolean }) => {
-      return apiRequest("PATCH", `/api/checklist-cards/${cardId}/ownership`, { owned });
+      console.log(`🚀 Frontend mutation: Card ${cardId}, Owned: ${owned}`);
+      const result = await apiRequest("PATCH", `/api/checklist-cards/${cardId}/ownership`, { owned });
+      console.log(`✅ Frontend mutation result:`, result);
+      return result;
     },
-    onSuccess: (_, { cardId, owned }) => {
+    onSuccess: (result, { cardId, owned }) => {
+      console.log(`🎉 Mutation SUCCESS: Card ${cardId}, Owned: ${owned}`, result);
+      
       // Force complete data refresh instead of optimistic updates
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/completion-stats`] });
@@ -292,7 +297,7 @@ export default function CollectionDetail() {
       });
     },
     onError: (error: any) => {
-      console.error("Error updating ownership:", error);
+      console.error("❌ Frontend mutation ERROR:", error);
       toast({
         title: "Erreur de mise à jour",
         description: "Impossible de mettre à jour la propriété de la carte.",

@@ -797,12 +797,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const userId = req.user!.id;
       const { owned } = req.body;
       
-      console.log(`API: Updating card ${cardId} ownership for user ${userId}: ${owned}`);
+      console.log(`🎯 API OWNERSHIP UPDATE: Card ${cardId}, User ${userId}, Owned: ${owned}`);
+      console.log(`📋 Request body:`, req.body);
+      console.log(`🔐 User from auth:`, req.user);
       
       const ownership = await storage.updateUserChecklistCardOwnership(userId, cardId, owned);
+      
+      console.log(`✅ Ownership updated successfully:`, ownership);
+      
       res.json({ ownership });
     } catch (error) {
-      console.error('Error updating checklist ownership:', error);
+      console.error('❌ Error updating checklist ownership:', error);
       res.status(500).json({ error: "Erreur lors de la mise à jour de la propriété" });
     }
   });

@@ -1234,10 +1234,14 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserChecklistCardOwnership(userId: number, cardId: number, owned: boolean): Promise<UserCardOwnership> {
+    console.log(`🏪 STORAGE: updateUserChecklistCardOwnership - User ${userId}, Card ${cardId}, Owned ${owned}`);
+    
     // Invalider le cache (simple clear pour éviter les erreurs)
     cache.clear();
+    console.log(`🗑️ Cache cleared`);
     
     // Vérifier si l'enregistrement existe
+    console.log(`🔍 Checking existing ownership for user ${userId}, card ${cardId}`);
     const existing = await db
       .select()
       .from(userCardOwnership)
@@ -1249,8 +1253,11 @@ export class DatabaseStorage implements IStorage {
       )
       .limit(1);
     
+    console.log(`📊 Found ${existing.length} existing records:`, existing);
+    
     if (existing.length > 0) {
       // Mettre à jour l'enregistrement existant
+      console.log(`🔄 Updating existing record for card ${cardId}`);
       const result = await db
         .update(userCardOwnership)
         .set({ 
@@ -1265,9 +1272,11 @@ export class DatabaseStorage implements IStorage {
         )
         .returning();
       
+      console.log(`✅ Update successful:`, result[0]);
       return result[0];
     } else {
       // Créer un nouvel enregistrement
+      console.log(`➕ Creating new ownership record for card ${cardId}`);
       const result = await db
         .insert(userCardOwnership)
         .values({
@@ -1279,6 +1288,7 @@ export class DatabaseStorage implements IStorage {
         })
         .returning();
       
+      console.log(`✅ Insert successful:`, result[0]);
       return result[0];
     }
   }
