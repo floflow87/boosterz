@@ -374,12 +374,12 @@ export default function CollectionDetail() {
       }
 
       if (includeCard) {
-        // Pour les cartes Hit, ne pas grouper par joueur - afficher toutes les cartes
+        // Pour les cartes Hit, ne pas grouper par joueur - afficher toutes les cartes sans variantes
         if (activeTab === "Hit") {
           const cardKey = `${card.id}-${card.playerName}-${card.teamName}-${card.reference}`;
           if (!playerGroups.has(cardKey)) {
-            const variants = getCardVariants(card);
-            playerGroups.set(cardKey, variants[0]);
+            // Pas de variantes pour l'affichage dans l'onglet Hit
+            playerGroups.set(cardKey, card);
           }
         } else {
           // Pour les autres onglets, grouper par joueur comme avant
