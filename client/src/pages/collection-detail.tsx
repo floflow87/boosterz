@@ -356,7 +356,29 @@ export default function CollectionDetail() {
       if (!matchesSearch) return;
 
       // Filtrer par card_type selon l'onglet actif
-      const includeCard = card.cardType === activeTab;
+      let includeCard = false;
+      
+      if (activeTab === "Base numérotée") {
+        includeCard = card.cardType === "Base numérotée";
+      } else if (activeTab === "Hit") {
+        // Inclure toutes les cartes Hit/Insert
+        includeCard = card.cardType === "Hit" || 
+                     card.cardType?.includes("Insert") ||
+                     card.cardType === "Breakthrough" ||
+                     card.cardType === "Hot Rookies" ||
+                     card.cardType === "Intergalactic" ||
+                     card.cardType === "Keepers" ||
+                     card.cardType === "Next Up" ||
+                     card.cardType === "Pennants" ||
+                     card.cardType === "Pure Class" ||
+                     card.cardType === "Score Team";
+      } else if (activeTab === "Autographe") {
+        includeCard = card.cardType === "Autographe" || card.cardType?.includes("Autograph");
+      } else if (activeTab === "Spéciale") {
+        includeCard = card.cardType === "Spéciale";
+      } else {
+        includeCard = card.cardType === activeTab;
+      }
 
       if (includeCard) {
         const playerKey = `${card.playerName}-${card.teamName}`;
