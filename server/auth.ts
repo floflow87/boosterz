@@ -101,7 +101,7 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   console.log('Auth middleware - token:', token);
 
   // Development mode: authenticate with any token as user 1, if no user 1 exists, authenticate as first user
-  if (token === 'test' || !token) {
+  if (process.env.NODE_ENV !== 'production' && (token === 'test' || !token)) {
     console.log('Using development mode authentication');
     try {
       let user = await storage.getUser(1);
@@ -140,14 +140,29 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   }
 
   try {
-    const user = await AuthService.getUserByToken(token);
+    const decoded = AuthService.verifyToken(token);
+    if (!decoded) {
+      return res.status(403).json({ message: 'Invalid token' });
+    }
+
+    const user = await storage.getUser(decoded.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    req.user = user;
+    if (!user.isActive) {
+      return res.status(403).json({ message: 'Compte désactivé' });
+    }
+
+    req.user = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      name: user.name
+    };
     next();
   } catch (error) {
+    console.error('Auth error:', error);
     return res.status(403).json({ message: 'Invalid token' });
   }
 };
