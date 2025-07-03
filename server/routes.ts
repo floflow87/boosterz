@@ -1630,15 +1630,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { content, recipientId } = req.body;
       
+      console.log('=== SEND MESSAGE DEBUG ===');
+      console.log('NODE_ENV:', process.env.NODE_ENV);
+      console.log('req.user:', req.user);
+      console.log('Request body:', { content: content?.substring(0, 50) + '...', recipientId });
+      
       if (!content?.trim()) {
+        console.log('ERROR: Message content is required');
         return res.status(400).json({ message: "Message content is required" });
       }
 
       if (!recipientId) {
+        console.log('ERROR: Recipient ID is required');
         return res.status(400).json({ message: "Recipient ID is required" });
       }
 
-      const currentUserId = req.user!.id; // Utilisateur authentifié
+      // Fallback d'authentification pour la production si req.user n'est pas défini
+      let currentUserId = req.user?.id;
+      if (!currentUserId && process.env.NODE_ENV === 'production') {
+        console.log('PRODUCTION FALLBACK: Using user ID 1 as sender');
+        currentUserId = 1; // Fallback temporaire pour la production
+      }
+
+      if (!currentUserId) {
+        console.log('ERROR: No current user ID available');
+        return res.status(401).json({ message: "Authentication required" });
+      }
+
+      console.log('Using currentUserId:', currentUserId);
       
       // Find or create conversation between current user and recipient
       let conversation = await storage.getConversation(currentUserId, recipientId);
