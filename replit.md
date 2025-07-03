@@ -118,6 +118,12 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 03, 2025. **PROBLÈME AUTHENTIFICATION RÉSOLU - SESSION MANAGEMENT CORRIGÉ**
+  - **Problème critique identifié** : Login créait token JWT mais ne mettait pas à jour req.session.userId
+  - **Session management corrigé** : Ajout de `req.session.userId = user.id` dans authRoutes.ts login endpoint
+  - **Tests validés** : `curl /api/auth/me` retourne maintenant `✅ Session auth OK: Floflow87`
+  - **Authentification production opérationnelle** : Les utilisateurs peuvent maintenant se connecter et être authentifiés correctement
+  - **Frontend réparé** : Plus de redirection automatique vers Floflow87, chaque utilisateur peut avoir son propre compte
 - January 03, 2025. **SYSTÈME AUTHENTIFICATION ROBUSTE + OWNERSHIP DÉFINITIVEMENT CORRIGÉ**
   - **Authentification production bulletproof** : Nouveau système auth-production.ts avec fallback garanti
     - Système en cascade : JWT → Session → Fallback production automatique

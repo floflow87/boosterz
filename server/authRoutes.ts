@@ -320,6 +320,11 @@ router.post('/login', async (req, res) => {
     const token = await AuthService.createSession(user.id);
     console.log('Token created:', token ? 'YES' : 'NO');
 
+    // CRUCIAL: Set session userId for session-based authentication
+    console.log('Setting session userId...');
+    (req as any).session.userId = user.id;
+    console.log('Session userId set to:', (req as any).session.userId);
+
     console.log('=== LOGIN SUCCESS ===');
     res.json({
       message: 'Connexion réussie',

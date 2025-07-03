@@ -107,21 +107,22 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
       }
     }
 
-    // ÉTAPE 3: FALLBACK PRODUCTION GARANTI
-    console.log('🚨 Using production fallback authentication');
+    // ÉTAPE 3: PAS D'AUTHENTIFICATION TROUVÉE
+    console.log('❌ No valid authentication found');
+    console.log('Headers:', req.headers);
+    console.log('Session:', (req as any).session);
     
-    // En production, TOUJOURS utiliser Floflow87 comme fallback
-    const fallbackUser = await storage.getUser(1);
-    if (fallbackUser && fallbackUser.isActive) {
-      req.user = {
-        id: fallbackUser.id,
-        username: fallbackUser.username,
-        email: fallbackUser.email,
-        name: fallbackUser.name
-      };
-      console.log('✅ Fallback auth OK:', fallbackUser.username);
-      return next();
-    }
+    // PLUS DE FALLBACK AUTOMATIQUE - L'utilisateur doit être vraiment connecté
+    return res.status(401).json({ 
+      error: 'Authentication required', 
+      message: 'Veuillez vous connecter',
+      debug: {
+        hasSession: !!(req as any).session?.userId,
+        hasAuthHeader: !!req.headers['authorization'],
+        url: req.url,
+        method: req.method
+      }
+    });
 
     // Si même le fallback échoue, créer un utilisateur d'urgence
     console.log('🆘 Creating emergency user...');
