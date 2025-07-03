@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import authRoutes from "./authRoutes";
 import chatRoutes from "./chatRoutes";
+import adminRoutes from "./adminRoutes";
 import { authenticateToken, optionalAuth, type AuthRequest } from "./auth-production";
 import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
@@ -47,6 +48,7 @@ initializeSampleData();
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.use('/api/auth', authRoutes);
+  app.use('/api/admin', adminRoutes);
   
   // Routes pour les cartes personnelles (Mes cartes)
   app.get("/api/personal-cards", authenticateToken, async (req: AuthRequest, res) => {

@@ -721,4 +721,51 @@ export type ChecklistCard = typeof checklistCards.$inferSelect;
 export type InsertUserCardOwnership = z.infer<typeof insertUserCardOwnershipSchema>;
 export type UserCardOwnership = typeof userCardOwnership.$inferSelect;
 
+// Admin & Permissions Tables
+export const permissions = pgTable("permissions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  role: text("role").notNull().default("user"), // admin, moderator, user
+  canManageUsers: boolean("can_manage_users").default(false).notNull(),
+  canViewLogs: boolean("can_view_logs").default(false).notNull(),
+  canManagePermissions: boolean("can_manage_permissions").default(false).notNull(),
+  canAccessAdmin: boolean("can_access_admin").default(false).notNull(),
+  canModerateContent: boolean("can_moderate_content").default(false).notNull(),
+  canManageDatabase: boolean("can_manage_database").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const systemLogs = pgTable("system_logs", {
+  id: serial("id").primaryKey(),
+  level: text("level").notNull(), // error, warn, info, debug
+  message: text("message").notNull(),
+  endpoint: text("endpoint"),
+  userId: integer("user_id"),
+  userAgent: text("user_agent"),
+  ipAddress: text("ip_address"),
+  requestData: text("request_data"),
+  responseStatus: integer("response_status"),
+  responseTime: integer("response_time"), // in milliseconds
+  stackTrace: text("stack_trace"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Permissions schemas
+export const insertPermissionSchema = createInsertSchema(permissions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSystemLogSchema = createInsertSchema(systemLogs).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
+export type Permission = typeof permissions.$inferSelect;
+export type InsertSystemLog = z.infer<typeof insertSystemLogSchema>;
+export type SystemLog = typeof systemLogs.$inferSelect;
+
 
