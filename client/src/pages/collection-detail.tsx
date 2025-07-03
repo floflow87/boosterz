@@ -20,7 +20,7 @@ export default function CollectionDetail() {
   const params = useParams();
   const [, setLocation] = useLocation();
   const collectionId = params.id ? parseInt(params.id) : 1;
-  const [filter, setFilter] = useState<"all" | "owned" | "missing" | "bases" | "autographs" | "hits" | "special_1_1">("bases");
+  const [activeTab, setActiveTab] = useState<"Spéciale" | "Hit" | "Autographe" | "Base numérotée">("Spéciale");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedCard, setSelectedCard] = useState<Card | null>(null);
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
@@ -243,35 +243,8 @@ export default function CollectionDetail() {
 
       if (!matchesSearch) return;
 
-      let includeCard = false;
-      switch (filter) {
-        case "bases": 
-          // "Bases num." = Parallel Numbered (les 9 variantes par joueur)
-          includeCard = card.cardType === "Parallel Numbered";
-          break;
-
-        case "autographs": 
-          // Autographes (toutes les variantes)
-          includeCard = card.cardType.includes("Autograph");
-          break;
-        case "hits": 
-          // Toutes les cartes Insert
-          includeCard = card.cardType.includes("Insert");
-          break;
-        case "special_1_1": 
-          // Cartes spéciales 1/1 : bases + inserts (sauf Intergalactic, Pennants, Next Up) + tous autographes
-          includeCard = card.cardType === "Base" || 
-                       card.cardType.includes("Autograph") ||
-                       (card.cardType.includes("Insert") && 
-                        !card.cardType.includes("Intergalactic") && 
-                        !card.cardType.includes("Pennants") && 
-                        !card.cardType.includes("Next Up"));
-          break;
-
-        default: 
-          // Par défaut, afficher les bases numérotées
-          includeCard = card.cardType === "Parallel Laser" || card.cardType === "Parallel Swirl";
-      }
+      // Filtrer par card_type selon l'onglet actif
+      const includeCard = card.cardType === activeTab;
 
       if (includeCard) {
         const playerKey = `${card.playerName}-${card.teamName}`;
@@ -285,7 +258,7 @@ export default function CollectionDetail() {
     let sortedCards = Array.from(playerGroups.values());
     
     // Pour les hits, trier par type de carte puis par joueur
-    if (filter === "hits") {
+    if (activeTab === "Hit") {
       sortedCards.sort((a, b) => {
         // D'abord par type de carte
         if (a.cardType !== b.cardType) {
@@ -860,50 +833,51 @@ export default function CollectionDetail() {
         <div className="sticky top-0 z-50 pb-4 mb-2 pt-2 -mx-3 px-3 transition-all duration-300" id="category-tabs">
           <div className="flex space-x-2 overflow-x-auto scrollbar-hide min-h-[52px] items-center pl-2" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             <button
-              onClick={() => setFilter("bases")}
+              onClick={() => setActiveTab("Spéciale")}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-                filter === "bases" 
+                activeTab === "Spéciale" 
+                  ? "bg-black text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+            >
+              Spéciales
+            </button>
+
+            <button
+              onClick={() => setActiveTab("Hit")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                activeTab === "Hit" 
                   ? "text-white shadow-lg transform scale-105" 
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               }`}
-              style={filter === "bases" ? { backgroundColor: '#F37261' } : {}}
+              style={activeTab === "Hit" ? { backgroundColor: '#F37261' } : {}}
             >
-              Bases num.
+              Hits
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("Autographe")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                activeTab === "Autographe" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+              style={activeTab === "Autographe" ? { backgroundColor: '#F37261' } : {}}
+            >
+              Autographes
             </button>
 
-          <button
-            onClick={() => setFilter("hits")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-              filter === "hits" 
-                ? "text-white shadow-lg transform scale-105" 
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-            style={filter === "hits" ? { backgroundColor: '#F37261' } : {}}
-          >
-            Hits
-          </button>
-          <button
-            onClick={() => setFilter("autographs")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-              filter === "autographs" 
-                ? "text-white shadow-lg transform scale-105" 
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-            style={filter === "autographs" ? { backgroundColor: '#F37261' } : {}}
-          >
-            Autographes
-          </button>
-
-          <button
-            onClick={() => setFilter("special_1_1")}
-            className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
-              filter === "special_1_1" 
-                ? "bg-black text-white shadow-lg transform scale-105" 
-                : "bg-gray-700 text-gray-300 hover:bg-gray-600"
-            }`}
-          >
-            Spéciales
-          </button>
+            <button
+              onClick={() => setActiveTab("Base numérotée")}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-300 mr-2 ${
+                activeTab === "Base numérotée" 
+                  ? "text-white shadow-lg transform scale-105" 
+                  : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+              }`}
+              style={activeTab === "Base numérotée" ? { backgroundColor: '#F37261' } : {}}
+            >
+              Bases numérotées
+            </button>
           </div>
         </div>
 
@@ -1876,7 +1850,7 @@ export default function CollectionDetail() {
         }}
         availableCards={cards || []}
         initialCard={selectedCard || undefined}
-        currentFilter={filter}
+        currentFilter={activeTab}
       />
 
       {/* Trade Panel Modal */}
