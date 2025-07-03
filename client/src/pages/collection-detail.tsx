@@ -224,8 +224,8 @@ export default function CollectionDetail() {
   // User checklist ownership queries
   const { data: userOwnership, isLoading: ownershipLoading } = useQuery<{ownership: any[]}>({
     queryKey: [`/api/collections/${collectionId}/checklist-ownership`],
-    staleTime: 10 * 60 * 1000, // Cache étendu à 10 minutes
-    gcTime: 30 * 60 * 1000, // Garde en cache 30 minutes
+    staleTime: 0, // Pas de cache pour debug ownership
+    gcTime: 0, // Pas de cache
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -275,18 +275,8 @@ export default function CollectionDetail() {
       return apiRequest("PATCH", `/api/checklist-cards/${cardId}/ownership`, { owned });
     },
     onSuccess: (_, { cardId, owned }) => {
-      // Mise à jour optimiste du cache
-      queryClient.setQueryData([`/api/collections/${collectionId}/checklist-ownership`], (oldData: any) => {
-        if (!oldData?.ownership) return oldData;
-        return {
-          ...oldData,
-          ownership: oldData.ownership.map((entry: any) =>
-            entry.cardId === cardId ? { ...entry, owned } : entry
-          )
-        };
-      });
-      
-      // Invalider les stats pour recalcul
+      // Force complete data refresh instead of optimistic updates
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/completion-stats`] });
       
       if (owned) {
@@ -294,6 +284,12 @@ export default function CollectionDetail() {
         setPulledCardEffect(cardId);
         setTimeout(() => setPulledCardEffect(null), 2000);
       }
+      
+      toast({
+        title: owned ? "Carte acquise" : "Carte retiree",
+        description: owned ? "La carte a été marquée comme acquise." : "La carte a été marquée comme manquante.",
+        className: owned ? "bg-green-900 border-green-700 text-green-100" : "bg-orange-900 border-orange-700 text-orange-100"
+      });
     },
     onError: (error: any) => {
       console.error("Error updating ownership:", error);
