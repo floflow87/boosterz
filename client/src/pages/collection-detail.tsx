@@ -230,6 +230,8 @@ export default function CollectionDetail() {
     });
   };
 
+
+
   const getUniquePlayerCards = () => {
     if (!cards) return [];
     
@@ -249,8 +251,9 @@ export default function CollectionDetail() {
       if (includeCard) {
         const playerKey = `${card.playerName}-${card.teamName}`;
         if (!playerGroups.has(playerKey)) {
-          // Pour les autographes, on stocke la première carte mais on va gérer les variantes
-          playerGroups.set(playerKey, card);
+          // Stocker la première carte trouvée pour ce joueur
+          const variants = getCardVariants(card);
+          playerGroups.set(playerKey, variants[0]); // Utiliser la première variante comme carte principale
         }
       }
     });
