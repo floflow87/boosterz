@@ -118,6 +118,18 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 02, 2025. **SYSTÈME VARIANTES CARTES COMPLET OPÉRATIONNEL**
+  - **Variantes Base numérotée** : 9 variantes automatiques avec sliders/carrousel
+    - /50 et /35 Laser (Commune), /30-/25 Swirl (Peu commune)
+    - /20-/15 Swirl et Laser (Rare), /10 Swirl (Épique), /5 Laser (Légendaire)
+    - Détection automatique via cardType "Base numérotée"
+  - **Variantes Hit** : 2 variantes avec navigation carrousel
+    - /15 (Rare) et /10 (Épique) avec sliders gauche/droite
+    - Compteur "1/2" affiché en bas à droite
+  - **Variantes Spéciale** : 9 variantes couleur préparées
+    - Orange, Violet, Vert, Bleu, Rouge, Jaune, Rose, Noir, Argent (toutes 1/1 Unique)
+  - **Autographes** : Carte unique sans variantes comme souhaité
+  - **Interface carrousel** : Flèches navigation, compteur position, système complet
 - January 02, 2025. **CHECKLIST COMPLÈTE IMPORTÉE + ONGLETS RÉORGANISÉS SELON DEMANDE UTILISATEUR**
   - **2397 cartes CSV importées avec succès** : Import complet du nouveau fichier utilisateur réalisé
     - Fichier source : `Checklist-Score-Ligue-1-23-24 (1)_1751523526854.csv` (2398 lignes avec header)

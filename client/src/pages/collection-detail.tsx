@@ -76,9 +76,10 @@ export default function CollectionDetail() {
       return numberedVariants;
     }
     
-    // Pour les inserts : gérer les cas spéciaux et variantes
-    if (card.cardType?.includes("Insert")) {
-      console.log(`📄 Carte Insert détectée:`, card.cardType);
+    // Pour les cartes Hit : 2 variantes (/15 et /10)
+    if (card.cardType === "Hit" || card.cardType?.includes("Insert")) {
+      console.log(`📄 Carte Hit détectée:`, card.cardType);
+      
       // Cas spéciaux : Intergalactic, Next Up, Pennants = 1 seule carte
       if (card.cardType.includes("Intergalactic") || 
           card.cardType.includes("Next Up") || 
@@ -91,10 +92,10 @@ export default function CollectionDetail() {
       const hitVariants = [];
       
       // Variante de base avec /15
-      hitVariants.push({ ...card, id: card.id, numbering: "/15" });
+      hitVariants.push({ ...card, id: card.id, numbering: "/15", rarity: "Rare" });
       
       // Variante numérotée avec /10
-      hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10" });
+      hitVariants.push({ ...card, id: card.id + 1000, numbering: "/10", rarity: "Épique" });
       
       console.log(`⭐ Génération de ${hitVariants.length} variantes Hit`);
       return hitVariants;
@@ -103,24 +104,27 @@ export default function CollectionDetail() {
 
     
     // Pour les autographes : pas de variantes (1 seule version)
-    if (card.cardType?.includes("Autograph")) {
+    if (card.cardType === "Autographe" || card.cardType?.includes("Autograph")) {
+      console.log(`✍️ Carte Autographe - pas de variantes`);
       return [card];
     }
     
-    // Pour les cartes spéciales : créer toutes les variantes
-    if (card.cardType === "special_1_1" || card.cardType?.toLowerCase().includes("special")) {
+    // Pour les cartes spéciales : créer toutes les variantes de couleur
+    if (card.cardType === "Spéciale" || card.cardType === "special_1_1" || card.cardType?.toLowerCase().includes("special")) {
+      console.log(`🌟 Carte Spéciale - génération de 9 variantes couleur`);
       const specialVariants = [
-        { ...card, id: card.id + 1000, cardSubType: "Orange", numbering: "1/1" },
-        { ...card, id: card.id + 2000, cardSubType: "Violet", numbering: "1/1" },
-        { ...card, id: card.id + 3000, cardSubType: "Vert", numbering: "1/1" },
-        { ...card, id: card.id + 4000, cardSubType: "Bleu", numbering: "1/1" },
-        { ...card, id: card.id + 5000, cardSubType: "Rouge", numbering: "1/1" },
-        { ...card, id: card.id + 6000, cardSubType: "Jaune", numbering: "1/1" },
-        { ...card, id: card.id + 7000, cardSubType: "Rose", numbering: "1/1" },
-        { ...card, id: card.id + 8000, cardSubType: "Noir", numbering: "1/1" },
-        { ...card, id: card.id + 9000, cardSubType: "Argent", numbering: "1/1" }
+        { ...card, id: card.id + 1000, cardSubType: "Orange", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 2000, cardSubType: "Violet", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 3000, cardSubType: "Vert", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 4000, cardSubType: "Bleu", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 5000, cardSubType: "Rouge", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 6000, cardSubType: "Jaune", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 7000, cardSubType: "Rose", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 8000, cardSubType: "Noir", numbering: "1/1", rarity: "Unique" },
+        { ...card, id: card.id + 9000, cardSubType: "Argent", numbering: "1/1", rarity: "Unique" }
       ];
       
+      console.log(`⭐ ${specialVariants.length} variantes Spéciales générées`);
       return specialVariants;
     }
     
