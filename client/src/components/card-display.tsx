@@ -3,6 +3,7 @@ import { Star, Handshake, Eye, MoreVertical, Share2, Heart, DollarSign, RefreshC
 import { cn } from "@/lib/utils";
 import type { Card } from "@shared/schema";
 import { determineRarity, getRarityInfo } from "@shared/rarity";
+import { CardFlipModal } from "./CardFlipModal";
 import cardDefaultImage from "@assets/f455cf2a-3d9e-456f-a921-3ac0c4507202_1750348552823.png";
 import rookieBadge from "@assets/rc_badge_1751486477447.png";
 
@@ -54,6 +55,7 @@ export default function CardDisplay({
 }: CardDisplayProps) {
   const [imageError, setImageError] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [showFlipModal, setShowFlipModal] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleImageLoad = () => {
@@ -68,6 +70,7 @@ export default function CardDisplay({
 
   const handleCardClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setShowFlipModal(true);
     onCardClick?.(card);
   };
 
@@ -475,6 +478,13 @@ export default function CardDisplay({
           </div>
         )}
       </div>
+      
+      {/* Card Flip Modal */}
+      <CardFlipModal
+        card={card}
+        isOpen={showFlipModal}
+        onClose={() => setShowFlipModal(false)}
+      />
     </div>
   );
 }

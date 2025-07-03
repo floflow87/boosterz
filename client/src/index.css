@@ -442,6 +442,58 @@
 
 
 
+/* Card Flip Animation Styles */
+.card-flip-container {
+  perspective: 1000px;
+  width: 100%;
+  height: 500px;
+}
+
+.card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform-style: preserve-3d;
+}
+
+.card-flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-flip-front,
+.card-flip-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 12px;
+}
+
+.card-flip-back {
+  transform: rotateY(180deg);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fadeInUp.delay-200 {
+  animation-delay: 0.2s;
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-100%) skewX(-12deg);
