@@ -43,11 +43,6 @@ export default function ProfileEdit() {
 
   const currentUser = authData?.user || null;
 
-  // Afficher l'écran de chargement
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
   // Mettre à jour les champs quand les données sont chargées
   useEffect(() => {
     if (currentUser) {

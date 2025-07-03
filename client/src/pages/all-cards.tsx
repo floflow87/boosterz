@@ -8,6 +8,7 @@ import CardAddModal from "@/components/card-add-modal";
 import LoadingScreen from "@/components/LoadingScreen";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import TrophyAvatar from "@/components/TrophyAvatar";
 import goldCardsImage from "@assets/2ba6c853-16ca-4c95-a080-c551c3715411_1750361216149.png";
 import type { User, Collection, Card } from "@shared/schema";
 
@@ -24,12 +25,21 @@ export default function AllCards() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
+  // Get current authenticated user
+  const { data: authData, isLoading: authLoading } = useQuery({
+    queryKey: ['/api/auth/me']
+  });
+  
+  const currentUser = authData?.user;
+
   const { data: user, isLoading: userLoading } = useQuery<User>({
-    queryKey: ["/api/users/1"],
+    queryKey: ["/api/users/me"],
+    enabled: !!currentUser
   });
 
   const { data: collections, isLoading: collectionsLoading } = useQuery<Collection[]>({
-    queryKey: ["/api/users/1/collections"],
+    queryKey: ["/api/users/me/collections"],
+    enabled: !!currentUser
   });
 
   const { data: cards, isLoading: cardsLoading } = useQuery<Card[]>({
@@ -56,7 +66,7 @@ export default function AllCards() {
     return true;
   });
 
-  if (userLoading || collectionsLoading || cardsLoading) {
+  if (authLoading || userLoading || collectionsLoading || cardsLoading) {
     return <LoadingScreen />;
   }
 
@@ -116,9 +126,17 @@ export default function AllCards() {
         {user && (
           <div className="bg-[hsl(214,35%,22%)] rounded-xl p-4 mb-4 gradient-overlay">
             <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-white font-poppins">{user.name}</h2>
-                <p className="text-[hsl(212,23%,69%)] text-sm">@{user.username}</p>
+              <div className="flex items-center space-x-3">
+                <TrophyAvatar 
+                  userId={user.id}
+                  avatar={user.avatar}
+                  size="md"
+                  className="w-12 h-12"
+                />
+                <div>
+                  <h2 className="text-lg font-bold text-white font-poppins">{user.name}</h2>
+                  <p className="text-[hsl(212,23%,69%)] text-sm">@{user.username}</p>
+                </div>
               </div>
               <div className="text-right">
                 <div className="text-xl font-bold text-[hsl(9,85%,67%)]">{user.totalCards?.toLocaleString() || 0}</div>
