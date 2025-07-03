@@ -75,32 +75,37 @@ export default function AdminPage() {
     queryKey: ['/api/auth/me'],
   });
 
-  const { data: userPermissions } = useQuery({
+  const { data: userPermissions } = useQuery<Permission>({
     queryKey: ['/api/admin/permissions/me'],
     enabled: !!currentUser,
   });
 
   // Charger les utilisateurs
-  const { data: users = [] } = useQuery({
+  const { data: users = [] } = useQuery<User[]>({
     queryKey: ['/api/admin/users'],
     enabled: userPermissions?.canManageUsers,
   });
 
   // Charger toutes les permissions
-  const { data: permissions = [] } = useQuery({
+  const { data: permissions = [] } = useQuery<Permission[]>({
     queryKey: ['/api/admin/permissions'],
     enabled: userPermissions?.canManagePermissions,
   });
 
   // Charger les logs système
-  const { data: logs = [], refetch: refetchLogs } = useQuery({
+  const { data: logs = [], refetch: refetchLogs } = useQuery<SystemLog[]>({
     queryKey: ['/api/admin/logs'],
     enabled: userPermissions?.canViewLogs,
     refetchInterval: logsAutoRefresh ? 5000 : false, // Refresh toutes les 5 secondes
   });
 
   // Statistiques système
-  const { data: stats } = useQuery({
+  const { data: stats } = useQuery<{
+    totalUsers: number;
+    activeUsers: number;
+    logsToday: number;
+    errorsToday: number;
+  }>({
     queryKey: ['/api/admin/stats'],
     enabled: userPermissions?.canAccessAdmin,
   });
@@ -108,10 +113,7 @@ export default function AdminPage() {
   // Mutation pour mettre à jour les permissions
   const updatePermissionsMutation = useMutation({
     mutationFn: async ({ userId, permissions }: { userId: number; permissions: Partial<Permission> }) => {
-      return apiRequest(`/api/admin/permissions/${userId}`, {
-        method: 'PATCH',
-        body: permissions,
-      });
+      return apiRequest(`/api/admin/permissions/${userId}`, 'PATCH', permissions);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/permissions'] });
@@ -121,10 +123,7 @@ export default function AdminPage() {
   // Mutation pour activer/désactiver un utilisateur
   const toggleUserMutation = useMutation({
     mutationFn: async ({ userId, isActive }: { userId: number; isActive: boolean }) => {
-      return apiRequest(`/api/admin/users/${userId}/toggle`, {
-        method: 'PATCH',
-        body: { isActive },
-      });
+      return apiRequest(`/api/admin/users/${userId}/toggle`, 'PATCH', { isActive });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
