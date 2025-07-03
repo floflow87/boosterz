@@ -103,23 +103,28 @@ export default function CollectionDetail() {
     
 
     
-    // Pour les autographes : détection par cardSubType "Autographe" dans les cartes Spéciales
+    // Pour les autographes : utiliser les vraies variantes de la base de données
     if (card.cardType === "Spéciale" && card.cardSubType === "Autographe") {
-      console.log(`✍️ Carte Autographe (Spéciale-Autographe) - génération variantes numérotées`);
+      console.log(`✍️ Carte Autographe (Spéciale-Autographe) - recherche variantes réelles`);
       
-      // Générer les variantes d'autographes selon le fichier Excel
-      const autographVariants = [
-        { ...card, id: card.id, numbering: "/199", rarity: "Commune" },
-        { ...card, id: card.id + 1000, numbering: "/99", rarity: "Peu commune" },
-        { ...card, id: card.id + 2000, numbering: "/49", rarity: "Rare" },
-        { ...card, id: card.id + 3000, numbering: "/25", rarity: "Rare" },
-        { ...card, id: card.id + 4000, numbering: "/10", rarity: "Épique" },
-        { ...card, id: card.id + 5000, numbering: "/5", rarity: "Épique" },
-        { ...card, id: card.id + 6000, numbering: "/3", rarity: "Légendaire" },
-        { ...card, id: card.id + 7000, numbering: "/2", rarity: "Légendaire" }
-      ];
+      // Chercher toutes les cartes d'autographe pour ce joueur dans la base de données
+      const autographVariants = cards?.filter(c => 
+        c.playerName === card.playerName && 
+        c.teamName === card.teamName && 
+        (
+          (c.cardType === "Spéciale" && c.cardSubType === "Autographe") ||
+          (c.cardType === "Autographe" && c.cardSubType === "Autographe")
+        )
+      ).sort((a, b) => {
+        // Trier par numérotation : 1/1 d'abord, puis par ordre décroissant
+        if (a.numbering === "1/1") return -1;
+        if (b.numbering === "1/1") return 1;
+        const aNum = parseInt(a.numbering?.replace("/", "") || "0");
+        const bNum = parseInt(b.numbering?.replace("/", "") || "0");
+        return bNum - aNum; // Ordre décroissant pour les numérotées
+      }) || [card];
       
-      console.log(`⭐ ${autographVariants.length} variantes Autographes générées`);
+      console.log(`⭐ ${autographVariants.length} variantes Autographes trouvées pour ${card.playerName}`);
       return autographVariants;
     }
     
