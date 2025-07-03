@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { AuthService, authenticateToken, type AuthRequest } from './auth';
+import { AuthService, authenticateToken, type AuthRequest } from './auth-production';
 import { storage } from './storage';
 import { insertUserSchema } from '@shared/schema';
 import { z } from 'zod';

@@ -473,16 +473,33 @@ export default function CollectionDetail() {
   const handleCardSelection = (cardId: number, checked: boolean) => {
     console.log("🎯 handleCardSelection - cardId:", cardId, "checked:", checked);
     
-    // Pour les variantes dynamiques, on doit envoyer le vrai ID de la base, pas l'ID généré
-    const realCard = cards?.find(c => c.id === cardId);
+    // MAPPING INTELLIGENT: Chercher carte réelle par recherche intelligente
+    let realCard = cards?.find(c => c.id === cardId);
+    
     if (!realCard) {
-      console.error("❌ Carte non trouvée avec ID:", cardId);
+      // ID généré dynamiquement - rechercher par propriétés
+      console.log("🔍 ID généré détecté, recherche par propriétés...");
+      
+      // Parcourir toutes les cartes et leurs variantes pour trouver le mapping
+      for (const card of cards || []) {
+        const variants = getCardVariants(card);
+        const matchingVariant = variants.find(v => v.id === cardId);
+        if (matchingVariant) {
+          realCard = card; // Utiliser la carte de base
+          console.log("✅ Mapping trouvé:", card.playerName, card.teamName, "- ID réel:", card.id);
+          break;
+        }
+      }
+    }
+    
+    if (!realCard) {
+      console.error("❌ Aucune carte trouvée pour ID:", cardId);
       return;
     }
     
-    console.log("🔍 Carte trouvée:", realCard.playerName, "- ID réel:", realCard.id);
+    console.log("🎯 Mutation ownership - Carte:", realCard.playerName, "- ID:", realCard.id, "- Owned:", checked);
     
-    // Utiliser directement la mutation avec le vrai ID de la carte
+    // Utiliser l'ID de la carte de base
     updateChecklistOwnershipMutation.mutate({ 
       cardId: realCard.id, 
       owned: checked 
@@ -1197,7 +1214,7 @@ export default function CollectionDetail() {
                 </div>
                 
                 {/* Ownership Status */}
-                {ownershipMap.get(currentVariant.id) && (
+                {ownershipMap.get(card.id) && (
                   <div className="absolute top-8 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded">
                     Acquise
                   </div>
@@ -1299,27 +1316,15 @@ export default function CollectionDetail() {
                   {/* Checkbox */}
                   <input
                     type="checkbox"
-                    checked={ownershipMap.get(currentVariant.realId || currentVariant.id)}
+                    checked={ownershipMap.get(card.id)}
                     onChange={(e) => {
                       e.stopPropagation();
                       
-                      // Trouver la vraie carte correspondante dans la base
-                      const realCard = cards?.find(c => 
-                        c.playerName === currentVariant.playerName && 
-                        c.teamName === currentVariant.teamName &&
-                        c.cardType === currentVariant.cardType
-                      );
+                      console.log("🎯 CHECKBOX CLICKED - Carte:", card.playerName, "ID réel:", card.id, "checked:", e.target.checked);
                       
-                      if (!realCard) {
-                        console.error("❌ Impossible de trouver la carte réelle pour:", currentVariant.playerName);
-                        return;
-                      }
-                      
-                      console.log("🎯 CHECKBOX CLICKED - Carte:", realCard.playerName, "ID réel:", realCard.id, "checked:", e.target.checked);
-                      
-                      // Utiliser le vrai ID de la carte trouvée
+                      // Utiliser directement l'ID de la carte de base
                       updateChecklistOwnershipMutation.mutate({ 
-                        cardId: realCard.id, 
+                        cardId: card.id, 
                         owned: e.target.checked 
                       });
                     }}

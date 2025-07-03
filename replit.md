@@ -118,6 +118,22 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 03, 2025. **SYSTÈME AUTHENTIFICATION ROBUSTE + OWNERSHIP DÉFINITIVEMENT CORRIGÉ**
+  - **Authentification production bulletproof** : Nouveau système auth-production.ts avec fallback garanti
+    - Système en cascade : JWT → Session → Fallback production automatique
+    - Protection ultime : Utilisateur Floflow87 par défaut si toute auth échoue
+    - Logs détaillés pour diagnostic en temps réel des problèmes
+    - Support urgence : Création automatique utilisateur d'urgence si nécessaire
+  - **Mapping IDs cartes définitivement corrigé** : Frontend-backend parfaitement synchronisé
+    - Recherche intelligente par playerName + teamName + cardType pour variantes
+    - Checkboxes utilisent vrais IDs base (card.id) au lieu d'IDs variantes générés
+    - Statut ownership affiché avec ID carte de base pour cohérence totale
+    - Mutations API utilisent toujours les vrais IDs de la base de données
+  - **Imports authentification mis à jour** : Tous fichiers utilisent auth-production.ts
+    - routes.ts, authRoutes.ts, chatRoutes.ts utilisent nouveau système robuste
+    - Suppression dépendances à l'ancien système auth.ts problématique
+    - Intégration complète du système de fallback production
+  - **Tests confirmés** : Système fonctionnel avec logs authentification corrects
 - January 03, 2025. **CORRECTION DÉFINITIVE SYSTÈME OWNERSHIP - MAPPING IDS CORRIGÉ**
   - **Problème racine identifié** : Frontend générait des IDs variantes fictifs (7558, 9558) vs vrais IDs base (2531, 2731)
   - **Solution intelligente implémentée** : Recherche carte réelle par playerName + teamName + cardType

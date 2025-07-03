@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import authRoutes from "./authRoutes";
 import chatRoutes from "./chatRoutes";
-import { authenticateToken, optionalAuth, type AuthRequest } from "./auth";
+import { authenticateToken, optionalAuth, type AuthRequest } from "./auth-production";
 import { CardRecognitionEngine } from "./cardRecognition";
 // import { performHealthCheck } from "./healthcheck";
 import type { Card, PersonalCard, InsertPersonalCard, Deck, InsertDeck, DeckCard, InsertDeckCard } from "@shared/schema";
