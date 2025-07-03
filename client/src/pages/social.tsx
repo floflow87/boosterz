@@ -550,9 +550,7 @@ export default function Social() {
     user.id !== currentUser?.user?.id
   );
 
-  console.log('Debug - currentUser:', currentUser);
-  console.log('Debug - users array:', users);
-  console.log('Debug - displayedUsers:', displayedUsers);
+
 
   // Close autocomplete when clicking outside
   useEffect(() => {

@@ -585,16 +585,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get user profile
   app.get("/api/users/:id", optionalAuth, async (req: AuthRequest, res) => {
     try {
+      console.log(`=== GET /api/users/${req.params.id} START ===`);
       const userId = parseInt(req.params.id);
+      console.log(`Parsed userId: ${userId}`);
+      
       const user = await storage.getUser(userId);
+      console.log(`User found:`, user ? `ID ${user.id}, ${user.username}` : 'null');
       
       if (!user) {
+        console.log(`User ${userId} not found, returning 404`);
         return res.status(404).json({ message: "User not found" });
       }
       
       // Get real counts from database
+      console.log(`Getting followers count for user ${userId}...`);
       const followersCount = await storage.getFollowersCount(userId);
+      console.log(`Followers count: ${followersCount}`);
+      
+      console.log(`Getting following count for user ${userId}...`);
       const followingCount = await storage.getFollowingCount(userId);
+      console.log(`Following count: ${followingCount}`);
       
       // Get decks count directly from database
       const userDecks = await db.select().from(decks).where(eq(decks.userId, userId));
@@ -638,8 +648,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         isFollowing
       });
     } catch (error) {
-      console.error('Error fetching user profile:', error);
-      res.status(500).json({ message: "Internal server error" });
+      console.error(`=== ERROR in GET /api/users/${req.params.id} ===`);
+      console.error('Error details:', error);
+      console.error('Error stack:', error instanceof Error ? error.stack : 'No stack available');
+      console.error('Request params:', req.params);
+      console.error('Request user:', req.user);
+      console.error(`=== END ERROR ===`);
+      res.status(500).json({ message: "Internal server error", details: error instanceof Error ? error.message : 'Unknown error' });
     }
   });
 
