@@ -350,15 +350,17 @@ export default function CollectionDetail() {
       if (activeTab === "Base numérotée") {
         includeCard = card.cardType === "Base numérotée";
       } else if (activeTab === "Hit") {
-        console.log(`🧪 Debug carte: ${card.playerName} - cardType: ${card.cardType}`);
-        includeCard = card.cardType?.includes("Insert");
+        includeCard = card.cardType === "Hit" || card.cardType?.includes("Insert");
         if (includeCard) {
           console.log(`✅ Carte Hit trouvée: ${card.playerName} - ${card.cardType}`);
         }
       } else if (activeTab === "Autographe") {
         includeCard = card.cardType === "Autographe" || card.cardType?.includes("Autograph");
       } else if (activeTab === "Spéciale") {
-        includeCard = card.cardType === "special_1_1" || card.cardType === "Spéciale";
+        // Les cartes avec référence 1-338 selon le CSV sont des Spéciales
+        const cardRef = parseInt(card.reference);
+        includeCard = card.cardType === "special_1_1" || card.cardType === "Spéciale" || 
+                     (cardRef >= 1 && cardRef <= 338);
       } else {
         includeCard = card.cardType === activeTab;
       }
