@@ -1299,10 +1299,16 @@ export default function CollectionDetail() {
                   {/* Checkbox */}
                   <input
                     type="checkbox"
-                    checked={isAnyVariantSelected}
+                    checked={ownershipMap.get(currentVariant.id)}
                     onChange={(e) => {
                       e.stopPropagation();
-                      handleCardSelection(currentVariant.id, e.target.checked);
+                      console.log("🎯 CHECKBOX CLICKED - ID:", currentVariant.id, "checked:", e.target.checked);
+                      
+                      // Utiliser directement la mutation avec le vrai ID
+                      updateChecklistOwnershipMutation.mutate({ 
+                        cardId: currentVariant.id, 
+                        owned: e.target.checked 
+                      });
                     }}
                     className="w-4 h-4 rounded border-2 border-gray-300 bg-white checked:bg-blue-500 checked:border-blue-500"
                   />
