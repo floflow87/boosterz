@@ -280,9 +280,12 @@ export default function CollectionDetail() {
     onSuccess: (result, { cardId, owned }) => {
       console.log(`🎉 Mutation SUCCESS: Card ${cardId}, Owned: ${owned}`, result);
       
-      // Force complete data refresh instead of optimistic updates
+      // Force complete data refresh with immediate refetch
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
       queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/completion-stats`] });
+      
+      // Force immediate refetch to update UI
+      queryClient.refetchQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
       
       if (owned) {
         // Effet visuel pour carte obtenue
