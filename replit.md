@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 03, 2025. **ERREUR CHECKBOXES RÉSOLUE + OWNERSHIP SYSTÈME CORRIGÉ**
+  - **Contrainte foreign key problématique supprimée** : FK user_card_ownership pointait vers table cards au lieu de checklist_cards
+  - **IDs de variantes synchronisés** : Problème entre IDs générés frontend (7558, 9558) vs vrais IDs base (2531-4390)  
+  - **Ownership réinitialisé** : Toutes cartes utilisateur remises à owned=false par défaut
+  - **Checkboxes sélection multiple opérationnelles** : Codes 200 au lieu de 500, système fonctionnel
+  - **Architecture clarifiée** : user_card_ownership utilise les vrais IDs de checklist_cards
+  - Résolution temporaire sans FK pour permettre fonctionnement immédiat
 - January 03, 2025. **OPTIMISATION PRODUCTION COMPLÈTE + ARCHITECTURE DATABASE AMÉLIORÉE**
   - **Relations FK manquantes ajoutées** : Contraintes foreign key pour `base_card_id` dans `checklist_cards` 
     - FK `checklist_card_id` dans `personal_cards` et `cards` vers `checklist_cards(id)`
