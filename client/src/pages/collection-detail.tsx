@@ -374,11 +374,20 @@ export default function CollectionDetail() {
       }
 
       if (includeCard) {
-        const playerKey = `${card.playerName}-${card.teamName}`;
-        if (!playerGroups.has(playerKey)) {
-          // Stocker la première carte trouvée pour ce joueur
-          const variants = getCardVariants(card);
-          playerGroups.set(playerKey, variants[0]); // Utiliser la première variante comme carte principale
+        // Pour les cartes Hit, ne pas grouper par joueur - afficher toutes les cartes
+        if (activeTab === "Hit") {
+          const cardKey = `${card.id}-${card.playerName}-${card.teamName}-${card.reference}`;
+          if (!playerGroups.has(cardKey)) {
+            const variants = getCardVariants(card);
+            playerGroups.set(cardKey, variants[0]);
+          }
+        } else {
+          // Pour les autres onglets, grouper par joueur comme avant
+          const playerKey = `${card.playerName}-${card.teamName}`;
+          if (!playerGroups.has(playerKey)) {
+            const variants = getCardVariants(card);
+            playerGroups.set(playerKey, variants[0]);
+          }
         }
       }
     });
