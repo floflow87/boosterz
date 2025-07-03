@@ -103,9 +103,9 @@ export default function CollectionDetail() {
     
 
     
-    // Pour les autographes : pas de variantes selon le fichier Excel de référence
-    if (card.cardType === "Autographe" || card.cardType?.includes("Autograph")) {
-      console.log(`✍️ Carte Autographe - carte unique selon fichier Excel`);
+    // Pour les autographes : détection par cardSubType "Autographe" dans les cartes Spéciales
+    if (card.cardType === "Spéciale" && card.cardSubType === "Autographe") {
+      console.log(`✍️ Carte Autographe (Spéciale-Autographe) - carte unique selon fichier Excel`);
       return [card];
     }
     
@@ -311,7 +311,7 @@ export default function CollectionDetail() {
     return cards.filter(card => 
       card.playerName === playerName && 
       card.teamName === teamName && 
-      card.cardType.includes("Autograph") &&
+      (card.cardType === "Spéciale" && card.cardSubType === "Autographe") &&
       card.numbering !== "/1" // Exclude 1/1 cards
     ).sort((a, b) => {
       // Trier par ordre de rareté : numérotées par ordre décroissant
@@ -695,13 +695,13 @@ export default function CollectionDetail() {
     }
     
     // Gold brillant pour tous les autographes
-    if (card.cardType.includes("Autograph")) {
+    if (card.cardType === "Spéciale" && card.cardSubType === "Autographe") {
       return "border-yellow-500 shadow-lg shadow-yellow-500/50";
     }
     
     // Noir pour les spéciales 1/1
     if (card.cardType === "Base" || 
-        card.cardType.includes("Autograph") ||
+        (card.cardType === "Spéciale" && card.cardSubType === "Autographe") ||
         (card.cardType.includes("Insert") && 
          !card.cardType.includes("Intergalactic") && 
          !card.cardType.includes("Pennants") && 
@@ -732,13 +732,13 @@ export default function CollectionDetail() {
     }
     
     // Gold pour tous les autographes
-    if (card.cardType.includes("Autograph")) {
+    if (card.cardType === "Spéciale" && card.cardSubType === "Autographe") {
       return "pulse-shadow-yellow";
     }
     
     // Noir pour les spéciales 1/1
     if (card.cardType === "Base" || 
-        card.cardType.includes("Autograph") ||
+        (card.cardType === "Spéciale" && card.cardSubType === "Autographe") ||
         (card.cardType.includes("Insert") && 
          !card.cardType.includes("Intergalactic") && 
          !card.cardType.includes("Pennants") && 
@@ -771,7 +771,7 @@ export default function CollectionDetail() {
     }
     
     // Pour les autographes
-    if (card.cardType?.includes("Autograph")) {
+    if (card.cardType === "Spéciale" && card.cardSubType === "Autographe") {
       return `Autographe ${card.numbering || "/X"}`;
     }
     
