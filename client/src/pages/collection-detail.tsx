@@ -350,6 +350,7 @@ export default function CollectionDetail() {
       if (activeTab === "Base numérotée") {
         includeCard = card.cardType === "Base numérotée";
       } else if (activeTab === "Hit") {
+        console.log(`🧪 Debug carte: ${card.playerName} - cardType: ${card.cardType}`);
         includeCard = card.cardType?.includes("Insert");
         if (includeCard) {
           console.log(`✅ Carte Hit trouvée: ${card.playerName} - ${card.cardType}`);
@@ -357,7 +358,7 @@ export default function CollectionDetail() {
       } else if (activeTab === "Autographe") {
         includeCard = card.cardType === "Autographe" || card.cardType?.includes("Autograph");
       } else if (activeTab === "Spéciale") {
-        includeCard = card.cardType === "Spéciale";
+        includeCard = card.cardType === "special_1_1" || card.cardType === "Spéciale";
       } else {
         includeCard = card.cardType === activeTab;
       }
