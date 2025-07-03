@@ -471,29 +471,22 @@ export default function CollectionDetail() {
 
   // Bulk actions functions
   const handleCardSelection = (cardId: number, checked: boolean) => {
-    const newSelection = new Set(selectedCards);
+    console.log("🎯 handleCardSelection - cardId:", cardId, "checked:", checked);
     
-    // Find the card being selected/deselected
-    const targetCard = cards?.find(c => c.id === cardId);
-    if (!targetCard) return;
-    
-    // Get all variants for this player
-    const variants = getCardVariants(targetCard);
-    
-    if (checked) {
-      // Add ALL variants for this player
-      variants.forEach(variant => {
-        newSelection.add(variant.id);
-      });
-    } else {
-      // Remove ALL variants for this player
-      variants.forEach(variant => {
-        newSelection.delete(variant.id);
-      });
+    // Pour les variantes dynamiques, on doit envoyer le vrai ID de la base, pas l'ID généré
+    const realCard = cards?.find(c => c.id === cardId);
+    if (!realCard) {
+      console.error("❌ Carte non trouvée avec ID:", cardId);
+      return;
     }
     
-    setSelectedCards(newSelection);
-    setShowBulkActions(newSelection.size > 0);
+    console.log("🔍 Carte trouvée:", realCard.playerName, "- ID réel:", realCard.id);
+    
+    // Utiliser directement la mutation avec le vrai ID de la carte
+    updateChecklistOwnershipMutation.mutate({ 
+      cardId: realCard.id, 
+      owned: checked 
+    });
   };
 
   const handleSelectAll = () => {
