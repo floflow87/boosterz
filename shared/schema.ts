@@ -116,6 +116,7 @@ export const checklistCards = pgTable("checklist_cards", {
   isVariant: boolean("is_variant").default(false).notNull(), // Si cette carte est une variante
   variants: text("variants"), // Variantes disponibles
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => ({
   uniqueCollectionReference: unique().on(table.collectionId, table.reference),
 }));

@@ -454,7 +454,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.json([]);
       }
       
-      const followedUserIds = followedUsers.map(f => f.followingId);
+      const followedUserIds = followedUsers.map((f: any) => f.followingId);
       
       // Get posts from followed users UNIQUEMENT - optimized query without subqueries
       const feedPosts = await db.select({
@@ -2398,7 +2398,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .from(postLikes)
         .where(eq(postLikes.userId, userId));
       
-      const likedPostIds = userLikes.map(like => like.postId);
+      const likedPostIds = userLikes.map((like: any) => like.postId);
       console.log('User likes found:', likedPostIds);
       res.json(likedPostIds);
     } catch (error) {
@@ -2431,7 +2431,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       .orderBy(desc(postComments.createdAt));
 
       // Restructurer les données pour inclure l'objet user
-      const comments = commentsData.map(comment => ({
+      const comments = commentsData.map((comment: any) => ({
         id: comment.id,
         content: comment.content,
         createdAt: comment.createdAt,
