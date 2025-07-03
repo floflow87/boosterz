@@ -196,11 +196,24 @@ export default function CollectionDetail() {
   // Legacy mutation (replaced by updateChecklistOwnershipMutation)
   const toggleOwnershipMutation = useMutation({
     mutationFn: async ({ cardId, isOwned }: { cardId: number; isOwned: boolean }) => {
-      // Use new checklist ownership system
-      return updateChecklistOwnershipMutation.mutateAsync({ cardId, owned: isOwned });
+      console.log(`🔄 toggleOwnershipMutation: Card ${cardId}, IsOwned: ${isOwned}`);
+      // Use new checklist ownership system directly
+      const result = await apiRequest("PATCH", `/api/checklist-cards/${cardId}/ownership`, { owned: isOwned });
+      console.log(`✅ toggleOwnershipMutation result:`, result);
+      return result;
     },
-    onSuccess: (_, { cardId, isOwned }) => {
-      // Effects are handled by updateChecklistOwnershipMutation
+    onSuccess: (result, { cardId, isOwned }) => {
+      console.log(`🎉 toggleOwnershipMutation SUCCESS: Card ${cardId}, IsOwned: ${isOwned}`, result);
+      
+      // Force complete data refresh
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
+      queryClient.invalidateQueries({ queryKey: [`/api/collections/${collectionId}/completion-stats`] });
+      
+      // Force immediate refetch to update UI
+      queryClient.refetchQueries({ queryKey: [`/api/collections/${collectionId}/checklist-ownership`] });
+    },
+    onError: (error: any) => {
+      console.error("❌ toggleOwnershipMutation ERROR:", error);
     }
   });
 
