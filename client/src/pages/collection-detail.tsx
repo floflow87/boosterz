@@ -1299,14 +1299,27 @@ export default function CollectionDetail() {
                   {/* Checkbox */}
                   <input
                     type="checkbox"
-                    checked={ownershipMap.get(currentVariant.id)}
+                    checked={ownershipMap.get(currentVariant.realId || currentVariant.id)}
                     onChange={(e) => {
                       e.stopPropagation();
-                      console.log("🎯 CHECKBOX CLICKED - ID:", currentVariant.id, "checked:", e.target.checked);
                       
-                      // Utiliser directement la mutation avec le vrai ID
+                      // Trouver la vraie carte correspondante dans la base
+                      const realCard = cards?.find(c => 
+                        c.playerName === currentVariant.playerName && 
+                        c.teamName === currentVariant.teamName &&
+                        c.cardType === currentVariant.cardType
+                      );
+                      
+                      if (!realCard) {
+                        console.error("❌ Impossible de trouver la carte réelle pour:", currentVariant.playerName);
+                        return;
+                      }
+                      
+                      console.log("🎯 CHECKBOX CLICKED - Carte:", realCard.playerName, "ID réel:", realCard.id, "checked:", e.target.checked);
+                      
+                      // Utiliser le vrai ID de la carte trouvée
                       updateChecklistOwnershipMutation.mutate({ 
-                        cardId: currentVariant.id, 
+                        cardId: realCard.id, 
                         owned: e.target.checked 
                       });
                     }}
@@ -1337,7 +1350,17 @@ export default function CollectionDetail() {
 
                   {/* Status indicator */}
                   <div className="w-3 h-3 rounded-full flex-shrink-0" 
-                       style={{ backgroundColor: ownershipMap.get(currentVariant.id) ? '#10B981' : '#EF4444' }}>
+                       style={{ 
+                         backgroundColor: (() => {
+                           // Trouver la vraie carte pour l'état de propriété
+                           const realCard = cards?.find(c => 
+                             c.playerName === currentVariant.playerName && 
+                             c.teamName === currentVariant.teamName &&
+                             c.cardType === currentVariant.cardType
+                           );
+                           return realCard && ownershipMap.get(realCard.id) ? '#10B981' : '#EF4444';
+                         })()
+                       }}>
                   </div>
                 </div>
               );

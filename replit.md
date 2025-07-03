@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 03, 2025. **CORRECTION DÉFINITIVE SYSTÈME OWNERSHIP - MAPPING IDS CORRIGÉ**
+  - **Problème racine identifié** : Frontend générait des IDs variantes fictifs (7558, 9558) vs vrais IDs base (2531, 2731)
+  - **Solution intelligente implémentée** : Recherche carte réelle par playerName + teamName + cardType
+  - **Checkboxes entièrement refactorées** : Utilisation des vrais IDs via mapping intelligent
+  - **API testée et fonctionnelle** : Backend confirme updates corrects (carte 2531 → owned=true)
+  - **Système ownership robuste** : Plus de décalage IDs, synchronisation frontend-backend garantie
+  - **Affichage statut corrigé** : Indicateurs visuels utilisent les vrais IDs pour l'état de propriété
 - January 03, 2025. **ERREUR CHECKBOXES RÉSOLUE + OWNERSHIP SYSTÈME CORRIGÉ**
   - **Contrainte foreign key problématique supprimée** : FK user_card_ownership pointait vers table cards au lieu de checklist_cards
   - **IDs de variantes synchronisés** : Problème entre IDs générés frontend (7558, 9558) vs vrais IDs base (2531-4390)  
