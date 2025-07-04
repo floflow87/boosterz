@@ -599,7 +599,7 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   reference: z.string().nullable().optional(),
   numbering: z.string().nullable().optional(),
   season: z.string().nullable().optional(),
-  collectionId: z.number().nullable().optional(), // Collection maintenant optionnelle
+  collectionId: z.number().nullable().optional(), // Collection ajoutée pour la logique frontend
   imageUrl: z.string().nullable().optional(),
   salePrice: z.string().nullable().optional(),
   saleDescription: z.string().nullable().optional(),

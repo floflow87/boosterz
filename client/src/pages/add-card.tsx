@@ -457,7 +457,7 @@ export default function AddCard() {
               {/* Type de collection et saison côte à côte */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="collectionType" className="text-white mb-2 block">Type de collection <span className="text-gray-400">(optionnel)</span></Label>
+                  <Label htmlFor="collectionType" className="text-white mb-2 block">Collection <span className="text-gray-400">(optionnel)</span></Label>
                   <Select value={collectionType} onValueChange={(value) => {
                     setCollectionType(value);
                     setSeason(""); // Reset saison quand on change le type

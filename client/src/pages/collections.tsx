@@ -760,10 +760,9 @@ export default function Collections() {
       queryClient.invalidateQueries({ queryKey: ["/api/cards/marketplace"] });
       queryClient.invalidateQueries({ queryKey: ["/api/decks"] });
       
-      // Forcer le rechargement immédiat avec un cache à 0
+      // Forcer le rechargement immédiat
       queryClient.refetchQueries({ 
         queryKey: ["/api/users/me/collections"],
-        staleTime: 0,
         type: 'active'
       });
       
@@ -1280,7 +1279,7 @@ export default function Collections() {
           <div className="space-y-4">
             <div className="mb-6">
               <h3 className="text-lg font-bold text-white font-poppins mb-4">
-                Mes cartes ({personalCards.length} cartes au total)
+                Mes cartes
               </h3>
               
               {/* Controls Row - Filter Tabs and View Icons */}
@@ -1716,13 +1715,15 @@ export default function Collections() {
                   
                   {/* Card Details - Structured two-column layout */}
                   <div className="space-y-6 text-white">
-                    {/* Description Section */}
-                    <div className="bg-[hsl(214,35%,18%)] rounded-xl p-6 border border-[hsl(214,35%,25%)]">
-                      <h3 className="text-lg font-bold text-white mb-4">Description</h3>
-                      <p className="text-gray-300 text-sm leading-relaxed">
-                        {selectedCard.saleDescription || selectedCard.tradeDescription || "Carte en excellent état, sortie directement du pack"}
-                      </p>
-                    </div>
+                    {/* Description Section - seulement si une description existe */}
+                    {(selectedCard.saleDescription || selectedCard.tradeDescription) && (
+                      <div className="bg-[hsl(214,35%,18%)] rounded-xl p-6 border border-[hsl(214,35%,25%)]">
+                        <h3 className="text-lg font-bold text-white mb-4">Description</h3>
+                        <p className="text-gray-300 text-sm leading-relaxed">
+                          {selectedCard.saleDescription || selectedCard.tradeDescription}
+                        </p>
+                      </div>
+                    )}
 
                     {/* Information Section - Two columns */}
                     <div className="bg-[hsl(214,35%,18%)] rounded-xl p-6 border border-[hsl(214,35%,25%)]">
