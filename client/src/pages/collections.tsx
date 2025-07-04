@@ -1729,21 +1729,25 @@ export default function Collections() {
                       <h3 className="text-lg font-bold text-white mb-6">Informations</h3>
                       
                       <div className="space-y-4">
-                        {/* Collection */}
-                        <div className="grid grid-cols-3 gap-4 items-center">
-                          <span className="text-gray-400 text-sm font-medium">Collection:</span>
-                          <span className="col-span-2 text-white text-sm">
-                            {collections?.find(c => c.id === selectedCard.collectionId)?.name || "Score Ligue 1"}
-                          </span>
-                        </div>
+                        {/* Collection - seulement si la carte a une collection */}
+                        {selectedCard.collectionId && (
+                          <div className="grid grid-cols-3 gap-4 items-center">
+                            <span className="text-gray-400 text-sm font-medium">Collection:</span>
+                            <span className="col-span-2 text-white text-sm">
+                              {collections?.find(c => c.id === selectedCard.collectionId)?.name || "Collection inconnue"}
+                            </span>
+                          </div>
+                        )}
 
-                        {/* Season */}
-                        <div className="grid grid-cols-3 gap-4 items-center">
-                          <span className="text-gray-400 text-sm font-medium">Saison:</span>
-                          <span className="col-span-2 text-white text-sm">
-                            {selectedCard.season || "23/24"}
-                          </span>
-                        </div>
+                        {/* Season - seulement si la carte a une saison */}
+                        {selectedCard.season && (
+                          <div className="grid grid-cols-3 gap-4 items-center">
+                            <span className="text-gray-400 text-sm font-medium">Saison:</span>
+                            <span className="col-span-2 text-white text-sm">
+                              {selectedCard.season}
+                            </span>
+                          </div>
+                        )}
 
                         {/* Card Type */}
                         <div className="grid grid-cols-3 gap-4 items-center">
