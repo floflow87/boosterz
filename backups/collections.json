@@ -1,0 +1,46 @@
+[
+  {
+    "id": 5,
+    "user_id": 999,
+    "name": "Panini NBA 2023-24",
+    "season": "2023-24",
+    "total_cards": 300,
+    "owned_cards": 185,
+    "completion_percentage": 61.7,
+    "image_url": "https://example.com/nba-2023.jpg",
+    "background_color": "#1E40AF"
+  },
+  {
+    "id": 6,
+    "user_id": 999,
+    "name": "Topps UEFA Champions League 2024",
+    "season": "2024",
+    "total_cards": 450,
+    "owned_cards": 290,
+    "completion_percentage": 64.4,
+    "image_url": "https://example.com/ucl-2024.jpg",
+    "background_color": "#7C3AED"
+  },
+  {
+    "id": 7,
+    "user_id": 999,
+    "name": "Panini FIFA World Cup Qatar 2022",
+    "season": "2022",
+    "total_cards": 670,
+    "owned_cards": 567,
+    "completion_percentage": 84.6,
+    "image_url": "https://example.com/fifa-2022.jpg",
+    "background_color": "#DC2626"
+  },
+  {
+    "id": 1,
+    "user_id": 1,
+    "name": "SCORE LIGUE 1",
+    "season": "2023/24",
+    "total_cards": 397,
+    "owned_cards": 156,
+    "completion_percentage": 67,
+    "image_url": "@assets/image 29_1750232088999.png",
+    "background_color": "#F37261"
+  }
+]

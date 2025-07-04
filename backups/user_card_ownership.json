@@ -1,0 +1,3410 @@
+[
+  {
+    "id": 2948,
+    "user_id": 1,
+    "card_id": 11634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.485Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2950,
+    "user_id": 1,
+    "card_id": 5635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.562Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2951,
+    "user_id": 1,
+    "card_id": 6635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.639Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2960,
+    "user_id": 1,
+    "card_id": 6836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.863Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2962,
+    "user_id": 1,
+    "card_id": 8836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.949Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2964,
+    "user_id": 1,
+    "card_id": 9836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.017Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2971,
+    "user_id": 1,
+    "card_id": 7637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.216Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2977,
+    "user_id": 1,
+    "card_id": 5838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.407Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2979,
+    "user_id": 1,
+    "card_id": 7838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.479Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2981,
+    "user_id": 1,
+    "card_id": 9838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.571Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2990,
+    "user_id": 1,
+    "card_id": 8639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.814Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2992,
+    "user_id": 1,
+    "card_id": 10639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.881Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2994,
+    "user_id": 1,
+    "card_id": 12639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.958Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2997,
+    "user_id": 1,
+    "card_id": 7440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.047Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2999,
+    "user_id": 1,
+    "card_id": 9440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.133Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3014,
+    "user_id": 1,
+    "card_id": 7242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.581Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3019,
+    "user_id": 1,
+    "card_id": 12242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.742Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3021,
+    "user_id": 1,
+    "card_id": 14242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.811Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3023,
+    "user_id": 1,
+    "card_id": 7043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.887Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3032,
+    "user_id": 1,
+    "card_id": 6044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.143Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3034,
+    "user_id": 1,
+    "card_id": 8044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.212Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3036,
+    "user_id": 1,
+    "card_id": 9044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.291Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3039,
+    "user_id": 1,
+    "card_id": 13044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.375Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3042,
+    "user_id": 1,
+    "card_id": 7245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.483Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3045,
+    "user_id": 1,
+    "card_id": 10245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.564Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3047,
+    "user_id": 1,
+    "card_id": 13245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.674Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3056,
+    "user_id": 1,
+    "card_id": 12046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.927Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3061,
+    "user_id": 1,
+    "card_id": 8447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.096Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3068,
+    "user_id": 1,
+    "card_id": 6048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.309Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3073,
+    "user_id": 1,
+    "card_id": 11048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.479Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3076,
+    "user_id": 1,
+    "card_id": 4849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.566Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3078,
+    "user_id": 1,
+    "card_id": 6849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.647Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3082,
+    "user_id": 1,
+    "card_id": 10849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.755Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3084,
+    "user_id": 1,
+    "card_id": 12849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.840Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3088,
+    "user_id": 1,
+    "card_id": 8650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.946Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3090,
+    "user_id": 1,
+    "card_id": 10650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.030Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3094,
+    "user_id": 1,
+    "card_id": 13650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.147Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3096,
+    "user_id": 1,
+    "card_id": 7251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.231Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3100,
+    "user_id": 1,
+    "card_id": 11251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.338Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3102,
+    "user_id": 1,
+    "card_id": 13251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.423Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3105,
+    "user_id": 1,
+    "card_id": 7852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.526Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3107,
+    "user_id": 1,
+    "card_id": 8852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.594Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3110,
+    "user_id": 1,
+    "card_id": 11852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.675Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3113,
+    "user_id": 1,
+    "card_id": 6053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.789Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3116,
+    "user_id": 1,
+    "card_id": 9053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.864Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3119,
+    "user_id": 1,
+    "card_id": 12053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.978Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3122,
+    "user_id": 1,
+    "card_id": 6054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.054Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3124,
+    "user_id": 1,
+    "card_id": 8054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.120Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3127,
+    "user_id": 1,
+    "card_id": 11054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.208Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3130,
+    "user_id": 1,
+    "card_id": 5255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.326Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3132,
+    "user_id": 1,
+    "card_id": 8255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.398Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3137,
+    "user_id": 1,
+    "card_id": 12255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.559Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3167,
+    "user_id": 1,
+    "card_id": 7259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.542Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3170,
+    "user_id": 1,
+    "card_id": 10259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.647Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3173,
+    "user_id": 1,
+    "card_id": 13259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.730Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3176,
+    "user_id": 1,
+    "card_id": 5860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.845Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3182,
+    "user_id": 1,
+    "card_id": 11860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.033Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3184,
+    "user_id": 1,
+    "card_id": 4661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.110Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3188,
+    "user_id": 1,
+    "card_id": 8661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.221Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3190,
+    "user_id": 1,
+    "card_id": 10661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.300Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3194,
+    "user_id": 1,
+    "card_id": 5862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.409Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3197,
+    "user_id": 1,
+    "card_id": 8862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.566Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3201,
+    "user_id": 1,
+    "card_id": 12862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.645Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3203,
+    "user_id": 1,
+    "card_id": 7263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.757Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3207,
+    "user_id": 1,
+    "card_id": 11263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.837Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3208,
+    "user_id": 1,
+    "card_id": 12263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.943Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3212,
+    "user_id": 1,
+    "card_id": 6264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.022Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3214,
+    "user_id": 1,
+    "card_id": 8264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.141Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3223,
+    "user_id": 1,
+    "card_id": 7865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.392Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3228,
+    "user_id": 1,
+    "card_id": 12865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.541Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3235,
+    "user_id": 1,
+    "card_id": 11466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.777Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3240,
+    "user_id": 1,
+    "card_id": 7867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.925Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3249,
+    "user_id": 1,
+    "card_id": 5868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.166Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3250,
+    "user_id": 1,
+    "card_id": 7868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.268Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3255,
+    "user_id": 1,
+    "card_id": 11868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.351Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3257,
+    "user_id": 1,
+    "card_id": 7269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.455Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3259,
+    "user_id": 1,
+    "card_id": 9269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.524Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3264,
+    "user_id": 1,
+    "card_id": 14269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.679Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3273,
+    "user_id": 1,
+    "card_id": 14070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.925Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3274,
+    "user_id": 1,
+    "card_id": 6271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.008Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3278,
+    "user_id": 1,
+    "card_id": 10271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.112Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3281,
+    "user_id": 1,
+    "card_id": 13271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.214Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3283,
+    "user_id": 1,
+    "card_id": 5072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.311Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3287,
+    "user_id": 1,
+    "card_id": 9072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.409Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3290,
+    "user_id": 1,
+    "card_id": 11072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.505Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3292,
+    "user_id": 1,
+    "card_id": 5873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.605Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3297,
+    "user_id": 1,
+    "card_id": 10873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.699Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3298,
+    "user_id": 1,
+    "card_id": 11873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.798Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3301,
+    "user_id": 1,
+    "card_id": 5674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.928Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3306,
+    "user_id": 1,
+    "card_id": 9674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.046Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3307,
+    "user_id": 1,
+    "card_id": 10674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.118Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3311,
+    "user_id": 1,
+    "card_id": 5875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.215Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3314,
+    "user_id": 1,
+    "card_id": 7875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.313Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3317,
+    "user_id": 1,
+    "card_id": 11875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.407Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3320,
+    "user_id": 1,
+    "card_id": 7276,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.501Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3321,
+    "user_id": 1,
+    "card_id": 8881,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.899Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3200,
+    "user_id": 1,
+    "card_id": 11862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.641Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3202,
+    "user_id": 1,
+    "card_id": 6263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.751Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3206,
+    "user_id": 1,
+    "card_id": 10263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.835Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3209,
+    "user_id": 1,
+    "card_id": 13263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.946Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3213,
+    "user_id": 1,
+    "card_id": 7264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.023Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3215,
+    "user_id": 1,
+    "card_id": 9264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.142Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3219,
+    "user_id": 1,
+    "card_id": 13264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.216Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3221,
+    "user_id": 1,
+    "card_id": 4865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.335Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3224,
+    "user_id": 1,
+    "card_id": 8865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.405Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3227,
+    "user_id": 1,
+    "card_id": 11865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.521Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3231,
+    "user_id": 1,
+    "card_id": 6466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.608Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3233,
+    "user_id": 1,
+    "card_id": 9466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.709Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3236,
+    "user_id": 1,
+    "card_id": 12466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.789Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3239,
+    "user_id": 1,
+    "card_id": 6867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.904Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3242,
+    "user_id": 1,
+    "card_id": 10867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.974Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3245,
+    "user_id": 1,
+    "card_id": 12867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.087Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3248,
+    "user_id": 1,
+    "card_id": 6868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.163Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3251,
+    "user_id": 1,
+    "card_id": 8868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.270Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3253,
+    "user_id": 1,
+    "card_id": 10868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.336Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3258,
+    "user_id": 1,
+    "card_id": 8269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.489Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3267,
+    "user_id": 1,
+    "card_id": 8070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.737Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3269,
+    "user_id": 1,
+    "card_id": 9070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.821Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3272,
+    "user_id": 1,
+    "card_id": 12070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.911Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3275,
+    "user_id": 1,
+    "card_id": 7271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.013Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3277,
+    "user_id": 1,
+    "card_id": 9271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.111Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3282,
+    "user_id": 1,
+    "card_id": 14271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.260Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3289,
+    "user_id": 1,
+    "card_id": 13072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.504Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3293,
+    "user_id": 1,
+    "card_id": 6873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.617Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3296,
+    "user_id": 1,
+    "card_id": 9873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.696Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3299,
+    "user_id": 1,
+    "card_id": 12873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.827Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3325,
+    "user_id": 1,
+    "card_id": 11881,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.949Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3326,
+    "user_id": 1,
+    "card_id": 13881,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:52.022Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3327,
+    "user_id": 1,
+    "card_id": 6082,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:52.084Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3329,
+    "user_id": 1,
+    "card_id": 8082,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:52.109Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3341,
+    "user_id": 1,
+    "card_id": 2531,
+    "owned": true,
+    "created_at": "2025-07-03T13:57:50.886Z",
+    "updated_at": "2025-07-03T14:13:33.768Z"
+  },
+  {
+    "id": 3332,
+    "user_id": 1,
+    "card_id": 5029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.442Z",
+    "updated_at": "2025-07-03T14:26:04.355Z"
+  },
+  {
+    "id": 3343,
+    "user_id": 1,
+    "card_id": 3932,
+    "owned": true,
+    "created_at": "2025-07-03T14:25:53.389Z",
+    "updated_at": "2025-07-03T14:25:53.389Z"
+  },
+  {
+    "id": 3342,
+    "user_id": 1,
+    "card_id": 2931,
+    "owned": true,
+    "created_at": "2025-07-03T14:25:44.813Z",
+    "updated_at": "2025-07-03T14:35:16.679Z"
+  },
+  {
+    "id": 3333,
+    "user_id": 1,
+    "card_id": 6029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.509Z",
+    "updated_at": "2025-07-03T14:40:37.155Z"
+  },
+  {
+    "id": 3334,
+    "user_id": 1,
+    "card_id": 9029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.518Z",
+    "updated_at": "2025-07-03T14:26:04.514Z"
+  },
+  {
+    "id": 3340,
+    "user_id": 1,
+    "card_id": 12029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.718Z",
+    "updated_at": "2025-07-03T14:26:04.687Z"
+  },
+  {
+    "id": 3344,
+    "user_id": 1,
+    "card_id": 3029,
+    "owned": true,
+    "created_at": "2025-07-03T14:35:42.962Z",
+    "updated_at": "2025-07-03T14:40:29.730Z"
+  },
+  {
+    "id": 2919,
+    "user_id": 1,
+    "card_id": 12831,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.584Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2920,
+    "user_id": 1,
+    "card_id": 11831,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.607Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2921,
+    "user_id": 1,
+    "card_id": 13831,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.663Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2922,
+    "user_id": 1,
+    "card_id": 10831,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.677Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2923,
+    "user_id": 1,
+    "card_id": 6032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.692Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2924,
+    "user_id": 1,
+    "card_id": 7032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.702Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2925,
+    "user_id": 1,
+    "card_id": 8032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.774Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2926,
+    "user_id": 1,
+    "card_id": 9032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.797Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2927,
+    "user_id": 1,
+    "card_id": 11032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.866Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2928,
+    "user_id": 1,
+    "card_id": 10032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.871Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2929,
+    "user_id": 1,
+    "card_id": 12032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.875Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3335,
+    "user_id": 1,
+    "card_id": 7029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.521Z",
+    "updated_at": "2025-07-03T14:26:04.483Z"
+  },
+  {
+    "id": 3339,
+    "user_id": 1,
+    "card_id": 13029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.718Z",
+    "updated_at": "2025-07-03T14:26:04.698Z"
+  },
+  {
+    "id": 2930,
+    "user_id": 1,
+    "card_id": 13032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.896Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2931,
+    "user_id": 1,
+    "card_id": 14032,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.965Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2933,
+    "user_id": 1,
+    "card_id": 8033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.064Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2942,
+    "user_id": 1,
+    "card_id": 5634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.294Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2944,
+    "user_id": 1,
+    "card_id": 7634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.367Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2946,
+    "user_id": 1,
+    "card_id": 8634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.453Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2953,
+    "user_id": 1,
+    "card_id": 8635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.650Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2955,
+    "user_id": 1,
+    "card_id": 10635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.717Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2957,
+    "user_id": 1,
+    "card_id": 12635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.827Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2966,
+    "user_id": 1,
+    "card_id": 12836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.063Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2968,
+    "user_id": 1,
+    "card_id": 4637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.136Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2970,
+    "user_id": 1,
+    "card_id": 6637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.204Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2973,
+    "user_id": 1,
+    "card_id": 9637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.291Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2976,
+    "user_id": 1,
+    "card_id": 12637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.395Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2983,
+    "user_id": 1,
+    "card_id": 11838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.602Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2989,
+    "user_id": 1,
+    "card_id": 7639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.803Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2995,
+    "user_id": 1,
+    "card_id": 5440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.993Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2998,
+    "user_id": 1,
+    "card_id": 8440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.080Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3000,
+    "user_id": 1,
+    "card_id": 10440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.146Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3003,
+    "user_id": 1,
+    "card_id": 13440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.238Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3005,
+    "user_id": 1,
+    "card_id": 7241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.321Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3008,
+    "user_id": 1,
+    "card_id": 10241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.388Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3010,
+    "user_id": 1,
+    "card_id": 12241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.455Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3012,
+    "user_id": 1,
+    "card_id": 14241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.521Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3016,
+    "user_id": 1,
+    "card_id": 9242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.643Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3018,
+    "user_id": 1,
+    "card_id": 11242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.714Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3022,
+    "user_id": 1,
+    "card_id": 6043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.831Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3024,
+    "user_id": 1,
+    "card_id": 8043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.912Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3031,
+    "user_id": 1,
+    "card_id": 5044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.124Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3037,
+    "user_id": 1,
+    "card_id": 11044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.323Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3044,
+    "user_id": 1,
+    "card_id": 8245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.520Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2932,
+    "user_id": 1,
+    "card_id": 5033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:38.988Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2934,
+    "user_id": 1,
+    "card_id": 6033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.069Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2941,
+    "user_id": 1,
+    "card_id": 4634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.280Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2947,
+    "user_id": 1,
+    "card_id": 10634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.464Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2949,
+    "user_id": 1,
+    "card_id": 12634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.527Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2952,
+    "user_id": 1,
+    "card_id": 7635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.643Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2959,
+    "user_id": 1,
+    "card_id": 5836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.833Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2961,
+    "user_id": 1,
+    "card_id": 7836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.903Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2963,
+    "user_id": 1,
+    "card_id": 10836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.014Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2972,
+    "user_id": 1,
+    "card_id": 8637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.249Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2974,
+    "user_id": 1,
+    "card_id": 10637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.319Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2975,
+    "user_id": 1,
+    "card_id": 11637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.385Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2984,
+    "user_id": 1,
+    "card_id": 12838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.623Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2986,
+    "user_id": 1,
+    "card_id": 4639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.695Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2987,
+    "user_id": 1,
+    "card_id": 5639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.760Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2996,
+    "user_id": 1,
+    "card_id": 6440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.999Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3001,
+    "user_id": 1,
+    "card_id": 11440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.183Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3007,
+    "user_id": 1,
+    "card_id": 9241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.366Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3013,
+    "user_id": 1,
+    "card_id": 6242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.556Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3015,
+    "user_id": 1,
+    "card_id": 8242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.623Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3017,
+    "user_id": 1,
+    "card_id": 10242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.699Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3020,
+    "user_id": 1,
+    "card_id": 13242,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.767Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3025,
+    "user_id": 1,
+    "card_id": 9043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.929Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3027,
+    "user_id": 1,
+    "card_id": 11043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.999Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3029,
+    "user_id": 1,
+    "card_id": 13043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.080Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3038,
+    "user_id": 1,
+    "card_id": 12044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.331Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3040,
+    "user_id": 1,
+    "card_id": 5245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.405Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3041,
+    "user_id": 1,
+    "card_id": 6245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.477Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3049,
+    "user_id": 1,
+    "card_id": 5046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.710Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3055,
+    "user_id": 1,
+    "card_id": 11046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.908Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3058,
+    "user_id": 1,
+    "card_id": 5447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.973Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3059,
+    "user_id": 1,
+    "card_id": 6447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.047Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3062,
+    "user_id": 1,
+    "card_id": 9447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.112Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3067,
+    "user_id": 1,
+    "card_id": 5048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.280Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3074,
+    "user_id": 1,
+    "card_id": 12048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.496Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3075,
+    "user_id": 1,
+    "card_id": 13048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.563Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3077,
+    "user_id": 1,
+    "card_id": 5849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.629Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3133,
+    "user_id": 1,
+    "card_id": 7255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.406Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3135,
+    "user_id": 1,
+    "card_id": 10255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.511Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3138,
+    "user_id": 1,
+    "card_id": 4656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.589Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3143,
+    "user_id": 1,
+    "card_id": 8656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.751Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3146,
+    "user_id": 1,
+    "card_id": 11656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.822Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3147,
+    "user_id": 1,
+    "card_id": 12656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.886Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3150,
+    "user_id": 1,
+    "card_id": 6857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.961Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3155,
+    "user_id": 1,
+    "card_id": 11857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.129Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3158,
+    "user_id": 1,
+    "card_id": 5858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.207Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3160,
+    "user_id": 1,
+    "card_id": 7858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.286Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3162,
+    "user_id": 1,
+    "card_id": 9858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.372Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3164,
+    "user_id": 1,
+    "card_id": 12858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.458Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3177,
+    "user_id": 1,
+    "card_id": 6860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.859Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3046,
+    "user_id": 1,
+    "card_id": 11245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.592Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3048,
+    "user_id": 1,
+    "card_id": 12245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.674Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3051,
+    "user_id": 1,
+    "card_id": 7046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.763Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3054,
+    "user_id": 1,
+    "card_id": 10046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.863Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3057,
+    "user_id": 1,
+    "card_id": 13046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.956Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3060,
+    "user_id": 1,
+    "card_id": 7447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.060Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3063,
+    "user_id": 1,
+    "card_id": 10447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.150Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3066,
+    "user_id": 1,
+    "card_id": 13447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.262Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3070,
+    "user_id": 1,
+    "card_id": 7048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.350Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3071,
+    "user_id": 1,
+    "card_id": 9048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.436Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3080,
+    "user_id": 1,
+    "card_id": 8849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.687Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3083,
+    "user_id": 1,
+    "card_id": 11849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.815Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3086,
+    "user_id": 1,
+    "card_id": 6650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.883Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3089,
+    "user_id": 1,
+    "card_id": 9650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.010Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3092,
+    "user_id": 1,
+    "card_id": 12650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.088Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3095,
+    "user_id": 1,
+    "card_id": 6251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.214Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3098,
+    "user_id": 1,
+    "card_id": 9251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.294Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3103,
+    "user_id": 1,
+    "card_id": 4852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.427Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3106,
+    "user_id": 1,
+    "card_id": 6852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.530Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3109,
+    "user_id": 1,
+    "card_id": 9852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.618Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3112,
+    "user_id": 1,
+    "card_id": 12852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.724Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3114,
+    "user_id": 1,
+    "card_id": 7053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.807Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3118,
+    "user_id": 1,
+    "card_id": 11053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.927Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3121,
+    "user_id": 1,
+    "card_id": 5054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.019Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3123,
+    "user_id": 1,
+    "card_id": 7054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.102Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3126,
+    "user_id": 1,
+    "card_id": 10054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.187Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3131,
+    "user_id": 1,
+    "card_id": 6255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.364Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3140,
+    "user_id": 1,
+    "card_id": 5656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.632Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3142,
+    "user_id": 1,
+    "card_id": 7656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.704Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3145,
+    "user_id": 1,
+    "card_id": 9656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.788Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3148,
+    "user_id": 1,
+    "card_id": 4857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.897Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3151,
+    "user_id": 1,
+    "card_id": 7857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.988Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3153,
+    "user_id": 1,
+    "card_id": 9857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.080Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3156,
+    "user_id": 1,
+    "card_id": 12857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.154Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3161,
+    "user_id": 1,
+    "card_id": 8858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.315Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3163,
+    "user_id": 1,
+    "card_id": 10858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.407Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3165,
+    "user_id": 1,
+    "card_id": 6259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.484Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3169,
+    "user_id": 1,
+    "card_id": 8259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.607Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3172,
+    "user_id": 1,
+    "card_id": 12259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.705Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3175,
+    "user_id": 1,
+    "card_id": 14259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.810Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3179,
+    "user_id": 1,
+    "card_id": 7860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.925Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3181,
+    "user_id": 1,
+    "card_id": 10860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.008Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3186,
+    "user_id": 1,
+    "card_id": 6661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.172Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3189,
+    "user_id": 1,
+    "card_id": 9661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.244Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3191,
+    "user_id": 1,
+    "card_id": 11661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.321Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3193,
+    "user_id": 1,
+    "card_id": 4862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.399Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3198,
+    "user_id": 1,
+    "card_id": 9862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.590Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3205,
+    "user_id": 1,
+    "card_id": 9263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.795Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3210,
+    "user_id": 1,
+    "card_id": 14263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.963Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3217,
+    "user_id": 1,
+    "card_id": 11264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.190Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3222,
+    "user_id": 1,
+    "card_id": 6865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.349Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3229,
+    "user_id": 1,
+    "card_id": 5466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.584Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3234,
+    "user_id": 1,
+    "card_id": 10466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.733Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3243,
+    "user_id": 1,
+    "card_id": 9867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.977Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3244,
+    "user_id": 1,
+    "card_id": 11867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.078Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3336,
+    "user_id": 1,
+    "card_id": 10029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.522Z",
+    "updated_at": "2025-07-03T14:26:04.513Z"
+  },
+  {
+    "id": 3247,
+    "user_id": 1,
+    "card_id": 4868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.147Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3252,
+    "user_id": 1,
+    "card_id": 9868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.304Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3261,
+    "user_id": 1,
+    "card_id": 11269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.547Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3263,
+    "user_id": 1,
+    "card_id": 12269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.638Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3265,
+    "user_id": 1,
+    "card_id": 6070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.712Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3270,
+    "user_id": 1,
+    "card_id": 11070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.870Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3279,
+    "user_id": 1,
+    "card_id": 11271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.121Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3280,
+    "user_id": 1,
+    "card_id": 12271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.209Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3285,
+    "user_id": 1,
+    "card_id": 6072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.310Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3286,
+    "user_id": 1,
+    "card_id": 8072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.405Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3291,
+    "user_id": 1,
+    "card_id": 12072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.503Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3294,
+    "user_id": 1,
+    "card_id": 7873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.640Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3302,
+    "user_id": 1,
+    "card_id": 4674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.932Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3305,
+    "user_id": 1,
+    "card_id": 8674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.025Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3308,
+    "user_id": 1,
+    "card_id": 11674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.123Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3316,
+    "user_id": 1,
+    "card_id": 10875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.369Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3324,
+    "user_id": 1,
+    "card_id": 10881,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.930Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3328,
+    "user_id": 1,
+    "card_id": 7082,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:52.086Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3178,
+    "user_id": 1,
+    "card_id": 8860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.920Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3180,
+    "user_id": 1,
+    "card_id": 9860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.984Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3199,
+    "user_id": 1,
+    "card_id": 10862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.604Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3204,
+    "user_id": 1,
+    "card_id": 8263,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.773Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3211,
+    "user_id": 1,
+    "card_id": 5264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.994Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3216,
+    "user_id": 1,
+    "card_id": 10264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.148Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3218,
+    "user_id": 1,
+    "card_id": 12264,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.213Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3220,
+    "user_id": 1,
+    "card_id": 5865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.333Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3225,
+    "user_id": 1,
+    "card_id": 9865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.405Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3226,
+    "user_id": 1,
+    "card_id": 10865,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.520Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3230,
+    "user_id": 1,
+    "card_id": 7466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.598Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3232,
+    "user_id": 1,
+    "card_id": 8466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.709Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3237,
+    "user_id": 1,
+    "card_id": 13466,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.791Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3238,
+    "user_id": 1,
+    "card_id": 5867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.893Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3241,
+    "user_id": 1,
+    "card_id": 8867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:48.960Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3246,
+    "user_id": 1,
+    "card_id": 13867,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.111Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3254,
+    "user_id": 1,
+    "card_id": 12868,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.358Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3256,
+    "user_id": 1,
+    "card_id": 6269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.454Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3337,
+    "user_id": 1,
+    "card_id": 8029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.524Z",
+    "updated_at": "2025-07-03T14:26:04.495Z"
+  },
+  {
+    "id": 3338,
+    "user_id": 1,
+    "card_id": 11029,
+    "owned": true,
+    "created_at": "2025-07-03T13:48:41.657Z",
+    "updated_at": "2025-07-03T14:26:04.558Z"
+  },
+  {
+    "id": 3260,
+    "user_id": 1,
+    "card_id": 10269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.542Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3262,
+    "user_id": 1,
+    "card_id": 13269,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.638Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3266,
+    "user_id": 1,
+    "card_id": 7070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.730Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3268,
+    "user_id": 1,
+    "card_id": 10070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.821Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3271,
+    "user_id": 1,
+    "card_id": 13070,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:49.914Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3276,
+    "user_id": 1,
+    "card_id": 8271,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.062Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3284,
+    "user_id": 1,
+    "card_id": 7072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.312Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3288,
+    "user_id": 1,
+    "card_id": 10072,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.451Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3295,
+    "user_id": 1,
+    "card_id": 8873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.696Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3300,
+    "user_id": 1,
+    "card_id": 13873,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.834Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3304,
+    "user_id": 1,
+    "card_id": 7674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.989Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3309,
+    "user_id": 1,
+    "card_id": 12674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.164Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3312,
+    "user_id": 1,
+    "card_id": 6875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.235Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3313,
+    "user_id": 1,
+    "card_id": 8875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.308Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3323,
+    "user_id": 1,
+    "card_id": 12881,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.921Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3330,
+    "user_id": 1,
+    "card_id": 10906,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:52.125Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2935,
+    "user_id": 1,
+    "card_id": 9033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.087Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2937,
+    "user_id": 1,
+    "card_id": 10033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.155Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2940,
+    "user_id": 1,
+    "card_id": 13033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.255Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2943,
+    "user_id": 1,
+    "card_id": 6634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.342Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2945,
+    "user_id": 1,
+    "card_id": 9634,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.451Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2954,
+    "user_id": 1,
+    "card_id": 9635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.674Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2956,
+    "user_id": 1,
+    "card_id": 11635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.751Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2958,
+    "user_id": 1,
+    "card_id": 13635,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.829Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2965,
+    "user_id": 1,
+    "card_id": 11836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.025Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2967,
+    "user_id": 1,
+    "card_id": 13836,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.093Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2969,
+    "user_id": 1,
+    "card_id": 5637,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.200Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2978,
+    "user_id": 1,
+    "card_id": 6838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.437Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2980,
+    "user_id": 1,
+    "card_id": 8838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.508Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2982,
+    "user_id": 1,
+    "card_id": 10838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.582Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2985,
+    "user_id": 1,
+    "card_id": 13838,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.669Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2988,
+    "user_id": 1,
+    "card_id": 6639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.772Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2991,
+    "user_id": 1,
+    "card_id": 9639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.856Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2993,
+    "user_id": 1,
+    "card_id": 11639,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:40.948Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3002,
+    "user_id": 1,
+    "card_id": 12440,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.193Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3004,
+    "user_id": 1,
+    "card_id": 6241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.268Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3006,
+    "user_id": 1,
+    "card_id": 8241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.334Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3009,
+    "user_id": 1,
+    "card_id": 11241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.427Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3011,
+    "user_id": 1,
+    "card_id": 13241,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.513Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3026,
+    "user_id": 1,
+    "card_id": 10043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:41.952Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3028,
+    "user_id": 1,
+    "card_id": 12043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.022Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3030,
+    "user_id": 1,
+    "card_id": 14043,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.102Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3033,
+    "user_id": 1,
+    "card_id": 7044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.184Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3035,
+    "user_id": 1,
+    "card_id": 10044,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.290Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3043,
+    "user_id": 1,
+    "card_id": 9245,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.521Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3050,
+    "user_id": 1,
+    "card_id": 6046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.713Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3052,
+    "user_id": 1,
+    "card_id": 8046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.784Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3053,
+    "user_id": 1,
+    "card_id": 9046,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:42.859Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3064,
+    "user_id": 1,
+    "card_id": 11447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.158Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3065,
+    "user_id": 1,
+    "card_id": 12447,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.233Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3069,
+    "user_id": 1,
+    "card_id": 8048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.346Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3072,
+    "user_id": 1,
+    "card_id": 10048,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.454Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3079,
+    "user_id": 1,
+    "card_id": 7849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.668Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3081,
+    "user_id": 1,
+    "card_id": 9849,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.754Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3085,
+    "user_id": 1,
+    "card_id": 5650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.857Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3087,
+    "user_id": 1,
+    "card_id": 7650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:43.945Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3091,
+    "user_id": 1,
+    "card_id": 11650,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.046Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3093,
+    "user_id": 1,
+    "card_id": 5251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.144Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3097,
+    "user_id": 1,
+    "card_id": 8251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.240Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3099,
+    "user_id": 1,
+    "card_id": 10251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.335Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3101,
+    "user_id": 1,
+    "card_id": 12251,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.404Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3104,
+    "user_id": 1,
+    "card_id": 5852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.480Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3108,
+    "user_id": 1,
+    "card_id": 10852,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.617Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3111,
+    "user_id": 1,
+    "card_id": 5053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.724Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3115,
+    "user_id": 1,
+    "card_id": 8053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.811Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3117,
+    "user_id": 1,
+    "card_id": 10053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.915Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3120,
+    "user_id": 1,
+    "card_id": 13053,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:44.996Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3125,
+    "user_id": 1,
+    "card_id": 9054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.164Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3128,
+    "user_id": 1,
+    "card_id": 12054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.240Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3129,
+    "user_id": 1,
+    "card_id": 13054,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.325Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3134,
+    "user_id": 1,
+    "card_id": 9255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.428Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3136,
+    "user_id": 1,
+    "card_id": 11255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.513Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3139,
+    "user_id": 1,
+    "card_id": 13255,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.589Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3141,
+    "user_id": 1,
+    "card_id": 6656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.698Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3144,
+    "user_id": 1,
+    "card_id": 10656,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.776Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3149,
+    "user_id": 1,
+    "card_id": 5857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:45.941Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3152,
+    "user_id": 1,
+    "card_id": 8857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.012Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3154,
+    "user_id": 1,
+    "card_id": 10857,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.098Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3157,
+    "user_id": 1,
+    "card_id": 4858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.187Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3159,
+    "user_id": 1,
+    "card_id": 6858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.272Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3166,
+    "user_id": 1,
+    "card_id": 11858,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.517Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3168,
+    "user_id": 1,
+    "card_id": 9259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.601Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3171,
+    "user_id": 1,
+    "card_id": 11259,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.673Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3174,
+    "user_id": 1,
+    "card_id": 4860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:46.797Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3183,
+    "user_id": 1,
+    "card_id": 12860,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.054Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3185,
+    "user_id": 1,
+    "card_id": 5661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.130Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3187,
+    "user_id": 1,
+    "card_id": 7661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.206Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3192,
+    "user_id": 1,
+    "card_id": 12661,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.362Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3195,
+    "user_id": 1,
+    "card_id": 6862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.433Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3196,
+    "user_id": 1,
+    "card_id": 7862,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:47.565Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3303,
+    "user_id": 1,
+    "card_id": 6674,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:50.971Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3310,
+    "user_id": 1,
+    "card_id": 4875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.179Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3315,
+    "user_id": 1,
+    "card_id": 9875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.350Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3318,
+    "user_id": 1,
+    "card_id": 12875,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.430Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3319,
+    "user_id": 1,
+    "card_id": 6276,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.497Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3322,
+    "user_id": 1,
+    "card_id": 9881,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:51.901Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 3331,
+    "user_id": 1,
+    "card_id": 10907,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:52.142Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2936,
+    "user_id": 1,
+    "card_id": 7033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.086Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2938,
+    "user_id": 1,
+    "card_id": 11033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.176Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  },
+  {
+    "id": 2939,
+    "user_id": 1,
+    "card_id": 12033,
+    "owned": false,
+    "created_at": "2025-07-03T13:47:39.254Z",
+    "updated_at": "2025-07-03T13:49:53.100Z"
+  }
+]
