@@ -1739,8 +1739,8 @@ export default function Collections() {
                           </div>
                         )}
 
-                        {/* Season - seulement si la carte a une saison */}
-                        {selectedCard.season && (
+                        {/* Season - seulement si la carte a une collection ET une saison */}
+                        {selectedCard.collectionId && selectedCard.season && (
                           <div className="grid grid-cols-3 gap-4 items-center">
                             <span className="text-gray-400 text-sm font-medium">Saison:</span>
                             <span className="col-span-2 text-white text-sm">
