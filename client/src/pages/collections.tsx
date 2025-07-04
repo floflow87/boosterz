@@ -1279,7 +1279,9 @@ export default function Collections() {
         {activeTab === "cards" && (
           <div className="space-y-4">
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-white font-poppins mb-4">Mes cartes</h3>
+              <h3 className="text-lg font-bold text-white font-poppins mb-4">
+                Mes cartes ({personalCards.length} cartes au total)
+              </h3>
               
               {/* Controls Row - Filter Tabs and View Icons */}
               <div className="flex items-center justify-between">
