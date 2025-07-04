@@ -93,6 +93,7 @@ export const personalCards = pgTable("personal_cards", {
   tradeDescription: text("trade_description"),
   tradeOnly: boolean("trade_only").default(false).notNull(),
   condition: text("condition"),
+  description: text("description"), // Description de la carte
   checklistCardId: integer("checklist_card_id"), // Relation vers checklist (FK ajoutée après)
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -592,6 +593,7 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   tradeDescription: true,
   tradeOnly: true,
   condition: true,
+  description: true,
 }).extend({
   // Rendre la plupart des champs optionnels sauf userId et cardType
   playerName: z.string().nullable().optional(),
@@ -609,6 +611,7 @@ export const insertPersonalCardSchema = createInsertSchema(personalCards).pick({
   tradeDescription: z.string().nullable().optional(),
   tradeOnly: z.boolean().optional(),
   condition: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

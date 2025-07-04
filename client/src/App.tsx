@@ -1,9 +1,10 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { useEffect } from "react";
 import Splash from "@/pages/splash";
 import Home from "@/pages/home";
 import Collections from "@/pages/collections";
@@ -32,12 +33,40 @@ import Admin from "@/pages/admin";
 import TrophyUnlock from "@/pages/trophy-unlock";
 import NotFound from "@/pages/not-found";
 
-function Router() {
+function AuthenticatedRouter() {
   const authToken = localStorage.getItem('authToken');
   const onboardingCompleted = localStorage.getItem('onboarding_completed');
   
-  // Check authentication state
+  // Vérifier que le token est valide auprès du serveur
+  const { data: currentUser, isLoading, error } = useQuery({
+    queryKey: ["/api/auth/me"],
+    enabled: !!authToken,
+    retry: false,
+    staleTime: 0,
+  });
+
+  // Si pas de token, rediriger vers auth
   if (!authToken) {
+    return <Landing />;
+  }
+
+  // Pendant la vérification du token
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[hsl(216,46%,13%)] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Vérification...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Si le token n'est pas valide, rediriger vers auth
+  if (error || !currentUser) {
+    // Nettoyer le localStorage et rediriger
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('onboarding_completed');
     return <Landing />;
   }
   
@@ -88,7 +117,7 @@ function App() {
       <NotificationProvider>
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <AuthenticatedRouter />
         </TooltipProvider>
       </NotificationProvider>
     </QueryClientProvider>

@@ -47,6 +47,7 @@ export default function AddCard() {
   const [season, setSeason] = useState("");
   const [collectionType, setCollectionType] = useState("");
   const [condition, setCondition] = useState("");
+  const [description, setDescription] = useState("");
   const [salePrice, setSalePrice] = useState("");
   const [saleDescription, setSaleDescription] = useState("");
   const [isForSale, setIsForSale] = useState(false);
@@ -331,6 +332,7 @@ export default function AddCard() {
       collectionId: targetCollection?.id || null, // Collection optionnelle
       imageUrl: editedImage || null,
       condition: condition || null,
+      description: description || null, // Nouvelle description
       salePrice: isForSale ? salePrice : null,
       saleDescription: isForSale ? saleDescription : null,
       isForSale: isForSale,
@@ -447,8 +449,8 @@ export default function AddCard() {
             {/* Message explicatif pour la création libre */}
             <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 mb-6">
               <p className="text-blue-200 text-sm">
-                💡 <strong>Création libre</strong> : Tu peux ajouter n'importe quelle carte en remplissant seulement le type de carte. 
-                La collection et la saison sont optionnelles - tu pourras les associer plus tard !
+                💡 Ajoute n'importe quelle carte et renseigne y les informations de ta carte. 
+                Tu peux également décider d'y associer une collection de ta check-list (optionnel)
               </p>
             </div>
             
@@ -646,6 +648,19 @@ export default function AddCard() {
                     <SelectItem value="played" className="text-white hover:bg-zinc-700">Usagé</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Description */}
+              <div>
+                <Label htmlFor="description" className="text-white mb-2 block">Description <span className="text-gray-400">(optionnel)</span></Label>
+                <textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="w-full bg-zinc-800 border-zinc-700 text-white rounded-md px-3 py-2 min-h-[80px] resize-none"
+                  placeholder="Description de ta carte..."
+                  rows={3}
+                />
               </div>
 
               {/* Prix de vente */}

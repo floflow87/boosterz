@@ -1716,11 +1716,11 @@ export default function Collections() {
                   {/* Card Details - Structured two-column layout */}
                   <div className="space-y-6 text-white">
                     {/* Description Section - seulement si une description existe */}
-                    {(selectedCard.saleDescription || selectedCard.tradeDescription) && (
+                    {(selectedCard.description || selectedCard.saleDescription || selectedCard.tradeDescription) && (
                       <div className="bg-[hsl(214,35%,18%)] rounded-xl p-6 border border-[hsl(214,35%,25%)]">
                         <h3 className="text-lg font-bold text-white mb-4">Description</h3>
                         <p className="text-gray-300 text-sm leading-relaxed">
-                          {selectedCard.saleDescription || selectedCard.tradeDescription}
+                          {selectedCard.description || selectedCard.saleDescription || selectedCard.tradeDescription}
                         </p>
                       </div>
                     )}
