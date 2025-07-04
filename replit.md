@@ -118,6 +118,13 @@ The application follows a modern full-stack architecture with clear separation b
 - **Build Process**: Automated build and deployment pipeline
 
 ## Changelog
+- January 04, 2025. **SYSTÈME CRÉATION LIBRE DE CARTES IMPLÉMENTÉ**
+  - **Création libre activée** : Les utilisateurs peuvent maintenant ajouter n'importe quelle carte sans être limités aux collections existantes
+  - **Schéma assouppli** : Champ `collectionId` rendu optionnel dans `insertPersonalCardSchema` pour permettre l'ajout libre
+  - **Interface améliorée** : Message explicatif ajouté sur la page d'ajout avec sélecteurs collection/saison marqués comme optionnels
+  - **Validation simplifiée** : Seul le type de carte est requis, tout le reste devient optionnel
+  - **Test confirmé** : Carte Pierre-Elerick Aubameyang ajoutée avec succès sans collection (collectionId: null)
+  - **Flexibilité maximale** : Les cartes peuvent être associées aux collections plus tard selon les besoins
 - January 04, 2025. **MIGRATION SUPABASE COMPLÈTEMENT RÉUSSIE + INFRASTRUCTURE PRODUCTION OPÉRATIONNELLE**
   - **Connexion Supabase établie** : Driver PostgreSQL natif (pg) compatible avec Transaction pooler
   - **Schémas automatiquement synchronisés** : 47 colonnes manquantes ajoutées (is_first_login, card_sub_type, etc.)
