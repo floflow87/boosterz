@@ -309,25 +309,17 @@ export default function AddCard() {
   };
 
   const handleSubmitCard = async () => {
-    if (!cardType || !collectionType || !season) {
+    if (!cardType) {
       toast({
         title: "Informations manquantes",
-        description: "Veuillez sélectionner le type de collection, la saison et le type de carte",
+        description: "Veuillez sélectionner au minimum le type de carte",
         variant: "destructive",
       });
       return;
     }
 
-    // Find the matching collection in database based on type and season
-    const targetCollection = getMatchingCollection();
-    if (!targetCollection) {
-      toast({
-        title: "Collection introuvable",
-        description: "Aucune collection correspondante trouvée en base de données",
-        variant: "destructive",
-      });
-      return;
-    }
+    // Collection optionnelle - peut être associée plus tard
+    const targetCollection = (collectionType && season) ? getMatchingCollection() : null;
 
     const cardData = {
       playerName: playerName || null,
@@ -336,7 +328,7 @@ export default function AddCard() {
       reference: reference || null,
       numbering: numbering || null,
       season: season || null,
-      collectionId: targetCollection.id,
+      collectionId: targetCollection?.id || null, // Collection optionnelle
       imageUrl: editedImage || null,
       condition: condition || null,
       salePrice: isForSale ? salePrice : null,
@@ -452,13 +444,20 @@ export default function AddCard() {
           <div>
             <h2 className="text-2xl font-bold mb-6">Détails de la carte</h2>
             
+            {/* Message explicatif pour la création libre */}
+            <div className="bg-blue-900/30 border border-blue-700/50 rounded-lg p-4 mb-6">
+              <p className="text-blue-200 text-sm">
+                💡 <strong>Création libre</strong> : Tu peux ajouter n'importe quelle carte en remplissant seulement le type de carte. 
+                La collection et la saison sont optionnelles - tu pourras les associer plus tard !
+              </p>
+            </div>
+            
             <div className="grid gap-6 max-w-2xl">
-
 
               {/* Type de collection et saison côte à côte */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="collectionType" className="text-white mb-2 block">Type de collection *</Label>
+                  <Label htmlFor="collectionType" className="text-white mb-2 block">Type de collection <span className="text-gray-400">(optionnel)</span></Label>
                   <Select value={collectionType} onValueChange={(value) => {
                     setCollectionType(value);
                     setSeason(""); // Reset saison quand on change le type
@@ -481,7 +480,7 @@ export default function AddCard() {
                 </div>
 
                 <div>
-                  <Label htmlFor="season" className="text-white mb-2 block">Saison *</Label>
+                  <Label htmlFor="season" className="text-white mb-2 block">Saison <span className="text-gray-400">(optionnel)</span></Label>
                   <Select value={season} onValueChange={setSeason} disabled={!collectionType}>
                     <SelectTrigger className="bg-zinc-800 border-zinc-700 text-white">
                       <SelectValue placeholder={collectionType ? "Sélectionne la saison" : "Choisir d'abord le type"} />
